@@ -54,7 +54,7 @@
                 </v-form>
                 <template v-else>
                   <v-list subheader two-line :disabled="connecting">
-                    <v-list-item v-for="(server, index) in servers" :key="server.id" @click="connect(server)">
+                    <v-list-item v-for="(server, index) in servers" :key="server.id" @click="connect(server.addr)">
                       <v-list-item-avatar>
                         <v-icon class="grey lighten-1" dark> mdi-server </v-icon>
                       </v-list-item-avatar>
@@ -107,7 +107,7 @@ export default Vue.extend({
       },
     ] as ServerItem[],
     edit_item: null as { is_add: boolean; index: number; server: ServerItem },
-    connect_automatically: false as boolean,
+    connect_automatically: true as boolean,
     connecting: false as boolean,
     connection_status: null as string,
     error: { active: false, status: "" },
@@ -162,9 +162,9 @@ export default Vue.extend({
         })
       );
     },
-    connect(server: ServerItem) {
+    connect(addr: string) {
       this.connecting = true;
-      this.$evbc.connect(server.addr);
+      this.$evbc.connect(addr);
     },
   },
   created() {
@@ -195,7 +195,8 @@ export default Vue.extend({
     });
 
     if (this.connect_automatically) {
-      this.connect(this.servers[0]);
+      // FIXME (aw): would be nice to have an senseful default here!
+      this.connect(`${window.location.hostname}:8849`)
     }
   },
 });
