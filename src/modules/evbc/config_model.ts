@@ -101,12 +101,12 @@ class EVConfigModel {
       return;
     }
 
-    Object.entries(config).forEach(([module_id, module_config]) => {
-      this._add_module_instance(module_config.module, module_id, module_config);
+    Object.entries(config.active_modules).forEach(([module_id, module_config]) => {
+      this._add_module_instance(module_config.module, module_id, module_config, config["x-module-layout"]?.[module_id]);
     });
 
     Object.entries(this._instances).forEach(([_instance_id, module_instance]) => {
-      const instance_connections = config[module_instance.id].connections;
+      const instance_connections = config.active_modules[module_instance.id].connections;
       if (!instance_connections) return;
 
       Object.entries(instance_connections).forEach(([requirement_name, requirement_connections]) => {
@@ -251,9 +251,10 @@ class EVConfigModel {
     return false;
   }
 
-  serialize() {
-    const config: EverestConfig = {};
+  serialize(): EverestConfig {
+    const config: EverestConfig = { active_modules: {}, "x-module-layout": {} };
     Object.entries(this._instances).forEach(([, instance]) => {
+      const modules_config = config.active_modules;
       // FIXME (aw): clean this up
       const connections: Record<
         string,
@@ -277,15 +278,16 @@ class EVConfigModel {
           }
         });
 
-      config[instance.id] = {
+      modules_config[instance.id] = {
         module: instance.type,
-        "x-view-model": instance.view_config,
         connections,
       };
 
+      config["x-module-layout"][instance.id] = instance.view_config;
+
       // FIXME (aw): looks ugly, also the naming twist is annoying
       if (instance.module_config && Object.keys(instance.module_config).length !== 0) {
-        config[instance.id].config_module = config_set_with_schema_to_config_set(instance.module_config);
+        modules_config[instance.id].config_module = config_set_with_schema_to_config_set(instance.module_config);
       }
 
       if (instance.implementation_config) {
@@ -298,7 +300,7 @@ class EVConfigModel {
         });
 
         if (Object.keys(implementation_config).length !== 0) {
-          config[instance.id].config_implementation = implementation_config;
+          modules_config[instance.id].config_implementation = implementation_config;
         }
       }
     });
@@ -316,7 +318,7 @@ class EVConfigModel {
     });
   }
 
-  _add_module_instance(type: string, id: string, config?: EverestModuleConfig) {
+  _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig) {
     if (!(type in this._module_definitions)) {
       throw Error(`Invalid module type: ${type}`);
     }
@@ -345,8 +347,8 @@ class EVConfigModel {
       implementation_config: Object.keys(impl_configs).length ? impl_configs : undefined,
       connections: [],
       view_config:
-        config && config["x-view-model"]
-          ? config["x-view-model"]
+        view_config
+          ? view_config
           : {
               position: null,
               terminals: default_terminals(manifest),
