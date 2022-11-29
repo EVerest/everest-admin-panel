@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Package everest-admin-panel
 
 on: workflow_dispatch
 
@@ -15,3 +15,10 @@ jobs:
         run: npm install
       - name: Build
         run: npm run build
+      - name: Tar
+        run: tar -C dist -czf everest-admin-panel.tar.gz ./
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: manually_dispatched
+          files: everest-admin-panel.tar.gz
