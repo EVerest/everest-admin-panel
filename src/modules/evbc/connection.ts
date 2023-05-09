@@ -6,7 +6,7 @@ import SampleManifestList from "./sample_module_info";
 import SampleInterfaceList from "./sample_interfaces_list";
 
 const LOOPBACK_WAIT_MS = 500;
-const RPC_COMMAND_TIMEOUT_MS = 1000;
+const RPC_COMMAND_TIMEOUT_MS = 2000;
 
 type ConnectionOpenStatus = {
   type: "OPEN";
@@ -111,7 +111,7 @@ class EVBackendConnection {
     return new Promise((resolve, reject) => {
       const timeout_id = setTimeout(() => {
         this._pending_commands.delete(id);
-        reject();
+        reject(`RPC communication timeout to everest controller process`);
       }, RPC_COMMAND_TIMEOUT_MS);
       this._pending_commands.set(id, { resolve, reject, timeout_id });
     });
