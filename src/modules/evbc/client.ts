@@ -111,6 +111,12 @@ class EVBackendClient {
   }
 
   _on_connected() {
+    // fetch rpc timeout value
+    const wait_for_rpc_timeout_value = this._cxn.issue_rpc("get_rpc_timeout", null, false).then((result) => {
+      console.log(result);
+      this._cxn._rpc_timeout_ms = result as number;
+    });
+
     // fetch all needed definitions
     // FIXME (aw): how to deal with errors, what about the 'as' type casting ?
     const wait_for_modules = this._cxn.issue_rpc("get_modules", null, false).then((result) => {
@@ -131,7 +137,7 @@ class EVBackendClient {
       this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(result).length} config files` });
     });
 
-    Promise.all([wait_for_modules, wait_for_interfaces, wait_for_configs]).then(() => {
+    Promise.all([wait_for_rpc_timeout_value, wait_for_modules, wait_for_interfaces, wait_for_configs]).then(() => {
       this.initialized = true;
       this._publish("connection_state", { type: "INITIALIZED", text: "Done initializing" });
     });
