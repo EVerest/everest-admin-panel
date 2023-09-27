@@ -59,8 +59,8 @@
                         <v-icon class="grey lighten-1" dark> mdi-server </v-icon>
                       </v-list-item-avatar>
                       <v-list-item-content>
-                        <v-list-item-title v-text="server.id"></v-list-item-title>
-                        <v-list-item-subtitle v-text="server.addr"></v-list-item-subtitle>
+                        <v-list-item-title>{{ server.id }}</v-list-item-title>
+                        <v-list-item-subtitle>{{ server.addr }}</v-list-item-subtitle>
                       </v-list-item-content>
                       <v-list-item-action v-if="server.editable">
                         <v-btn icon @click.prevent.stop="edit_server(index)"><v-icon>mdi-pencil</v-icon></v-btn>
