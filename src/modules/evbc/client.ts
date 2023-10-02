@@ -113,7 +113,6 @@ class EVBackendClient {
   _on_connected() {
     // fetch rpc timeout value
     const wait_for_rpc_timeout_value = this._cxn.issue_rpc("get_rpc_timeout", null, false).then((result) => {
-      console.log(result);
       this._cxn._rpc_timeout_ms = result as number;
     });
 
