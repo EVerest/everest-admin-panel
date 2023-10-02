@@ -1,6 +1,12 @@
 name: Package everest-admin-panel
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        type: string
+        description: Image tag
+        default: 'latest'
 
 jobs:
   package:
@@ -20,5 +26,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: manually_dispatched
+          tag_name: ${{ inputs.tag }}
           files: everest-admin-panel.tar.gz

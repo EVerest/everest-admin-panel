@@ -41,6 +41,7 @@ class EVBackendConnection {
   _loopback = false;
   _pending_commands = new Map();
   _url: string;
+  _rpc_timeout_ms = RPC_COMMAND_TIMEOUT_MS;
   issue_rpc: (method: string, params: unknown, notification: boolean) => Promise<unknown>;
 
   constructor(url: string, listener: ConnectionStatusListener) {
@@ -111,8 +112,8 @@ class EVBackendConnection {
     return new Promise((resolve, reject) => {
       const timeout_id = setTimeout(() => {
         this._pending_commands.delete(id);
-        reject(`RPC communication timeout to everest controller process`);
-      }, RPC_COMMAND_TIMEOUT_MS);
+        reject(`RPC communication timeout to everest controller process after '${this._rpc_timeout_ms}'ms`);
+      }, this._rpc_timeout_ms);
       this._pending_commands.set(id, { resolve, reject, timeout_id });
     });
   }
