@@ -20,7 +20,8 @@
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "vuetify"
+      "vuetify",
+      "node"
     ],
     "typeRoots": [
       "./node_modules/@types/"
