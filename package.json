@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@mdi/font": "^6.9.96",
+    "@types/node": "^20.10.4",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
     "@vue/cli": "^5.0.8",
