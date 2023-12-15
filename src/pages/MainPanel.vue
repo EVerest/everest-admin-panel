@@ -37,6 +37,10 @@
           <v-list-item-title>Debug</v-list-item-title>
         </v-list-item>
       </v-list>
+      <v-list-item class="bottom-list d-flex flex-column">
+        <span>EVerest admin panel</span>
+        <span>Version 0.0.2</span>
+      </v-list-item>
     </v-navigation-drawer>
 
     <v-main>
@@ -67,6 +71,11 @@
 }
 .rotateable:hover {
   transform: rotateZ(360deg);
+}
+.bottom-list {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 </style>
 

@@ -5,7 +5,6 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 
 import MainPanel from "../pages/MainPanel.vue";
-import AboutPage from "../pages/AboutPage.vue";
 import AccountPage from "../pages/AccountPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import ConfigPage from "../pages/ConfigPage.vue";
@@ -16,11 +15,6 @@ import { evbc } from "../plugins/evbc";
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
-  {
-    path: "/about",
-    name: "about",
-    component: AboutPage,
-  },
   {
     path: "/login",
     name: "login",
