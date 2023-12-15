@@ -96,8 +96,6 @@ export default {
         this.evbc_disconnected = false;
       }
     });
-
-    this.$store.commit("snackbar_message", { text: "Hi there", color: "blue", timeout: 3142 });
   },
   computed: {
     snackbar() {
@@ -106,7 +104,7 @@ export default {
   },
   watch: {
     snackbar(sb) {
-      this.show_snackbar = sb === undefined ? false : true;
+      this.show_snackbar = sb !== undefined;
     },
   },
 };
