@@ -51,7 +51,7 @@
           <v-card-text>Trying to reconnect ...</v-card-text>
         </v-card>
       </v-overlay>
-      <v-snackbar v-model="show_snackbar" :color="snackbar.color" :timeout="snackbar.timeout" bottom>
+      <v-snackbar v-if="show_snackbar" v-model="snackbar" :color="snackbar.color" :timeout="snackbar.timeout" bottom>
         {{ snackbar.text }}
         <template v-slot:action="{ attrs }">
           <v-btn dark text v-bind="attrs" @click="show_snackbar = false"> Close </v-btn>
