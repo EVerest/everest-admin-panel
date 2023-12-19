@@ -8,17 +8,23 @@
       <v-expansion-panel-content>
         <v-expansion-panels class="ma-0">
           <v-expansion-panel v-for="module in module_list" :key="module.type">
-            <v-expansion-panel-header disable-icon-rotate>
-              {{ module.type }}
-              <template v-slot:actions>
-                <v-btn icon @click.stop="add_module_to_config(module.type)">
-                  <v-icon>mdi-plus-box-outline</v-icon>
-                </v-btn>
+            <v-tooltip right>
+              <template v-slot:activator="{ on, attrs }">
+                <v-expansion-panel-header disable-icon-rotate v-bind="attrs" v-on="on">
+                  {{ module.type }}
+                  <template v-slot:actions>
+                    <v-btn icon @click.stop="add_module_to_config(module.type)">
+                      <v-icon>mdi-plus-box-outline</v-icon>
+                    </v-btn>
+                  </template>
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  {{ module.description }}
+                </v-expansion-panel-content>
               </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              {{ module.description }}
-            </v-expansion-panel-content>
+              <span>{{ module.description }}</span>
+            </v-tooltip>
+
           </v-expansion-panel>
         </v-expansion-panels>
       </v-expansion-panel-content>
