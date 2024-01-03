@@ -3,7 +3,14 @@
 
 <template>
   <v-card v-if="module_node">
-    <v-card-title> Module instance information </v-card-title>
+    <v-card-title>
+      Module instance information
+      <icon-button-with-tooltip
+        icon="mdi-close"
+        title="Discard selection"
+        @on-click="context.unselect()"
+      />      
+    </v-card-title>
     <v-card-text>
       <p class="font-weight-bold">Module type: {{ module_node.instance.type }}</p>
       <v-form>
@@ -38,37 +45,53 @@
       </v-form>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="primary" text @click="context.unselect()"> Discard selection </v-btn>
-      <v-btn color="primary" text @click="delete_module_instance(module_node.instance_id)"> Delete instance </v-btn>
+      <icon-button-with-tooltip
+        icon="mdi-delete"
+        title="Delete instance"
+        @on-click="delete_connection(module_node.instance_id)"
+      />     
     </v-card-actions>
   </v-card>
   <v-card v-else-if="connection">
-    <v-card-title> Connection </v-card-title>
+    <v-card-title>
+      Connection
+      <icon-button-with-tooltip
+        icon="mdi-close"
+        title="Discard selection"
+        @on-click="context.unselect()"
+      /> 
+    </v-card-title>
     <v-card-text>
       The requirement <code>{{ connection.to.name }}</code> of <code>{{ connection.to.id }}</code> is fulfilled by
       implementation <code>{{ connection.from.name }}</code> of <code>{{ connection.from.id }}</code>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="primary" text @click="context.unselect()"> Discard selection </v-btn>
-      <v-btn color="primary" text @click="delete_connection(connection.id)"> Delete connection </v-btn>
+      <icon-button-with-tooltip
+        icon="mdi-delete"
+        title="Delete connection"
+        @on-click="delete_connection(connection.id)"
+      />
     </v-card-actions>
   </v-card>
   <v-card v-else-if="terminal">
     <v-card-title>
       {{ terminal.type === "provide" ? "Implementation" : "Requirement" }}: <code>{{ terminal.id }}</code>
+      <icon-button-with-tooltip
+        icon="mdi-close"
+        title="Discard selection"
+        @on-click="context.unselect()"
+      />     
     </v-card-title>
     <v-card-text>
       Interface type: <code>{{ terminal.interface }}</code>
     </v-card-text>
-    <v-card-actions>
-      <v-btn color="primary" text @click="context.unselect()"> Discard selection </v-btn>
-    </v-card-actions>
   </v-card>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import VJsf from "@koumoul/vjsf/lib/VJsf.js";
+import IconButtonWithTooltip from "./IconButtonWithTooltip.vue";
 import "@koumoul/vjsf/lib/VJsf.css";
 import "@koumoul/vjsf/lib/deps/third-party.js";
 import { ModuleInstanceModel, Terminal, ConnectionID, ModuleInstanceID } from "@/modules/evbc";
@@ -150,6 +173,7 @@ export default Vue.extend({
   },
   components: {
     VJsf,
+    IconButtonWithTooltip,
   },
 });
 </script>
