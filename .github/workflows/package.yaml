@@ -1,6 +1,9 @@
 name: Package everest-admin-panel
 
 on:
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       tag:
