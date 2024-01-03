@@ -6,7 +6,7 @@ import { PathConfig } from "konva/lib/shapes/Path";
 import { TerminalAlignment, TerminalType } from "@/modules/evbc";
 import { COLOR, ICON_DATA, SIZE } from "../constants";
 
-interface TerminalConfig extends PathConfig {
+export interface TerminalConfig extends PathConfig {
   terminal_type: TerminalType;
   terminal_id: number;
   terminal_alignment: TerminalAlignment;

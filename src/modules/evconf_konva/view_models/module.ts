@@ -99,6 +99,10 @@ export default class ModuleViewModel {
     };
   }
 
+  notify_stage_context(event: ConfigStageContextEvent) {
+    this._stage_context._publish(event)
+  }
+
   _notify(ev: ViewModelChangeEvent) {
     this._observers.forEach((handler) => handler(ev));
   }

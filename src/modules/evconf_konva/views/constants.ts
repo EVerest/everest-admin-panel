@@ -26,3 +26,14 @@ export const SIZE = {
   CONNECTION_WIDTH: 4,
   CONNECTION_CTRL: 100,
 };
+
+export const TEXT = {
+  fontFamily: "Roboto, sans-serif",
+};
+
+export const TOOLTIP = {
+  position: {
+    x: 10,
+    y: 770,
+  },
+};
