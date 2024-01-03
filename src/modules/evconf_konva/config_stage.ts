@@ -112,6 +112,7 @@ export default class ConfigStage {
 
     this.context = context;
     context.set_container(this._stage.container());
+    this._stage.on("pointerclick", () => context.unselect());
     this.context.add_observer((ev) => this._handle_stage_context_event(ev));
     this.registerListeners();
     this.resizeStage();
