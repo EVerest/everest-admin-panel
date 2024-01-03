@@ -10,11 +10,13 @@ import ModuleViewModel from "./view_models/module";
 import ConfigStageContext, { ConfigStageContextEvent } from "./stage_context";
 import ConnectionManager from "./connection_manager";
 import Stage = Konva.Stage;
+import { TEXT, TOOLTIP } from "./views/constants";
 
 export default class ConfigStage {
   // view part
   _konva: {
     stage: Konva.Stage;
+    tooltip: Konva.Text;
     static_layer: Konva.Layer;
     anim_layer: Konva.Layer;
   };
@@ -33,17 +35,34 @@ export default class ConfigStage {
   constructor(private config: StageConfig, context: ConfigStageContext) {
     this._stage = new Konva.Stage(config);
 
+    const tooltipLayer = new Konva.Layer({});
+
+    const tooltip = new Konva.Text({
+      text: '',
+      fontFamily: TEXT.fontFamily,
+      fontSize: 16,
+      padding: 5,
+      fill: 'black',
+      alpha: 0.75,
+      visible: false,
+      ...TOOLTIP.position
+    });
+
+    tooltipLayer.add(tooltip);
+
+    const static_layer = new Konva.Layer({});
+
     const scaleBy = 1.2;
     this._stage.on("wheel", (event) => {
       // FIXME (aw): review this code, got copied from Konva docs ...
       event.evt.preventDefault();
 
-      const oldScale = this._stage.scaleX();
+      const oldScale = static_layer.scaleX();
       const pointer = this._stage.getPointerPosition();
 
       const mousePointTo = {
-        x: (pointer.x - this._stage.x()) / oldScale,
-        y: (pointer.y - this._stage.y()) / oldScale,
+        x: (pointer.x - static_layer.x()) / oldScale,
+        y: (pointer.y - static_layer.y()) / oldScale,
       };
 
       // how to scale? Zoom in? Or zoom out?
@@ -57,22 +76,36 @@ export default class ConfigStage {
 
       const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-      this._stage.scale({ x: newScale, y: newScale });
-
+      static_layer.scale({ x: newScale, y: newScale });
+      if (pointer === null) {
+        return;
+      }
       const newPos = {
         x: pointer.x - mousePointTo.x * newScale,
         y: pointer.y - mousePointTo.y * newScale,
       };
-      this._stage.position(newPos);
+      static_layer.position(newPos);
       // static_layer.draw();
     });
 
-    const static_layer = new Konva.Layer({});
+    this._stage.on("dragmove", () => {
+      // keep tooltip always in the bottom left corner
+      const stage_position = this._stage.position();
+
+      const new_position = {
+        x: TOOLTIP.position.x - stage_position.x,
+        y: TOOLTIP.position.y - stage_position.y,
+      }
+      
+      tooltip.position(new_position);
+    });
 
     this._stage.add(static_layer);
+    this._stage.add(tooltipLayer);
 
     this._konva = {
       stage: this._stage,
+      tooltip,
       static_layer,
       anim_layer: null,
     };
@@ -150,6 +183,11 @@ export default class ConfigStage {
     if (ev.type === "ADD_CONNECTION") {
       // FIXME (aw): check return value and deal with it
       this._model.add_connection(ev.connection);
+    } else if (ev.type === "SHOW_TOOLTIP") { 
+      this._konva.tooltip.text(ev.text);
+      this._konva.tooltip.show();
+    } else if (ev.type === "HIDE_TOOLTIP") {
+      this._konva.tooltip.hide();
     }
   }
 

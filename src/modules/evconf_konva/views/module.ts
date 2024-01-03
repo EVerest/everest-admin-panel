@@ -3,10 +3,11 @@
 
 import Konva from "konva";
 import { TerminalAlignment } from "@/modules/evbc";
-import { SIZE } from "./constants";
-import { TerminalShape } from "./shapes/terminal";
+import { SIZE, TEXT } from "./constants";
+import { TerminalConfig, TerminalShape } from "./shapes/terminal";
 import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
 import { TerminalPlacement } from "./shapes/connection";
+import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
 
 // FIXME (aw): the TerminalPlacement type belongs to a shared place!
 type TerminalPlacementWithID = TerminalPlacement & { id: number };
@@ -69,7 +70,7 @@ export default class ModuleView {
     this._vm = view_model;
 
     this._terminal_views = view_model.terminal_lookup.map((item, terminal_id) => {
-      const view = new TerminalShape({
+      const view = new TerminalShape<TerminalConfig>({
         terminal_type: item.terminal.type,
         terminal_id,
         terminal_alignment: item.alignment,
@@ -79,8 +80,21 @@ export default class ModuleView {
       view.on("dragstart", () => this._terminal_dragstart_handler(view));
       view.on("dragmove", () => this._terminal_dragmove_handler(view));
       view.on("dragend", () => this._terminal_dragend_handler(view));
-      view.on("mouseenter", () => this._vm.set_cursor("pointer"));
-      view.on("mouseleave", () => this._vm.set_cursor("default"));
+      view.on("mouseenter", () => {
+        this._vm.set_cursor("pointer");
+        const showTooltip: ShowTooltipEvent = {
+          type: "SHOW_TOOLTIP",
+          text: `Interface type: ${item.terminal.interface}`,
+        }
+        this._vm.notify_stage_context(showTooltip)
+      });
+      view.on("mouseleave", () => {
+        this._vm.set_cursor("default");
+        const hideTooltip: HideTooltipEvent = {
+          type: "HIDE_TOOLTIP",
+        }
+        this._vm.notify_stage_context(hideTooltip)
+      });
       view.on("pointerclick", (ev) => {
         view_model.clicked_terminal(terminal_id);
         ev.cancelBubble = true;
@@ -126,7 +140,7 @@ export default class ModuleView {
     const title = new Konva.Text({
       wrap: "none",
       text: view_model.id,
-      fontFamily: "Roboto, sans-serif",
+      fontFamily: TEXT.fontFamily,
       ellipsis: true,
       fill: "black",
       fontSize: 16 * 2,
@@ -151,7 +165,7 @@ export default class ModuleView {
     const type_info = new Konva.Text({
       wrap: "none",
       text: `Type: ${view_model.type}`,
-      fontFamily: "Roboto, sans-serif",
+      fontFamily: TEXT.fontFamily,
       ellipsis: true,
       fill: "black",
       fontSize: 16,

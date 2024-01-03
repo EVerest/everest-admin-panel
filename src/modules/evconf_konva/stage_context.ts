@@ -34,7 +34,16 @@ type AddConnectionEvent = {
   readonly connection: Connection;
 };
 
-export type ConfigStageContextEvent = SelectionEvent | AddConnectionEvent;
+export type ShowTooltipEvent = {
+  readonly type: "SHOW_TOOLTIP";
+  readonly text: string;
+};
+
+export type HideTooltipEvent = {
+  readonly type: "HIDE_TOOLTIP";
+};
+
+export type ConfigStageContextEvent = SelectionEvent | AddConnectionEvent | ShowTooltipEvent | HideTooltipEvent ;
 
 type ConfigStageContextEventHandler = (ev: ConfigStageContextEvent) => void;
 
