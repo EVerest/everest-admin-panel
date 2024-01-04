@@ -7,9 +7,7 @@
       <icon-button-with-tooltip
           icon="mdi-close"
           title="Discard selection"
-          variant="text"
-          density="compact"
-
+          @on-click="context.unselect()"
       />
     </template>
     <v-card-text>
@@ -62,7 +60,7 @@
       <icon-button-with-tooltip
         icon="mdi-close"
         title="Discard selection"
-        @on-click="context.unselect()"
+        @click="context.unselect()"
       /> 
     </v-card-title>
     <v-card-text>
@@ -73,7 +71,7 @@
       <icon-button-with-tooltip
         icon="mdi-delete"
         title="Delete connection"
-        @on-click="delete_connection(connection.id)"
+        @click="delete_connection(connection.id)"
       />
     </v-card-actions>
   </v-card>
@@ -83,7 +81,7 @@
       <icon-button-with-tooltip
         icon="mdi-close"
         title="Discard selection"
-        @on-click="context.unselect()"
+        @click="context.unselect()"
       />     
     </v-card-title>
     <v-card-text>
