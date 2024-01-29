@@ -2,26 +2,27 @@
 <!-- Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-card v-if="module_node">
-    <v-card-title>
-      Module instance information
+  <v-card v-if="module_node" :title="'Module instance information'">
+    <template v-slot:append>
       <icon-button-with-tooltip
-        icon="mdi-close"
-        title="Discard selection"
-        @on-click="context.unselect()"
-      />      
-    </v-card-title>
+          icon="mdi-close"
+          title="Discard selection"
+          variant="text"
+          density="compact"
+
+      />
+    </template>
     <v-card-text>
       <p class="font-weight-bold">Module type: {{ module_node.instance.type }}</p>
       <v-form>
         <!-- FIXME (aw): howto do the binding here? -->
-        <v-text-field :value="module_node.instance.id" label="Module ID" :rules="moduleIDRules"></v-text-field>
+        <v-text-field :model-value="module_node.instance.id" label="Module ID" :rules="moduleIDRules"></v-text-field>
       </v-form>
       <v-form>
         <template v-if="module_node.instance.module_config">
           <v-divider />
           <p class="font-weight-bold">Module configuration</p>
-          <v-jsf
+          <vjsf
             v-for="(item, index) in module_node.instance.module_config"
             :key="index"
             v-model="item.model"
@@ -33,12 +34,15 @@
           <p class="font-weight-bold">Implementation configurations</p>
           <v-expansion-panels>
             <v-expansion-panel v-for="(impl_config, id) in module_node.instance.implementation_config" :key="id">
-              <v-expansion-panel-header>
+              <v-expansion-panel-title>
                 {{ id }}
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-jsf v-for="(item, index) in impl_config" :key="index" v-model="item.model" :schema="item.schema" />
-              </v-expansion-panel-content>
+              </v-expansion-panel-title>
+              <v-expansion-panel-text>
+                <vjsf
+                    v-for="(item, index) in impl_config" :key="index" v-model="item.model" :schema="item.schema"
+                >
+                </vjsf>
+              </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
         </template>
@@ -48,8 +52,8 @@
       <icon-button-with-tooltip
         icon="mdi-delete"
         title="Delete instance"
-        @on-click="delete_connection(module_node.instance_id)"
-      />     
+        @on-click="delete_module_instance(module_node.instance_id)"
+      />
     </v-card-actions>
   </v-card>
   <v-card v-else-if="connection">
@@ -89,25 +93,24 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import VJsf from "@koumoul/vjsf/lib/VJsf.js";
+import {defineComponent} from "vue";
+import { Vjsf } from "@koumoul/vjsf";
 import IconButtonWithTooltip from "./IconButtonWithTooltip.vue";
-import "@koumoul/vjsf/lib/VJsf.css";
-import "@koumoul/vjsf/lib/deps/third-party.js";
 import { ModuleInstanceModel, Terminal, ConnectionID, ModuleInstanceID } from "@/modules/evbc";
 import EVConfigModel from "@/modules/evbc/config_model";
 import ConfigStageContext from "@/modules/evconf_konva/stage_context";
+import {useEvbcStore} from "@/store/evbc";
 
-export default Vue.extend({
-  // data() {
-  //   return {
-  //     model: {},
-  //   };
-  // },
+let evbcStore: ReturnType<typeof useEvbcStore>;
+
+export default defineComponent({
+  created() {
+    evbcStore = useEvbcStore();
+  },
   computed: {
     // FIXME (aw): this is not how it works!
     module_node(): { instance_id: number; instance: ModuleInstanceModel } {
-      const instance_id = this.$store.getters["evbc/selected_module_instance"];
+      const instance_id = evbcStore.get_selected_module_instance();
       if (instance_id === null) {
         return null;
       }
@@ -118,17 +121,17 @@ export default Vue.extend({
       };
     },
     terminal(): Terminal {
-      return this.$store.getters["evbc/selected_terminal"];
+      return evbcStore.get_selected_terminal();
     },
     config_model: function (): EVConfigModel {
-      return this.$store.getters["evbc/current_config"];
+      return evbcStore.get_current_config();
     },
     connection: function (): {
       from: { type: string; id: string; name: string };
       to: { type: string; id: string; name: string };
       id: ConnectionID;
     } {
-      const connection_id = this.$store.getters["evbc/selected_connection"];
+      const connection_id = evbcStore.get_selected_connection();
       if (connection_id === null) {
         return null;
       }
@@ -151,7 +154,7 @@ export default Vue.extend({
       };
     },
     context: function (): ConfigStageContext {
-      return this.$store.getters["evbc/config_context"];
+      return evbcStore.config_context;
     },
     moduleIDRules: function () {
       return [
@@ -172,7 +175,7 @@ export default Vue.extend({
     },
   },
   components: {
-    VJsf,
+    Vjsf,
     IconButtonWithTooltip,
   },
 });

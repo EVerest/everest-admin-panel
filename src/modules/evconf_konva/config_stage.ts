@@ -9,6 +9,7 @@ import ModuleView from "./views/module";
 import ModuleViewModel from "./view_models/module";
 import ConfigStageContext, { ConfigStageContextEvent } from "./stage_context";
 import ConnectionManager from "./connection_manager";
+import Stage = Konva.Stage;
 
 export default class ConfigStage {
   // view part
@@ -27,21 +28,22 @@ export default class ConfigStage {
   _conn_man: ConnectionManager;
 
   readonly context: ConfigStageContext;
+  private _stage: Stage;
 
-  constructor(config: StageConfig, context: ConfigStageContext) {
-    const stage = new Konva.Stage(config);
+  constructor(private config: StageConfig, context: ConfigStageContext) {
+    this._stage = new Konva.Stage(config);
 
     const scaleBy = 1.2;
-    stage.on("wheel", (event) => {
+    this._stage.on("wheel", (event) => {
       // FIXME (aw): review this code, got copied from Konva docs ...
       event.evt.preventDefault();
 
-      const oldScale = stage.scaleX();
-      const pointer = stage.getPointerPosition();
+      const oldScale = this._stage.scaleX();
+      const pointer = this._stage.getPointerPosition();
 
       const mousePointTo = {
-        x: (pointer.x - stage.x()) / oldScale,
-        y: (pointer.y - stage.y()) / oldScale,
+        x: (pointer.x - this._stage.x()) / oldScale,
+        y: (pointer.y - this._stage.y()) / oldScale,
       };
 
       // how to scale? Zoom in? Or zoom out?
@@ -55,32 +57,51 @@ export default class ConfigStage {
 
       const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-      stage.scale({ x: newScale, y: newScale });
+      this._stage.scale({ x: newScale, y: newScale });
 
       const newPos = {
         x: pointer.x - mousePointTo.x * newScale,
         y: pointer.y - mousePointTo.y * newScale,
       };
-      stage.position(newPos);
+      this._stage.position(newPos);
       // static_layer.draw();
     });
 
     const static_layer = new Konva.Layer({});
 
-    stage.add(static_layer);
+    this._stage.add(static_layer);
 
     this._konva = {
-      stage,
+      stage: this._stage,
       static_layer,
       anim_layer: null,
     };
 
     this.context = context;
-    context.set_container(stage.container());
-
-    // stage.on("pointerclick", () => context.unselect());
-    // FIXME (aw): unload observers!
+    context.set_container(this._stage.container());
     this.context.add_observer((ev) => this._handle_stage_context_event(ev));
+    this.registerListeners();
+  }
+
+  private registerListeners() {
+    window.addEventListener('resize', () => this.resizeStage());
+  }
+
+  // TODO : Call this method when the stage is destroyed
+  private unregisterListeners() {
+    // TODO : Probably won't work
+    window.removeEventListener('resize', this.resizeStage);
+  }
+
+  public resizeStage(): void {
+    // debugger;
+    const container = document.getElementById(this.config.container as string) as HTMLDivElement;
+
+    const containerWidth = container.offsetWidth;
+    const containerHeight = container.offsetHeight;
+
+    this._stage.width(containerWidth);
+    this._stage.height(containerHeight);
   }
 
   set_model(model: EVConfigModel) {

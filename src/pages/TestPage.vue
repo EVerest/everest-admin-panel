@@ -1,57 +1,35 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest -->
-
 <template>
   <v-container fluid class="fill-height">
     <v-row class="fill-height">
       <v-spacer />
-      <v-col class="pt-0" cols="7">Local storage: {{ ls }} </v-col>
+      <v-col class="pt-0" cols="7">Local storage: {{ localStorageItem }} </v-col>
       <v-spacer />
     </v-row>
   </v-container>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
   data() {
-    const reactive = {
-      ls: null as string,
+    return {
+      localStorageItem: ""
     };
-
-    return reactive as typeof reactive & {
-      //
-    };
-  },
-  computed: {
-    nodes() {
-      return null;
-    },
   },
   created() {
-    // FIXME (aw): can we assume, localStorage always exists?
-    const storage = window.localStorage;
-    const ls_item = storage.getItem("ls");
-    if (!ls_item) {
-      this.ls = `No item named 'ls' in our storage :(`;
-      storage.setItem("ls", "Saved stuff");
-    } else {
-      this.ls = ls_item;
-    }
-  },
-  mounted() {
-    //
+    this.loadLocalStorage();
   },
   methods: {
-    loadConfig() {
-      //
-    },
-  },
-  components: {
-    //
-  },
+    loadLocalStorage() {
+      const lsItem = window.localStorage.getItem("ls");
+      if (!lsItem) {
+        this.localStorageItem = `No item named 'ls' in our storage :(`;
+        window.localStorage.setItem("ls", "Saved stuff");
+      } else {
+        this.localStorageItem = lsItem;
+      }
+    }
+  }
 });
 </script>
-
-<style lang="scss" scoped></style>

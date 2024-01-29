@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest
 
-import { PluginObject } from "vue";
 import EVBackendClient from "@/modules/evbc/client";
+import { App } from "vue";
 
-export const evbc = new EVBackendClient();
+const evbc = new EVBackendClient();
 
 export default {
-  install: function (Vue) {
-    Vue.prototype.$evbc = evbc;
+  install(app: App) {
+    app.provide('evbc', evbc);
   },
-} as PluginObject<void>;
+};

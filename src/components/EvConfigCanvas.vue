@@ -7,77 +7,78 @@
     <!-- <v-sheet id="config-stage-info" class="pa-2" height="100" width="200" elevation="2" v-if="selected_interface">
       {{ selected_interface }} <v-btn color="primary" x-small @click="discard_selected_terminal">Discard</v-btn>
     </v-sheet> -->
-    <v-btn id="config-save-button" fab color="primary" @click="save_config" v-if="current_config">
-      <v-icon dark> mdi-content-save </v-icon>
-    </v-btn>
+    <v-btn id="config-save-button" icon="mdi-content-save" color="primary" @click="save_config" v-if="current_config"></v-btn>
   </v-sheet>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-
+import {defineComponent, onMounted, computed, watch, ComputedRef, inject, onDeactivated} from 'vue';
+import { useEvbcStore } from '@/store/evbc';
 import ConfigStage from "@/modules/evconf_konva/config_stage";
 import EVConfigModel from "@/modules/evbc/config_model";
+import EVBackendClient from "@/modules/evbc/client";
+import {useMainStore} from "@/store/main";
 
-export default Vue.extend({
-  data() {
-    const reactive = {
-      selected_interface: null as string,
+export default defineComponent({
+  setup() {
+    const mainStore = useMainStore();
+    const evbcStore = useEvbcStore();
+    const evbc = inject<EVBackendClient>('evbc');
+    const selected_interface: string | null = null;
+
+    let stage: ConfigStage;
+    onMounted(() => {
+      stage = new ConfigStage(
+          {
+            container: "konva-stage",
+            width: 1024, // will automatically be resized responsively
+            height: 800,
+            draggable: true,
+          },
+          evbcStore.config_context
+      );
+      if (current_config.value) {
+        stage.set_model(current_config.value);
+      }
+    });
+
+
+    const current_config: ComputedRef<EVConfigModel> = computed(evbcStore.get_current_config);
+
+    const save_config = () => {
+      if (!current_config.value) return;
+      evbc
+          .save_config(current_config.value)
+          .then(() => {
+            mainStore.setSnackbarMessage({
+              text: `Successfully saved ${current_config.value._name}`,
+              color: "blue",
+              timeout: 2000,
+            });
+          })
+          .catch((error: string) => {
+            mainStore.setSnackbarMessage({
+              text: `Failed to save ${current_config.value._name}\nReason: ${error}`,
+              color: "red",
+              timeout: 0,
+            });
+          });
     };
 
-    return reactive as typeof reactive & {
-      stage: ConfigStage;
-    };
-  },
-  computed: {
-    current_config(): EVConfigModel {
-      return this.$store.getters["evbc/current_config"];
-    },
-  },
-  methods: {
-    save_config() {
-      if (!this.current_config) return;
-      this.$evbc
-        .save_config(this.current_config)
-        .then(() => {
-          this.$store.commit("snackbar_message", {
-            text: `Succuessfully saved ${this.current_config._name}`,
-            color: "blue",
-            timeout: 2000,
-          });
-        })
-        .catch((error) => {
-          this.$store.commit("snackbar_message", {
-            text: `Failed to save ${this.current_config._name}\nReason: ${error}`,
-            color: "red",
-            timeout: 0,
-          });
-        });
-    },
-  },
-  mounted() {
-    this.stage = new ConfigStage(
-      {
-        container: "konva-stage",
-        width: 1024,
-        height: 800,
-        draggable: true, // FIXME (aw): is this the best solution?
-      },
-      this.$store.getters["evbc/config_context"]
-    );
-
-    if (this.current_config) {
-      this.stage.set_model(this.current_config);
-    }
-  },
-  watch: {
-    current_config(new_config, old_config) {
+    watch(current_config, (new_config, old_config) => {
       if (old_config) {
         // FIXME (aw): should we ask for something here?
       }
 
-      this.stage.set_model(new_config);
-    },
+      stage.set_model(new_config);
+    });
+
+    return {
+      selected_interface,
+      stage,
+      current_config,
+      save_config,
+    };
   },
 });
 </script>
@@ -85,6 +86,11 @@ export default Vue.extend({
 <style lang="scss">
 #konva-stage-container {
   position: relative;
+  max-height: calc(100vh - 96px);
+}
+#konva-stage {
+  height: 100%;
+  width: 100%;
 }
 #config-stage-info {
   position: absolute;

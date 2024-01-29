@@ -1,89 +1,61 @@
-// SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest
-
-import { ActionTree, GetterTree, MutationTree } from "vuex";
+import {defineStore} from 'pinia';
+import {reactive, ref, watch} from 'vue';
 import EVConfigModel from "@/modules/evbc/config_model";
-import ConfigStageContext, { SelectionType } from "@/modules/evconf_konva/stage_context";
+import ConfigStageContext, {SelectionType} from "@/modules/evconf_konva/stage_context";
+import {ConnectionID, ModuleInstanceID, Terminal} from "@/modules/evbc";
 
-// FIXME (aw): should this be made a per store instance variable?
-const non_reactive_state = {
-  config_model: null as EVConfigModel,
-  config_context: new ConfigStageContext(),
-};
+export const useEvbcStore = defineStore('evbc', () => {
+  const config_opened = ref(false);
+  const selection = ref({ type: "NONE" } as SelectionType);
+  const config_model = ref<EVConfigModel | null>(null);
+  const config_context = reactive(new ConfigStageContext());
 
-type State = {
-  config_opened: boolean;
-  selection: SelectionType;
-};
+  // Watcher inside the store
+  watch(() => config_context, (configStageContext) => {
+    configStageContext.add_observer((ev) => {
+      if (ev.type === "SELECT") {
+        selection.value = ev.selection;
+      }
+    });
+  }, { deep: true });
 
-const state: State = {
-  config_opened: false,
-  selection: { type: "NONE" },
-};
-
-const getters: GetterTree<State, unknown> = {
-  config_context: () => non_reactive_state.config_context,
-  current_config: (state) => {
-    return state.config_opened ? non_reactive_state.config_model : null;
-  },
-  selected_module_instance: (state) => {
-    if (state.config_opened && state.selection.type === "MODULE_INSTANCE") {
-      return state.selection.id;
+  function setOpenedConfig(model: EVConfigModel) {
+    if (config_opened.value) {
+      config_opened.value = false;
     }
 
-    return null;
-  },
-  selected_terminal: (state) => {
-    // FIXME (aw): asymmetrie, shouldn't there be also a terminal id
-    if (state.config_opened && state.selection.type === "TERMINAL") {
-      return state.selection.terminal;
-    }
+    config_model.value = model;
+    config_opened.value = true;
+  }
 
-    return null;
-  },
-  selected_connection: (state) => {
-    if (state.config_opened && state.selection.type === "CONNECTION") {
-      return state.selection.id;
-    }
+  function resetOpenedConfig() {
+    config_model.value = null;
+    config_opened.value = false;
+  }
 
-    return null;
-  },
-};
+  function setCurrentSelection(sel: SelectionType) {
+    selection.value = sel;
+  }
 
-const mutations = <MutationTree<State>>{
-  change_config_opened_state(state, opened) {
-    state.config_opened = opened;
-  },
-  change_current_selection(state, selection: SelectionType) {
-    state.selection = selection;
-  },
-};
+  // Getters
+  const get_config_context = (): ConfigStageContext => config_context;
+  const get_current_config = (): EVConfigModel | null => config_opened.value ? config_model.value : null;
+  const get_selected_module_instance = (): ModuleInstanceID | null => config_opened.value && selection.value.type === "MODULE_INSTANCE" ? selection.value.id : null;
+  const get_selected_terminal = (): Terminal | null => config_opened.value && selection.value.type === "TERMINAL" ? selection.value.terminal : null;
+  const get_selected_connection = (): ConnectionID | null => config_opened.value && selection.value.type === "CONNECTION" ? selection.value.id : null;
 
-const actions = <ActionTree<State, unknown>>{
-  set_opened_config({ commit, state }, config_model: EVConfigModel) {
-    if (state.config_opened) {
-      // FIXME (aw): check vuex behaviour on changing a value which will become the same again eventually?
-      commit("change_config_opened_state", false);
-    }
-
-    non_reactive_state.config_model = config_model;
-
-    commit("change_config_opened_state", true);
-  },
-  reset_opened_config({ commit }) {
-    non_reactive_state.config_model = null;
-
-    commit("change_config_opened_state", false);
-  },
-  set_current_selection({ commit }, selection: SelectionType) {
-    commit("change_current_selection", selection);
-  },
-};
-
-export default {
-  namespaced: true,
-  state,
-  getters,
-  mutations,
-  actions,
-};
+  return {
+    config_opened,
+    selection,
+    config_model,
+    config_context,
+    setOpenedConfig,
+    resetOpenedConfig,
+    setCurrentSelection,
+    get_config_context,
+    get_current_config,
+    get_selected_module_instance,
+    get_selected_terminal,
+    get_selected_connection
+  };
+});

@@ -3,19 +3,12 @@
 
 import "@mdi/font/css/materialdesignicons.css";
 import Vue from "vue";
-import App from "./App.vue";
+import {createApp} from "vue";
 import "./registerServiceWorker";
-import router from "./router";
-import store from "./store";
-import vuetify from "./plugins/vuetify";
-import EVerestBackendClient from "./plugins/evbc";
+import App from "@/App.vue";
+import {registerPlugins} from "@/plugins";
 
-Vue.config.productionTip = false;
-Vue.use(EVerestBackendClient);
+const app: Vue.App<Element> = createApp(App);
+registerPlugins(app);
 
-new Vue({
-  router,
-  store,
-  vuetify,
-  render: (h) => h(App),
-}).$mount("#app");
+app.mount('#app');
