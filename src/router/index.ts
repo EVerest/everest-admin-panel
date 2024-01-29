@@ -1,20 +1,17 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest
 
-import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
+import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 
 import MainPanel from "../pages/MainPanel.vue";
-import AccountPage from "../pages/AccountPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import ConfigPage from "../pages/ConfigPage.vue";
 import TestPage from "../pages/TestPage.vue";
+import EVBackendClient from "@/modules/evbc/client";
+import {inject} from "vue";
 
-import { evbc } from "../plugins/evbc";
 
-Vue.use(VueRouter);
-
-const routes: Array<RouteConfig> = [
+const routes: RouteRecordRaw[] = [
   {
     path: "/login",
     name: "login",
@@ -30,10 +27,6 @@ const routes: Array<RouteConfig> = [
         component: ConfigPage,
       },
       {
-        path: "account",
-        component: AccountPage,
-      },
-      {
         path: "tests",
         component: TestPage,
       },
@@ -42,15 +35,15 @@ const routes: Array<RouteConfig> = [
   },
 ];
 
-const router = new VueRouter({
-  mode: "hash",
-  base: process.env.BASE_URL,
+export const router = createRouter({
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
 });
 
 router.beforeEach((to, from, next) => {
+  const evbc = inject<EVBackendClient>("evbc");
   if (to.matched.some((record) => record.meta.requiresConnection)) {
-    if (evbc.initialized) {
+    if (evbc?.initialized) {
       next();
     } else {
       next("login");
@@ -60,4 +53,3 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-export default router;

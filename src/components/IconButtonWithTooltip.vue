@@ -2,9 +2,9 @@
 <!-- Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-    <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn icon v-bind="attrs" v-on="on" class="icon-right" @click="onClick" >
+    <v-tooltip location="bottom">
+        <template v-slot:activator="{ props }">
+            <v-btn v-bind="props" icon class="icon-right" @click="$emit('onClick')" :variant="$props.variant" :density="$props.density">
             <v-icon> {{ $props.icon }} </v-icon>
             </v-btn>
         </template>
@@ -20,17 +20,14 @@
 }
 </style>
 
-<script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
-  props: {
-    title: String,
-    icon: String,
-  },
-  methods: {
-    onClick() {
-      this.$emit("on-click");
-    },
-  },
-})
+<script lang="ts" setup>
+const props = defineProps<{
+  title: string,
+  icon: string,
+  variant?: NonNullable<"flat" | "text" | "elevated" | "tonal" | "outlined" | "plain"> | undefined,
+  density?: null | 'default' | 'comfortable' | 'compact',
+}>();
+const emits = defineEmits<{
+  onClick: []
+}>();
 </script>
