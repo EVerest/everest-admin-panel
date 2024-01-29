@@ -3,39 +3,27 @@
 
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark clipped-left>
+    <v-app-bar color="primary" theme="dark">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-spacer />
-      <v-img class="mx-4 rotateable" max-height="40" max-width="40" contain src="img/icons/everest_lf_logo.svg" />
+      <v-spacer/>
+      <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo.svg"/>
       <v-toolbar-title>EVerest admin panel</v-toolbar-title>
-      <v-spacer />
+      <v-spacer/>
     </v-app-bar>
-    <v-navigation-drawer v-model="drawer" app fixed temporary>
-      <v-list nav dense>
-        <v-list-item to="config" link>
-          <v-list-item-icon>
-            <v-icon>mdi-cog</v-icon>
-          </v-list-item-icon>
+    <v-navigation-drawer v-model="drawer" position="fixed" temporary>
+      <v-list nav density="compact">
+        <v-list-item to="config" append-icon="mdi-cog" link>
           <v-list-item-title>Config</v-list-item-title>
         </v-list-item>
-        <v-list-item to="account" link>
-          <v-list-item-icon>
-            <v-icon>mdi-account-multiple</v-icon>
-          </v-list-item-icon>
+        <!--<v-list-item to="account" append-icon="mdi-account-multiple" link>
           <v-list-item-title>Account</v-list-item-title>
-        </v-list-item>
-        <v-list-item to="tests" link>
-          <v-list-item-icon>
-            <v-icon>mdi-car-lifted-pickup</v-icon>
-          </v-list-item-icon>
+        </v-list-item>-->
+        <v-list-item to="tests" append-icon="mdi-car-lifted-pickup" link>
           <v-list-item-title>Tests</v-list-item-title>
         </v-list-item>
-        <v-list-item to="about" link>
-          <v-list-item-icon>
-            <v-icon>mdi-ninja</v-icon>
-          </v-list-item-icon>
+        <!--<v-list-item to="about" append-icon="mdi-ninja" link>
           <v-list-item-title>Debug</v-list-item-title>
-        </v-list-item>
+        </v-list-item>-->
       </v-list>
       <v-list-item class="bottom-list d-flex flex-column">
         <span>EVerest admin panel</span>
@@ -44,21 +32,21 @@
     </v-navigation-drawer>
 
     <v-main>
-      <router-view v-if="!evbc_disconnected" />
+      <router-view v-if="!evbc_disconnected"/>
       <v-overlay :dark="false" v-else>
         <!-- FIXME (aw): remove absolute dimensions without changing v-card size -->
         <v-card elevation="10" loading="true" width="400" height="150">
-          <template slot="progress">
+          <template v-slot:actions>
             <v-progress-linear height="10" indeterminate></v-progress-linear>
           </template>
           <v-card-title>Lost connection to EVerest backend</v-card-title>
           <v-card-text>Trying to reconnect ...</v-card-text>
         </v-card>
       </v-overlay>
-      <v-snackbar v-if="show_snackbar" v-model="snackbar" :color="snackbar.color" :timeout="snackbar.timeout" bottom>
+      <v-snackbar v-if="show_snackbar" :color="snackbar.color" :timeout="snackbar.timeout" location="bottom">
         {{ snackbar.text }}
-        <template v-slot:action="{ attrs }">
-          <v-btn dark text v-bind="attrs" @click="show_snackbar = false"> Close </v-btn>
+        <template v-slot:actions>
+          <v-btn theme="dark" variant="text" @click="close_snackbar"> Close</v-btn>
         </template>
       </v-snackbar>
     </v-main>
@@ -69,9 +57,11 @@
 .rotateable {
   transition: transform 1s ease-in-out;
 }
+
 .rotateable:hover {
   transform: rotateZ(360deg);
 }
+
 .bottom-list {
   position: absolute;
   bottom: 0;
@@ -79,16 +69,38 @@
 }
 </style>
 
-<script>
-export default {
+<script lang="ts">
+import {defineComponent, inject} from "vue";
+import EVBackendClient from "@/modules/evbc/client";
+
+import {useMainStore} from "@/store/main";
+
+let evbc: EVBackendClient;
+let mainStore: ReturnType<typeof useMainStore>;
+
+export default defineComponent({
   data: () => ({
     drawer: false,
     evbc_disconnected: false,
     evbc_status: "",
-    show_snackbar: false,
   }),
+  computed: {
+    snackbar() {
+      return mainStore.snackbar_message;
+    },
+    show_snackbar() {
+      return mainStore.snackbar_message !== undefined;
+    },
+  },
+  methods: {
+    close_snackbar() {
+      mainStore.setSnackbarMessage(undefined);
+    },
+  },
   created() {
-    this.$evbc.on("connection_state", (ev) => {
+    mainStore = useMainStore()
+    evbc = inject<EVBackendClient>("evbc");
+    evbc.on("connection_state", (ev) => {
       this.evbc_status = ev.text;
       if (ev.type === "RECONNECT") {
         this.evbc_disconnected = true;
@@ -97,15 +109,5 @@ export default {
       }
     });
   },
-  computed: {
-    snackbar() {
-      return this.$store.state.snackbar_message;
-    },
-  },
-  watch: {
-    snackbar(sb) {
-      this.show_snackbar = sb !== undefined;
-    },
-  },
-};
+});
 </script>

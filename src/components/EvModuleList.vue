@@ -4,97 +4,111 @@
 <template>
   <v-expansion-panels class="ma-0">
     <v-expansion-panel>
-      <v-expansion-panel-header> Available modules </v-expansion-panel-header>
-      <v-expansion-panel-content>
-        <v-expansion-panels class="ma-0">
-          <v-expansion-panel v-for="module in module_list" :key="module.type">
-            <v-tooltip right>
-              <template v-slot:activator="{ on, attrs }">
-                <v-expansion-panel-header disable-icon-rotate v-bind="attrs" v-on="on">
-                  {{ module.type }}
-                  <template v-slot:actions>
-                    <v-btn icon @click.stop="add_module_to_config(module.type)">
-                      <v-icon>mdi-plus-box-outline</v-icon>
-                    </v-btn>
-                  </template>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  {{ module.description }}
-                </v-expansion-panel-content>
+      <v-expansion-panel-title> Available modules </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <v-list class="ma-0">
+          <v-tooltip location="right" v-for="module in module_list" :key="module.type">
+            <template v-slot:activator="{ props }">
+            <v-list-item
+                         v-bind="props"
+                         :title="module.type"
+                         @click.stop="add_module_to_config(module.type)"
+            >
+              <template v-slot:append>
+                <v-icon>mdi-plus</v-icon>
               </template>
-              <span>{{ module.description }}</span>
-            </v-tooltip>
-
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-expansion-panel-content>
+            </v-list-item>
+            </template>
+            <span>{{`${module.type}: ${module.description}`}}</span>
+          </v-tooltip>
+        </v-list>
+      </v-expansion-panel-text>
     </v-expansion-panel>
     <v-expansion-panel :disabled="config_list.length == 0">
-      <v-expansion-panel-header>
-        {{ config_list.length == 0 ? "No configs available" : "Available configs" }}</v-expansion-panel-header
+      <v-expansion-panel-title>
+        {{ config_list.length == 0 ? "No configs available" : "Available configs" }}</v-expansion-panel-title
       >
-      <v-expansion-panel-content>
-        <v-sheet class="d-flex align-center my-1 pa-2" elevation="1" v-for="config in config_list" :key="config">
-          {{ config }}
-          <v-spacer />
-          <v-btn icon @click="load_config(config)">
-            <v-icon>mdi-upload</v-icon>
-          </v-btn>
-        </v-sheet>
-      </v-expansion-panel-content>
+      <v-expansion-panel-text>
+        <v-list>
+          <v-tooltip
+              location="right"
+              v-for="config in config_list"
+              :key="config"
+          >
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                  :title="config"
+                  v-bind="props"
+                  @click="load_config(config)"
+              >
+                <template v-slot:append>
+                  <v-icon>mdi-upload</v-icon>
+                </template>
+              </v-list-item>
+            </template>
+            <span>{{ config }}</span>
+          </v-tooltip>
+        </v-list>
+
+      </v-expansion-panel-text>
     </v-expansion-panel>
     <v-expansion-panel>
-      <v-expansion-panel-header> Issue commands </v-expansion-panel-header>
-      <v-expansion-panel-content>
-        <v-sheet class="d-flex align-center my-1 pa-2" elevation="1">
-          Restart modules
-          <v-spacer />
-          <v-btn icon @click="execute('restart_modules')">
-            <v-icon>mdi-run</v-icon>
-          </v-btn>
-        </v-sheet>
-      </v-expansion-panel-content>
+      <v-expansion-panel-title> Issue commands </v-expansion-panel-title>
+      <v-expansion-panel-text>
+        <v-list>
+          <v-list-item @click="execute('restart_modules')" :title="'Restart modules'">
+            <template v-slot:append>
+              <v-icon>mdi-run</v-icon>
+            </template>
+          </v-list-item>
+        </v-list>
+      </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-import EVConfigModel from "@/modules/evbc/config_model";
+import {defineComponent, inject} from "vue";
+import {useEvbcStore} from "@/store/evbc";
+import EVBackendClient from "@/modules/evbc/client";
 
-export default Vue.extend({
+let evbcStore: ReturnType<typeof useEvbcStore>;
+let evbc: EVBackendClient;
+
+export default defineComponent({
+  created() {
+    evbcStore = useEvbcStore();
+    evbc = inject<EVBackendClient>('evbc')
+  },
   computed: {
-    current_config(): EVConfigModel {
-      return this.$store.getters["evbc/current_config"];
-    },
     module_list(): Array<{ type: string; description: string }> {
-      return Object.entries(this.$evbc.everest_definitions.modules).map(([key, value]) => ({
+      return Object.entries(evbc.everest_definitions.modules).map(([key, value]) => ({
         type: key,
         description: value.description,
       }));
     },
     config_list(): Array<string> {
-      const configs: Record<string, unknown> = this.$evbc._configs;
+      const configs: Record<string, unknown> = evbc._configs;
       return Object.entries(configs).map(([key]) => key);
     },
   },
   methods: {
     add_module_to_config(type: string) {
       // FIXME (aw): does this logic belongs to here?
-      if (this.current_config) {
-        this.current_config.add_new_module_instance(type);
+      if (evbcStore.get_current_config()) {
+        evbcStore.get_current_config().add_new_module_instance(type);
       } else {
-        const new_config = this.$evbc.create_empty_config("test_config");
+        const new_config = evbc.create_empty_config("test_config");
         new_config.add_new_module_instance(type);
-        this.$store.dispatch("evbc/set_opened_config", new_config);
+        evbcStore.setOpenedConfig(new_config);
       }
     },
     load_config(name: string) {
-      const new_config = this.$evbc.load_config(name);
-      this.$store.dispatch("evbc/set_opened_config", new_config);
+      const new_config = evbc.load_config(name);
+      evbcStore.setOpenedConfig(new_config);
     },
     execute(command: string) {
-      this.$evbc.execute_remote_command(command);
+      evbc.execute_remote_command(command);
     },
   },
 });

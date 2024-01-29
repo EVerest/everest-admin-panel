@@ -50,6 +50,10 @@ export default class ConfigStageContext {
     this._event_handlers.push(handler);
   }
 
+  remove_observer(handler: ConfigStageContextEventHandler) {
+    this._event_handlers.splice(this._event_handlers.indexOf(handler), 1);
+  }
+
   set_container(container: HTMLDivElement) {
     this.container = container;
   }
