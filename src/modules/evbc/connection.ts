@@ -63,7 +63,8 @@ class EVBackendConnection {
   }
 
   _connect() {
-    this._socket = new WebSocket(`ws://${this._url}`);
+    const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+    this._socket = new WebSocket(`${protocol}://${this._url}`);
     this._socket.onopen = this._handle_socket_opened.bind(this);
     this._socket.onmessage = this._handle_backend_message.bind(this);
     this._socket.onerror = this._handle_socket_error.bind(this);

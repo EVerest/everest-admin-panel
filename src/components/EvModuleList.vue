@@ -7,7 +7,7 @@
       <v-expansion-panel-title> Available modules </v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-list class="ma-0">
-          <v-tooltip location="right" v-for="module in module_list" :key="module.type">
+          <v-tooltip location="right" v-for="module in module_list" :key="module.type" open-delay="500">
             <template v-slot:activator="{ props }">
             <v-list-item
                          v-bind="props"
@@ -34,6 +34,7 @@
               location="right"
               v-for="config in config_list"
               :key="config"
+              open-delay="500"
           >
             <template v-slot:activator="{ props }">
               <v-list-item
