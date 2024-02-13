@@ -81,6 +81,7 @@ export default class ConfigStage {
     context.set_container(this._stage.container());
     this.context.add_observer((ev) => this._handle_stage_context_event(ev));
     this.registerListeners();
+    this.resizeStage();
   }
 
   private registerListeners() {
