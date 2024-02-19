@@ -2,7 +2,7 @@
 <!-- Copyright 2020 - 2023 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-dialog :value="show_dialog" @click:outside="deny" width="auto">
+  <v-dialog :model-value="show_dialog" @click:outside="deny" width="auto">
     <v-card>
       <v-card-title class="d-flex flex-row align-baseline">
         <v-icon
@@ -26,8 +26,8 @@
 </template>
 
 <script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
+import { defineComponent } from "vue";
+export default defineComponent({
   props: {
     show_dialog: {
       type: Boolean,
