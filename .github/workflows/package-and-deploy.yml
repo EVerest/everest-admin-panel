@@ -1,0 +1,105 @@
+name: Package and deploy everest-admin-panel
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  workflow_dispatch: {}
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm build
+      - name: Tar
+        run: tar -C dist -czf everest-admin-panel.tar.gz ./
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') && success()
+        with:
+          files: everest-admin-panel.tar.gz
+
+  deploy:
+    needs: package
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    env:
+      SUBDIR: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm build:pages
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages # The branch the action should deploy to.
+          folder: dist # The folder the action should deploy.
+          clean: true # Automatically remove deleted files from the deployment
+          commit-message: 'Deploying to gh-pages'
+          # Optional: Conditional URL based on whether it's a PR or push to main
+          target-folder: ${{ env.SUBDIR }}
+      - name: Create Job Summary
+        uses: actions/github-script@v5
+        if: always() # This ensures the step runs regardless of the job's success or failure
+        with:
+          script: |
+            const ownerRepo = process.env.GITHUB_REPOSITORY;
+            const subDir = process.env.SUBDIR;
+            const baseUrl = `https://${ownerRepo.split('/')[0]}.github.io/${ownerRepo.split('/')[1]}`;
+            const deploymentUrl = `${baseUrl}/${subDir}`;
+
+            console.log(`Deployment URL: ${deploymentUrl}`);
+            core.summary.addHeading("Deployment Details")
+            .addLink("View Deployment", deploymentUrl)
+            .write();
