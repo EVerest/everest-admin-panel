@@ -5,6 +5,7 @@
   "scripts": {
     "preview": "vite preview -c vite.config.ts",
     "build": "vite build -c vite.config.ts",
+    "build:pages": "vite build -c vite.config.ts --mode pages",
     "dev": "vite -c vite.config.ts",
     "lint": "eslint --ignore-path .gitignore ."
   },
