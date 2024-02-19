@@ -25,10 +25,10 @@
       </v-expansion-panel-text>
     </v-expansion-panel>
     <v-expansion-panel :disabled="config_list.length == 0">
-      <v-expansion-panel-header>
+      <v-expansion-panel-title>
         {{ config_list.length == 0 ? "No configs available" : "Available configs" }}
-      </v-expansion-panel-header>
-      <v-expansion-panel-content>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
         <v-sheet class="d-flex align-center my-1 pa-2" elevation="1" v-for="config in config_list" :key="config">
           {{ config }}
           <v-spacer />
@@ -36,7 +36,7 @@
             <v-icon>mdi-upload</v-icon>
           </v-btn>
         </v-sheet>
-      </v-expansion-panel-content>
+      </v-expansion-panel-text>
       <ev-dialog
           :show_dialog="show_dialog"
           title="Warning"
@@ -66,16 +66,30 @@
 import {defineComponent, inject} from "vue";
 import {useEvbcStore} from "@/store/evbc";
 import EVBackendClient from "@/modules/evbc/client";
+import EvDialog from "@/components/EvDialog.vue";
 
 let evbcStore: ReturnType<typeof useEvbcStore>;
 let evbc: EVBackendClient;
 
 export default defineComponent({
+  data: () => {
+    return {
+      show_dialog: false,
+      config_to_load: null,
+    } as {
+      show_dialog: boolean;
+      config_to_load: string | null;
+    };
+  },
   created() {
     evbcStore = useEvbcStore();
-    evbc = inject<EVBackendClient>('evbc')
+    evbc = inject<EVBackendClient>('evbc') as EVBackendClient;
   },
+  components: {EvDialog},
   computed: {
+    current_config(): EVConfigModel | null {
+      return evbcStore.get_current_config();
+    },
     module_list(): Array<{ type: string; description: string }> {
       return Object.entries(evbc.everest_definitions.modules).map(([key, value]) => ({
         type: key,
@@ -87,15 +101,11 @@ export default defineComponent({
       return Object.entries(configs).map(([key]) => key);
     },
   },
-  data: (): Data => ({
-    show_dialog: false,
-    config_to_load: null,
-  }),
   methods: {
     add_module_to_config(type: string) {
       // FIXME (aw): does this logic belongs to here?
       if (evbcStore.get_current_config()) {
-        evbcStore.get_current_config().add_new_module_instance(type);
+        evbcStore.get_current_config()!.add_new_module_instance(type);
       } else {
         const new_config = evbc.create_empty_config("test_config");
         new_config.add_new_module_instance(type);
@@ -110,10 +120,11 @@ export default defineComponent({
       this.config_to_load = name;
       this.show_dialog = true;
     },
-    load_config(name: string) {
+    load_config(name: string | null) {
+      if (!name) return;
       this.show_dialog = false;
       const new_config = evbc.load_config(name);
-      evbcStore.setOpenedConfig(new_config);
+      evbcStore.setOpenedConfig(new_config)
     },
     execute(command: string) {
       evbc.execute_remote_command(command);
