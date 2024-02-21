@@ -6,14 +6,14 @@ settings:
 
 dependencies:
   '@json-layout/core':
-    specifier: ^0.9.1
-    version: 0.9.1
+    specifier: ^0.9.3
+    version: 0.9.3
   '@json-layout/vocabulary':
-    specifier: ^0.9.0
-    version: 0.9.0(ajv@8.12.0)
+    specifier: ^0.9.1
+    version: 0.9.1(ajv@8.12.0)
   '@koumoul/vjsf':
-    specifier: ^3.0.0-beta.1
-    version: 3.0.0-beta.1(vue@3.4.5)(vuetify@3.4.9)
+    specifier: ^3.0.0-beta.3
+    version: 3.0.0-beta.3(vue@3.4.5)(vuetify@3.4.9)
   '@mdi/font':
     specifier: ^7.4.47
     version: 7.4.47
@@ -393,10 +393,10 @@ packages:
   /@jridgewell/sourcemap-codec@1.4.15:
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
 
-  /@json-layout/core@0.9.1:
-    resolution: {integrity: sha512-1Qw27z+iIx2ae3s26p6uSMpqcMMzYzlu6T+ODDPKoAauK9mrdpqmv69T7UFr1ZCE3X0e25zGasWYxqI3q71mnA==}
+  /@json-layout/core@0.9.3:
+    resolution: {integrity: sha512-KPvdTwKbwTEa4QyRU67bQz+HyfvE/4AI7aSzwQ0/qH2Rak3wbAnN0vOQozeFfvMxIIBpmTu3oKKCKBAd3tn4fw==}
     dependencies:
-      '@json-layout/vocabulary': 0.9.0(ajv@8.12.0)
+      '@json-layout/vocabulary': 0.9.1(ajv@8.12.0)
       '@types/markdown-it': 13.0.7
       ajv: 8.12.0
       ajv-errors: 3.0.0(ajv@8.12.0)
@@ -412,8 +412,8 @@ packages:
       - supports-color
     dev: false
 
-  /@json-layout/vocabulary@0.9.0(ajv@8.12.0):
-    resolution: {integrity: sha512-2zHiDEV35jAjORMjieBw3B/cPA6Wg8X+mvg7yLnUEBxDqwnuVSnN8yKps5iB+1yHVOchO8r5d1S3O64cknMODA==}
+  /@json-layout/vocabulary@0.9.1(ajv@8.12.0):
+    resolution: {integrity: sha512-QL/ai1Z3YjqStEGoVp/4mbxWnzf72uGCJRPIvwJj5GGt6QnN0shdxQRdeU3ANv6pgMmXSncdpYVHkHrjhW3Cgw==}
     dependencies:
       ajv-formats: 2.1.1(ajv@8.12.0)
       debug: 4.3.4
@@ -422,13 +422,13 @@ packages:
       - supports-color
     dev: false
 
-  /@koumoul/vjsf@3.0.0-beta.1(vue@3.4.5)(vuetify@3.4.9):
-    resolution: {integrity: sha512-7lJ4LHFfvvvjDrscBZfZAIDDoFCQgR0GZqeeS+18Jbgeb1FAJWJ2+rDrXOH+7AgcCAUl48wTGa96S2o51jlDyQ==}
+  /@koumoul/vjsf@3.0.0-beta.3(vue@3.4.5)(vuetify@3.4.9):
+    resolution: {integrity: sha512-y004A0fphoPDwaUJHlw/niQ9OWjtLTcfcD982ZHdd3vGja2ilQohOlJeiO30O6flSON82GQS+1ZeL5rD2UneHw==}
     peerDependencies:
       vue: ^3.4.3
       vuetify: ^3.4.9
     dependencies:
-      '@json-layout/core': 0.9.1
+      '@json-layout/core': 0.9.3
       '@vueuse/core': 10.7.1(vue@3.4.5)
       debug: 4.3.4
       ejs: 3.1.9
