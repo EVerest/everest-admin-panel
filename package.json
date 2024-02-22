@@ -14,6 +14,7 @@
     "@json-layout/vocabulary": "^0.9.1",
     "@koumoul/vjsf": "^3.0.0-beta.3",
     "@mdi/font": "^7.4.47",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@vue/compat": "^3.4.5",
     "ajv": "^8.12.0",
     "ajv-errors": "^3.0.0",
@@ -28,11 +29,11 @@
     "register-service-worker": "^1.7.2",
     "roboto-fontface": "*",
     "unplugin-fonts": "^1.1.1",
-    "vue": "^3.3.0",
+    "vue": "^3.4.19",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "4.2.5",
-    "vuetify": "^3.0.0"
+    "vuetify": "^3.5.4"
   },
   "devDependencies": {
     "@babel/types": "^7.23.0",
