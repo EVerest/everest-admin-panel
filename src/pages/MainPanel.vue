@@ -18,9 +18,6 @@
         <!--<v-list-item to="account" append-icon="mdi-account-multiple" link>
           <v-list-item-title>Account</v-list-item-title>
         </v-list-item>-->
-        <v-list-item to="tests" append-icon="mdi-car-lifted-pickup" link>
-          <v-list-item-title>Tests</v-list-item-title>
-        </v-list-item>
         <!--<v-list-item to="about" append-icon="mdi-ninja" link>
           <v-list-item-title>Debug</v-list-item-title>
         </v-list-item>-->
