@@ -9,7 +9,7 @@
           title="Discard selection"
           variant="text"
           density="compact"
-
+          @on-click="context.unselect()"
       />
     </template>
     <v-card-text>
