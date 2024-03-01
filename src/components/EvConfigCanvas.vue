@@ -2,17 +2,17 @@
 <!-- Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-sheet id="konva-stage-container" width="100%" height="800" elevation="4">
+  <v-sheet id="konva-stage-container" elevation="4" height="800" width="100%">
     <div id="konva-stage" />
     <!-- <v-sheet id="config-stage-info" class="pa-2" height="100" width="200" elevation="2" v-if="selected_interface">
       {{ selected_interface }} <v-btn color="primary" x-small @click="discard_selected_terminal">Discard</v-btn>
     </v-sheet> -->
-    <v-btn id="config-save-button" icon="mdi-content-save" color="primary" @click="save_config" v-if="current_config"></v-btn>
+    <v-btn v-if="current_config" id="config-save-button" color="primary" icon="mdi-content-save" @click="save_config"></v-btn>
   </v-sheet>
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, computed, watch, ComputedRef, inject, onDeactivated} from 'vue';
+import {defineComponent, onMounted, computed, watch, ComputedRef, inject} from 'vue';
 import { useEvbcStore } from '@/store/evbc';
 import ConfigStage from "@/modules/evconf_konva/config_stage";
 import EVConfigModel from "@/modules/evbc/config_model";
@@ -23,7 +23,7 @@ export default defineComponent({
   setup() {
     const mainStore = useMainStore();
     const evbcStore = useEvbcStore();
-    const evbc = inject<EVBackendClient>('evbc');
+    const evbc: EVBackendClient = inject<EVBackendClient>('evbc') as EVBackendClient;
     const selected_interface: string | null = null;
 
     let stage: ConfigStage;
@@ -43,7 +43,7 @@ export default defineComponent({
     });
 
 
-    const current_config: ComputedRef<EVConfigModel> = computed(evbcStore.get_current_config);
+    const current_config: ComputedRef<EVConfigModel> = computed(evbcStore.get_current_config) as ComputedRef<EVConfigModel>;
 
     const save_config = () => {
       if (!current_config.value) return;

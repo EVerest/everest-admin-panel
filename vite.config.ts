@@ -4,7 +4,6 @@ import {defineConfig} from "vite";
 import ViteFonts from 'unplugin-fonts/vite';
 import {commonjsDeps} from '@koumoul/vjsf/utils/build';
 import {fileURLToPath} from "node:url";
-import commonjs from "@rollup/plugin-commonjs";
 
 export default defineConfig({
     optimizeDeps: {
@@ -16,7 +15,6 @@ export default defineConfig({
         }
     },
     plugins: [
-        commonjs(),
         Vue({
             template: { transformAssetUrls }
         }),

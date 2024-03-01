@@ -6,7 +6,6 @@ import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 import MainPanel from "../pages/MainPanel.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import ConfigPage from "../pages/ConfigPage.vue";
-import TestPage from "../pages/TestPage.vue";
 import EVBackendClient from "@/modules/evbc/client";
 import {inject} from "vue";
 
@@ -26,10 +25,6 @@ const routes: RouteRecordRaw[] = [
         path: "config",
         component: ConfigPage,
       },
-      {
-        path: "tests",
-        component: TestPage,
-      },
     ],
     meta: { requiresConnection: true },
   },
@@ -42,13 +37,20 @@ export const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const evbc = inject<EVBackendClient>("evbc");
-  if (to.matched.some((record) => record.meta.requiresConnection)) {
-    if (evbc?.initialized) {
+  const userIsLoggedIn = evbc?.initialized; // Check if the user is logged in based on EVBackendClient initialization
+
+  // Redirect to ConfigPage if the user is logged in and navigating to the root path
+  if (to.path === "/" && userIsLoggedIn) {
+    next("/config"); // Adjust the path as necessary to match your ConfigPage route
+  } else if (to.matched.some(record => record.meta.requiresConnection)) {
+    // Require connection for specific routes
+    if (userIsLoggedIn) {
       next();
     } else {
-      next("login");
+      next("/login"); // Redirect to login if not logged in and trying to access a protected route
     }
   } else {
+    // Proceed with the navigation for all other cases
     next();
   }
 });

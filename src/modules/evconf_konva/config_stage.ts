@@ -10,7 +10,6 @@ import ModuleViewModel from "./view_models/module";
 import ConfigStageContext, { ConfigStageContextEvent } from "./stage_context";
 import ConnectionManager from "./connection_manager";
 import Stage = Konva.Stage;
-import { TEXT, TOOLTIP } from "./views/constants";
 
 export default class ConfigStage {
   // view part
@@ -35,34 +34,17 @@ export default class ConfigStage {
   constructor(private config: StageConfig, context: ConfigStageContext) {
     this._stage = new Konva.Stage(config);
 
-    const tooltipLayer = new Konva.Layer({});
-
-    const tooltip = new Konva.Text({
-      text: '',
-      fontFamily: TEXT.fontFamily,
-      fontSize: 16,
-      padding: 5,
-      fill: 'black',
-      alpha: 0.75,
-      visible: false,
-      ...TOOLTIP.position
-    });
-
-    tooltipLayer.add(tooltip);
-
-    const static_layer = new Konva.Layer({});
-
     const scaleBy = 1.2;
     this._stage.on("wheel", (event) => {
       // FIXME (aw): review this code, got copied from Konva docs ...
       event.evt.preventDefault();
 
-      const oldScale = static_layer.scaleX();
+      const oldScale = this._stage.scaleX();
       const pointer = this._stage.getPointerPosition();
 
       const mousePointTo = {
-        x: (pointer.x - static_layer.x()) / oldScale,
-        y: (pointer.y - static_layer.y()) / oldScale,
+        x: (pointer.x - this._stage.x()) / oldScale,
+        y: (pointer.y - this._stage.y()) / oldScale,
       };
 
       // how to scale? Zoom in? Or zoom out?
@@ -76,15 +58,13 @@ export default class ConfigStage {
 
       const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-      static_layer.scale({ x: newScale, y: newScale });
-      if (pointer === null) {
-        return;
-      }
+      this._stage.scale({ x: newScale, y: newScale });
+
       const newPos = {
         x: pointer.x - mousePointTo.x * newScale,
         y: pointer.y - mousePointTo.y * newScale,
       };
-      static_layer.position(newPos);
+      this._stage.position(newPos);
       // static_layer.draw();
     });
 
@@ -92,27 +72,16 @@ export default class ConfigStage {
       // keep tooltip always in the bottom left corner
       const stage_position = this._stage.position();
 
-      const new_position = {
-        x: TOOLTIP.position.x - stage_position.x,
-        y: TOOLTIP.position.y - stage_position.y,
-      }
-      
-      tooltip.position(new_position);
-    });
-
     this._stage.add(static_layer);
-    this._stage.add(tooltipLayer);
 
     this._konva = {
       stage: this._stage,
-      tooltip,
       static_layer,
       anim_layer: null,
     };
 
     this.context = context;
     context.set_container(this._stage.container());
-    this._stage.on("pointerclick", () => context.unselect());
     this.context.add_observer((ev) => this._handle_stage_context_event(ev));
     this.registerListeners();
     this.resizeStage();

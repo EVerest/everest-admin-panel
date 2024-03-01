@@ -20,18 +20,14 @@
 }
 </style>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-export default defineComponent({
-  props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    icon: {
-      type: String,
-      required: true,
-    },
-  },
-})
+<script lang="ts" setup>
+const props = defineProps<{
+  title: string,
+  icon: string,
+  variant?: NonNullable<"flat" | "text" | "elevated" | "tonal" | "outlined" | "plain"> | undefined,
+  density?: null | 'default' | 'comfortable' | 'compact',
+}>();
+const emits = defineEmits<{
+  onClick: []
+}>();
 </script>
