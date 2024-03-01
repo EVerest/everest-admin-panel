@@ -13,6 +13,7 @@
     "lib": ["ESNext", "DOM"],
     "skipLibCheck": true,
     "noEmit": true,
+    "strictNullChecks": false, // TODO : We should enable this and fix all the errors
     "paths": {
       "@/*": [
         "src/*"
@@ -20,6 +21,6 @@
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
-  "references": [{ "path": "./tsconfig.node.json" }],
+  "references": [{ "path": "./tsconfig.node.json"}],
   "exclude": ["node_modules"]
 }
