@@ -6,7 +6,6 @@ import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 import MainPanel from "../pages/MainPanel.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import ConfigPage from "../pages/ConfigPage.vue";
-import TestPage from "../pages/TestPage.vue";
 import EVBackendClient from "@/modules/evbc/client";
 import {inject} from "vue";
 
@@ -25,10 +24,6 @@ const routes: RouteRecordRaw[] = [
       {
         path: "config",
         component: ConfigPage,
-      },
-      {
-        path: "tests",
-        component: TestPage,
       },
     ],
     meta: { requiresConnection: true },
