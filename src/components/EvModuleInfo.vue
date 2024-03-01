@@ -9,7 +9,7 @@
           title="Discard selection"
           variant="text"
           density="compact"
-          @on-click="context.unselect()"
+          @click="context.unselect()"
       />
     </template>
     <v-card-text>
@@ -52,7 +52,7 @@
       <icon-button-with-tooltip
         icon="mdi-delete"
         title="Delete instance"
-        @on-click="delete_module_instance(module_node.instance_id)"
+        @click="delete_module_instance(module_node.instance_id)"
       />
     </v-card-actions>
   </v-card>
