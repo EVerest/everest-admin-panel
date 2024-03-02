@@ -4,8 +4,7 @@
 <template>
     <v-tooltip location="bottom">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" icon class="icon-right" @click="$emit('onClick')" :variant="$props.variant" :density="$props.density">
-            <v-icon> {{ $props.icon }} </v-icon>
+            <v-btn v-bind="props" :icon="$props.icon" class="icon-right" @click="$emit('click')" :variant="$props.variant" :density="$props.density">
             </v-btn>
         </template>
         <span> {{ $props.title }} </span>
@@ -28,6 +27,6 @@ const props = defineProps<{
   density?: null | 'default' | 'comfortable' | 'compact',
 }>();
 const emit = defineEmits<{
-  onClick: []
+  click: []
 }>();
 </script>
