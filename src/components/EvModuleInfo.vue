@@ -7,14 +7,16 @@
       <icon-button-with-tooltip
           icon="mdi-close"
           title="Discard selection"
+          variant="text"
+          density="compact"
           @on-click="context.unselect()"
       />
     </template>
     <v-card-text>
-      <p class="font-weight-bold">Module type: {{ module_node.instance.type }}</p>
+      <p class="font-weight-bold">Module type: {{ module_node?.instance?.type }}</p>
       <v-form>
         <!-- FIXME (aw): howto do the binding here? -->
-        <v-text-field :model-value="module_node.instance.id" label="Module ID" :rules="moduleIDRules"></v-text-field>
+        <v-text-field :model-value="module_node?.instance.id" label="Module ID" :rules="moduleIDRules"></v-text-field>
       </v-form>
       <v-form>
         <template v-if="module_node.instance.module_config">
@@ -60,6 +62,8 @@
       <icon-button-with-tooltip
         icon="mdi-close"
         title="Discard selection"
+        variant="text"
+        density="compact"
         @click="context.unselect()"
       /> 
     </v-card-title>
@@ -81,6 +85,8 @@
       <icon-button-with-tooltip
         icon="mdi-close"
         title="Discard selection"
+        variant="text"
+        density="compact"
         @click="context.unselect()"
       />     
     </v-card-title>
