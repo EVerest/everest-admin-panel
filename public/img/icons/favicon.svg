@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--suppress ALL -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   width="32"
+   height="32"
+   version="1.1"
+   viewBox="0 0 31.999998 31.999998"
+   xml:space="preserve"
+   id="svg14"><defs
+   id="defs18" /><metadata
+   id="metadata2"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata>
+<style
+   type="text/css"
+   id="style4">
+	.st0{opacity:0.8;fill:#FFFFFF;}
+	.st1{fill:#FFFFFF;}
+	.st2{opacity:0.8;}
+	.st3{fill:#254C84;}
+	.st4{fill:#0C2351;}
+	.st5{fill:#BAF419;}
+	.st6{fill:#00CE7C;}
+	.st7{fill:none;}
+	.st8{fill:#2F96D0;}
+	.st9{fill:#1B3964;}
+	.st10{fill:none;stroke:#2F96D0;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;}
+</style>
+<polygon
+   class="st3"
+   transform="matrix(0.10944287,0,0,0.10944148,0,-0.12545277)"
+   points="146.19,125.1 229.93,125.1 221.16,147.34 292.39,147.34 146.19,1.1463 "
+   id="polygon6" />
+<polygon
+   class="st4"
+   transform="matrix(0.10944287,0,0,0.10944148,0,-0.12545277)"
+   points="116.97,30.366 0,147.34 70.288,147.34 "
+   id="polygon8" />
+<polygon
+   class="st5"
+   transform="matrix(0.10944287,0,0,0.10944148,0,-0.12545277)"
+   points="174.82,264.91 292.39,147.34 221.16,147.34 "
+   id="polygon10" />
+<polygon
+   class="st6"
+   transform="matrix(0.10944287,0,0,0.10944148,0,-0.12545277)"
+   points="0,147.34 146.19,293.54 146.19,167.93 146.19,166.96 62.456,166.96 70.288,147.34 "
+   id="polygon12" />
+
+</svg>
