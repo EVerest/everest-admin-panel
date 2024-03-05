@@ -7,6 +7,8 @@ on:
   push:
     branches:
       - main
+    tags:
+      - '*'
   workflow_dispatch:
     inputs:
       tag:
@@ -47,7 +49,7 @@ jobs:
         run: tar -C dist -czf everest-admin-panel.tar.gz ./
       - name: Release
         uses: softprops/action-gh-release@v1
-        if: github.ref == 'refs/heads/main'
+        if: startsWith(github.ref, 'refs/tags/') && success()
         with:
           tag_name: ${{ inputs.tag }}
           files: everest-admin-panel.tar.gz
@@ -82,8 +84,6 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install
-      - name: Echo subdir
-        run: echo $SUBDIR
       - name: Build
         run: pnpm build:pages
       - name: Deploy to GitHub Pages
@@ -95,3 +95,18 @@ jobs:
           commit-message: 'Deploying to gh-pages'
           # Optional: Conditional URL based on whether it's a PR or push to main
           target-folder: ${{ env.SUBDIR }}
+      - name: Create Job Summary
+        uses: actions/github-script@v5
+        if: always() # This ensures the step runs regardless of the job's success or failure
+        with:
+          script: |
+            const ownerRepo = process.env.GITHUB_REPOSITORY;
+            const subDir = process.env.SUBDIR;
+            const baseUrl = `https://${ownerRepo.split('/')[0]}.github.io/${ownerRepo.split('/')[1]}`;
+            const deploymentUrl = `${baseUrl}/${subDir}`;
+
+            console.log(`Deployment URL: ${deploymentUrl}`);
+            core.summary.addHeading("Deployment Details")
+            .addLink("View Deployment", deploymentUrl)
+            .write();
+
