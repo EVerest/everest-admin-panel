@@ -11,6 +11,8 @@ import ConfigStageContext, { ConfigStageContextEvent } from "./stage_context";
 import ConnectionManager from "./connection_manager";
 import Stage = Konva.Stage;
 import { TEXT, TOOLTIP } from "./views/constants";
+import { KonvaEventObject } from "konva/lib/Node";
+import { Vector2d } from "konva/lib/types";
 
 export default class ConfigStage {
   // view part
@@ -31,6 +33,7 @@ export default class ConfigStage {
 
   readonly context: ConfigStageContext;
   private _stage: Stage;
+  private _bg: Konva.Rect;
 
   constructor(private config: StageConfig, context: ConfigStageContext) {
     this._stage = new Konva.Stage(config);
@@ -50,54 +53,46 @@ export default class ConfigStage {
 
     tooltipLayer.add(tooltip);
 
-    const static_layer = new Konva.Layer({});
+    const static_layer = new Konva.Layer({
+      draggable: true
+    });
+    this._reset_static_layer(static_layer);
 
-    const scaleBy = 1.2;
-    this._stage.on("wheel", (event) => {
+    this._stage.on("wheel", (event: KonvaEventObject<WheelEvent>) => {
       // FIXME (aw): review this code, got copied from Konva docs ...
       event.evt.preventDefault();
 
-      const oldScale = static_layer.scaleX();
-      const pointer = this._stage.getPointerPosition();
+      const oldScale: number = static_layer.scaleX();
+      const pointer: Vector2d = this._stage.getPointerPosition();
+
+      if (!pointer) {
+        return;
+      }
 
       const mousePointTo = {
         x: (pointer.x - static_layer.x()) / oldScale,
         y: (pointer.y - static_layer.y()) / oldScale,
       };
 
-      // how to scale? Zoom in? Or zoom out?
-      let direction = event.evt.deltaY > 0 ? -1 : 1;
+      // if a trackpad does not give a proper delta, we have to reduce the speed,
+      // because of the high amount of events triggered by a trackpad
+      const delta = event.evt.deltaY === 1 || event.evt.deltaY === -1 ?
+          event.evt.deltaY * 0.2 : event.evt.deltaY;
+      const zoomIntensity = 0.005; // Adjust this value to control the zoom speed
+      const scaleBy = Math.exp(delta * zoomIntensity);
 
-      // when we zoom on trackpad, e.evt.ctrlKey is true
-      // in that case lets revert direction
-      if (event.evt.ctrlKey) {
-        direction = -direction;
-      }
-
-      const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+      const newScale = oldScale * scaleBy;
 
       static_layer.scale({ x: newScale, y: newScale });
-      if (pointer === null) {
-        return;
-      }
       const newPos = {
         x: pointer.x - mousePointTo.x * newScale,
         y: pointer.y - mousePointTo.y * newScale,
       };
       static_layer.position(newPos);
-      // static_layer.draw();
-    });
-
-    this._stage.on("dragmove", () => {
-      // keep tooltip always in the bottom left corner
-      const stage_position = this._stage.position();
-
-      const new_position = {
-        x: TOOLTIP.position.x - stage_position.x,
-        y: TOOLTIP.position.y - stage_position.y,
-      }
-      
-      tooltip.position(new_position);
+      this._bg.width(this._stage.width() / newScale);
+      this._bg.height(this._stage.height() / newScale);
+      this._bg.setAbsolutePosition({x: 0, y: 0});
+      static_layer.batchDraw();
     });
 
     this._stage.add(static_layer);
@@ -147,7 +142,7 @@ export default class ConfigStage {
     }
 
     this._conn_man = new ConnectionManager(this.context);
-    this._konva.static_layer.destroyChildren();
+    this._reset_static_layer(this._konva.static_layer)
     this._konva.static_layer.add(this._conn_man.group);
 
     this._model = model;
@@ -254,7 +249,16 @@ export default class ConfigStage {
     // TerminalInfo
   }
 
-  _clear_stage() {
-    this._conn_man.group.destroyChildren();
+  _reset_static_layer(static_layer: Konva.Layer) {
+    static_layer.destroyChildren();
+    this._bg = new Konva.Rect({
+      width: this._stage.width(),
+      height: this._stage.height(),
+      fill: 'rgba(255, 0, 0, 0)'
+    });
+    static_layer.add(this._bg);
+    static_layer.on("dragend", () => {
+      this._bg.setAbsolutePosition({x: 0, y: 0});
+    });
   }
 }

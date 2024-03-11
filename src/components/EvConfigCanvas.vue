@@ -33,7 +33,7 @@ export default defineComponent({
             container: "konva-stage",
             width: 1024, // will automatically be resized responsively
             height: 800,
-            draggable: true,
+            draggable: false, // we only want to have the static layer draggable
           },
           evbcStore.config_context
       );

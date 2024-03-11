@@ -34,6 +34,6 @@ export const TEXT = {
 export const TOOLTIP = {
   position: {
     x: 10,
-    y: 770,
+    y: 10,
   },
 };
