@@ -38,6 +38,11 @@ export default class ConfigStage {
   constructor(private config: StageConfig, context: ConfigStageContext) {
     this._stage = new Konva.Stage(config);
 
+    // allow drag with left and right mouse button
+    Konva.dragButtons = [0, 2];
+    // prevent context menu on right click
+    this._stage.on("contextmenu", (e: KonvaEventObject<MouseEvent>) => e.evt.preventDefault());
+
     const tooltipLayer = new Konva.Layer({});
 
     const tooltip = new Konva.Text({
