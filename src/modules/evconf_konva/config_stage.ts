@@ -262,7 +262,11 @@ export default class ConfigStage {
       fill: 'rgba(255, 0, 0, 0)'
     });
     static_layer.add(this._bg);
+    static_layer.on("dragstart", () => {
+      this._stage.container().style.cursor = "grab";
+    });
     static_layer.on("dragend", () => {
+      this._stage.container().style.cursor = "default";
       this._bg.setAbsolutePosition({x: 0, y: 0});
     });
   }
