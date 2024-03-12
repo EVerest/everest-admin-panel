@@ -5,7 +5,6 @@ import "@mdi/font/css/materialdesignicons.css";
 import "@fontsource/roboto/index.css";
 import Vue from "vue";
 import {createApp} from "vue";
-import "./registerServiceWorker";
 import App from "@/App.vue";
 import {registerPlugins} from "@/plugins";
 
