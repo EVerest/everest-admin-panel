@@ -134,7 +134,7 @@ export default class ModuleView {
         y: 2,
       },
       fillAfterStrokeEnabled: true,
-      listening: false,
+      listening: true,
     });
 
     const title = new Konva.Text({
@@ -149,15 +149,17 @@ export default class ModuleView {
       listening: true,
     });
 
-    title.on("mouseenter", () => {
-      this._vm.set_cursor("pointer");
-    });
-    title.on("mouseleave", () => {
-      this._vm.set_cursor("default");
-    });
-    title.on("pointerclick", (ev) => {
-      this._vm.clicked_title();
-      ev.cancelBubble = true;
+    [frame, title].forEach(e => {
+      e.on("mouseenter", () => {
+        this._vm.set_cursor("pointer");
+      });
+      e.on("mouseleave", () => {
+        this._vm.set_cursor("default");
+      });
+      e.on("pointerclick", (ev) => {
+        this._vm.clicked_title();
+        ev.cancelBubble = true;
+      })
     });
 
     this._title = title;
