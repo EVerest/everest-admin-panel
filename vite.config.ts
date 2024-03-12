@@ -4,6 +4,7 @@ import {defineConfig, loadEnv} from "vite";
 import {commonjsDeps} from '@koumoul/vjsf/utils/build';
 import {fileURLToPath} from "node:url";
 import commonjs from "@rollup/plugin-commonjs";
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(({ mode}) => {
     loadEnv(mode, process.cwd(), '');
@@ -15,7 +16,8 @@ export default defineConfig(({ mode}) => {
     build: {
         commonjsOptions: {
             include: commonjsDeps,
-        }
+        },
+        minify: false
     },
     plugins: [
         commonjs(),
@@ -25,6 +27,7 @@ export default defineConfig(({ mode}) => {
         Vuetify({
             autoImport: true,
         }),
+        VitePWA({ registerType: 'autoUpdate' })
     ],
     resolve: {
         alias: {
