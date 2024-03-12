@@ -1,14 +1,14 @@
-export default {
+module.exports = {
   root: true,
   env: {
     node: true,
     es2022: true
   },
-  'extends': [
-    'plugin:vue/essential',
-    'plugin:vuetify/base',
+  extends: [
     'eslint:recommended',
-    '@vue/typescript/recommended'
+    'plugin:vue/vue3-essential',
+    'plugin:vuetify/base',
+    '@vue/eslint-config-typescript'
   ],
   parser: "vue-eslint-parser",
   parserOptions: {
@@ -16,7 +16,7 @@ export default {
   },
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn'
   },
   ignorePatterns: [
       "node_modules",
