@@ -20,11 +20,13 @@
 </style>
 
 <script lang="ts" setup>
+import type { VBtn } from "vuetify/components";
+
 const props = defineProps<{
   title: string,
   icon: string,
-  variant?: NonNullable<"flat" | "text" | "elevated" | "tonal" | "outlined" | "plain"> | undefined,
-  density?: null | 'default' | 'comfortable' | 'compact',
+  variant?: VBtn["$props"]["variant"],
+  density?: VBtn["$props"]["density"],
 }>();
 const emit = defineEmits<{
   click: []
