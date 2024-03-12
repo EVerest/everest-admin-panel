@@ -50,9 +50,29 @@ export default class ConfigStage {
       fontFamily: TEXT.fontFamily,
       fontSize: 16,
       padding: 5,
-      fill: 'black',
+      fill: 'white',
       alpha: 0.75,
       visible: false,
+      sceneFunc: function(context, shape) {
+        const {width, height} = shape.size();
+        const borderRadius = 3;
+
+        context.beginPath();
+        context.moveTo(borderRadius, 0);
+        context.lineTo(width - borderRadius, 0);
+        context.arcTo(width, 0, width, borderRadius, borderRadius);
+        context.lineTo(width, height - borderRadius);
+        context.arcTo(width, height, width - borderRadius, height, borderRadius);
+        context.lineTo(borderRadius, height);
+        context.arcTo(0, height, 0, height - borderRadius, borderRadius);
+        context.lineTo(0, borderRadius);
+        context.arcTo(0, 0, borderRadius, 0, borderRadius);
+        context.closePath();
+        context.fillStyle = 'rgb(33, 150, 243)';
+        context.fill();
+
+        (shape as Konva.Text)._sceneFunc(context);
+      },
       ...TOOLTIP.position
     });
 
