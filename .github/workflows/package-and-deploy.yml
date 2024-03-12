@@ -9,12 +9,7 @@ on:
       - main
     tags:
       - '*'
-  workflow_dispatch:
-    inputs:
-      tag:
-        type: string
-        description: Image tag
-        default: 'latest'
+  workflow_dispatch: {}
 
 jobs:
   package:
@@ -51,7 +46,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/') && success()
         with:
-          tag_name: ${{ inputs.tag }}
           files: everest-admin-panel.tar.gz
 
   deploy:
@@ -109,4 +103,3 @@ jobs:
             core.summary.addHeading("Deployment Details")
             .addLink("View Deployment", deploymentUrl)
             .write();
-
