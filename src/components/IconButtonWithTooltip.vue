@@ -4,10 +4,10 @@
 <template>
     <v-tooltip location="bottom">
         <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" :icon="$props.icon" class="icon-right" @click="$emit('click')" :variant="$props.variant" :density="$props.density">
+            <v-btn v-bind="props" :icon="icon" class="icon-right" @click="emit('click')" :variant="variant" :density="density">
             </v-btn>
         </template>
-        <span> {{ $props.title }} </span>
+        <span> {{ props.title }} </span>
     </v-tooltip>
 </template>
   

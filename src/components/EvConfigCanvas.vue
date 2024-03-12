@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, computed, watch, ComputedRef, inject, onDeactivated} from 'vue';
+import {defineComponent, onMounted, computed, watch, ComputedRef, inject} from 'vue';
 import { useEvbcStore } from '@/store/evbc';
 import ConfigStage from "@/modules/evconf_konva/config_stage";
 import EVConfigModel from "@/modules/evbc/config_model";
