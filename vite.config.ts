@@ -6,8 +6,8 @@ import {commonjsDeps} from '@koumoul/vjsf/utils/build';
 import {fileURLToPath} from "node:url";
 import commonjs from "@rollup/plugin-commonjs";
 
-export default defineConfig(({command, mode}) => {
-    const env = loadEnv(mode, process.cwd(), '');
+export default defineConfig(({ mode}) => {
+    loadEnv(mode, process.cwd(), '');
     return {
         base: mode === 'pages' ? `/everest-admin-panel/${process.env.SUBDIR}` : '',
         optimizeDeps: {
