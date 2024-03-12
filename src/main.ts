@@ -2,6 +2,7 @@
 // Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest
 
 import "@mdi/font/css/materialdesignicons.css";
+import "@fontsource/roboto/index.css";
 import Vue from "vue";
 import {createApp} from "vue";
 import "./registerServiceWorker";

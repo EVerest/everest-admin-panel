@@ -11,6 +11,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@fontsource/roboto": "5.0.12",
     "@json-layout/core": "^0.9.3",
     "@json-layout/vocabulary": "^0.9.1",
     "@koumoul/vjsf": "^3.0.0-beta.3",
@@ -28,8 +29,6 @@
     "markdown-it": "^14.0.0",
     "pinia": "^2.1.7",
     "register-service-worker": "^1.7.2",
-    "roboto-fontface": "*",
-    "unplugin-fonts": "^1.1.1",
     "vue": "^3.4.19",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",
