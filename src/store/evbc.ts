@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import {reactive, ref, watch} from 'vue';
+import {reactive, ref} from 'vue';
 import EVConfigModel from "@/modules/evbc/config_model";
 import ConfigStageContext, {SelectionType} from "@/modules/evconf_konva/stage_context";
 import {ConnectionID, ModuleInstanceID, Terminal} from "@/modules/evbc";
@@ -10,14 +10,11 @@ export const useEvbcStore = defineStore('evbc', () => {
   const config_model = ref<EVConfigModel | null>(null);
   const config_context = reactive(new ConfigStageContext());
 
-  // Watcher inside the store
-  watch(() => config_context, (configStageContext) => {
-    configStageContext.add_observer((ev) => {
-      if (ev.type === "SELECT") {
-        selection.value = ev.selection;
-      }
-    });
-  }, { deep: true });
+  config_context.add_observer((ev) => {
+    if (ev.type === "SELECT") {
+      selection.value = ev.selection;
+    }
+  });
 
   function setOpenedConfig(model: EVConfigModel) {
     if (config_opened.value) {
