@@ -19,6 +19,9 @@ export default defineConfig(({ mode}) => {
         },
         minify: false
     },
+    define: {
+        VITE_APP_VERSION: JSON.stringify(process.env.npm_package_version),
+    },
     plugins: [
         commonjs(),
         Vue({

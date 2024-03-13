@@ -23,8 +23,7 @@
         </v-list-item>-->
       </v-list>
       <v-list-item class="bottom-list d-flex flex-column">
-        <span>EVerest admin panel</span>
-        <span>Version 0.0.2</span>
+        <span>Version {{ version }}</span>
       </v-list-item>
     </v-navigation-drawer>
 
@@ -74,12 +73,12 @@ import {useMainStore} from "@/store/main";
 
 let evbc: EVBackendClient;
 let mainStore: ReturnType<typeof useMainStore>;
-
 export default defineComponent({
   data: () => ({
     drawer: false,
     evbc_disconnected: false,
     evbc_status: "",
+    version: VITE_APP_VERSION,
   }),
   computed: {
     snackbar() {
