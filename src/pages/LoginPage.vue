@@ -13,7 +13,7 @@
                   <v-toolbar-title>Choose server instance</v-toolbar-title>
 
                   <v-spacer></v-spacer>
-                  <v-btn icon :disabled="connecting" @click="add_server"><v-icon>mdi-plus</v-icon></v-btn>
+                  <v-btn icon="mdi-plus" :disabled="connecting" @click="add_server"></v-btn>
                 </template>
                 <template v-else>
                   <v-toolbar-title>{{ edit_item.is_add ? "Add" : "Edit" }} server instance</v-toolbar-title>
@@ -61,10 +61,8 @@
                       </v-col>
                       <v-spacer />
                       <v-col class="text-right">
-                        <v-btn class="mx-4" icon elevation="2" @click="close_edit()">
-                          <v-icon> mdi-close </v-icon>
-                        </v-btn>
-                        <v-btn icon="mdi-check" elevation="2" @click="submit_edit()">  </v-btn>
+                        <v-btn class="mx-4" icon="mdi-close" elevation="2" @click="close_edit()"></v-btn>
+                        <v-btn icon="mdi-check" elevation="2" @click="submit_edit()"></v-btn>
                       </v-col>
                     </v-row>
                   </v-container>
