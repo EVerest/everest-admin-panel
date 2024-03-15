@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+
 import {defineStore} from 'pinia';
 import {reactive, ref} from 'vue';
 import EVConfigModel from "@/modules/evbc/config_model";
