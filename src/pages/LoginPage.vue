@@ -25,7 +25,12 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12">
-                        <v-text-field label="Name of EVerest instance" v-model="edit_item.server.id" hint="For example 'Local', 'Development'...">
+                        <v-text-field
+                            label="Name of EVerest instance"
+                            v-model="edit_item.server.id"
+                            hint="For example 'Local', 'Development'..."
+                            :rules="[validateInstanceName]"
+                        >
                         </v-text-field>
                       </v-col>
                     </v-row>
@@ -151,6 +156,13 @@ export default defineComponent({
           port: 8849
         },
       };
+    },
+    validateInstanceName(value: string): true | string {
+      if (value.trim().length < 1) {
+        return 'Please enter a name with at least one character.';
+      } else {
+        return true;
+      }
     },
     validateDomain(value: string): true | string {
       if (value.includes('://')) {
