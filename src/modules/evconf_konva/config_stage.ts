@@ -132,7 +132,6 @@ export default class ConfigStage {
 
     this.context = context;
     context.set_container(this._stage.container());
-    this._stage.on("pointerclick", () => context.unselect());
     this.context.add_observer((ev) => this._handle_stage_context_event(ev));
     this.registerListeners();
     this.resizeStage();
@@ -281,6 +280,7 @@ export default class ConfigStage {
       height: this._stage.height(),
       fill: 'rgba(255, 0, 0, 0)'
     });
+    this._bg.on("pointerclick", () => this.context.unselect());
     static_layer.add(this._bg);
     static_layer.on("dragstart", () => {
       this._stage.container().style.cursor = "grab";
