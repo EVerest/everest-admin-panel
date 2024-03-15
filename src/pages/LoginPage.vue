@@ -10,7 +10,7 @@
             <v-card elevation="10">
               <v-toolbar dark color="primary">
                 <template v-if="!edit_item">
-                  <v-toolbar-title>Choose server instance</v-toolbar-title>
+                  <v-toolbar-title>Choose EVerest instance</v-toolbar-title>
 
                   <v-spacer></v-spacer>
                   <v-btn icon="mdi-plus" :disabled="connecting" @click="add_server"></v-btn>
@@ -68,15 +68,17 @@
                   </v-container>
                 </v-form>
                 <template v-else>
-                  <v-list-subheader lines="two" :disabled="connecting">
-                    <v-list-item append-icon="mdi-server" v-for="(server, index) in servers" :key="server.id" @click="connect(server.addr)">
+                  <v-list-subheader lines="two" :disabled="connecting" class="mb-3">
+                    <v-list-item prepend-icon="mdi-server" v-for="(server, index) in servers" :key="server.id" @click="connect(server.addr)">
 
                         <v-list-item-title>{{ server.id }}</v-list-item-title>
                         <v-list-item-subtitle>{{ server.addr }}</v-list-item-subtitle>
-                      
-                      <v-list-item-action v-if="server.editable">
-                        <v-btn icon="mdi-pencil" @click.prevent.stop="edit_server(index)"></v-btn>
-                      </v-list-item-action>
+
+                      <template v-slot:append v-if="server.editable">
+                        <v-list-item-action>
+                          <v-btn variant="text" icon="mdi-pencil" @click.prevent.stop="edit_server(index)"></v-btn>
+                        </v-list-item-action>
+                      </template>
                     </v-list-item>
                   </v-list-subheader>
                   <v-alert v-bind:text="error.status" prominent type="error" icon="mdi-cloud-alert" v-model="error.active" closable>
