@@ -9,25 +9,25 @@
           <v-col xs="12" sm="10" md="8">
             <v-card elevation="10">
               <v-toolbar dark color="primary">
-                <template v-if="!edit_item">
+                <template v-if="!editItem">
                   <v-toolbar-title>Choose EVerest instance</v-toolbar-title>
 
                   <v-spacer></v-spacer>
-                  <v-btn icon="mdi-plus" :disabled="connecting" @click="add_server"></v-btn>
+                  <v-btn icon="mdi-plus" :disabled="connecting" @click="addServer"></v-btn>
                 </template>
                 <template v-else>
-                  <v-toolbar-title>{{ edit_item.is_add ? "Add" : "Edit" }} server instance</v-toolbar-title>
+                  <v-toolbar-title>{{ editItem.is_add ? "Add" : "Edit" }} server instance</v-toolbar-title>
                 </template>
               </v-toolbar>
 
               <v-card-text>
-                <v-form v-if="edit_item">
+                <v-form v-if="editItem">
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12">
                         <v-text-field
                             label="Name of EVerest instance"
-                            v-model="edit_item.server.id"
+                            v-model="editItem.server.id"
                             hint="For example 'Local', 'Development'..."
                             :rules="[validateInstanceName]"
                         >
@@ -36,7 +36,7 @@
                     </v-row>
                     <v-row>
                       <v-col cols="3" sm="3">
-                        <v-select v-model="edit_item.server.protocol"
+                        <v-select v-model="editItem.server.protocol"
                                   label="Protocol"
                                   :items="[ { value: 'ws', title: 'ws://' }, { value: 'wss', title: 'wss://' } ]"
                         ></v-select>
@@ -44,7 +44,7 @@
                       <v-col cols="6" sm="6">
                         <v-text-field
                           label="Server Address"
-                          v-model="edit_item.server.addr"
+                          v-model="editItem.server.addr"
                           hint="For example, test.pionix.de"
                           :rules="[validateDomain]"
                         ></v-text-field>
@@ -52,7 +52,7 @@
                       <v-col cols="3" sm="3">
                         <v-text-field type="number"
                                       label="Port"
-                                      v-model="edit_item.server.port"
+                                      v-model="editItem.server.port"
                                       hint="For example, 8849"
                                       :rules="[validatePort]"
                         >
@@ -61,13 +61,13 @@
                     </v-row>
                     <v-row>
                       <v-col>
-                        <v-btn icon="mdi-delete" elevation="2" @click="delete_item(edit_item.index)">
+                        <v-btn icon="mdi-delete" elevation="2" @click="deleteItem(editItem.index)">
                         </v-btn>
                       </v-col>
                       <v-spacer />
                       <v-col class="text-right">
-                        <v-btn class="mx-4" icon="mdi-close" elevation="2" @click="close_edit()"></v-btn>
-                        <v-btn icon="mdi-check" elevation="2" @click="submit_edit()"></v-btn>
+                        <v-btn class="mx-4" icon="mdi-close" elevation="2" @click="closeEdit()"></v-btn>
+                        <v-btn icon="mdi-check" elevation="2" @click="submitEdit()"></v-btn>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -81,7 +81,7 @@
 
                       <template v-slot:append v-if="server.editable">
                         <v-list-item-action>
-                          <v-btn variant="text" icon="mdi-pencil" @click.prevent.stop="edit_server(index)"></v-btn>
+                          <v-btn variant="text" icon="mdi-pencil" @click.prevent.stop="editServer(index)"></v-btn>
                         </v-list-item-action>
                       </template>
                     </v-list-item>
@@ -90,7 +90,7 @@
                   </v-alert>
                   <transition>
                     <p class="pt-10 text-center font-weight-medium text-h6" v-if="connecting">
-                      {{ connection_status }}
+                      {{ connectionStatus }}
                     </p>
                   </transition>
                   <v-progress-linear :active="connecting" height="10" absolute location="bottom" indeterminate></v-progress-linear>
@@ -105,9 +105,9 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, inject} from "vue";
+import { defineComponent, ref, reactive, onMounted, inject } from "vue";
 import EVBackendClient from "@/modules/evbc/client";
-let evbc: EVBackendClient;
+import {useRouter} from "vue-router";
 
 type ServerItem = {
   id: string;
@@ -117,35 +117,33 @@ type ServerItem = {
   port: number;
 };
 
-// BIG FIXME (aw): the needs to be refactored graphically and logically
-
 export default defineComponent({
-  data: () => ({
-    servers: [
+  setup() {
+    const evbc = inject<EVBackendClient>("evbc");
+    const servers = ref<ServerItem[]>([
       {
         id: "Loopback",
         addr: "loopback",
         editable: false,
-        protocol: undefined,
-        port: undefined
+        protocol: 'ws',
+        port: 8849,
       },
       {
         id: "Ötzi",
         addr: "oetzi.pionix.net",
         editable: true,
         protocol: "wss",
-        port: 8849
-      }
-    ] as ServerItem[],
-    edit_item: null as { is_add: boolean; index: number; server: ServerItem },
-    connect_automatically: true as boolean,
-    connecting: false as boolean,
-    connection_status: null as string,
-    error: { active: false, status: "" },
-  }),
-  methods: {
-    add_server() {
-      this.edit_item = {
+        port: 8849,
+      },
+    ]);
+    const editItem = ref<{ is_add: boolean; index: number | null; server: ServerItem } | null>(null);
+    const connectAutomatically = ref(true);
+    const connecting = ref(false);
+    const connectionStatus = ref<string | null>(null);
+    const error = reactive({ active: false, status: "" });
+
+    const addServer = () => {
+      editItem.value = {
         is_add: true,
         index: null,
         server: {
@@ -153,112 +151,139 @@ export default defineComponent({
           addr: "127.0.0.1",
           editable: true,
           protocol: "ws",
-          port: 8849
+          port: 8849,
         },
       };
-    },
-    validateInstanceName(value: string): true | string {
+    };
+
+    const validateInstanceName = (value: string): true | string => {
       if (value.trim().length < 1) {
         return 'Please enter a name with at least one character.';
       } else {
         return true;
       }
-    },
-    validateDomain(value: string): true | string {
+    };
+
+    const validateDomain = (value: string): true | string => {
       if (value.includes('://')) {
         return 'Please enter a domain without any protocol (e.g., "test.pionix.de").';
       }
-
-      // Prevent user from entering a domain with port
       const domainPattern = /.*:\d+$/;
       if (domainPattern.test(value)) {
         return "Please don't enter a port here.";
       } else {
-        return true
+        return true;
       }
-    },
-    validatePort(value: number): true | string {
+    };
+
+    const validatePort = (value: number): true | string => {
       if (value < 1 || value > 65535) {
         return 'Please enter a valid port number.';
       } else {
         return true;
       }
-    },
-    edit_server(index: number) {
-      this.edit_item = {
+    };
+
+    const editServer = (index: number) => {
+      editItem.value = {
         is_add: false,
         index,
-        server: {
-          ...this.servers[index],
-        },
+        server: { ...servers.value[index] },
       };
-    },
-    submit_edit() {
-      const server_item = {
-        ...this.edit_item.server,
-      };
-      if (this.edit_item.is_add) {
-        this.servers.push(server_item);
-      } else {
-        this.servers[this.edit_item.index] = server_item;
+    };
+
+    const submitEdit = () => {
+      if (editItem.value) {
+        const serverItem = { ...editItem.value.server };
+        if (editItem.value.is_add) {
+          servers.value.push(serverItem);
+        } else if (editItem.value.index !== null) {
+          servers.value[editItem.value.index] = serverItem;
+        }
+        closeEdit();
+        submitLocalStorageSettings();
       }
-      this.close_edit();
-      this.submit_local_storage_settings();
-    },
-    close_edit() {
-      this.edit_item = null;
-    },
-    delete_item(index: number) {
-      this.servers.splice(index, 1);
-      this.close_edit();
-      this.submit_local_storage_settings();
-    },
-    submit_local_storage_settings() {
+    };
+
+    const closeEdit = () => {
+      editItem.value = null;
+    };
+
+    const deleteItem = (index: number) => {
+      servers.value.splice(index, 1);
+      closeEdit();
+      submitLocalStorageSettings();
+    };
+
+    const submitLocalStorageSettings = () => {
       window.localStorage.setItem(
-        "evbc-settings",
-        JSON.stringify({
-          servers: this.servers,
-          connect_automatically: this.connect_automatically,
-        })
+          "evbc-settings",
+          JSON.stringify({
+            servers: servers.value,
+            connectAutomatically: connectAutomatically.value,
+          })
       );
-    },
-    connect(addr: string) {
-      this.connecting = true;
-      evbc.connect(addr);
-    },
-  },
-  created() {
-    evbc = inject<EVBackendClient>('evbc');
-    const storage = window.localStorage;
-    const evbc_ls_string = storage.getItem("evbc-settings");
+    };
 
-    if (evbc_ls_string) {
-      const evbc_local_storage = JSON.parse(evbc_ls_string);
-      if ("servers" in evbc_local_storage) {
-        this.servers = (evbc_local_storage.servers as ServerItem[]).map((item) => ({ ...item }));
+    const connect = (addr: string) => {
+      connecting.value = true;
+      if (evbc) {
+        evbc.connect(addr);
+      }
+    };
+
+    onMounted(() => {
+      const router = useRouter();
+      const storage = window.localStorage;
+      const evbcLsString = storage.getItem("evbc-settings");
+      if (evbcLsString) {
+        const evbcLocalStorage = JSON.parse(evbcLsString);
+        if ("servers" in evbcLocalStorage) {
+          servers.value = evbcLocalStorage.servers.map((item: ServerItem) => ({ ...item }));
+        }
+        if ("connectAutomatically" in evbcLocalStorage) {
+          connectAutomatically.value = evbcLocalStorage.connectAutomatically;
+        }
       }
 
-      if ("connect_automatically" in evbc_local_storage) {
-        this.connect_automatically = evbc_local_storage.connect_automatically;
+      if (evbc) {
+        const unsubscribe = evbc.on("connection_state", (ev) => {
+          if (ev.type === "INFO") {
+            connectionStatus.value = ev.text;
+          } else if (ev.type === "INITIALIZED") {
+            unsubscribe();
+            router.push({ name: "main" });
+          } else if (ev.type === "FAILED") {
+            connecting.value = false;
+            error.active = true;
+            error.status = ev.text;
+          }
+        });
       }
-    }
 
-    const unsubscribe = evbc.on("connection_state", (ev) => {
-      if (ev.type === "INFO") {
-        this.connection_status = ev.text;
-      } else if (ev.type === "INITIALIZED") {
-        unsubscribe();
-        this.$router.push({ name: "main" });
-      } else if (ev.type === "FAILED") {
-        this.connecting = false;
-        this.error = { active: true, status: ev.text };
+      if (connectAutomatically.value && evbc) {
+        connect(`${window.location.hostname}:8849`);
       }
     });
 
-    if (this.connect_automatically) {
-      // FIXME (aw): would be nice to have an senseful default here!
-      this.connect(`${window.location.hostname}:8849`)
-    }
+    return {
+      servers,
+      editItem,
+      connectAutomatically,
+      connecting,
+      connectionStatus,
+      error,
+      addServer,
+      validateInstanceName,
+      validateDomain,
+      validatePort,
+      editServer,
+      submitEdit,
+      closeEdit,
+      deleteItem,
+      submitLocalStorageSettings,
+      connect,
+    };
   },
 });
 </script>
