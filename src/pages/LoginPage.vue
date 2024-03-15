@@ -6,7 +6,7 @@
     <v-main>
       <v-container fluid fill-height>
         <v-row align="center" justify="center">
-          <v-col xs="12" sm="8" md="4">
+          <v-col xs="12" sm="10" md="8">
             <v-card elevation="10">
               <v-toolbar dark color="primary">
                 <template v-if="!edit_item">
@@ -24,17 +24,34 @@
                 <v-form v-if="edit_item">
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6">
-                        <v-text-field label="Server ID" v-model="edit_item.server.id" hint="For example, HomeServer">
+                      <v-col cols="12" sm="12">
+                        <v-text-field label="Name of EVerest instance" v-model="edit_item.server.id" hint="For example 'Local', 'Development'...">
                         </v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6">
+                    </v-row>
+                    <v-row>
+                      <v-col cols="3" sm="3">
+                        <v-select v-model="edit_item.server.protocol"
+                                  label="Protocol"
+                                  :items="[ { value: 'ws', title: 'ws://' }, { value: 'wss', title: 'wss://' } ]"
+                        ></v-select>
+                      </v-col>
+                      <v-col cols="6" sm="6">
                         <v-text-field
                           label="Server Address"
                           v-model="edit_item.server.addr"
                           hint="For example, test.pionix.de"
                           :rules="[validateDomain]"
                         ></v-text-field>
+                      </v-col>
+                      <v-col cols="3" sm="3">
+                        <v-text-field type="number"
+                                      label="Port"
+                                      v-model="edit_item.server.port"
+                                      hint="For example, 8849"
+                                      :rules="[validatePort]"
+                        >
+                        </v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -91,6 +108,8 @@ type ServerItem = {
   id: string;
   addr: string;
   editable: boolean;
+  protocol: string;
+  port: number;
 };
 
 // BIG FIXME (aw): the needs to be refactored graphically and logically
@@ -102,7 +121,16 @@ export default defineComponent({
         id: "Loopback",
         addr: "loopback",
         editable: false,
+        protocol: undefined,
+        port: undefined
       },
+      {
+        id: "Ötzi",
+        addr: "oetzi.pionix.net",
+        editable: true,
+        protocol: "wss",
+        port: 8849
+      }
     ] as ServerItem[],
     edit_item: null as { is_add: boolean; index: number; server: ServerItem },
     connect_automatically: true as boolean,
@@ -117,8 +145,10 @@ export default defineComponent({
         index: null,
         server: {
           id: "Example Instance",
-          addr: "8.8.4.8",
+          addr: "127.0.0.1",
           editable: true,
+          protocol: "ws",
+          port: 8849
         },
       };
     },
@@ -133,6 +163,13 @@ export default defineComponent({
         return "Please don't enter a port here.";
       } else {
         return true
+      }
+    },
+    validatePort(value: number): true | string {
+      if (value < 1 || value > 65535) {
+        return 'Please enter a valid port number.';
+      } else {
+        return true;
       }
     },
     edit_server(index: number) {
