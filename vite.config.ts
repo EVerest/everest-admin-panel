@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+
 import Vue from '@vitejs/plugin-vue';
 import Vuetify, {transformAssetUrls} from 'vite-plugin-vuetify';
 import {defineConfig, loadEnv} from "vite";

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2022 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 
 import SampleConfigList from "./sample_config_list";
 import SampleManifestList from "./sample_module_info";
