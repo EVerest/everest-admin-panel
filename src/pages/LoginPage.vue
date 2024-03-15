@@ -33,6 +33,7 @@
                           label="Server Address"
                           v-model="edit_item.server.addr"
                           hint="For example, test.pionix.de"
+                          :rules="[validateDomain]"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -120,6 +121,19 @@ export default defineComponent({
           editable: true,
         },
       };
+    },
+    validateDomain(value: string): true | string {
+      if (value.includes('://')) {
+        return 'Please enter a domain without any protocol (e.g., "test.pionix.de").';
+      }
+
+      // Prevent user from entering a domain with port
+      const domainPattern = /.*:\d+$/;
+      if (domainPattern.test(value)) {
+        return "Please don't enter a port here.";
+      } else {
+        return true
+      }
     },
     edit_server(index: number) {
       this.edit_item = {
