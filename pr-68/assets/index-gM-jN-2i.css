@@ -30127,13 +30127,13 @@
   src: url(/everest-admin-panel/pr-68/assets/roboto-latin-400-normal-JkyEVz-m.woff2) format('woff2'), url(/everest-admin-panel/pr-68/assets/roboto-latin-400-normal-VNUqCuId.woff) format('woff');
   unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
 }
-.rotateable[data-v-f3cac26f] {
+.rotateable[data-v-7f2dde12] {
   transition: transform 1s ease-in-out;
 }
-.rotateable[data-v-f3cac26f]:hover {
+.rotateable[data-v-7f2dde12]:hover {
   transform: rotateZ(360deg);
 }
-.bottom-list[data-v-f3cac26f] {
+.bottom-list[data-v-7f2dde12] {
   position: absolute;
   bottom: 0;
   width: 100%;

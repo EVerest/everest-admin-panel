@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-c5zFrIC8.js"(exports, module) {
+  "assets/index-EKeSIui3.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -9211,7 +9211,7 @@ var require_index_001 = __commonJS({
         },
         changeInstance() {
           evbc$2.disconnect();
-          router$1.push("/login");
+          router$1.push({ path: "/login", query: { auto_connect: "false" } });
         }
       },
       created() {
@@ -19649,7 +19649,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$6], ["__scopeId", "data-v-f3cac26f"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$6], ["__scopeId", "data-v-7f2dde12"]]);
     /**
       * vee-validate v4.12.6
       * (c) 2024 Abdelrahman Awad
@@ -21831,7 +21831,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }
             if ("connectAutomatically" in evbcLocalStorage) {
               connectAutomatically.value = evbcLocalStorage.connectAutomatically;
-              if (connectAutomatically.value && ((_a2 = window.localStorage) == null ? void 0 : _a2.getItem("lastConnectedServer")) !== null) {
+              if (router2.currentRoute.value.query.auto_connect !== "false" && connectAutomatically.value && ((_a2 = window.localStorage) == null ? void 0 : _a2.getItem("lastConnectedServer")) !== null) {
                 const lastServer = JSON.parse(window.localStorage.getItem("lastConnectedServer"));
                 connect(lastServer);
               }
