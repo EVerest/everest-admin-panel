@@ -28,6 +28,7 @@
     "konva": "^8.4.3",
     "markdown-it": "^14.0.0",
     "pinia": "^2.1.7",
+    "vee-validate": "^4.12.6",
     "vue": "^3.4.19",
     "vue-class-component": "^7.2.6",
     "vue-property-decorator": "^9.1.2",

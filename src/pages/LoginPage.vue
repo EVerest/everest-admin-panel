@@ -9,69 +9,70 @@
           <v-col xs="12" sm="10" md="8">
             <v-card elevation="10">
               <v-toolbar dark color="primary">
-                <template v-if="!editItem">
+                <template v-if="currentView === ComponentViews.LIST">
                   <v-toolbar-title>Choose EVerest instance</v-toolbar-title>
 
                   <v-spacer></v-spacer>
-                  <v-btn icon="mdi-plus" :disabled="connecting" @click="addServer"></v-btn>
+                  <v-btn icon="mdi-plus" :disabled="connecting" @click="openAddServerView"></v-btn>
                 </template>
                 <template v-else>
-                  <v-toolbar-title>{{ editItem.is_add ? "Add" : "Edit" }} server instance</v-toolbar-title>
+                  <v-toolbar-title>{{ currentView === ComponentViews.ADD  ? "Add" : "Edit" }} server instance</v-toolbar-title>
                 </template>
               </v-toolbar>
 
               <v-card-text>
-                <v-form v-if="editItem">
+                <Form @submit="submitEdit" v-if="[ComponentViews.ADD, ComponentViews.EDIT].includes(currentView)">
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12">
                         <v-text-field
                             label="Name of EVerest instance"
-                            v-model="editItem.server.id"
+                            v-model="instanceId.value.value"
+                            :error-messages="instanceId.errorMessage.value"
                             hint="For example 'Local', 'Development'..."
-                            :rules="[validateInstanceName]"
                         >
                         </v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="3" sm="3">
-                        <v-select v-model="editItem.server.protocol"
+                        <v-select v-model="protocol.value.value"
+                                  :error-messages="protocol.errorMessage.value"
                                   label="Protocol"
                                   :items="[ { value: 'ws', title: 'ws://' }, { value: 'wss', title: 'wss://' } ]"
                         ></v-select>
                       </v-col>
                       <v-col cols="6" sm="6">
                         <v-text-field
-                          label="Server Address"
-                          v-model="editItem.server.addr"
-                          hint="For example, test.pionix.de"
-                          :rules="[validateDomain]"
+                          label="EVerest instance host address"
+                          v-model="host.value.value"
+                          :error-messages="host.errorMessage.value"
+                          hint="For example, oetzi.pionix.net"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="3" sm="3">
                         <v-text-field type="number"
                                       label="Port"
-                                      v-model="editItem.server.port"
+                                      v-model="port.value.value"
+                                      :error-messages="port.errorMessage.value"
                                       hint="For example, 8849"
-                                      :rules="[validatePort]"
                         >
                         </v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col>
-                        <v-btn icon="mdi-delete" elevation="2" @click="deleteItem(editItem.index)">
+                        <v-btn icon="mdi-delete" elevation="2" @click="deleteItem()">
                         </v-btn>
                       </v-col>
                       <v-spacer />
                       <v-col class="text-right">
                         <v-btn class="mx-4" icon="mdi-close" elevation="2" @click="closeEdit()"></v-btn>
-                        <v-btn icon="mdi-check" elevation="2" @click="submitEdit()"></v-btn>
+                        <v-btn icon="mdi-check" elevation="2" type="submit" :disabled="!meta.valid"></v-btn>
                       </v-col>
                     </v-row>
                   </v-container>
-                </v-form>
+                </Form>
                 <template v-else>
                   <v-list-subheader lines="two" :disabled="connecting" class="mb-3">
                     <v-list-item prepend-icon="mdi-server" v-for="(server, index) in servers" :key="server.id" @click="connect(server.addr)">
@@ -81,7 +82,7 @@
 
                       <template v-slot:append v-if="server.editable">
                         <v-list-item-action>
-                          <v-btn variant="text" icon="mdi-pencil" @click.prevent.stop="editServer(index)"></v-btn>
+                          <v-btn variant="text" icon="mdi-pencil" @click.prevent.stop="openEditServerView(index)"></v-btn>
                         </v-list-item-action>
                       </template>
                     </v-list-item>
@@ -106,6 +107,7 @@
 
 <script lang="ts">
 import { defineComponent, ref, reactive, onMounted, inject } from "vue";
+import { useForm, useField } from "vee-validate";
 import EVBackendClient from "@/modules/evbc/client";
 import {useRouter} from "vue-router";
 
@@ -113,14 +115,20 @@ type ServerItem = {
   id: string;
   addr: string;
   editable: boolean;
-  protocol: string;
+  protocol: "ws" | "wss";
   port: number;
 };
+
+enum ComponentViews {
+  LIST,
+  EDIT,
+  ADD
+}
 
 export default defineComponent({
   setup() {
     const evbc = inject<EVBackendClient>("evbc");
-    const servers = ref<ServerItem[]>([
+    const servers = reactive<ServerItem[]>([
       {
         id: "Loopback",
         addr: "loopback",
@@ -136,81 +144,104 @@ export default defineComponent({
         port: 8849,
       },
     ]);
-    const editItem = ref<{ is_add: boolean; index: number | null; server: ServerItem } | null>(null);
-    const connectAutomatically = ref(true);
+    const currentView = ref<ComponentViews>(ComponentViews.LIST);
+    const connectAutomatically = ref(false);
+    const currentlyEditing = ref<ServerItem | null>(null);
     const connecting = ref(false);
     const connectionStatus = ref<string | null>(null);
     const error = reactive({ active: false, status: "" });
 
-    const addServer = () => {
-      editItem.value = {
-        is_add: true,
-        index: null,
-        server: {
-          id: "Example Instance",
-          addr: "127.0.0.1",
-          editable: true,
-          protocol: "ws",
-          port: 8849,
+    const { meta, handleSubmit } = useForm({
+      validationSchema: {
+        instanceId: (value: string) => {
+          if (value === undefined || value.trim().length < 1) {
+            return 'Please enter a name with at least one character.';
+          } else {
+            return true;
+          }
         },
-      };
+        host: (value: string) => {
+          if (value === undefined || value.trim().length < 1) {
+            return 'Please enter a host.';
+          }
+
+          if (value.includes('://')) {
+            return 'Please enter a domain without any protocol (e.g., "test.pionix.de").';
+          }
+
+          // Prevent user from entering a domain with port
+          const domainPattern = /.*:\d+$/;
+          if (domainPattern.test(value)) {
+            return "Please don't enter a port here.";
+          } else {
+            return true;
+          }
+        },
+        port: (value: number) => {
+          if (value === undefined || value < 1 || value > 65535) {
+            return 'Please enter a valid port number.';
+          } else {
+            return true;
+          }
+        },
+      }
+    });
+
+    const instanceId = useField<string>("instanceId");
+    const host = useField<string>("host");
+    const port = useField<number>("port");
+    const protocol = useField<"ws" | "wss">("protocol");
+
+
+    const openAddServerView = () => {
+      resetFields();
+      currentView.value = ComponentViews.ADD;
     };
 
-    const validateInstanceName = (value: string): true | string => {
-      if (value.trim().length < 1) {
-        return 'Please enter a name with at least one character.';
+    const resetFields = () => {
+      instanceId.value.value = "";
+      host.value.value = "";
+      port.value.value = 8849;
+      protocol.value.value = "ws";
+      currentlyEditing.value = null;
+    };
+
+    const openEditServerView = (index: number) => {
+      currentlyEditing.value = servers[index];
+      protocol.value.value = servers[index].protocol;
+      host.value.value = servers[index].addr;
+      port.value.value = servers[index].port;
+      instanceId.value.value = servers[index].id;
+      currentView.value = ComponentViews.EDIT;
+    };
+
+    const submitEdit = handleSubmit(async (values) => {
+      if (currentlyEditing.value !== null) {
+        // This works because we are using the objects reference and not a copy
+        currentlyEditing.value.id = instanceId.value.value;
+        currentlyEditing.value.addr = host.value.value;
+        currentlyEditing.value.protocol = protocol.value.value;
+        currentlyEditing.value.port = port.value.value;
       } else {
-        return true;
+        servers.push({
+          id: instanceId.value.value,
+          addr: host.value.value,
+          editable: true,
+          protocol: protocol.value.value,
+          port: port.value.value,
+        });
       }
-    };
-
-    const validateDomain = (value: string): true | string => {
-      if (value.includes('://')) {
-        return 'Please enter a domain without any protocol (e.g., "test.pionix.de").';
-      }
-      const domainPattern = /.*:\d+$/;
-      if (domainPattern.test(value)) {
-        return "Please don't enter a port here.";
-      } else {
-        return true;
-      }
-    };
-
-    const validatePort = (value: number): true | string => {
-      if (value < 1 || value > 65535) {
-        return 'Please enter a valid port number.';
-      } else {
-        return true;
-      }
-    };
-
-    const editServer = (index: number) => {
-      editItem.value = {
-        is_add: false,
-        index,
-        server: { ...servers.value[index] },
-      };
-    };
-
-    const submitEdit = () => {
-      if (editItem.value) {
-        const serverItem = { ...editItem.value.server };
-        if (editItem.value.is_add) {
-          servers.value.push(serverItem);
-        } else if (editItem.value.index !== null) {
-          servers.value[editItem.value.index] = serverItem;
-        }
-        closeEdit();
-        submitLocalStorageSettings();
-      }
-    };
+      closeEdit();
+      submitLocalStorageSettings();
+    });
 
     const closeEdit = () => {
-      editItem.value = null;
+      currentView.value = ComponentViews.LIST;
+      resetFields();
     };
 
-    const deleteItem = (index: number) => {
-      servers.value.splice(index, 1);
+    const deleteItem = () => {
+      servers.splice(servers.indexOf(currentlyEditing.value), 1);
       closeEdit();
       submitLocalStorageSettings();
     };
@@ -219,7 +250,7 @@ export default defineComponent({
       window.localStorage.setItem(
           "evbc-settings",
           JSON.stringify({
-            servers: servers.value,
+            servers: servers,
             connectAutomatically: connectAutomatically.value,
           })
       );
@@ -239,7 +270,8 @@ export default defineComponent({
       if (evbcLsString) {
         const evbcLocalStorage = JSON.parse(evbcLsString);
         if ("servers" in evbcLocalStorage) {
-          servers.value = evbcLocalStorage.servers.map((item: ServerItem) => ({ ...item }));
+          servers.splice(0, servers.length);
+          servers.push(...evbcLocalStorage.servers);
         }
         if ("connectAutomatically" in evbcLocalStorage) {
           connectAutomatically.value = evbcLocalStorage.connectAutomatically;
@@ -268,21 +300,25 @@ export default defineComponent({
 
     return {
       servers,
-      editItem,
       connectAutomatically,
       connecting,
       connectionStatus,
       error,
-      addServer,
-      validateInstanceName,
-      validateDomain,
-      validatePort,
-      editServer,
+      openAddServerView,
+      openEditServerView,
       submitEdit,
       closeEdit,
       deleteItem,
       submitLocalStorageSettings,
       connect,
+      meta,
+      host,
+      instanceId,
+      protocol,
+      port,
+      currentView,
+      currentlyEditing,
+      ComponentViews,
     };
   },
 });
