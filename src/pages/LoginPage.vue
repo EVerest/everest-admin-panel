@@ -282,7 +282,11 @@ export default defineComponent({
         }
         if ("connectAutomatically" in evbcLocalStorage) {
           connectAutomatically.value = evbcLocalStorage.connectAutomatically;
-          if (connectAutomatically.value && window.localStorage?.getItem("lastConnectedServer") !== null) {
+          if (
+              router.currentRoute.value.query.auto_connect !== 'false' &&
+              connectAutomatically.value &&
+              window.localStorage?.getItem("lastConnectedServer") !== null
+          ) {
             const lastServer = JSON.parse(window.localStorage.getItem("lastConnectedServer")!);
             connect(lastServer);
           }
@@ -300,6 +304,9 @@ export default defineComponent({
             connecting.value = false;
             error.active = true;
             error.status = ev.text;
+          } else if (ev.type === "IDLE") {
+            connecting.value = false;
+            connectionStatus.value = "";
           }
         });
       }

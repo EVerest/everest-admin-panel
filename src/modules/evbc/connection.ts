@@ -26,11 +26,16 @@ type ConnectionErrorStatus = {
   error: string;
 };
 
+type ConnectionDisconnectedStatus = {
+  type: "DISCONNECTED";
+}
+
 export type ConnectionStatus =
   | ConnectionOpenStatus
   | ConnectionOpenedStatus
   | ConnectionClosedStatus
-  | ConnectionErrorStatus;
+    | ConnectionErrorStatus
+    | ConnectionDisconnectedStatus;
 
 export type ConnectionStatusListener = (status: ConnectionStatus) => void;
 
@@ -68,6 +73,13 @@ class EVBackendConnection {
     this._socket.onmessage = this._handle_backend_message.bind(this);
     this._socket.onerror = this._handle_socket_error.bind(this);
     this._socket.onclose = () => this._handle_socket_close();
+  }
+
+  _disconnect() {
+    this._socket.close();
+    this._publish_connection_state({type: "DISCONNECTED"});
+    this._listener = () => {
+    };
   }
 
   _issue_rpc_loopback(method: string /* params: unknown, notification: boolean */) {

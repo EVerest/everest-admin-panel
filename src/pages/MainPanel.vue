@@ -15,12 +15,9 @@
         <v-list-item to="config" append-icon="mdi-cog" link>
           <v-list-item-title>Config</v-list-item-title>
         </v-list-item>
-        <!--<v-list-item to="account" append-icon="mdi-account-multiple" link>
-          <v-list-item-title>Account</v-list-item-title>
-        </v-list-item>-->
-        <!--<v-list-item to="about" append-icon="mdi-ninja" link>
-          <v-list-item-title>Debug</v-list-item-title>
-        </v-list-item>-->
+        <v-list-item @click="changeInstance()" append-icon="mdi-image-filter-hdr" link>
+          <v-list-item-title>Change EVerest instance</v-list-item-title>
+        </v-list-item>
       </v-list>
       <v-list-item class="bottom-list d-flex flex-column">
         <span>Version {{ version }}</span>
@@ -70,9 +67,11 @@ import {defineComponent, inject} from "vue";
 import EVBackendClient from "@/modules/evbc/client";
 
 import {useMainStore} from "@/store/main";
+import {Router, useRouter} from "vue-router";
 
 let evbc: EVBackendClient;
 let mainStore: ReturnType<typeof useMainStore>;
+let router: Router;
 export default defineComponent({
   data: () => ({
     drawer: false,
@@ -92,10 +91,15 @@ export default defineComponent({
     close_snackbar() {
       mainStore.setSnackbarMessage(undefined);
     },
+    changeInstance() {
+      evbc.disconnect();
+      router.push({path: "/login", query: { auto_connect: "false" }});
+    },
   },
   created() {
     mainStore = useMainStore()
     evbc = inject<EVBackendClient>("evbc");
+    router = useRouter();
     evbc.on("connection_state", (ev) => {
       this.evbc_status = ev.text;
       if (ev.type === "RECONNECT") {
