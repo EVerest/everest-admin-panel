@@ -27,6 +27,7 @@
     "just-clone": "^6.2.0",
     "konva": "^8.4.3",
     "markdown-it": "^14.0.0",
+    "notyf": "^3.10.0",
     "pinia": "^2.1.7",
     "vee-validate": "^4.12.6",
     "vue": "^3.4.19",

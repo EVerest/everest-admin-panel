@@ -41,12 +41,6 @@
           <v-card-text>Trying to reconnect ...</v-card-text>
         </v-card>
       </v-overlay>
-      <v-snackbar v-if="show_snackbar" :color="snackbar.color" :timeout="snackbar.timeout" location="bottom">
-        {{ snackbar.text }}
-        <template v-slot:actions>
-          <v-btn theme="dark" variant="text" @click="close_snackbar"> Close</v-btn>
-        </template>
-      </v-snackbar>
     </v-main>
   </v-app>
 </template>
@@ -71,11 +65,9 @@
 import {defineComponent, inject} from "vue";
 import EVBackendClient from "@/modules/evbc/client";
 
-import {useMainStore} from "@/store/main";
 import {Router, useRouter} from "vue-router";
 
 let evbc: EVBackendClient;
-let mainStore: ReturnType<typeof useMainStore>;
 let router: Router;
 export default defineComponent({
   data: () => ({
@@ -85,27 +77,17 @@ export default defineComponent({
     version: VITE_APP_VERSION,
   }),
   computed: {
-    snackbar() {
-      return mainStore.snackbar_message;
-    },
-    show_snackbar() {
-      return mainStore.snackbar_message !== undefined;
-    },
     connectionUrl() {
       return evbc?._cxn?._url ?? "nothing";
     }
   },
   methods: {
-    close_snackbar() {
-      mainStore.setSnackbarMessage(undefined);
-    },
     changeInstance() {
       evbc.disconnect();
       router.push({path: "/login", query: { auto_connect: "false" }});
     },
   },
   created() {
-    mainStore = useMainStore()
     evbc = inject<EVBackendClient>("evbc");
     router = useRouter();
     evbc.on("connection_state", (ev) => {
