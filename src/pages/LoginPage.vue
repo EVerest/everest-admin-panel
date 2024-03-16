@@ -75,10 +75,11 @@
                 </Form>
                 <template v-else>
                   <v-list-subheader lines="two" :disabled="connecting" class="mb-3">
-                    <v-list-item prepend-icon="mdi-server" v-for="(server, index) in servers" :key="server.id" @click="connect(server.addr)">
+                    <v-list-item prepend-icon="mdi-server" v-for="(server, index) in servers" :key="server.id"
+                                 @click="connect(server)">
 
                         <v-list-item-title>{{ server.id }}</v-list-item-title>
-                        <v-list-item-subtitle>{{ server.addr }}</v-list-item-subtitle>
+                      <v-list-item-subtitle>{{ server.host }}</v-list-item-subtitle>
 
                       <template v-slot:append v-if="server.editable">
                         <v-list-item-action>
@@ -106,14 +107,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, reactive, onMounted, inject } from "vue";
-import { useForm, useField } from "vee-validate";
+import {defineComponent, inject, onMounted, reactive, ref} from "vue";
+import {useField, useForm} from "vee-validate";
 import EVBackendClient from "@/modules/evbc/client";
 import {useRouter} from "vue-router";
 
 type ServerItem = {
   id: string;
-  addr: string;
+  host: string;
   editable: boolean;
   protocol: "ws" | "wss";
   port: number;
@@ -131,14 +132,14 @@ export default defineComponent({
     const servers = reactive<ServerItem[]>([
       {
         id: "Loopback",
-        addr: "loopback",
+        host: "loopback",
         editable: false,
         protocol: 'ws',
         port: 8849,
       },
       {
         id: "Ötzi",
-        addr: "oetzi.pionix.net",
+        host: "oetzi.pionix.net",
         editable: true,
         protocol: "wss",
         port: 8849,
@@ -209,23 +210,23 @@ export default defineComponent({
     const openEditServerView = (index: number) => {
       currentlyEditing.value = servers[index];
       protocol.value.value = servers[index].protocol;
-      host.value.value = servers[index].addr;
+      host.value.value = servers[index].host;
       port.value.value = servers[index].port;
       instanceId.value.value = servers[index].id;
       currentView.value = ComponentViews.EDIT;
     };
 
-    const submitEdit = handleSubmit(async (values) => {
+    const submitEdit = handleSubmit(async () => {
       if (currentlyEditing.value !== null) {
         // This works because we are using the objects reference and not a copy
         currentlyEditing.value.id = instanceId.value.value;
-        currentlyEditing.value.addr = host.value.value;
+        currentlyEditing.value.host = host.value.value;
         currentlyEditing.value.protocol = protocol.value.value;
         currentlyEditing.value.port = port.value.value;
       } else {
         servers.push({
           id: instanceId.value.value,
-          addr: host.value.value,
+          host: host.value.value,
           editable: true,
           protocol: protocol.value.value,
           port: port.value.value,
@@ -256,10 +257,10 @@ export default defineComponent({
       );
     };
 
-    const connect = (addr: string) => {
+    const connect = (server: ServerItem) => {
       connecting.value = true;
       if (evbc) {
-        evbc.connect(addr);
+        evbc.connect(server.protocol + "://" + server.host + ":" + server.port);
       }
     };
 
