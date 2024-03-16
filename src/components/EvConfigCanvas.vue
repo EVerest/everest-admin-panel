@@ -17,14 +17,14 @@ import { useEvbcStore } from '@/store/evbc';
 import ConfigStage from "@/modules/evconf_konva/config_stage";
 import EVConfigModel from "@/modules/evbc/config_model";
 import EVBackendClient from "@/modules/evbc/client";
-import {useMainStore} from "@/store/main";
+import { Notyf } from "notyf";
 
 export default defineComponent({
   setup() {
-    const mainStore = useMainStore();
     const evbcStore = useEvbcStore();
     const evbc = inject<EVBackendClient>('evbc');
     const selected_interface: string | null = null;
+    const notyf = inject<Notyf>('notyf');
 
     let stage: ConfigStage;
     onMounted(() => {
@@ -50,18 +50,10 @@ export default defineComponent({
       evbc
           .save_config(current_config.value)
           .then(() => {
-            mainStore.setSnackbarMessage({
-              text: `Successfully saved ${current_config.value._name}`,
-              color: "blue",
-              timeout: 2000,
-            });
+            notyf.success(`Successfully saved ${current_config.value._name}`)
           })
           .catch((error: string) => {
-            mainStore.setSnackbarMessage({
-              text: `Failed to save ${current_config.value._name}\nReason: ${error}`,
-              color: "red",
-              timeout: 0,
-            });
+            notyf.error(`Failed to save ${current_config.value._name}\nReason: ${error}`)
           });
     };
 
