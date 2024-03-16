@@ -9,10 +9,10 @@ import {
   EverestModuleDefinitionList,
 } from ".";
 import EVConfigModel from "./config_model";
-import EVBackendConnection, { ConnectionStatus } from "./connection";
+import EVBackendConnection, {ConnectionStatus} from "./connection";
 
 type ConnectionStateEvent = {
-  type: "INFO" | "INITIALIZED" | "FAILED" | "RECONNECT";
+  type: "INFO" | "INITIALIZED" | "FAILED" | "RECONNECT" | "IDLE";
   text: string;
 };
 
@@ -40,7 +40,16 @@ class EVBackendClient {
   };
 
   connect(url: string) {
+    if (this._cxn) {
+      this._cxn._disconnect();
+    }
     this._cxn = new EVBackendConnection(url, (msg) => this._connection_state_listener(msg));
+  }
+
+  disconnect(): void {
+    this._cxn._disconnect();
+    this.initialized = false;
+    this._cxn = null;
   }
 
   on<K extends keyof ClientEventMap>(event_name: K, handler: EventHandler<ClientEventMap[K]>) {
@@ -100,9 +109,11 @@ class EVBackendClient {
         event = { type: "INITIALIZED", text: "Successfully reconnected" };
       }
     } else if (status.type === "ERROR") {
-      event = { type: "FAILED", text: `Connection failed` };
+      event = {type: "FAILED", text: `Connection failed. Trying to reconnect.`};
     } else if (status.type === "CLOSED") {
       event = { type: "RECONNECT", text: "Trying to reconnect" };
+    } else if (status.type === "DISCONNECTED") {
+      event = {type: "IDLE", text: "Disconnected"};
     }
 
     if (event) {
