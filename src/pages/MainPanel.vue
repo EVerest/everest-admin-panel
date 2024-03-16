@@ -15,9 +15,14 @@
         <v-list-item to="config" append-icon="mdi-cog" link>
           <v-list-item-title>Config</v-list-item-title>
         </v-list-item>
-        <v-list-item @click="changeInstance()" append-icon="mdi-image-filter-hdr" link>
-          <v-list-item-title>Change EVerest instance</v-list-item-title>
-        </v-list-item>
+        <v-tooltip location="end">
+          <template v-slot:activator="{ props }">
+            <v-list-item @click="changeInstance()" append-icon="mdi-image-filter-hdr" link v-bind="props">
+              <v-list-item-title>Change EVerest instance</v-list-item-title>
+            </v-list-item>
+          </template>
+          <span>Connected to {{ connectionUrl }}</span>
+        </v-tooltip>
       </v-list>
       <v-list-item class="bottom-list d-flex flex-column">
         <span>Version {{ version }}</span>
@@ -86,6 +91,9 @@ export default defineComponent({
     show_snackbar() {
       return mainStore.snackbar_message !== undefined;
     },
+    connectionUrl() {
+      return evbc?._cxn?._url ?? "nothing";
+    }
   },
   methods: {
     close_snackbar() {
