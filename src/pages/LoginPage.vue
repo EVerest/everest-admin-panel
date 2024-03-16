@@ -88,6 +88,8 @@
                       </template>
                     </v-list-item>
                   </v-list-subheader>
+                  <v-checkbox v-model="connectAutomatically"
+                              label="Automatically connect to this instance"></v-checkbox>
                   <v-alert v-bind:text="error.status" prominent type="error" icon="mdi-cloud-alert" v-model="error.active" closable>
                   </v-alert>
                   <transition>
@@ -107,7 +109,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, inject, onMounted, reactive, ref} from "vue";
+import {defineComponent, inject, onMounted, reactive, ref, watch} from "vue";
 import {useField, useForm} from "vee-validate";
 import EVBackendClient from "@/modules/evbc/client";
 import {useRouter} from "vue-router";
@@ -147,6 +149,9 @@ export default defineComponent({
     ]);
     const currentView = ref<ComponentViews>(ComponentViews.LIST);
     const connectAutomatically = ref(false);
+    watch<boolean>(connectAutomatically, () => {
+      submitLocalStorageSettings();
+    });
     const currentlyEditing = ref<ServerItem | null>(null);
     const connecting = ref(false);
     const connectionStatus = ref<string | null>(null);
@@ -258,6 +263,7 @@ export default defineComponent({
     };
 
     const connect = (server: ServerItem) => {
+      window.localStorage.setItem("lastConnectedServer", JSON.stringify(server));
       connecting.value = true;
       if (evbc) {
         evbc.connect(server.protocol + "://" + server.host + ":" + server.port);
@@ -276,6 +282,10 @@ export default defineComponent({
         }
         if ("connectAutomatically" in evbcLocalStorage) {
           connectAutomatically.value = evbcLocalStorage.connectAutomatically;
+          if (connectAutomatically.value && window.localStorage?.getItem("lastConnectedServer") !== null) {
+            const lastServer = JSON.parse(window.localStorage.getItem("lastConnectedServer")!);
+            connect(lastServer);
+          }
         }
       }
 
@@ -292,10 +302,6 @@ export default defineComponent({
             error.status = ev.text;
           }
         });
-      }
-
-      if (connectAutomatically.value && evbc) {
-        connect(`${window.location.hostname}:8849`);
       }
     });
 
