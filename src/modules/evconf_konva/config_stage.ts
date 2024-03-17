@@ -173,7 +173,13 @@ export default class ConfigStage {
     this._model = model;
 
     Object.keys(model._instances).forEach((id) => this._add_module_instance_to_stage(Number(id)));
-    Object.keys(model._connections).forEach((id) => this._add_connection_to_stage(Number(id)));
+    Object.keys(model._connections).forEach((id) => {
+      try {
+        this._add_connection_to_stage(Number(id))
+      } catch (e) {
+        console.warn(e);
+      }
+    });
 
     model.add_observer((ev) => this._handle_config_event(ev));
 
@@ -245,7 +251,7 @@ export default class ConfigStage {
       "provide"
     );
     if (providing_terminal_lookup_id === -1) {
-      throw Error(`Assertion failed`);
+      throw Error(`Couldn't add connection to stage, terminal ${cxn.providing_impl_name} not found on ${providing_view_model.type}.`);
     }
 
     const requiring_terminal_lookup_id = requiring_view_model.get_terminal_lookup_id(
@@ -253,7 +259,7 @@ export default class ConfigStage {
       "requirement"
     );
     if (requiring_terminal_lookup_id === -1) {
-      throw Error(`Assertion failed`);
+      throw Error(`Couldn't add connection to stage, terminal ${cxn.requirement_name} not found on ${requiring_view_model.type}.`);
     }
 
     this._conn_man.add_connection(
