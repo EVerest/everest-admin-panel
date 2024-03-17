@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 
+import {currentTheme} from "@/plugins/vuetify";
+
 export const COLOR = {
-  TERMINAL_REQUIREMENT: "#ffd04e",
-  TERMINAL_REQUIREMENT_LIGHT: "#FFE8A7",
-  TERMINAL_PROVIDE: "#679cff",
-  TERMINAL_PROVIDE_LIGHT: "#B3CEFF",
-  CONNECTION: "#CCC",
+  TERMINAL_REQUIREMENT: currentTheme.colors.secondary,
+  TERMINAL_REQUIREMENT_DISABLED: "#d5d4cc",
+  TERMINAL_PROVIDE: currentTheme.colors.warning,
+  TERMINAL_PROVIDE_DISABLED: "#d5d4cc",
+  CONNECTION: currentTheme.colors.secondary,
 };
 
 export const ICON_DATA = {
@@ -27,9 +29,13 @@ export const SIZE = {
   CONNECTION_CTRL: 100,
 };
 
-export const TEXT = {
+export const NORMAL_TEXT = {
   fontFamily: "Roboto, sans-serif",
 };
+
+export const MONO_TEXT = {
+  fontFamily: "Roboto Mono, monospace",
+}
 
 export const TOOLTIP = {
   position: {

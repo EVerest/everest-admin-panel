@@ -2,7 +2,7 @@
 <!-- Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-sheet id="konva-stage-container" width="100%" height="800" elevation="4">
+  <v-sheet id="konva-stage-container" width="100%" height="100vh" elevation="4">
     <div id="konva-stage" />
     <!-- <v-sheet id="config-stage-info" class="pa-2" height="100" width="200" elevation="2" v-if="selected_interface">
       {{ selected_interface }} <v-btn color="primary" x-small @click="discard_selected_terminal">Discard</v-btn>
@@ -12,12 +12,12 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, computed, watch, ComputedRef, inject} from 'vue';
-import { useEvbcStore } from '@/store/evbc';
+import {computed, ComputedRef, defineComponent, inject, onMounted, watch} from 'vue';
+import {useEvbcStore} from '@/store/evbc';
 import ConfigStage from "@/modules/evconf_konva/config_stage";
 import EVConfigModel from "@/modules/evbc/config_model";
 import EVBackendClient from "@/modules/evbc/client";
-import { Notyf } from "notyf";
+import {Notyf} from "notyf";
 
 export default defineComponent({
   setup() {

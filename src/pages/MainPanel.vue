@@ -3,11 +3,11 @@
 
 <template>
   <v-app>
-    <v-app-bar color="primary" theme="dark">
+    <v-app-bar color="primary">
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-spacer/>
-      <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo.svg"/>
-      <v-toolbar-title>EVerest admin panel</v-toolbar-title>
+      <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo_white.svg"/>
+      <v-toolbar-title class="app-bar-title">EVerest Admin Panel</v-toolbar-title>
       <v-spacer/>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" position="fixed" temporary>
@@ -58,6 +58,11 @@
   position: absolute;
   bottom: 0;
   width: 100%;
+}
+
+.app-bar-title {
+  font-family: "Open Sans Condensed", sans-serif;
+  font-weight: 700;
 }
 </style>
 

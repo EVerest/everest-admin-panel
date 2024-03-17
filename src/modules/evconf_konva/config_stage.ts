@@ -2,17 +2,18 @@
 // Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
-import { StageConfig } from "konva/lib/Stage";
-import { ConnectionID, ModuleInstanceID } from "@/modules/evbc";
-import EVConfigModel, { ConfigModelEvent } from "@/modules/evbc/config_model";
+import {StageConfig} from "konva/lib/Stage";
+import {ConnectionID, ModuleInstanceID} from "@/modules/evbc";
+import EVConfigModel, {ConfigModelEvent} from "@/modules/evbc/config_model";
 import ModuleView from "./views/module";
 import ModuleViewModel from "./view_models/module";
-import ConfigStageContext, { ConfigStageContextEvent } from "./stage_context";
+import ConfigStageContext, {ConfigStageContextEvent} from "./stage_context";
 import ConnectionManager from "./connection_manager";
+import {NORMAL_TEXT, TOOLTIP} from "./views/constants";
+import {KonvaEventObject} from "konva/lib/Node";
+import {Vector2d} from "konva/lib/types";
+import {currentTheme} from "@/plugins/vuetify";
 import Stage = Konva.Stage;
-import { TEXT, TOOLTIP } from "./views/constants";
-import { KonvaEventObject } from "konva/lib/Node";
-import { Vector2d } from "konva/lib/types";
 
 export default class ConfigStage {
   // view part
@@ -47,7 +48,7 @@ export default class ConfigStage {
 
     const tooltip = new Konva.Text({
       text: '',
-      fontFamily: TEXT.fontFamily,
+      fontFamily: NORMAL_TEXT.fontFamily,
       fontSize: 16,
       padding: 5,
       fill: 'white',
@@ -68,7 +69,7 @@ export default class ConfigStage {
         context.lineTo(0, borderRadius);
         context.arcTo(0, 0, borderRadius, 0, borderRadius);
         context.closePath();
-        context.fillStyle = 'rgb(33, 150, 243)';
+        context.fillStyle = currentTheme.colors.secondary;
         context.fill();
 
         (shape as Konva.Text)._sceneFunc(context);
