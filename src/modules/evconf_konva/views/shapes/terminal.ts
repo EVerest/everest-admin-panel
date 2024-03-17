@@ -2,9 +2,9 @@
 // Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
-import { PathConfig } from "konva/lib/shapes/Path";
-import { TerminalAlignment, TerminalType } from "@/modules/evbc";
-import { COLOR, ICON_DATA, SIZE } from "../constants";
+import {PathConfig} from "konva/lib/shapes/Path";
+import {TerminalAlignment, TerminalType} from "@/modules/evbc";
+import {COLOR, ICON_DATA, SIZE} from "../constants";
 
 export interface TerminalConfig extends PathConfig {
   terminal_type: TerminalType;
@@ -85,10 +85,10 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
     }
     if (look === "DISABLED") {
       this.data(ICON_DATA.DISABLED);
-      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_LIGHT : COLOR.TERMINAL_PROVIDE_LIGHT);
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED);
       this.listening(false);
     } else if (look === "PLACEHOLDER") {
-      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_LIGHT : COLOR.TERMINAL_PROVIDE_LIGHT);
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED);
       this.listening(false);
     } else if (look === "NORMAL") {
       this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);

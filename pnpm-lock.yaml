@@ -5,6 +5,9 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
+  '@fontsource/open-sans-condensed':
+    specifier: ^4.5.5
+    version: 4.5.5
   '@fontsource/roboto':
     specifier: 5.0.12
     version: 5.0.12
@@ -1575,6 +1578,10 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@fontsource/open-sans-condensed@4.5.5:
+    resolution: { integrity: sha512-ah6DBSWgjWEG20tVJnvcUQ/8XTfnGpuOGK4HLTF91vtrGg7PyrdEMlao/O1+S4i+SzeuJCmf5Qbc3eWponBL3Q== }
+    dev: false
 
   /@fontsource/roboto@5.0.12:
     resolution: {integrity: sha512-x0o17jvgoSSbS9OZnUX2+xJmVRvVCfeaYJjkS7w62iN7CuJWtMf5vJj8LqgC7ibqIkitOHVW+XssRjgrcHn62g==}

@@ -2,12 +2,13 @@
 // Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
-import { TerminalAlignment } from "@/modules/evbc";
-import { SIZE, TEXT } from "./constants";
-import { TerminalConfig, TerminalShape } from "./shapes/terminal";
-import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
-import { TerminalPlacement } from "./shapes/connection";
-import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
+import {TerminalAlignment} from "@/modules/evbc";
+import {MONO_TEXT, NORMAL_TEXT, SIZE} from "./constants";
+import {TerminalConfig, TerminalShape} from "./shapes/terminal";
+import ModuleViewModel, {ViewModelChangeEvent} from "../view_models/module";
+import {TerminalPlacement} from "./shapes/connection";
+import {HideTooltipEvent, ShowTooltipEvent} from "../stage_context";
+import {currentTheme} from "@/plugins/vuetify";
 
 // FIXME (aw): the TerminalPlacement type belongs to a shared place!
 type TerminalPlacementWithID = TerminalPlacement & { id: number };
@@ -119,14 +120,11 @@ export default class ModuleView {
       x: view_model.grid_position.x * SIZE.GRID,
       y: view_model.grid_position.y * SIZE.GRID,
     });
-
     const frame = new Konva.Rect({
-      cornerRadius: 16,
+      cornerRadius: 4,
       width: SIZE.FRAME_WIDTH,
       height: SIZE.FRAME_HEIGHT,
-      fill: "white",
-      stroke: "gray",
-      strokeWidth: 2,
+      fill: currentTheme.colors.primary,
       shadowBlur: 4,
       shadowOpacity: 0.4,
       shadowOffset: {
@@ -137,19 +135,49 @@ export default class ModuleView {
       listening: true,
     });
 
+    const strokeWidth = 8;
+    const topStroke = new Konva.Line({
+      cornerRadius: 4,
+      points: [
+        0, strokeWidth / 2, // Start at the top-left corner of where the rectangle is positioned
+        SIZE.FRAME_WIDTH, strokeWidth / 2 // End at the top-right corner of where the rectangle is positioned
+      ],
+      stroke: currentTheme.colors.secondary,
+      strokeWidth,
+      x: frame.x(),
+      y: frame.y(),
+      listening: true
+    });
+
     const title = new Konva.Text({
       wrap: "none",
       text: view_model.id,
-      fontFamily: TEXT.fontFamily,
+      fontFamily: NORMAL_TEXT.fontFamily,
       ellipsis: true,
-      fill: "black",
+      fill: "white",
       fontSize: 16 * 2,
-      padding: 12,
+      padding: 16,
+      y: strokeWidth,
       width: SIZE.FRAME_WIDTH,
       listening: true,
     });
 
-    [frame, title].forEach(e => {
+    const typeInfo = new Konva.Text({
+      wrap: "none",
+      text: `${view_model.type}`,
+      fontFamily: MONO_TEXT.fontFamily,
+      ellipsis: true,
+      fill: "white",
+      opacity: 0.5,
+      fontSize: 16,
+      padding: 8,
+      width: SIZE.FRAME_WIDTH,
+      y: frame.height() - 16 * 2,
+      align: "right",
+      listening: true,
+    });
+
+    [frame, title, topStroke, typeInfo].forEach(e => {
       e.on("mouseenter", () => {
         this._vm.set_cursor("pointer");
       });
@@ -164,20 +192,7 @@ export default class ModuleView {
 
     this._title = title;
 
-    const type_info = new Konva.Text({
-      wrap: "none",
-      text: `Type: ${view_model.type}`,
-      fontFamily: TEXT.fontFamily,
-      ellipsis: true,
-      fill: "black",
-      fontSize: 16,
-      padding: 12,
-      width: SIZE.FRAME_WIDTH,
-      y: 16 * 3,
-      listening: false,
-    });
-
-    this.group.add(frame, type_info, title, ...this._terminal_views);
+    this.group.add(frame, topStroke, typeInfo, title, ...this._terminal_views);
     this.group.cache();
   }
 

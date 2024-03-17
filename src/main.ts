@@ -3,12 +3,14 @@
 
 import "@mdi/font/css/materialdesignicons.css";
 import "@fontsource/roboto/index.css";
-import { Notyf } from "notyf";
+import "@fontsource/open-sans-condensed/latin-700.css";
+import "@/main.scss";
+import {Notyf} from "notyf";
 import 'notyf/notyf.min.css';
-import Vue from "vue";
-import {createApp} from "vue";
+import Vue, {createApp} from "vue";
 import App from "@/App.vue";
 import {registerPlugins} from "@/plugins";
+import {currentTheme} from "@/plugins/vuetify";
 
 const app: Vue.App<Element> = createApp(App);
 registerPlugins(app);
@@ -20,6 +22,24 @@ app.provide('notyf', new Notyf({
         x: 'right',
         y: 'top',
     },
+    types: [
+        {
+            type: 'info',
+            background: currentTheme.colors.info,
+        },
+        {
+            type: 'success',
+            background: currentTheme.colors.success,
+        },
+        {
+            type: 'warning',
+            background: currentTheme.colors.warning,
+        },
+        {
+            type: 'error',
+            background: currentTheme.colors.error,
+        },
+    ]
 }));
 
 app.mount('#app');
