@@ -7,6 +7,7 @@
       <v-expansion-panel-title> Available modules</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-text-field v-model="search"
+                      v-if="show_search"
                       hide-details
                       label="Search"
                       density="compact"
@@ -108,17 +109,36 @@ export default defineComponent({
     current_config(): EVConfigModel | null {
       return evbcStore.get_current_config();
     },
+    show_search(): boolean {
+      return !evbcStore.get_selected_terminal();
+    },
     filtered_module_list(): Array<{ type: string; description: string }> {
-      return Object.entries(evbc.everest_definitions.modules)
-          .filter(([key, value]) => {
-            return !this.search || this.search.trim() === "" ||
-                key.toLowerCase().includes(this.search.toLowerCase()) ||
-                value.description.toLowerCase().includes(this.search.toLowerCase());
-          })
-          .map(([key, value]) => ({
-            type: key,
-            description: value.description,
-          }));
+      const selectedTerminal = evbcStore.get_selected_terminal();
+      if (selectedTerminal) {
+        return Object.entries(evbc.everest_definitions.modules)
+            .filter(([, value]) => {
+              if (selectedTerminal.type === "requirement") {
+                return value.provides && Object.values(value.provides).some((e) => e.interface === selectedTerminal.interface);
+              } else {
+                return value.requires && Object.values(value.requires).some((e) => e.interface === selectedTerminal.interface);
+              }
+            })
+            .map(([key, value]) => ({
+              type: key,
+              description: value.description,
+            }));
+      } else {
+        return Object.entries(evbc.everest_definitions.modules)
+            .filter(([key, value]) => {
+              return !this.search || this.search.trim() === "" ||
+                  key.toLowerCase().includes(this.search.toLowerCase()) ||
+                  value.description.toLowerCase().includes(this.search.toLowerCase());
+            })
+            .map(([key, value]) => ({
+              type: key,
+              description: value.description,
+            }));
+      }
     },
     config_list(): Array<string> {
       const configs: Record<string, unknown> = evbc._configs;
