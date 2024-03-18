@@ -56,7 +56,7 @@
       <v-expansion-panel-title> Issue commands</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-list>
-          <v-list-item @click="execute('restart_modules')" :title="'Restart modules'">
+          <v-list-item @click="restart_modules()" :title="'Restart modules'">
             <template v-slot:append>
               <v-icon>mdi-run</v-icon>
             </template>
@@ -132,8 +132,8 @@ export default defineComponent({
       const new_config = evbc.load_config(name);
       evbcStore.setOpenedConfig(new_config)
     },
-    execute(command: string) {
-      evbc.execute_remote_command(command);
+    restart_modules() {
+      evbc._cxn.rpc_issuer.restart_modules();
     },
     close_dialog() {
       this.show_dialog = false;
