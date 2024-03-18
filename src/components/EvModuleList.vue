@@ -147,13 +147,25 @@ export default defineComponent({
   },
   methods: {
     add_module_to_config(type: string) {
-      // FIXME (aw): does this logic belongs to here?
+      let added_module_id: number;
       if (evbcStore.get_current_config()) {
-        evbcStore.get_current_config()!.add_new_module_instance(type);
+        added_module_id = evbcStore.get_current_config()!.add_new_module_instance(type);
       } else {
         const new_config = evbc.create_empty_config("test_config");
-        new_config.add_new_module_instance(type);
+        added_module_id = new_config.add_new_module_instance(type);
         evbcStore.setOpenedConfig(new_config);
+      }
+      if (evbcStore.get_selected_terminal()) {
+        const selectedTerminal = evbcStore.get_selected_terminal();
+        const addedModuleInstance = evbcStore.get_current_config().get_module_instance(added_module_id);
+        const terminals = Object.values(addedModuleInstance.view_config.terminals).flat();
+        let terminalToClick;
+        if (selectedTerminal.type === "requirement") {
+          terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "provide");
+        } else {
+          terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
+        }
+        evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
       }
     },
     load_config_if_empty(name: string) {

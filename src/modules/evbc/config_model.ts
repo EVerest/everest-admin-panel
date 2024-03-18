@@ -18,7 +18,7 @@ import {
   TerminalAlignment,
   TerminalArrangement,
 } from ".";
-import { default_terminals, generate_interface_parents_map, InterfaceParentMap } from "./utils";
+import {default_terminals, generate_interface_parents_map, InterfaceParentMap} from "./utils";
 
 import clone from "just-clone";
 
@@ -318,7 +318,7 @@ class EVConfigModel {
     });
   }
 
-  _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig) {
+  _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig): number {
     if (!(type in this._module_definitions)) {
       throw Error(`Invalid module type: ${type}`);
     }
