@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-pJ1XnDhS.js"(exports, module) {
+  "assets/index-Jzc_wWlw.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -81321,11 +81321,9 @@ Reason: ${error2}`);
             reject(`RPC communication timeout to everest controller process after '${this._rpc_timeout_ms}'ms`);
           }, this._rpc_timeout_ms);
           this._pending_commands.set(id2, { resolve: resolve2, reject, timeout_id });
-          console.log(JSON.stringify(this._pending_commands.size));
         });
       }
       handle_backend_message(ev) {
-        console.log("second", this._pending_commands.size);
         const payload = JSON.parse(ev.data);
         if (payload.id !== void 0) {
           const id2 = payload.id;
