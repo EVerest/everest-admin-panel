@@ -2,18 +2,18 @@
 <!-- Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-container fluid class="fill-height">
-    <v-row class="fill-height">
-      <v-col cols="2" class="overflow-y-auto pa-0" style="max-height: calc(100vh - 96px)">
-        <ev-module-list />
-      </v-col>
-      <v-col class="pt-0" cols="7">
-        <ev-config-canvas />
-      </v-col>
-      <v-col cols="3" class="overflow-y-auto pa-0 pr-2" style="max-height: calc(100vh - 96px)">
-        <ev-module-info />
-      </v-col>
-    </v-row>
+  <v-container fluid class="fill-height px-0 py-0">
+    <splitpanes class="default-theme" style="height: calc(100vh - 64px)" @resize="on_splitpanes_resize">
+      <pane size="15">
+        <ev-module-list/>
+      </pane>
+      <pane size="70">
+        <ev-config-canvas/>
+      </pane>
+      <pane size="15">
+        <ev-module-info/>
+      </pane>
+    </splitpanes>
   </v-container>
 </template>
 
@@ -23,12 +23,21 @@ import {defineComponent} from "vue";
 import EvConfigCanvas from "../components/EvConfigCanvas.vue";
 import EvModuleList from "../components/EvModuleList.vue";
 import EvModuleInfo from "../components/EvModuleInfo.vue";
+import {Pane, Splitpanes} from "splitpanes";
+import 'splitpanes/dist/splitpanes.css'
 
 export default defineComponent({
   components: {
     EvConfigCanvas,
     EvModuleList,
     EvModuleInfo,
+    Splitpanes,
+    Pane,
+  },
+  methods: {
+    on_splitpanes_resize() {
+      window.dispatchEvent(new Event('resize'));
+    },
   },
 });
 </script>

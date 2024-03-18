@@ -2,7 +2,7 @@
 <!-- Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-sheet id="konva-stage-container" width="100%" height="100vh" elevation="4">
+  <v-sheet id="konva-stage-container" width="100%" height="100vh" elevation="0">
     <div id="konva-stage" />
     <!-- <v-sheet id="config-stage-info" class="pa-2" height="100" width="200" elevation="2" v-if="selected_interface">
       {{ selected_interface }} <v-btn color="primary" x-small @click="discard_selected_terminal">Discard</v-btn>
@@ -97,7 +97,7 @@ export default defineComponent({
 <style lang="scss">
 #konva-stage-container {
   position: relative;
-  max-height: calc(100vh - 96px);
+  max-height: calc(100vh - 64px);
 }
 #konva-stage {
   height: 100%;
