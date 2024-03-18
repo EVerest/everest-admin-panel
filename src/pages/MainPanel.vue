@@ -71,9 +71,11 @@ import {defineComponent, inject} from "vue";
 import EVBackendClient from "@/modules/evbc/client";
 
 import {Router, useRouter} from "vue-router";
+import {Notyf} from "notyf";
 
 let evbc: EVBackendClient;
 let router: Router;
+let notyf: Notyf;
 export default defineComponent({
   data: () => ({
     drawer: false,
@@ -87,17 +89,27 @@ export default defineComponent({
     }
   },
   methods: {
-    changeInstance() {
-      evbc.disconnect();
-      router.push({path: "/login", query: { auto_connect: "false" }});
+    async changeInstance() {
+      let notification;
+      // show notification if disconnect takes longer than 250ms
+      const timeout = setTimeout(() => {
+        notification = notyf.open({type: "warning", message: "Disconnecting from EVerest backend ...", ripple: false});
+      }, 250)
+      await evbc.disconnect();
+      clearTimeout(timeout);
+      if (notification) {
+        notyf.dismiss(notification);
+      }
+      await router.push({path: "/login", query: {auto_connect: "false"}});
     },
   },
   created() {
     evbc = inject<EVBackendClient>("evbc");
     router = useRouter();
+    notyf = inject<Notyf>("notyf");
     evbc.on("connection_state", (ev) => {
       this.evbc_status = ev.text;
-      if (ev.type === "RECONNECT") {
+      if (ev.type === "RECONNECT" || ev.type === "IDLE") {
         this.evbc_disconnected = true;
       } else if (ev.type === "INITIALIZED") {
         this.evbc_disconnected = false;

@@ -39,16 +39,16 @@ class EVBackendClient {
     interfaces: null,
   };
 
-  connect(url: string) {
+  async connect(url: string): Promise<void> {
     if (this._cxn) {
-      this._cxn._disconnect();
+      await this._cxn._disconnect();
     }
     this._cxn = new EVBackendConnection(url, (msg) => this._connection_state_listener(msg));
   }
 
-  disconnect(): void {
-    this._cxn._disconnect();
+  async disconnect(): Promise<void> {
     this.initialized = false;
+    await this._cxn._disconnect();
     this._cxn = null;
   }
 
@@ -81,19 +81,12 @@ class EVBackendClient {
     return new EVConfigModel(this.everest_definitions, name);
   }
 
-  save_config(config: EVConfigModel) {
-    return this._cxn.issue_rpc(
-      "save_config",
-      {
-        name: `${config._name}`,
-        config: config.serialize(),
-      },
-      false
-    );
-  }
-
-  execute_remote_command(command: string) {
-    this._cxn.issue_rpc(command, null, true);
+  async save_config(config: EVConfigModel) {
+    await this._cxn.rpc_issuer.save_config({
+      name: `${config._name}`,
+      config: config.serialize(),
+    }, false);
+    await this._reload_configs();
   }
 
   _connection_state_listener(status: ConnectionStatus) {
@@ -122,35 +115,32 @@ class EVBackendClient {
   }
 
   _on_connected() {
-    // fetch rpc timeout value
-    const wait_for_rpc_timeout_value = this._cxn.issue_rpc("get_rpc_timeout", null, false).then((result) => {
-      this._cxn._rpc_timeout_ms = result as number;
-    });
-
-    // fetch all needed definitions
-    // FIXME (aw): how to deal with errors, what about the 'as' type casting ?
-    const wait_for_modules = this._cxn.issue_rpc("get_modules", null, false).then((result) => {
-      this.everest_definitions.modules = result as EverestModuleDefinitionList;
-      this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(result).length} module files` });
-    });
-
-    const wait_for_interfaces = this._cxn.issue_rpc("get_interfaces", null, false).then((result) => {
-      this.everest_definitions.interfaces = result as EverestInterfaceDefinitionList;
-      this._publish("connection_state", {
-        type: "INFO",
-        text: `Received ${Object.keys(result).length} interfaces definitions`,
-      });
-    });
-
-    const wait_for_configs = this._cxn.issue_rpc("get_configs", null, false).then((result) => {
-      this._configs = result as EverestConfigList;
-      this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(result).length} config files` });
-    });
-
-    Promise.all([wait_for_rpc_timeout_value, wait_for_modules, wait_for_interfaces, wait_for_configs]).then(() => {
+    this._reload_instance_data().then(() => {
       this.initialized = true;
       this._publish("connection_state", { type: "INITIALIZED", text: "Done initializing" });
     });
+  }
+
+  async _reload_modules(): Promise<void> {
+    this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
+    this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(this.everest_definitions.modules).length} module files` });
+  }
+
+  async _reload_interfaces(): Promise<void> {
+    this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
+    this._publish("connection_state", {
+      type: "INFO",
+      text: `Received ${Object.keys(this.everest_definitions.interfaces).length} interfaces definitions`,
+    });
+  }
+
+  async _reload_configs(): Promise<void> {
+    this._configs = await this._cxn.rpc_issuer.get_configs();
+    this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(this._configs).length} config files` });
+  }
+
+  _reload_instance_data(): Promise<void[]> {
+    return Promise.all([this._reload_interfaces(), this._reload_configs(), this._reload_modules()]);
   }
 
   _publish<K extends keyof ClientEventMap>(event_name: K, message: ClientEventMap[K]) {

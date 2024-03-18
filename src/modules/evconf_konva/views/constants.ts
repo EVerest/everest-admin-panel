@@ -43,3 +43,5 @@ export const TOOLTIP = {
     y: 10,
   },
 };
+
+export const INITIAL_RPC_TIMEOUT_VALUE = 10000;

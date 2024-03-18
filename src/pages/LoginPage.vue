@@ -254,7 +254,7 @@ export default defineComponent({
 
     const submitLocalStorageSettings = () => {
       window.localStorage.setItem(
-          "evbc-settings",
+          "evbcSettings",
           JSON.stringify({
             servers: servers,
             connectAutomatically: connectAutomatically.value,
@@ -273,7 +273,7 @@ export default defineComponent({
     onMounted(() => {
       const router = useRouter();
       const storage = window.localStorage;
-      const evbcLsString = storage.getItem("evbc-settings");
+      const evbcLsString = storage.getItem("evbcSettings");
       if (evbcLsString) {
         const evbcLocalStorage = JSON.parse(evbcLsString);
         if ("servers" in evbcLocalStorage) {
