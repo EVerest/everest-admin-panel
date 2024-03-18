@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-G6iVlzWp.js"(exports, module) {
+  "assets/index-dKd7EI3T.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -9267,7 +9267,7 @@ var require_index_001 = __commonJS({
         });
       }
     });
-    const _imports_0 = "/everest-admin-panel/main/img/icons/everest_lf_logo.svg";
+    const _imports_0 = "/everest-admin-panel/main/img/icons/everest_lf_logo_white.svg";
     function propsFactory(props, source) {
       return (defaults2) => {
         return Object.keys(props).reduce((obj, prop2) => {
@@ -19351,10 +19351,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const _component_router_view = resolveComponent("router-view");
       return openBlock(), createBlock(VApp, null, {
         default: withCtx(() => [
-          createVNode(VAppBar, {
-            color: "primary",
-            theme: "dark"
-          }, {
+          createVNode(VAppBar, { color: "primary" }, {
             default: withCtx(() => [
               createVNode(VAppBarNavIcon, {
                 onClick: _cache[0] || (_cache[0] = ($event) => _ctx.drawer = !_ctx.drawer)
@@ -19366,9 +19363,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 "max-width": "40",
                 src: _imports_0
               }),
-              createVNode(VToolbarTitle, null, {
+              createVNode(VToolbarTitle, { class: "app-bar-title" }, {
                 default: withCtx(() => [
-                  createTextVNode("EVerest admin panel")
+                  createTextVNode("EVerest Admin Panel")
                 ]),
                 _: 1
               }),
@@ -19483,7 +19480,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$6], ["__scopeId", "data-v-2855fae7"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$6], ["__scopeId", "data-v-10d5f691"]]);
     /**
       * vee-validate v4.12.6
       * (c) 2024 Abdelrahman Awad
@@ -32777,7 +32774,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function stringToArray(string) {
       return Array.from(string);
     }
-    var AUTO = "auto", CENTER = "center", JUSTIFY = "justify", CHANGE_KONVA = "Change.konva", CONTEXT_2D = "2d", DASH = "-", LEFT = "left", TEXT$1 = "text", TEXT_UPPER = "Text", TOP = "top", BOTTOM = "bottom", MIDDLE = "middle", NORMAL$1 = "normal", PX_SPACE = "px ", SPACE = " ", RIGHT = "right", WORD = "word", CHAR = "char", NONE = "none", ELLIPSIS = "…", ATTR_CHANGE_LIST$1 = [
+    var AUTO = "auto", CENTER = "center", JUSTIFY = "justify", CHANGE_KONVA = "Change.konva", CONTEXT_2D = "2d", DASH = "-", LEFT = "left", TEXT = "text", TEXT_UPPER = "Text", TOP = "top", BOTTOM = "bottom", MIDDLE = "middle", NORMAL$1 = "normal", PX_SPACE = "px ", SPACE = " ", RIGHT = "right", WORD = "word", CHAR = "char", NONE = "none", ELLIPSIS = "…", ATTR_CHANGE_LIST$1 = [
       "fontFamily",
       "fontSize",
       "fontStyle",
@@ -32927,7 +32924,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       setText(text2) {
         var str = Util._isString(text2) ? text2 : text2 === null || text2 === void 0 ? "" : text2 + "";
-        this._setAttr(TEXT$1, str);
+        this._setAttr(TEXT, str);
         return this;
       }
       getWidth() {
@@ -35808,12 +35805,221 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         Threshold
       }
     });
+    const md3 = {
+      defaults: {
+        VAppBar: {
+          flat: true
+        },
+        VAutocomplete: {
+          variant: "filled"
+        },
+        VBanner: {
+          color: "primary"
+        },
+        VBottomSheet: {
+          contentClass: "rounded-t-xl overflow-hidden"
+        },
+        VBtn: {
+          color: "primary",
+          rounded: "xl"
+        },
+        VBtnGroup: {
+          rounded: "xl",
+          VBtn: {
+            rounded: null
+          }
+        },
+        VCard: {
+          rounded: "lg"
+        },
+        VCheckbox: {
+          color: "secondary",
+          inset: true
+        },
+        VChip: {
+          rounded: "sm"
+        },
+        VCombobox: {
+          variant: "filled"
+        },
+        VNavigationDrawer: {
+          // VList: {
+          //   nav: true,
+          //   VListItem: {
+          //     rounded: 'xl',
+          //   },
+          // },
+        },
+        VSelect: {
+          variant: "filled"
+        },
+        VSlider: {
+          color: "primary"
+        },
+        VTabs: {
+          color: "primary"
+        },
+        VTextarea: {
+          variant: "filled"
+        },
+        VTextField: {
+          variant: "filled"
+        },
+        VToolbar: {
+          VBtn: {
+            color: null
+          }
+        }
+      },
+      icons: {
+        defaultSet: "mdi",
+        sets: {
+          mdi
+        }
+      },
+      theme: {
+        themes: {
+          light: {
+            colors: {
+              primary: "#6750a4",
+              secondary: "#b4b0bb",
+              tertiary: "#7d5260",
+              error: "#b3261e",
+              surface: "#fffbfe"
+            }
+          }
+        }
+      }
+    };
+    function createVuetify() {
+      let vuetify2 = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+      const {
+        blueprint,
+        ...rest
+      } = vuetify2;
+      const options = mergeDeep(blueprint, rest);
+      const {
+        aliases: aliases2 = {},
+        components = {},
+        directives = {}
+      } = options;
+      const defaults2 = createDefaults(options.defaults);
+      const display = createDisplay(options.display, options.ssr);
+      const theme = createTheme(options.theme);
+      const icons = createIcons(options.icons);
+      const locale = createLocale(options.locale);
+      const date2 = createDate(options.date, locale);
+      const goTo = createGoTo(options.goTo, locale);
+      const install = (app2) => {
+        for (const key in directives) {
+          app2.directive(key, directives[key]);
+        }
+        for (const key in components) {
+          app2.component(key, components[key]);
+        }
+        for (const key in aliases2) {
+          app2.component(key, defineComponent({
+            ...aliases2[key],
+            name: key,
+            aliasName: aliases2[key].name
+          }));
+        }
+        theme.install(app2);
+        app2.provide(DefaultsSymbol, defaults2);
+        app2.provide(DisplaySymbol, display);
+        app2.provide(ThemeSymbol, theme);
+        app2.provide(IconSymbol, icons);
+        app2.provide(LocaleSymbol, locale);
+        app2.provide(DateOptionsSymbol, date2.options);
+        app2.provide(DateAdapterSymbol, date2.instance);
+        app2.provide(GoToSymbol, goTo);
+        if (IN_BROWSER && options.ssr) {
+          if (app2.$nuxt) {
+            app2.$nuxt.hook("app:suspense:resolve", () => {
+              display.update();
+            });
+          } else {
+            const {
+              mount
+            } = app2;
+            app2.mount = function() {
+              const vm = mount(...arguments);
+              nextTick(() => display.update());
+              app2.mount = mount;
+              return vm;
+            };
+          }
+        }
+        getUid.reset();
+        {
+          app2.mixin({
+            computed: {
+              $vuetify() {
+                return reactive({
+                  defaults: inject.call(this, DefaultsSymbol),
+                  display: inject.call(this, DisplaySymbol),
+                  theme: inject.call(this, ThemeSymbol),
+                  icons: inject.call(this, IconSymbol),
+                  locale: inject.call(this, LocaleSymbol),
+                  date: inject.call(this, DateAdapterSymbol)
+                });
+              }
+            }
+          });
+        }
+      };
+      return {
+        install,
+        defaults: defaults2,
+        display,
+        theme,
+        icons,
+        locale,
+        date: date2,
+        goTo
+      };
+    }
+    const version = "3.5.5";
+    createVuetify.version = version;
+    function inject(key) {
+      var _a2, _b;
+      const vm = this.$;
+      const provides = ((_a2 = vm.parent) == null ? void 0 : _a2.provides) ?? ((_b = vm.vnode.appContext) == null ? void 0 : _b.provides);
+      if (provides && key in provides) {
+        return provides[key];
+      }
+    }
+    const everestTheme = {
+      dark: false,
+      colors: {
+        background: "#EFEDE8",
+        surface: "#EFEDE8",
+        primary: "#254C84",
+        secondary: "#35CE7C",
+        error: "#b9352b",
+        info: "#254C84",
+        success: "#35CE7C",
+        warning: "#c09112",
+        "on-background": "#212121",
+        "on-surface": "#212121"
+      }
+    };
+    const currentTheme = everestTheme;
+    const vuetify = createVuetify({
+      blueprint: md3,
+      theme: {
+        defaultTheme: "everestTheme",
+        themes: {
+          everestTheme
+        }
+      }
+    });
     const COLOR = {
-      TERMINAL_REQUIREMENT: "#ffd04e",
-      TERMINAL_REQUIREMENT_LIGHT: "#FFE8A7",
-      TERMINAL_PROVIDE: "#679cff",
-      TERMINAL_PROVIDE_LIGHT: "#B3CEFF",
-      CONNECTION: "#CCC"
+      TERMINAL_REQUIREMENT: currentTheme.colors.secondary,
+      TERMINAL_REQUIREMENT_DISABLED: "#d5d4cc",
+      TERMINAL_PROVIDE: currentTheme.colors.warning,
+      TERMINAL_PROVIDE_DISABLED: "#d5d4cc",
+      CONNECTION: currentTheme.colors.secondary
     };
     const ICON_DATA = {
       EDIT: "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z",
@@ -35829,8 +36035,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       CONNECTION_WIDTH: 4,
       CONNECTION_CTRL: 100
     };
-    const TEXT = {
+    const NORMAL_TEXT = {
       fontFamily: "Roboto, sans-serif"
+    };
+    const MONO_TEXT = {
+      fontFamily: "Roboto Mono, monospace"
     };
     const TOOLTIP = {
       position: {
@@ -35896,10 +36105,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         if (look === "DISABLED") {
           this.data(ICON_DATA.DISABLED);
-          this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_LIGHT : COLOR.TERMINAL_PROVIDE_LIGHT);
+          this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED);
           this.listening(false);
         } else if (look === "PLACEHOLDER") {
-          this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_LIGHT : COLOR.TERMINAL_PROVIDE_LIGHT);
+          this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED);
           this.listening(false);
         } else if (look === "NORMAL") {
           this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
@@ -35985,12 +36194,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           y: view_model.grid_position.y * SIZE.GRID
         });
         const frame = new Konva.Rect({
-          cornerRadius: 16,
+          cornerRadius: 4,
           width: SIZE.FRAME_WIDTH,
           height: SIZE.FRAME_HEIGHT,
-          fill: "white",
-          stroke: "gray",
-          strokeWidth: 2,
+          fill: currentTheme.colors.primary,
           shadowBlur: 4,
           shadowOpacity: 0.4,
           shadowOffset: {
@@ -36000,18 +36207,50 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           fillAfterStrokeEnabled: true,
           listening: true
         });
+        const strokeWidth = 8;
+        const topStroke = new Konva.Line({
+          cornerRadius: 4,
+          points: [
+            0,
+            strokeWidth / 2,
+            // Start at the top-left corner of where the rectangle is positioned
+            SIZE.FRAME_WIDTH,
+            strokeWidth / 2
+            // End at the top-right corner of where the rectangle is positioned
+          ],
+          stroke: currentTheme.colors.secondary,
+          strokeWidth,
+          x: frame.x(),
+          y: frame.y(),
+          listening: true
+        });
         const title2 = new Konva.Text({
           wrap: "none",
           text: view_model.id,
-          fontFamily: TEXT.fontFamily,
+          fontFamily: NORMAL_TEXT.fontFamily,
           ellipsis: true,
-          fill: "black",
+          fill: "white",
           fontSize: 16 * 2,
-          padding: 12,
+          padding: 16,
+          y: strokeWidth,
           width: SIZE.FRAME_WIDTH,
           listening: true
         });
-        [frame, title2].forEach((e) => {
+        const typeInfo = new Konva.Text({
+          wrap: "none",
+          text: `${view_model.type}`,
+          fontFamily: MONO_TEXT.fontFamily,
+          ellipsis: true,
+          fill: "white",
+          opacity: 0.5,
+          fontSize: 16,
+          padding: 8,
+          width: SIZE.FRAME_WIDTH,
+          y: frame.height() - 16 * 2,
+          align: "right",
+          listening: true
+        });
+        [frame, title2, topStroke, typeInfo].forEach((e) => {
           e.on("mouseenter", () => {
             this._vm.set_cursor("pointer");
           });
@@ -36024,19 +36263,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           });
         });
         this._title = title2;
-        const type_info = new Konva.Text({
-          wrap: "none",
-          text: `Type: ${view_model.type}`,
-          fontFamily: TEXT.fontFamily,
-          ellipsis: true,
-          fill: "black",
-          fontSize: 16,
-          padding: 12,
-          width: SIZE.FRAME_WIDTH,
-          y: 16 * 3,
-          listening: false
-        });
-        this.group.add(frame, type_info, title2, ...this._terminal_views);
+        this.group.add(frame, topStroke, typeInfo, title2, ...this._terminal_views);
         this.group.cache();
       }
       get_terminal_placement(id2) {
@@ -36477,7 +36704,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const tooltipLayer = new Konva.Layer({});
         const tooltip = new Konva.Text({
           text: "",
-          fontFamily: TEXT.fontFamily,
+          fontFamily: NORMAL_TEXT.fontFamily,
           fontSize: 16,
           padding: 5,
           fill: "white",
@@ -36497,7 +36724,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             context2.lineTo(0, borderRadius);
             context2.arcTo(0, 0, borderRadius, 0, borderRadius);
             context2.closePath();
-            context2.fillStyle = "rgb(33, 150, 243)";
+            context2.fillStyle = currentTheme.colors.secondary;
             context2.fill();
             shape._sceneFunc(context2);
           },
@@ -36570,7 +36797,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         this._konva.static_layer.add(this._conn_man.group);
         this._model = model;
         Object.keys(model._instances).forEach((id2) => this._add_module_instance_to_stage(Number(id2)));
-        Object.keys(model._connections).forEach((id2) => this._add_connection_to_stage(Number(id2)));
+        Object.keys(model._connections).forEach((id2) => {
+          try {
+            this._add_connection_to_stage(Number(id2));
+          } catch (e) {
+            console.warn(e);
+          }
+        });
         model.add_observer((ev) => this._handle_config_event(ev));
       }
       _handle_config_event(ev) {
@@ -36623,14 +36856,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           "provide"
         );
         if (providing_terminal_lookup_id === -1) {
-          throw Error(`Assertion failed`);
+          throw Error(`Couldn't add connection to stage, terminal ${cxn.providing_impl_name} not found on ${providing_view_model.type}.`);
         }
         const requiring_terminal_lookup_id = requiring_view_model.get_terminal_lookup_id(
           cxn.requirement_name,
           "requirement"
         );
         if (requiring_terminal_lookup_id === -1) {
-          throw Error(`Assertion failed`);
+          throw Error(`Couldn't add connection to stage, terminal ${cxn.requirement_name} not found on ${requiring_view_model.type}.`);
         }
         this._conn_man.add_connection(
           id2,
@@ -36757,7 +36990,7 @@ Reason: ${error2}`);
       return openBlock(), createBlock(VSheet, {
         id: "konva-stage-container",
         width: "100%",
-        height: "800",
+        height: "100vh",
         elevation: "4"
       }, {
         default: withCtx(() => [
@@ -74285,104 +74518,6 @@ Reason: ${error2}`);
         return forwardRefs({}, vInputRef, vFieldRef, textareaRef);
       }
     });
-    function createVuetify() {
-      let vuetify2 = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
-      const {
-        blueprint,
-        ...rest
-      } = vuetify2;
-      const options = mergeDeep(blueprint, rest);
-      const {
-        aliases: aliases2 = {},
-        components = {},
-        directives = {}
-      } = options;
-      const defaults2 = createDefaults(options.defaults);
-      const display = createDisplay(options.display, options.ssr);
-      const theme = createTheme(options.theme);
-      const icons = createIcons(options.icons);
-      const locale = createLocale(options.locale);
-      const date2 = createDate(options.date, locale);
-      const goTo = createGoTo(options.goTo, locale);
-      const install = (app2) => {
-        for (const key in directives) {
-          app2.directive(key, directives[key]);
-        }
-        for (const key in components) {
-          app2.component(key, components[key]);
-        }
-        for (const key in aliases2) {
-          app2.component(key, defineComponent({
-            ...aliases2[key],
-            name: key,
-            aliasName: aliases2[key].name
-          }));
-        }
-        theme.install(app2);
-        app2.provide(DefaultsSymbol, defaults2);
-        app2.provide(DisplaySymbol, display);
-        app2.provide(ThemeSymbol, theme);
-        app2.provide(IconSymbol, icons);
-        app2.provide(LocaleSymbol, locale);
-        app2.provide(DateOptionsSymbol, date2.options);
-        app2.provide(DateAdapterSymbol, date2.instance);
-        app2.provide(GoToSymbol, goTo);
-        if (IN_BROWSER && options.ssr) {
-          if (app2.$nuxt) {
-            app2.$nuxt.hook("app:suspense:resolve", () => {
-              display.update();
-            });
-          } else {
-            const {
-              mount
-            } = app2;
-            app2.mount = function() {
-              const vm = mount(...arguments);
-              nextTick(() => display.update());
-              app2.mount = mount;
-              return vm;
-            };
-          }
-        }
-        getUid.reset();
-        {
-          app2.mixin({
-            computed: {
-              $vuetify() {
-                return reactive({
-                  defaults: inject.call(this, DefaultsSymbol),
-                  display: inject.call(this, DisplaySymbol),
-                  theme: inject.call(this, ThemeSymbol),
-                  icons: inject.call(this, IconSymbol),
-                  locale: inject.call(this, LocaleSymbol),
-                  date: inject.call(this, DateAdapterSymbol)
-                });
-              }
-            }
-          });
-        }
-      };
-      return {
-        install,
-        defaults: defaults2,
-        display,
-        theme,
-        icons,
-        locale,
-        date: date2,
-        goTo
-      };
-    }
-    const version = "3.5.5";
-    createVuetify.version = version;
-    function inject(key) {
-      var _a2, _b;
-      const vm = this.$;
-      const provides = ((_a2 = vm.parent) == null ? void 0 : _a2.provides) ?? ((_b = vm.vnode.appContext) == null ? void 0 : _b.provides);
-      if (provides && key in provides) {
-        return provides[key];
-      }
-    }
     const _sfc_main$x = {
       props: {
         layoutSlot: {
@@ -81315,9 +81450,6 @@ Reason: ${error2}`);
         app2.provide("evbc", evbc);
       }
     };
-    const vuetify = createVuetify({
-      //
-    });
     const pinia = createPinia();
     function registerPlugins(app2) {
       app2.use(pinia).use(evbcPlugin).use(vuetify).use(router);
@@ -81332,7 +81464,25 @@ Reason: ${error2}`);
       position: {
         x: "right",
         y: "top"
-      }
+      },
+      types: [
+        {
+          type: "info",
+          background: currentTheme.colors.info
+        },
+        {
+          type: "success",
+          background: currentTheme.colors.success
+        },
+        {
+          type: "warning",
+          background: currentTheme.colors.warning
+        },
+        {
+          type: "error",
+          background: currentTheme.colors.error
+        }
+      ]
     }));
     app.mount("#app");
   }
