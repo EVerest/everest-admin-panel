@@ -14,11 +14,11 @@
     </template>
     <v-card-text>
       <p class="font-weight-bold">Module type: {{ module_node?.instance?.type }}</p>
-      <v-form>
+      <v-form @submit.prevent>
         <!-- FIXME (aw): howto do the binding here? -->
         <v-text-field :model-value="module_node?.instance.id" label="Module ID" :rules="moduleIDRules"></v-text-field>
       </v-form>
-      <v-form>
+      <v-form @submit.prevent>
         <template v-if="module_node.instance.module_config">
           <v-divider />
           <p class="font-weight-bold">Module configuration</p>
