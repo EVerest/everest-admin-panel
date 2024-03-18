@@ -7,7 +7,21 @@
     <!-- <v-sheet id="config-stage-info" class="pa-2" height="100" width="200" elevation="2" v-if="selected_interface">
       {{ selected_interface }} <v-btn color="primary" x-small @click="discard_selected_terminal">Discard</v-btn>
     </v-sheet> -->
-    <v-btn id="config-save-button" icon="mdi-content-save" color="primary" @click="save_config" v-if="current_config"></v-btn>
+    <div id="stage-controls">
+      <v-tooltip location="left">
+        <template v-slot:activator="{ props }">
+          <v-btn id="reset-view-button" icon="mdi-undo" color="primary" @click="reset_view" v-bind="props"></v-btn>
+        </template>
+        <span>Reset View</span>
+      </v-tooltip>
+      <v-tooltip location="left" v-if="current_config">
+        <template v-slot:activator="{ props }">
+          <v-btn id="config-save-button" icon="mdi-content-save" color="primary" @click="save_config"
+                 v-bind="props"></v-btn>
+        </template>
+        <span>Save Config</span>
+      </v-tooltip>
+    </div>
   </v-sheet>
 </template>
 
@@ -45,6 +59,10 @@ export default defineComponent({
 
     const current_config: ComputedRef<EVConfigModel> = computed(evbcStore.get_current_config);
 
+    const reset_view = () => {
+      stage.reset_view();
+    };
+
     const save_config = () => {
       if (!current_config.value) return;
       evbc
@@ -69,6 +87,7 @@ export default defineComponent({
       selected_interface,
       stage,
       current_config,
+      reset_view,
       save_config,
     };
   },
@@ -89,9 +108,13 @@ export default defineComponent({
   top: 6px;
   right: 6px;
 }
-#config-save-button {
+
+#stage-controls {
   position: absolute;
   bottom: 12px;
   right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 </style>

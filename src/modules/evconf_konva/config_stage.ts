@@ -14,6 +14,7 @@ import {KonvaEventObject} from "konva/lib/Node";
 import {Vector2d} from "konva/lib/types";
 import {currentTheme} from "@/plugins/vuetify";
 import Stage = Konva.Stage;
+import Layer = Konva.Layer;
 
 export default class ConfigStage {
   // view part
@@ -109,16 +110,11 @@ export default class ConfigStage {
 
       const newScale = oldScale * scaleBy;
 
-      static_layer.scale({ x: newScale, y: newScale });
       const newPos = {
         x: pointer.x - mousePointTo.x * newScale,
         y: pointer.y - mousePointTo.y * newScale,
       };
-      static_layer.position(newPos);
-      this._bg.width(this._stage.width() / newScale);
-      this._bg.height(this._stage.height() / newScale);
-      this._bg.setAbsolutePosition({x: 0, y: 0});
-      static_layer.batchDraw();
+      this.setNewPosAndScale(static_layer, newPos, newScale);
     });
 
     this._stage.add(static_layer);
@@ -136,6 +132,15 @@ export default class ConfigStage {
     this.context.add_observer((ev) => this._handle_stage_context_event(ev));
     this.registerListeners();
     this.resizeStage();
+  }
+
+  private setNewPosAndScale(static_layer: Layer, newPos: { x: number; y: number }, newScale: number) {
+    static_layer.scale({x: newScale, y: newScale});
+    static_layer.position(newPos);
+    this._bg.width(this._stage.width() / newScale);
+    this._bg.height(this._stage.height() / newScale);
+    this._bg.setAbsolutePosition({x: 0, y: 0});
+    static_layer.batchDraw();
   }
 
   private registerListeners() {
@@ -157,6 +162,10 @@ export default class ConfigStage {
 
     this._stage.width(containerWidth);
     this._stage.height(containerHeight);
+  }
+
+  public reset_view(): void {
+    this.setNewPosAndScale(this._konva.static_layer, {x: 0, y: 0}, 1);
   }
 
   set_model(model: EVConfigModel) {
