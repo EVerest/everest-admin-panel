@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-QocjkHj3.js"(exports, module) {
+  "assets/index-N1VaxuhY.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -36911,7 +36911,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (!current_config.value)
             return;
           evbc2.save_config(current_config.value).then(() => {
-            console.log("successfully saved");
             notyf.success(`Successfully saved ${current_config.value._name}`);
           }).catch((error2) => {
             notyf.error(`Failed to save ${current_config.value._name}
