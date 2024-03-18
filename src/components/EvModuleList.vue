@@ -6,8 +6,15 @@
     <v-expansion-panel>
       <v-expansion-panel-title> Available modules</v-expansion-panel-title>
       <v-expansion-panel-text>
+        <v-text-field v-model="search"
+                      hide-details
+                      label="Search"
+                      density="compact"
+                      variant="outlined"
+                      clearable
+        ></v-text-field>
         <v-list class="ma-0">
-          <v-tooltip location="right" v-for="module in module_list" :key="module.type" open-delay="500">
+          <v-tooltip location="right" v-for="module in filtered_module_list" :key="module.type" open-delay="500">
             <template v-slot:activator="{ props }">
               <v-list-item
                   v-bind="props"
@@ -84,9 +91,11 @@ export default defineComponent({
     return {
       show_dialog: false,
       config_to_load: null,
+      search: "",
     } as {
       show_dialog: boolean;
       config_to_load: string | null;
+      search: string;
     };
   },
   created() {
@@ -99,11 +108,17 @@ export default defineComponent({
     current_config(): EVConfigModel | null {
       return evbcStore.get_current_config();
     },
-    module_list(): Array<{ type: string; description: string }> {
-      return Object.entries(evbc.everest_definitions.modules).map(([key, value]) => ({
-        type: key,
-        description: value.description,
-      }));
+    filtered_module_list(): Array<{ type: string; description: string }> {
+      return Object.entries(evbc.everest_definitions.modules)
+          .filter(([key, value]) => {
+            return !this.search || this.search.trim() === "" ||
+                key.toLowerCase().includes(this.search.toLowerCase()) ||
+                value.description.toLowerCase().includes(this.search.toLowerCase());
+          })
+          .map(([key, value]) => ({
+            type: key,
+            description: value.description,
+          }));
     },
     config_list(): Array<string> {
       const configs: Record<string, unknown> = evbc._configs;
