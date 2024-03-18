@@ -73,9 +73,11 @@ import {useEvbcStore} from "@/store/evbc";
 import EVBackendClient from "@/modules/evbc/client";
 import EvDialog from "@/components/EvDialog.vue";
 import EVConfigModel from "@/modules/evbc/config_model";
+import {Notyf} from "notyf";
 
 let evbcStore: ReturnType<typeof useEvbcStore>;
 let evbc: EVBackendClient;
+let notyf: Notyf;
 
 export default defineComponent({
   data: () => {
@@ -90,6 +92,7 @@ export default defineComponent({
   created() {
     evbcStore = useEvbcStore();
     evbc = inject<EVBackendClient>('evbc') as EVBackendClient;
+    notyf = inject<Notyf>('notyf');
   },
   components: {EvDialog},
   computed: {
@@ -133,7 +136,9 @@ export default defineComponent({
       evbcStore.setOpenedConfig(new_config)
     },
     restart_modules() {
-      evbc._cxn.rpc_issuer.restart_modules();
+      evbc._cxn.rpc_issuer.restart_modules().then(() => {
+        notyf.success("Issued restart modules command");
+      });
     },
     close_dialog() {
       this.show_dialog = false;
