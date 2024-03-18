@@ -131,7 +131,8 @@ export default class ConfigStage {
     context.set_container(this._stage.container());
     this.context.add_observer((ev) => this._handle_stage_context_event(ev));
     this.registerListeners();
-    this.resizeStage();
+
+    setTimeout(() => this.resizeStage(), 1500); // we have to wait for the animation of the splitpanes to finish
   }
 
   private setNewPosAndScale(static_layer: Layer, newPos: { x: number; y: number }, newScale: number) {

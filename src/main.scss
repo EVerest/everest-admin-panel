@@ -1,3 +1,17 @@
 html {
   scrollbar-color: rgba(var(--v-theme-on-background), var(--v-disabled-opacity)) rgb(var(--v-theme-background));
 }
+
+.splitpanes__pane {
+  background-color: transparent !important;
+  overflow-y: scroll !important;
+  padding: 0;
+
+  &:nth-of-type(3) {
+    overflow-y: hidden !important;
+  }
+}
+
+.splitpanes__splitter {
+  background-color: rgba(var(--v-theme-on-background), 0.05) !important;
+}
