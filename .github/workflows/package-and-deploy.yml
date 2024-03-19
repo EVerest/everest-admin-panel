@@ -56,6 +56,9 @@ jobs:
     needs: package
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
     env:
       SUBDIR: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
     steps:
