@@ -11,6 +11,9 @@ dependencies:
   '@fontsource/roboto':
     specifier: 5.0.12
     version: 5.0.12
+  '@highlightjs/vue-plugin':
+    specifier: ^2.1.0
+    version: 2.1.0(highlight.js@11.9.0)(vue@3.4.19)
   '@json-layout/core':
     specifier: ^0.9.3
     version: 0.9.3
@@ -47,6 +50,12 @@ dependencies:
   debug:
     specifier: ^4.3.4
     version: 4.3.4
+  highlight.js:
+    specifier: ^11.9.0
+    version: 11.9.0
+  js-yaml:
+    specifier: ^4.1.0
+    version: 4.1.0
   just-clone:
     specifier: ^6.2.0
     version: 6.2.0
@@ -1591,6 +1600,16 @@ packages:
 
   /@fontsource/roboto@5.0.12:
     resolution: {integrity: sha512-x0o17jvgoSSbS9OZnUX2+xJmVRvVCfeaYJjkS7w62iN7CuJWtMf5vJj8LqgC7ibqIkitOHVW+XssRjgrcHn62g==}
+    dev: false
+
+  /@highlightjs/vue-plugin@2.1.0(highlight.js@11.9.0)(vue@3.4.19):
+    resolution: { integrity: sha512-E+bmk4ncca+hBEYRV2a+1aIzIV0VSY/e5ArjpuSN9IO7wBJrzUE2u4ESCwrbQD7sAy+jWQjkV5qCCWgc+pu7CQ== }
+    peerDependencies:
+      highlight.js: ^11.0.1
+      vue: ^3
+    dependencies:
+      highlight.js: 11.9.0
+      vue: 3.4.19(typescript@5.3.3)
     dev: false
 
   /@humanwhocodes/config-array@0.11.14:
@@ -3452,6 +3471,11 @@ packages:
     hasBin: true
     dev: true
 
+  /highlight.js@11.9.0:
+    resolution: { integrity: sha512-fJ7cW7fQGCYAkgv4CPfwFHrfd/cLS4Hau96JuJ+ZTOWhjnhoeN1ub1tFmALm/+lW5z4WCAuAV9bm05AP0mS6Gw== }
+    engines: { node: '>=12.0.0' }
+    dev: false
+
   /idb@7.1.1:
     resolution: {integrity: sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==}
     dev: true
@@ -3708,7 +3732,6 @@ packages:
     hasBin: true
     dependencies:
       argparse: 2.0.1
-    dev: true
 
   /jsesc@0.5.0:
     resolution: {integrity: sha512-uZz5UnB7u4T9LvwmFqXii7pZSouaRPorGs5who1Ip7VO0wxanFvBL7GkM6dTHlgX+jhBApRetaWpnDabOeTcnA==}

@@ -4,10 +4,19 @@
 <template>
   <v-sheet id="konva-stage-container" width="100%" height="100vh" elevation="0">
     <div id="konva-stage" />
-    <!-- <v-sheet id="config-stage-info" class="pa-2" height="100" width="200" elevation="2" v-if="selected_interface">
-      {{ selected_interface }} <v-btn color="primary" x-small @click="discard_selected_terminal">Discard</v-btn>
-    </v-sheet> -->
     <div id="stage-controls">
+      <config-preview :config="current_config" v-if="current_config">
+        <template v-slot:activator="{ activatorProps }">
+          <v-tooltip location="left">
+            <template v-slot:activator="{ props }">
+              <v-btn id="show-preview-button" color="primary" v-bind="{...activatorProps, ...props}"
+                     prepend-icon="mdi-code-tags" icon="mdi-code-tags">
+              </v-btn>
+            </template>
+            <span>Show config preview</span>
+          </v-tooltip>
+        </template>
+      </config-preview>
       <v-tooltip location="left">
         <template v-slot:activator="{ props }">
           <v-btn id="reset-view-button" icon="mdi-undo" color="primary" @click="reset_view" v-bind="props"></v-btn>
@@ -26,19 +35,24 @@
 </template>
 
 <script lang="ts">
-import {computed, ComputedRef, defineComponent, inject, onMounted, watch} from 'vue';
+import {computed, ComputedRef, defineComponent, inject, onMounted, ref, watch} from 'vue';
 import {useEvbcStore} from '@/store/evbc';
 import ConfigStage from "@/modules/evconf_konva/config_stage";
 import EVConfigModel from "@/modules/evbc/config_model";
 import EVBackendClient from "@/modules/evbc/client";
 import {Notyf} from "notyf";
+import ConfigPreview from "@/components/ConfigPreview.vue";
 
 export default defineComponent({
-  setup() {
+  components: {ConfigPreview},
+  setup()
+  {
     const evbcStore = useEvbcStore();
     const evbc = inject<EVBackendClient>('evbc');
     const selected_interface: string | null = null;
     const notyf = inject<Notyf>('notyf');
+
+    ref(false);
 
     let stage: ConfigStage;
     onMounted(() => {
