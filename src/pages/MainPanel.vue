@@ -100,7 +100,7 @@ export default defineComponent({
       if (notification) {
         notyf.dismiss(notification);
       }
-      await router.push({path: "/login", query: {auto_connect: "false"}});
+      await router.push({path: "/connect", query: {auto_connect: "false"}});
     },
   },
   created() {
