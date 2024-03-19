@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-ldVltAwR.js"(exports, module) {
+  "assets/index-g-JY-geT.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -9235,6 +9235,7 @@ var require_index_001 = __commonJS({
     }
     let evbc$2;
     let router$1;
+    let notyf$1;
     const _sfc_main$C = /* @__PURE__ */ defineComponent$1({
       data: () => ({
         drawer: false,
@@ -9249,17 +9250,26 @@ var require_index_001 = __commonJS({
         }
       },
       methods: {
-        changeInstance() {
-          evbc$2.disconnect();
-          router$1.push({ path: "/login", query: { auto_connect: "false" } });
+        async changeInstance() {
+          let notification;
+          const timeout = setTimeout(() => {
+            notification = notyf$1.open({ type: "warning", message: "Disconnecting from EVerest backend ...", ripple: false });
+          }, 250);
+          await evbc$2.disconnect();
+          clearTimeout(timeout);
+          if (notification) {
+            notyf$1.dismiss(notification);
+          }
+          await router$1.push({ path: "/login", query: { auto_connect: "false" } });
         }
       },
       created() {
         evbc$2 = inject$1("evbc");
         router$1 = useRouter$1();
+        notyf$1 = inject$1("notyf");
         evbc$2.on("connection_state", (ev) => {
           this.evbc_status = ev.text;
-          if (ev.type === "RECONNECT") {
+          if (ev.type === "RECONNECT" || ev.type === "IDLE") {
             this.evbc_disconnected = true;
           } else if (ev.type === "INITIALIZED") {
             this.evbc_disconnected = false;
@@ -19480,7 +19490,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$6], ["__scopeId", "data-v-10d5f691"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$6], ["__scopeId", "data-v-cadf9cf6"]]);
     /**
       * vee-validate v4.12.6
       * (c) 2024 Abdelrahman Awad
@@ -21635,7 +21645,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
         const submitLocalStorageSettings = () => {
           window.localStorage.setItem(
-            "evbc-settings",
+            "evbcSettings",
             JSON.stringify({
               servers,
               connectAutomatically: connectAutomatically.value
@@ -21653,7 +21663,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           var _a2;
           const router2 = useRouter$1();
           const storage = window.localStorage;
-          const evbcLsString = storage.getItem("evbc-settings");
+          const evbcLsString = storage.getItem("evbcSettings");
           if (evbcLsString) {
             const evbcLocalStorage = JSON.parse(evbcLsString);
             if ("servers" in evbcLocalStorage) {
@@ -36047,6 +36057,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         y: 10
       }
     };
+    const INITIAL_RPC_TIMEOUT_VALUE = 1e4;
     class TerminalShape extends Konva.Path {
       constructor(config2) {
         config2.data = config2.data || ICON_DATA.TERMINAL;
@@ -36750,16 +36761,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const zoomIntensity = 5e-3;
           const scaleBy = Math.exp(delta2 * zoomIntensity);
           const newScale = oldScale * scaleBy;
-          static_layer.scale({ x: newScale, y: newScale });
           const newPos = {
             x: pointer.x - mousePointTo.x * newScale,
             y: pointer.y - mousePointTo.y * newScale
           };
-          static_layer.position(newPos);
-          this._bg.width(this._stage.width() / newScale);
-          this._bg.height(this._stage.height() / newScale);
-          this._bg.setAbsolutePosition({ x: 0, y: 0 });
-          static_layer.batchDraw();
+          this.setNewPosAndScale(static_layer, newPos, newScale);
         });
         this._stage.add(static_layer);
         this._stage.add(tooltipLayer);
@@ -36775,6 +36781,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         this.registerListeners();
         this.resizeStage();
       }
+      setNewPosAndScale(static_layer, newPos, newScale) {
+        static_layer.scale({ x: newScale, y: newScale });
+        static_layer.position(newPos);
+        this._bg.width(this._stage.width() / newScale);
+        this._bg.height(this._stage.height() / newScale);
+        this._bg.setAbsolutePosition({ x: 0, y: 0 });
+        static_layer.batchDraw();
+      }
       registerListeners() {
         window.addEventListener("resize", () => this.resizeStage());
       }
@@ -36788,6 +36802,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const containerHeight = container.offsetHeight;
         this._stage.width(containerWidth);
         this._stage.height(containerHeight);
+      }
+      reset_view() {
+        this.setNewPosAndScale(this._konva.static_layer, { x: 0, y: 0 }, 1);
       }
       set_model(model) {
         if (this._model)
@@ -36894,7 +36911,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const evbcStore2 = useEvbcStore();
         const evbc2 = inject$1("evbc");
         const selected_interface = null;
-        const notyf = inject$1("notyf");
+        const notyf2 = inject$1("notyf");
         let stage;
         onMounted(() => {
           stage = new ConfigStage(
@@ -36913,13 +36930,16 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
         });
         const current_config = computed(evbcStore2.get_current_config);
+        const reset_view = () => {
+          stage.reset_view();
+        };
         const save_config = () => {
           if (!current_config.value)
             return;
           evbc2.save_config(current_config.value).then(() => {
-            notyf.success(`Successfully saved ${current_config.value._name}`);
+            notyf2.success(`Successfully saved ${current_config.value._name}`);
           }).catch((error2) => {
-            notyf.error(`Failed to save ${current_config.value._name}
+            notyf2.error(`Failed to save ${current_config.value._name}
 Reason: ${error2}`);
           });
         };
@@ -36930,6 +36950,7 @@ Reason: ${error2}`);
           selected_interface,
           stage,
           current_config,
+          reset_view,
           save_config
         };
       }
@@ -36986,6 +37007,9 @@ Reason: ${error2}`);
       }
     });
     const _hoisted_1$4 = /* @__PURE__ */ createBaseVNode("div", { id: "konva-stage" }, null, -1);
+    const _hoisted_2$3 = { id: "stage-controls" };
+    const _hoisted_3$1 = /* @__PURE__ */ createBaseVNode("span", null, "Reset View", -1);
+    const _hoisted_4 = /* @__PURE__ */ createBaseVNode("span", null, "Save Config", -1);
     function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
       return openBlock(), createBlock(VSheet, {
         id: "konva-stage-container",
@@ -36995,13 +37019,39 @@ Reason: ${error2}`);
       }, {
         default: withCtx(() => [
           _hoisted_1$4,
-          _ctx.current_config ? (openBlock(), createBlock(VBtn, {
-            key: 0,
-            id: "config-save-button",
-            icon: "mdi-content-save",
-            color: "primary",
-            onClick: _ctx.save_config
-          }, null, 8, ["onClick"])) : createCommentVNode("", true)
+          createBaseVNode("div", _hoisted_2$3, [
+            createVNode(VTooltip, { location: "left" }, {
+              activator: withCtx(({ props }) => [
+                createVNode(VBtn, mergeProps({
+                  id: "reset-view-button",
+                  icon: "mdi-undo",
+                  color: "primary",
+                  onClick: _ctx.reset_view
+                }, props), null, 16, ["onClick"])
+              ]),
+              default: withCtx(() => [
+                _hoisted_3$1
+              ]),
+              _: 1
+            }),
+            _ctx.current_config ? (openBlock(), createBlock(VTooltip, {
+              key: 0,
+              location: "left"
+            }, {
+              activator: withCtx(({ props }) => [
+                createVNode(VBtn, mergeProps({
+                  id: "config-save-button",
+                  icon: "mdi-content-save",
+                  color: "primary",
+                  onClick: _ctx.save_config
+                }, props), null, 16, ["onClick"])
+              ]),
+              default: withCtx(() => [
+                _hoisted_4
+              ]),
+              _: 1
+            })) : createCommentVNode("", true)
+          ])
         ]),
         _: 1
       });
@@ -37209,27 +37259,49 @@ Reason: ${error2}`);
     const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$3]]);
     let evbcStore$1;
     let evbc$1;
+    let notyf;
     const _sfc_main$y = /* @__PURE__ */ defineComponent$1({
       data: () => {
         return {
           show_dialog: false,
-          config_to_load: null
+          config_to_load: null,
+          search: ""
         };
       },
       created() {
         evbcStore$1 = useEvbcStore();
         evbc$1 = inject$1("evbc");
+        notyf = inject$1("notyf");
       },
       components: { EvDialog },
       computed: {
         current_config() {
           return evbcStore$1.get_current_config();
         },
-        module_list() {
-          return Object.entries(evbc$1.everest_definitions.modules).map(([key, value]) => ({
-            type: key,
-            description: value.description
-          }));
+        show_search() {
+          return !evbcStore$1.get_selected_terminal();
+        },
+        filtered_module_list() {
+          const selectedTerminal = evbcStore$1.get_selected_terminal();
+          if (selectedTerminal) {
+            return Object.entries(evbc$1.everest_definitions.modules).filter(([, value]) => {
+              if (selectedTerminal.type === "requirement") {
+                return value.provides && Object.values(value.provides).some((e) => e.interface === selectedTerminal.interface);
+              } else {
+                return value.requires && Object.values(value.requires).some((e) => e.interface === selectedTerminal.interface);
+              }
+            }).map(([key, value]) => ({
+              type: key,
+              description: value.description
+            }));
+          } else {
+            return Object.entries(evbc$1.everest_definitions.modules).filter(([key, value]) => {
+              return !this.search || this.search.trim() === "" || key.toLowerCase().includes(this.search.toLowerCase()) || value.description.toLowerCase().includes(this.search.toLowerCase());
+            }).map(([key, value]) => ({
+              type: key,
+              description: value.description
+            }));
+          }
         },
         config_list() {
           const configs = evbc$1._configs;
@@ -37238,12 +37310,25 @@ Reason: ${error2}`);
       },
       methods: {
         add_module_to_config(type2) {
+          let added_module_id;
           if (evbcStore$1.get_current_config()) {
-            evbcStore$1.get_current_config().add_new_module_instance(type2);
+            added_module_id = evbcStore$1.get_current_config().add_new_module_instance(type2);
           } else {
             const new_config = evbc$1.create_empty_config("test_config");
-            new_config.add_new_module_instance(type2);
+            added_module_id = new_config.add_new_module_instance(type2);
             evbcStore$1.setOpenedConfig(new_config);
+          }
+          if (evbcStore$1.get_selected_terminal()) {
+            const selectedTerminal = evbcStore$1.get_selected_terminal();
+            const addedModuleInstance = evbcStore$1.get_current_config().get_module_instance(added_module_id);
+            const terminals = Object.values(addedModuleInstance.view_config.terminals).flat();
+            let terminalToClick;
+            if (selectedTerminal.type === "requirement") {
+              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "provide");
+            } else {
+              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
+            }
+            evbcStore$1.get_config_context().clicked_terminal(terminalToClick, added_module_id);
           }
         },
         load_config_if_empty(name) {
@@ -37261,8 +37346,10 @@ Reason: ${error2}`);
           const new_config = evbc$1.load_config(name);
           evbcStore$1.setOpenedConfig(new_config);
         },
-        execute(command) {
-          evbc$1.execute_remote_command(command);
+        restart_modules() {
+          evbc$1._cxn.rpc_issuer.restart_modules().then(() => {
+            notyf.success("Issued restart modules command");
+          });
         },
         close_dialog() {
           this.show_dialog = false;
@@ -37528,9 +37615,19 @@ Reason: ${error2}`);
               }),
               createVNode(VExpansionPanelText, null, {
                 default: withCtx(() => [
+                  _ctx.show_search ? (openBlock(), createBlock(VTextField, {
+                    key: 0,
+                    modelValue: _ctx.search,
+                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.search = $event),
+                    "hide-details": "",
+                    label: "Search",
+                    density: "compact",
+                    variant: "outlined",
+                    clearable: ""
+                  }, null, 8, ["modelValue"])) : createCommentVNode("", true),
                   createVNode(VList, { class: "ma-0" }, {
                     default: withCtx(() => [
-                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.module_list, (module2) => {
+                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.filtered_module_list, (module2) => {
                         return openBlock(), createBlock(VTooltip, {
                           location: "right",
                           key: module2.type,
@@ -37620,8 +37717,8 @@ Reason: ${error2}`);
                 text: "Do you want to discard the current config and load the new one?",
                 accept_text: "Load config",
                 deny_text: "Don't load config",
-                onAccept: _cache[0] || (_cache[0] = ($event) => _ctx.load_config(_ctx.config_to_load)),
-                onDeny: _cache[1] || (_cache[1] = ($event) => _ctx.close_dialog())
+                onAccept: _cache[1] || (_cache[1] = ($event) => _ctx.load_config(_ctx.config_to_load)),
+                onDeny: _cache[2] || (_cache[2] = ($event) => _ctx.close_dialog())
               }, null, 8, ["show_dialog"])
             ]),
             _: 1
@@ -37639,7 +37736,7 @@ Reason: ${error2}`);
                   createVNode(VList, null, {
                     default: withCtx(() => [
                       createVNode(VListItem, {
-                        onClick: _cache[2] || (_cache[2] = ($event) => _ctx.execute("restart_modules")),
+                        onClick: _cache[3] || (_cache[3] = ($event) => _ctx.restart_modules()),
                         title: "Restart modules"
                       }, {
                         append: withCtx(() => [
@@ -76865,7 +76962,10 @@ Reason: ${error2}`);
               var _a2, _b;
               return [
                 createBaseVNode("p", _hoisted_1, "Module type: " + toDisplayString((_b = (_a2 = _ctx.module_node) == null ? void 0 : _a2.instance) == null ? void 0 : _b.type), 1),
-                createVNode(VForm, null, {
+                createVNode(VForm, {
+                  onSubmit: _cache[1] || (_cache[1] = withModifiers(() => {
+                  }, ["prevent"]))
+                }, {
                   default: withCtx(() => {
                     var _a3;
                     return [
@@ -76878,7 +76978,10 @@ Reason: ${error2}`);
                   }),
                   _: 1
                 }),
-                createVNode(VForm, null, {
+                createVNode(VForm, {
+                  onSubmit: _cache[2] || (_cache[2] = withModifiers(() => {
+                  }, ["prevent"]))
+                }, {
                   default: withCtx(() => [
                     _ctx.module_node.instance.module_config ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
                       createVNode(VDivider),
@@ -76939,7 +77042,7 @@ Reason: ${error2}`);
               createVNode(_component_icon_button_with_tooltip, {
                 icon: "mdi-delete",
                 title: "Delete instance",
-                onClick: _cache[1] || (_cache[1] = ($event) => _ctx.delete_module_instance(_ctx.module_node.instance_id))
+                onClick: _cache[3] || (_cache[3] = ($event) => _ctx.delete_module_instance(_ctx.module_node.instance_id))
               })
             ]),
             _: 1
@@ -76956,7 +77059,7 @@ Reason: ${error2}`);
                 title: "Discard selection",
                 variant: "text",
                 density: "compact",
-                onClick: _cache[2] || (_cache[2] = ($event) => _ctx.context.unselect())
+                onClick: _cache[4] || (_cache[4] = ($event) => _ctx.context.unselect())
               })
             ]),
             _: 1
@@ -76979,7 +77082,7 @@ Reason: ${error2}`);
               createVNode(_component_icon_button_with_tooltip, {
                 icon: "mdi-delete",
                 title: "Delete connection",
-                onClick: _cache[3] || (_cache[3] = ($event) => _ctx.delete_connection(_ctx.connection.id))
+                onClick: _cache[5] || (_cache[5] = ($event) => _ctx.delete_connection(_ctx.connection.id))
               })
             ]),
             _: 1
@@ -76997,7 +77100,7 @@ Reason: ${error2}`);
                 title: "Discard selection",
                 variant: "text",
                 density: "compact",
-                onClick: _cache[4] || (_cache[4] = ($event) => _ctx.context.unselect())
+                onClick: _cache[6] || (_cache[6] = ($event) => _ctx.context.unselect())
               })
             ]),
             _: 1
@@ -77460,686 +77563,6 @@ Reason: ${error2}`);
         }
       }
     }
-    const SampleConfigList = {
-      "sample-config-sil": {
-        active_modules: {
-          auth: {
-            connections: {
-              tokenProvider: [
-                {
-                  implementation_id: "main",
-                  module_id: "token_provider_1"
-                }
-              ],
-              tokenValidator: [
-                {
-                  implementation_id: "main",
-                  module_id: "token_validator"
-                }
-              ]
-            },
-            module: "JsAuth",
-            "x-view-model": {
-              position: {
-                x: 6,
-                y: 1
-              },
-              terminals: {
-                bottom: [
-                  {
-                    id: "tokenProvider",
-                    interface: "auth_token_provider",
-                    type: "requirement"
-                  }
-                ],
-                left: [
-                  {
-                    id: "main",
-                    interface: "auth",
-                    type: "provide"
-                  }
-                ],
-                right: [
-                  {
-                    id: "tokenValidator",
-                    interface: "auth_token_validator",
-                    type: "requirement"
-                  }
-                ],
-                top: []
-              }
-            }
-          },
-          car_simulator: {
-            connections: {
-              simulation_control: [
-                {
-                  implementation_id: "yeti_simulation_control",
-                  module_id: "yeti_driver"
-                }
-              ]
-            },
-            module: "JsCarSimulator",
-            "x-view-model": {
-              position: {
-                x: -28,
-                y: 35
-              },
-              terminals: {
-                bottom: [],
-                left: [],
-                right: [
-                  {
-                    id: "main",
-                    interface: "car_simulator",
-                    type: "provide"
-                  }
-                ],
-                top: [
-                  {
-                    id: "simulation_control",
-                    interface: "yeti_simulation_control",
-                    type: "requirement"
-                  }
-                ]
-              }
-            }
-          },
-          energy_manager: {
-            connections: {
-              energy_trunk: [
-                {
-                  implementation_id: "energy_grid",
-                  module_id: "grid_connection_point"
-                }
-              ]
-            },
-            module: "EnergyManager",
-            "x-view-model": {
-              position: {
-                x: 2,
-                y: 38
-              },
-              terminals: {
-                bottom: [],
-                left: [],
-                right: [
-                  {
-                    id: "main",
-                    interface: "energy_manager",
-                    type: "provide"
-                  }
-                ],
-                top: [
-                  {
-                    id: "energy_trunk",
-                    interface: "energy",
-                    type: "requirement"
-                  }
-                ]
-              }
-            }
-          },
-          evse_manager: {
-            connections: {
-              auth: [
-                {
-                  implementation_id: "main",
-                  module_id: "auth"
-                }
-              ],
-              bsp: [
-                {
-                  implementation_id: "board_support",
-                  module_id: "yeti_driver"
-                }
-              ],
-              powermeter: [
-                {
-                  implementation_id: "powermeter",
-                  module_id: "yeti_driver"
-                }
-              ]
-            },
-            module: "EvseManager",
-            "x-view-model": {
-              position: {
-                x: -11,
-                y: 13
-              },
-              terminals: {
-                bottom: [
-                  {
-                    id: "energy_grid",
-                    interface: "energy",
-                    type: "provide"
-                  }
-                ],
-                left: [
-                  {
-                    id: "bsp",
-                    interface: "board_support_AC",
-                    type: "requirement"
-                  },
-                  {
-                    id: "powermeter",
-                    interface: "powermeter",
-                    type: "requirement"
-                  }
-                ],
-                right: [
-                  {
-                    id: "evse",
-                    interface: "evse_manager",
-                    type: "provide"
-                  }
-                ],
-                top: [
-                  {
-                    id: "auth",
-                    interface: "auth",
-                    type: "requirement"
-                  }
-                ]
-              }
-            }
-          },
-          grid_connection_point: {
-            connections: {
-              energy_consumer: [
-                {
-                  implementation_id: "energy_grid",
-                  module_id: "evse_manager"
-                }
-              ],
-              powermeter: [
-                {
-                  implementation_id: "powermeter",
-                  module_id: "yeti_driver"
-                }
-              ]
-            },
-            module: "EnergyNode",
-            "x-view-model": {
-              position: {
-                x: 2,
-                y: 26
-              },
-              terminals: {
-                bottom: [
-                  {
-                    id: "energy_grid",
-                    interface: "energy",
-                    type: "provide"
-                  }
-                ],
-                left: [
-                  {
-                    id: "energy_consumer",
-                    interface: "energy",
-                    type: "requirement"
-                  },
-                  {
-                    id: "powermeter",
-                    interface: "powermeter",
-                    type: "requirement"
-                  },
-                  {
-                    id: "price_information",
-                    interface: "energy_price_information",
-                    type: "requirement"
-                  }
-                ],
-                right: [],
-                top: []
-              }
-            }
-          },
-          iso15118_charger: {
-            connections: {},
-            module: "JsRiseV2G",
-            "x-view-model": {
-              position: {
-                x: -29,
-                y: 4
-              },
-              terminals: {
-                bottom: [],
-                left: [
-                  {
-                    id: "slac",
-                    interface: "ISO15118_3_SLAC",
-                    type: "requirement"
-                  }
-                ],
-                right: [
-                  {
-                    id: "ac_charger",
-                    interface: "ISO15118_ac_charger",
-                    type: "provide"
-                  },
-                  {
-                    id: "dc_charger",
-                    interface: "ISO15118_dc_charger",
-                    type: "provide"
-                  },
-                  {
-                    id: "main",
-                    interface: "empty",
-                    type: "provide"
-                  }
-                ],
-                top: []
-              }
-            }
-          },
-          token_provider_1: {
-            connections: {
-              evse: [
-                {
-                  implementation_id: "evse",
-                  module_id: "evse_manager"
-                }
-              ]
-            },
-            module: "JsDummyTokenProvider",
-            "x-view-model": {
-              position: {
-                x: 6,
-                y: 13
-              },
-              terminals: {
-                bottom: [],
-                left: [
-                  {
-                    id: "evse",
-                    interface: "evse_manager",
-                    type: "requirement"
-                  }
-                ],
-                right: [],
-                top: [
-                  {
-                    id: "main",
-                    interface: "auth_token_provider",
-                    type: "provide"
-                  }
-                ]
-              }
-            }
-          },
-          token_validator: {
-            connections: {},
-            module: "JsDummyTokenValidator",
-            "x-view-model": {
-              position: {
-                x: 22,
-                y: 1
-              },
-              terminals: {
-                bottom: [],
-                left: [
-                  {
-                    id: "main",
-                    interface: "auth_token_validator",
-                    type: "provide"
-                  }
-                ],
-                right: [],
-                top: []
-              }
-            }
-          },
-          yeti_driver: {
-            connections: {},
-            module: "JsYetiSimulator",
-            "x-view-model": {
-              position: {
-                x: -28,
-                y: 24
-              },
-              terminals: {
-                bottom: [
-                  {
-                    id: "yeti_simulation_control",
-                    interface: "yeti_simulation_control",
-                    type: "provide"
-                  }
-                ],
-                left: [
-                  {
-                    id: "yeti_extras",
-                    interface: "yeti_extras",
-                    type: "provide"
-                  },
-                  {
-                    id: "debug_state",
-                    interface: "debug_json",
-                    type: "provide"
-                  },
-                  {
-                    id: "debug_yeti",
-                    interface: "debug_json",
-                    type: "provide"
-                  }
-                ],
-                right: [
-                  {
-                    id: "debug_keepalive",
-                    interface: "debug_json",
-                    type: "provide"
-                  },
-                  {
-                    id: "debug_powermeter",
-                    interface: "debug_json",
-                    type: "provide"
-                  },
-                  {
-                    id: "powermeter",
-                    interface: "powermeter",
-                    type: "provide"
-                  }
-                ],
-                top: [
-                  {
-                    id: "board_support",
-                    interface: "board_support_AC",
-                    type: "provide"
-                  }
-                ]
-              }
-            }
-          }
-        },
-        "x-module-layout": {
-          auth: {
-            position: {
-              x: 6,
-              y: 1
-            },
-            terminals: {
-              bottom: [
-                {
-                  id: "tokenProvider",
-                  interface: "auth_token_provider",
-                  type: "requirement"
-                }
-              ],
-              left: [
-                {
-                  id: "main",
-                  interface: "auth",
-                  type: "provide"
-                }
-              ],
-              right: [
-                {
-                  id: "tokenValidator",
-                  interface: "auth_token_validator",
-                  type: "requirement"
-                }
-              ],
-              top: []
-            }
-          },
-          car_simulator: {
-            position: {
-              x: -28,
-              y: 35
-            },
-            terminals: {
-              bottom: [],
-              left: [],
-              right: [
-                {
-                  id: "main",
-                  interface: "car_simulator",
-                  type: "provide"
-                }
-              ],
-              top: [
-                {
-                  id: "simulation_control",
-                  interface: "yeti_simulation_control",
-                  type: "requirement"
-                }
-              ]
-            }
-          },
-          energy_manager: {
-            position: {
-              x: 2,
-              y: 38
-            },
-            terminals: {
-              bottom: [],
-              left: [],
-              right: [
-                {
-                  id: "main",
-                  interface: "energy_manager",
-                  type: "provide"
-                }
-              ],
-              top: [
-                {
-                  id: "energy_trunk",
-                  interface: "energy",
-                  type: "requirement"
-                }
-              ]
-            }
-          },
-          evse_manager: {
-            position: {
-              x: -11,
-              y: 13
-            },
-            terminals: {
-              bottom: [
-                {
-                  id: "energy_grid",
-                  interface: "energy",
-                  type: "provide"
-                }
-              ],
-              left: [
-                {
-                  id: "bsp",
-                  interface: "board_support_AC",
-                  type: "requirement"
-                },
-                {
-                  id: "powermeter",
-                  interface: "powermeter",
-                  type: "requirement"
-                }
-              ],
-              right: [
-                {
-                  id: "evse",
-                  interface: "evse_manager",
-                  type: "provide"
-                }
-              ],
-              top: [
-                {
-                  id: "auth",
-                  interface: "auth",
-                  type: "requirement"
-                }
-              ]
-            }
-          },
-          grid_connection_point: {
-            position: {
-              x: 2,
-              y: 26
-            },
-            terminals: {
-              bottom: [
-                {
-                  id: "energy_grid",
-                  interface: "energy",
-                  type: "provide"
-                }
-              ],
-              left: [
-                {
-                  id: "energy_consumer",
-                  interface: "energy",
-                  type: "requirement"
-                },
-                {
-                  id: "powermeter",
-                  interface: "powermeter",
-                  type: "requirement"
-                },
-                {
-                  id: "price_information",
-                  interface: "energy_price_information",
-                  type: "requirement"
-                }
-              ],
-              right: [],
-              top: []
-            }
-          },
-          iso15118_charger: {
-            position: {
-              x: -29,
-              y: 4
-            },
-            terminals: {
-              bottom: [],
-              left: [
-                {
-                  id: "slac",
-                  interface: "ISO15118_3_SLAC",
-                  type: "requirement"
-                }
-              ],
-              right: [
-                {
-                  id: "ac_charger",
-                  interface: "ISO15118_ac_charger",
-                  type: "provide"
-                },
-                {
-                  id: "dc_charger",
-                  interface: "ISO15118_dc_charger",
-                  type: "provide"
-                },
-                {
-                  id: "main",
-                  interface: "empty",
-                  type: "provide"
-                }
-              ],
-              top: []
-            }
-          },
-          token_provider_1: {
-            position: {
-              x: 6,
-              y: 13
-            },
-            terminals: {
-              bottom: [],
-              left: [
-                {
-                  id: "evse",
-                  interface: "evse_manager",
-                  type: "requirement"
-                }
-              ],
-              right: [],
-              top: [
-                {
-                  id: "main",
-                  interface: "auth_token_provider",
-                  type: "provide"
-                }
-              ]
-            }
-          },
-          token_validator: {
-            position: {
-              x: 22,
-              y: 1
-            },
-            terminals: {
-              bottom: [],
-              left: [
-                {
-                  id: "main",
-                  interface: "auth_token_validator",
-                  type: "provide"
-                }
-              ],
-              right: [],
-              top: []
-            }
-          },
-          yeti_driver: {
-            position: {
-              x: -28,
-              y: 24
-            },
-            terminals: {
-              bottom: [
-                {
-                  id: "yeti_simulation_control",
-                  interface: "yeti_simulation_control",
-                  type: "provide"
-                }
-              ],
-              left: [
-                {
-                  id: "yeti_extras",
-                  interface: "yeti_extras",
-                  type: "provide"
-                },
-                {
-                  id: "debug_state",
-                  interface: "debug_json",
-                  type: "provide"
-                },
-                {
-                  id: "debug_yeti",
-                  interface: "debug_json",
-                  type: "provide"
-                }
-              ],
-              right: [
-                {
-                  id: "debug_keepalive",
-                  interface: "debug_json",
-                  type: "provide"
-                },
-                {
-                  id: "debug_powermeter",
-                  interface: "debug_json",
-                  type: "provide"
-                },
-                {
-                  id: "powermeter",
-                  interface: "powermeter",
-                  type: "provide"
-                }
-              ],
-              top: [
-                {
-                  id: "board_support",
-                  interface: "board_support_AC",
-                  type: "provide"
-                }
-              ]
-            }
-          }
-        }
-      }
-    };
     const SampleManifestList = {
       EnergyManager: {
         description: "This module is the global Energy Manager for all EVSE/Charging stations in this building",
@@ -81201,73 +80624,784 @@ Reason: ${error2}`);
         }
       }
     };
-    const LOOPBACK_WAIT_MS = 500;
-    const RPC_COMMAND_TIMEOUT_MS = 2e3;
-    class EVBackendConnection {
-      constructor(url, listener) {
-        __publicField(this, "_socket");
-        __publicField(this, "_last_message");
-        __publicField(this, "_listener");
-        __publicField(this, "_loopback", false);
-        __publicField(this, "_pending_commands", /* @__PURE__ */ new Map());
-        __publicField(this, "_url");
-        __publicField(this, "_rpc_timeout_ms", RPC_COMMAND_TIMEOUT_MS);
-        __publicField(this, "issue_rpc");
-        this._listener = listener;
-        this._publish_connection_state({
-          type: "OPEN",
-          url
-        });
-        if (url === "loopback") {
-          this.issue_rpc = this._issue_rpc_loopback;
-          this._connect_loopback_mode();
-          return;
+    const SampleConfigList = {
+      "sample-config-sil": {
+        active_modules: {
+          auth: {
+            connections: {
+              tokenProvider: [
+                {
+                  implementation_id: "main",
+                  module_id: "token_provider_1"
+                }
+              ],
+              tokenValidator: [
+                {
+                  implementation_id: "main",
+                  module_id: "token_validator"
+                }
+              ]
+            },
+            module: "JsAuth",
+            "x-view-model": {
+              position: {
+                x: 6,
+                y: 1
+              },
+              terminals: {
+                bottom: [
+                  {
+                    id: "tokenProvider",
+                    interface: "auth_token_provider",
+                    type: "requirement"
+                  }
+                ],
+                left: [
+                  {
+                    id: "main",
+                    interface: "auth",
+                    type: "provide"
+                  }
+                ],
+                right: [
+                  {
+                    id: "tokenValidator",
+                    interface: "auth_token_validator",
+                    type: "requirement"
+                  }
+                ],
+                top: []
+              }
+            }
+          },
+          car_simulator: {
+            connections: {
+              simulation_control: [
+                {
+                  implementation_id: "yeti_simulation_control",
+                  module_id: "yeti_driver"
+                }
+              ]
+            },
+            module: "JsCarSimulator",
+            "x-view-model": {
+              position: {
+                x: -28,
+                y: 35
+              },
+              terminals: {
+                bottom: [],
+                left: [],
+                right: [
+                  {
+                    id: "main",
+                    interface: "car_simulator",
+                    type: "provide"
+                  }
+                ],
+                top: [
+                  {
+                    id: "simulation_control",
+                    interface: "yeti_simulation_control",
+                    type: "requirement"
+                  }
+                ]
+              }
+            }
+          },
+          energy_manager: {
+            connections: {
+              energy_trunk: [
+                {
+                  implementation_id: "energy_grid",
+                  module_id: "grid_connection_point"
+                }
+              ]
+            },
+            module: "EnergyManager",
+            "x-view-model": {
+              position: {
+                x: 2,
+                y: 38
+              },
+              terminals: {
+                bottom: [],
+                left: [],
+                right: [
+                  {
+                    id: "main",
+                    interface: "energy_manager",
+                    type: "provide"
+                  }
+                ],
+                top: [
+                  {
+                    id: "energy_trunk",
+                    interface: "energy",
+                    type: "requirement"
+                  }
+                ]
+              }
+            }
+          },
+          evse_manager: {
+            connections: {
+              auth: [
+                {
+                  implementation_id: "main",
+                  module_id: "auth"
+                }
+              ],
+              bsp: [
+                {
+                  implementation_id: "board_support",
+                  module_id: "yeti_driver"
+                }
+              ],
+              powermeter: [
+                {
+                  implementation_id: "powermeter",
+                  module_id: "yeti_driver"
+                }
+              ]
+            },
+            module: "EvseManager",
+            "x-view-model": {
+              position: {
+                x: -11,
+                y: 13
+              },
+              terminals: {
+                bottom: [
+                  {
+                    id: "energy_grid",
+                    interface: "energy",
+                    type: "provide"
+                  }
+                ],
+                left: [
+                  {
+                    id: "bsp",
+                    interface: "board_support_AC",
+                    type: "requirement"
+                  },
+                  {
+                    id: "powermeter",
+                    interface: "powermeter",
+                    type: "requirement"
+                  }
+                ],
+                right: [
+                  {
+                    id: "evse",
+                    interface: "evse_manager",
+                    type: "provide"
+                  }
+                ],
+                top: [
+                  {
+                    id: "auth",
+                    interface: "auth",
+                    type: "requirement"
+                  }
+                ]
+              }
+            }
+          },
+          grid_connection_point: {
+            connections: {
+              energy_consumer: [
+                {
+                  implementation_id: "energy_grid",
+                  module_id: "evse_manager"
+                }
+              ],
+              powermeter: [
+                {
+                  implementation_id: "powermeter",
+                  module_id: "yeti_driver"
+                }
+              ]
+            },
+            module: "EnergyNode",
+            "x-view-model": {
+              position: {
+                x: 2,
+                y: 26
+              },
+              terminals: {
+                bottom: [
+                  {
+                    id: "energy_grid",
+                    interface: "energy",
+                    type: "provide"
+                  }
+                ],
+                left: [
+                  {
+                    id: "energy_consumer",
+                    interface: "energy",
+                    type: "requirement"
+                  },
+                  {
+                    id: "powermeter",
+                    interface: "powermeter",
+                    type: "requirement"
+                  },
+                  {
+                    id: "price_information",
+                    interface: "energy_price_information",
+                    type: "requirement"
+                  }
+                ],
+                right: [],
+                top: []
+              }
+            }
+          },
+          iso15118_charger: {
+            connections: {},
+            module: "JsRiseV2G",
+            "x-view-model": {
+              position: {
+                x: -29,
+                y: 4
+              },
+              terminals: {
+                bottom: [],
+                left: [
+                  {
+                    id: "slac",
+                    interface: "ISO15118_3_SLAC",
+                    type: "requirement"
+                  }
+                ],
+                right: [
+                  {
+                    id: "ac_charger",
+                    interface: "ISO15118_ac_charger",
+                    type: "provide"
+                  },
+                  {
+                    id: "dc_charger",
+                    interface: "ISO15118_dc_charger",
+                    type: "provide"
+                  },
+                  {
+                    id: "main",
+                    interface: "empty",
+                    type: "provide"
+                  }
+                ],
+                top: []
+              }
+            }
+          },
+          token_provider_1: {
+            connections: {
+              evse: [
+                {
+                  implementation_id: "evse",
+                  module_id: "evse_manager"
+                }
+              ]
+            },
+            module: "JsDummyTokenProvider",
+            "x-view-model": {
+              position: {
+                x: 6,
+                y: 13
+              },
+              terminals: {
+                bottom: [],
+                left: [
+                  {
+                    id: "evse",
+                    interface: "evse_manager",
+                    type: "requirement"
+                  }
+                ],
+                right: [],
+                top: [
+                  {
+                    id: "main",
+                    interface: "auth_token_provider",
+                    type: "provide"
+                  }
+                ]
+              }
+            }
+          },
+          token_validator: {
+            connections: {},
+            module: "JsDummyTokenValidator",
+            "x-view-model": {
+              position: {
+                x: 22,
+                y: 1
+              },
+              terminals: {
+                bottom: [],
+                left: [
+                  {
+                    id: "main",
+                    interface: "auth_token_validator",
+                    type: "provide"
+                  }
+                ],
+                right: [],
+                top: []
+              }
+            }
+          },
+          yeti_driver: {
+            connections: {},
+            module: "JsYetiSimulator",
+            "x-view-model": {
+              position: {
+                x: -28,
+                y: 24
+              },
+              terminals: {
+                bottom: [
+                  {
+                    id: "yeti_simulation_control",
+                    interface: "yeti_simulation_control",
+                    type: "provide"
+                  }
+                ],
+                left: [
+                  {
+                    id: "yeti_extras",
+                    interface: "yeti_extras",
+                    type: "provide"
+                  },
+                  {
+                    id: "debug_state",
+                    interface: "debug_json",
+                    type: "provide"
+                  },
+                  {
+                    id: "debug_yeti",
+                    interface: "debug_json",
+                    type: "provide"
+                  }
+                ],
+                right: [
+                  {
+                    id: "debug_keepalive",
+                    interface: "debug_json",
+                    type: "provide"
+                  },
+                  {
+                    id: "debug_powermeter",
+                    interface: "debug_json",
+                    type: "provide"
+                  },
+                  {
+                    id: "powermeter",
+                    interface: "powermeter",
+                    type: "provide"
+                  }
+                ],
+                top: [
+                  {
+                    id: "board_support",
+                    interface: "board_support_AC",
+                    type: "provide"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "x-module-layout": {
+          auth: {
+            position: {
+              x: 6,
+              y: 1
+            },
+            terminals: {
+              bottom: [
+                {
+                  id: "tokenProvider",
+                  interface: "auth_token_provider",
+                  type: "requirement"
+                }
+              ],
+              left: [
+                {
+                  id: "main",
+                  interface: "auth",
+                  type: "provide"
+                }
+              ],
+              right: [
+                {
+                  id: "tokenValidator",
+                  interface: "auth_token_validator",
+                  type: "requirement"
+                }
+              ],
+              top: []
+            }
+          },
+          car_simulator: {
+            position: {
+              x: -28,
+              y: 35
+            },
+            terminals: {
+              bottom: [],
+              left: [],
+              right: [
+                {
+                  id: "main",
+                  interface: "car_simulator",
+                  type: "provide"
+                }
+              ],
+              top: [
+                {
+                  id: "simulation_control",
+                  interface: "yeti_simulation_control",
+                  type: "requirement"
+                }
+              ]
+            }
+          },
+          energy_manager: {
+            position: {
+              x: 2,
+              y: 38
+            },
+            terminals: {
+              bottom: [],
+              left: [],
+              right: [
+                {
+                  id: "main",
+                  interface: "energy_manager",
+                  type: "provide"
+                }
+              ],
+              top: [
+                {
+                  id: "energy_trunk",
+                  interface: "energy",
+                  type: "requirement"
+                }
+              ]
+            }
+          },
+          evse_manager: {
+            position: {
+              x: -11,
+              y: 13
+            },
+            terminals: {
+              bottom: [
+                {
+                  id: "energy_grid",
+                  interface: "energy",
+                  type: "provide"
+                }
+              ],
+              left: [
+                {
+                  id: "bsp",
+                  interface: "board_support_AC",
+                  type: "requirement"
+                },
+                {
+                  id: "powermeter",
+                  interface: "powermeter",
+                  type: "requirement"
+                }
+              ],
+              right: [
+                {
+                  id: "evse",
+                  interface: "evse_manager",
+                  type: "provide"
+                }
+              ],
+              top: [
+                {
+                  id: "auth",
+                  interface: "auth",
+                  type: "requirement"
+                }
+              ]
+            }
+          },
+          grid_connection_point: {
+            position: {
+              x: 2,
+              y: 26
+            },
+            terminals: {
+              bottom: [
+                {
+                  id: "energy_grid",
+                  interface: "energy",
+                  type: "provide"
+                }
+              ],
+              left: [
+                {
+                  id: "energy_consumer",
+                  interface: "energy",
+                  type: "requirement"
+                },
+                {
+                  id: "powermeter",
+                  interface: "powermeter",
+                  type: "requirement"
+                },
+                {
+                  id: "price_information",
+                  interface: "energy_price_information",
+                  type: "requirement"
+                }
+              ],
+              right: [],
+              top: []
+            }
+          },
+          iso15118_charger: {
+            position: {
+              x: -29,
+              y: 4
+            },
+            terminals: {
+              bottom: [],
+              left: [
+                {
+                  id: "slac",
+                  interface: "ISO15118_3_SLAC",
+                  type: "requirement"
+                }
+              ],
+              right: [
+                {
+                  id: "ac_charger",
+                  interface: "ISO15118_ac_charger",
+                  type: "provide"
+                },
+                {
+                  id: "dc_charger",
+                  interface: "ISO15118_dc_charger",
+                  type: "provide"
+                },
+                {
+                  id: "main",
+                  interface: "empty",
+                  type: "provide"
+                }
+              ],
+              top: []
+            }
+          },
+          token_provider_1: {
+            position: {
+              x: 6,
+              y: 13
+            },
+            terminals: {
+              bottom: [],
+              left: [
+                {
+                  id: "evse",
+                  interface: "evse_manager",
+                  type: "requirement"
+                }
+              ],
+              right: [],
+              top: [
+                {
+                  id: "main",
+                  interface: "auth_token_provider",
+                  type: "provide"
+                }
+              ]
+            }
+          },
+          token_validator: {
+            position: {
+              x: 22,
+              y: 1
+            },
+            terminals: {
+              bottom: [],
+              left: [
+                {
+                  id: "main",
+                  interface: "auth_token_validator",
+                  type: "provide"
+                }
+              ],
+              right: [],
+              top: []
+            }
+          },
+          yeti_driver: {
+            position: {
+              x: -28,
+              y: 24
+            },
+            terminals: {
+              bottom: [
+                {
+                  id: "yeti_simulation_control",
+                  interface: "yeti_simulation_control",
+                  type: "provide"
+                }
+              ],
+              left: [
+                {
+                  id: "yeti_extras",
+                  interface: "yeti_extras",
+                  type: "provide"
+                },
+                {
+                  id: "debug_state",
+                  interface: "debug_json",
+                  type: "provide"
+                },
+                {
+                  id: "debug_yeti",
+                  interface: "debug_json",
+                  type: "provide"
+                }
+              ],
+              right: [
+                {
+                  id: "debug_keepalive",
+                  interface: "debug_json",
+                  type: "provide"
+                },
+                {
+                  id: "debug_powermeter",
+                  interface: "debug_json",
+                  type: "provide"
+                },
+                {
+                  id: "powermeter",
+                  interface: "powermeter",
+                  type: "provide"
+                }
+              ],
+              top: [
+                {
+                  id: "board_support",
+                  interface: "board_support_AC",
+                  type: "provide"
+                }
+              ]
+            }
+          }
         }
-        this.issue_rpc = this._issue_rpc;
-        this._url = url;
-        this._connect();
       }
-      _connect() {
-        this._socket = new WebSocket(this._url);
-        this._socket.onopen = this._handle_socket_opened.bind(this);
-        this._socket.onmessage = this._handle_backend_message.bind(this);
-        this._socket.onerror = this._handle_socket_error.bind(this);
-        this._socket.onclose = () => this._handle_socket_close();
+    };
+    class RpcIssuer {
+      async get_modules() {
+        return this.issue_rpc("get_modules", null, false);
       }
-      _disconnect() {
-        this._socket.close();
-        this._publish_connection_state({ type: "DISCONNECTED" });
-        this._listener = () => {
-        };
+      async get_interfaces() {
+        return this.issue_rpc("get_interfaces", null, false);
       }
-      _issue_rpc_loopback(method) {
-        if (method === "get_modules") {
+      async get_configs() {
+        return this.issue_rpc("get_configs", null, false);
+      }
+      async save_config(params, notification) {
+        return this.issue_rpc("save_config", params, notification);
+      }
+      async restart_modules() {
+        return this.issue_rpc("restart_modules", null, false);
+      }
+      async get_rpc_timeout() {
+        return this.issue_rpc("get_rpc_timeout", null, false);
+      }
+    }
+    class LoopbackRpcIssuer extends RpcIssuer {
+      random_wait_resolve(returnValue) {
+        if (returnValue) {
           return new Promise((resolve2) => {
-            setTimeout(() => resolve2(SampleManifestList), LOOPBACK_WAIT_MS);
-          });
-        } else if (method === "get_interfaces") {
-          return new Promise((resolve2) => {
-            setTimeout(() => resolve2(SampleInterfaceList), 2 * LOOPBACK_WAIT_MS);
-          });
-        } else if (method === "get_configs") {
-          return new Promise((resolve2) => {
-            setTimeout(() => resolve2(SampleConfigList), 3 * LOOPBACK_WAIT_MS);
+            setTimeout(() => resolve2(returnValue), Math.random() * 4 * LOOPBACK_WAIT_MS);
           });
         } else {
-          return Promise.reject(`Method '${method}' currently not handled in loopback mode`);
+          return new Promise((resolve2) => {
+            setTimeout(() => resolve2(), Math.random() * 4 * LOOPBACK_WAIT_MS);
+          });
         }
       }
-      _issue_rpc(method, params, notification) {
+      async get_modules() {
+        return this.random_wait_resolve(SampleManifestList);
+      }
+      async get_interfaces() {
+        return this.random_wait_resolve(SampleInterfaceList);
+      }
+      async get_configs() {
+        return this.random_wait_resolve(SampleConfigList);
+      }
+      async save_config() {
+        return this.random_wait_resolve();
+      }
+      async restart_modules() {
+        return this.random_wait_resolve();
+      }
+      async get_rpc_timeout() {
+        return this.random_wait_resolve(5e3);
+      }
+      async issue_rpc() {
+        throw new Error("Method not implemented in LoopbackRpcIssuer.");
+      }
+      async disconnect() {
+        return this.random_wait_resolve();
+      }
+    }
+    class WebsocketRpcIssuer extends RpcIssuer {
+      constructor(_url, publish_connection_state) {
+        super();
+        __publicField(this, "_pending_commands", /* @__PURE__ */ new Map());
+        __publicField(this, "_socket");
+        __publicField(this, "_rpc_timeout_ms", INITIAL_RPC_TIMEOUT_VALUE);
+        this._url = _url;
+        this.publish_connection_state = publish_connection_state;
+        this._socket = new WebSocket(this._url);
+        this._socket.onopen = this._handle_socket_opened.bind(this);
+        this._socket.onmessage = this.handle_backend_message.bind(this);
+        this._socket.onerror = this._handle_socket_error.bind(this);
+        this._socket.onclose = this._handle_socket_close.bind(this);
+      }
+      _handle_socket_opened() {
+        this.publish_connection_state({ type: "OPENED" });
+        this.get_rpc_timeout().then((timeout) => {
+          this._rpc_timeout_ms = timeout;
+        });
+      }
+      _handle_socket_error() {
+        this.publish_connection_state({
+          type: "ERROR",
+          error: `Could not connect to ${this._socket.url}.`
+        });
+      }
+      _handle_socket_close() {
+        this.publish_connection_state({
+          type: "CLOSED"
+        });
+      }
+      async disconnect() {
+        this._socket.close();
+      }
+      async issue_rpc(method, params, notification) {
         const id2 = notification ? void 0 : Math.floor(Math.random() * 1024 * 1024);
         const rpc_request = {
           method,
           ...params !== void 0 && { params },
           ...!notification && { id: id2 }
         };
-        if (this._loopback) {
-          this._loopback_handle_command();
-          return null;
-        }
         this._socket.send(JSON.stringify(rpc_request));
         if (notification) {
           return null;
@@ -81280,10 +81414,7 @@ Reason: ${error2}`);
           this._pending_commands.set(id2, { resolve: resolve2, reject, timeout_id });
         });
       }
-      _publish_connection_state(status) {
-        this._listener(status);
-      }
-      _handle_backend_message(ev) {
+      handle_backend_message(ev) {
         const payload = JSON.parse(ev.data);
         if (payload.id !== void 0) {
           const id2 = payload.id;
@@ -81303,28 +81434,41 @@ Reason: ${error2}`);
           }
         }
       }
-      _handle_socket_opened() {
-        this._publish_connection_state({ type: "OPENED" });
+    }
+    const LOOPBACK_WAIT_MS = 500;
+    class EVBackendConnection {
+      constructor(_url, _listener) {
+        __publicField(this, "_socket");
+        __publicField(this, "_last_message");
+        __publicField(this, "_loopback", false);
+        __publicField(this, "rpc_issuer");
+        this._url = _url;
+        this._listener = _listener;
+        this._publish_connection_state({ type: "OPEN", url: this._url });
+        if (this._url === "ws://loopback:8849") {
+          this._connect_loopback_mode();
+        } else {
+          this._connect_websocket_mode();
+        }
       }
-      _loopback_handle_command() {
+      _connect_websocket_mode() {
+        this.rpc_issuer = new WebsocketRpcIssuer(this._url, this._publish_connection_state.bind(this));
       }
       _connect_loopback_mode() {
+        this.rpc_issuer = new LoopbackRpcIssuer();
         this._loopback = true;
         setTimeout(() => {
           this._publish_connection_state({ type: "OPENED" });
         }, LOOPBACK_WAIT_MS);
       }
-      _handle_socket_error() {
-        this._publish_connection_state({
-          type: "ERROR",
-          error: `Could not connect to ${this._socket.url}.`
-        });
+      async _disconnect() {
+        await this.rpc_issuer.disconnect();
+        this._publish_connection_state({ type: "DISCONNECTED" });
+        this._listener = () => {
+        };
       }
-      _handle_socket_close() {
-        this._publish_connection_state({
-          type: "CLOSED"
-        });
-        setTimeout(() => this._connect(), 1e3);
+      _publish_connection_state(status) {
+        this._listener(status);
       }
     }
     class EVBackendClient {
@@ -81339,15 +81483,15 @@ Reason: ${error2}`);
           interfaces: null
         });
       }
-      connect(url) {
+      async connect(url) {
         if (this._cxn) {
-          this._cxn._disconnect();
+          await this._cxn._disconnect();
         }
         this._cxn = new EVBackendConnection(url, (msg) => this._connection_state_listener(msg));
       }
-      disconnect() {
-        this._cxn._disconnect();
+      async disconnect() {
         this.initialized = false;
+        await this._cxn._disconnect();
         this._cxn = null;
       }
       on(event_name, handler) {
@@ -81375,18 +81519,12 @@ Reason: ${error2}`);
       create_empty_config(name) {
         return new EVConfigModel(this.everest_definitions, name);
       }
-      save_config(config2) {
-        return this._cxn.issue_rpc(
-          "save_config",
-          {
-            name: `${config2._name}`,
-            config: config2.serialize()
-          },
-          false
-        );
-      }
-      execute_remote_command(command) {
-        this._cxn.issue_rpc(command, null, true);
+      async save_config(config2) {
+        await this._cxn.rpc_issuer.save_config({
+          name: `${config2._name}`,
+          config: config2.serialize()
+        }, false);
+        await this._reload_configs();
       }
       _connection_state_listener(status) {
         let event = null;
@@ -81411,28 +81549,28 @@ Reason: ${error2}`);
         }
       }
       _on_connected() {
-        const wait_for_rpc_timeout_value = this._cxn.issue_rpc("get_rpc_timeout", null, false).then((result) => {
-          this._cxn._rpc_timeout_ms = result;
-        });
-        const wait_for_modules = this._cxn.issue_rpc("get_modules", null, false).then((result) => {
-          this.everest_definitions.modules = result;
-          this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(result).length} module files` });
-        });
-        const wait_for_interfaces = this._cxn.issue_rpc("get_interfaces", null, false).then((result) => {
-          this.everest_definitions.interfaces = result;
-          this._publish("connection_state", {
-            type: "INFO",
-            text: `Received ${Object.keys(result).length} interfaces definitions`
-          });
-        });
-        const wait_for_configs = this._cxn.issue_rpc("get_configs", null, false).then((result) => {
-          this._configs = result;
-          this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(result).length} config files` });
-        });
-        Promise.all([wait_for_rpc_timeout_value, wait_for_modules, wait_for_interfaces, wait_for_configs]).then(() => {
+        this._reload_instance_data().then(() => {
           this.initialized = true;
           this._publish("connection_state", { type: "INITIALIZED", text: "Done initializing" });
         });
+      }
+      async _reload_modules() {
+        this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
+        this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(this.everest_definitions.modules).length} module files` });
+      }
+      async _reload_interfaces() {
+        this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
+        this._publish("connection_state", {
+          type: "INFO",
+          text: `Received ${Object.keys(this.everest_definitions.interfaces).length} interfaces definitions`
+        });
+      }
+      async _reload_configs() {
+        this._configs = await this._cxn.rpc_issuer.get_configs();
+        this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(this._configs).length} config files` });
+      }
+      _reload_instance_data() {
+        return Promise.all([this._reload_interfaces(), this._reload_configs(), this._reload_modules()]);
       }
       _publish(event_name, message) {
         this._last_event_map[event_name] = message;
