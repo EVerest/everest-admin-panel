@@ -47,7 +47,7 @@
                           label="EVerest instance host address"
                           v-model="host.value.value"
                           :error-messages="host.errorMessage.value"
-                          hint="For example, oetzi.pionix.net"
+                          hint="For example, localhost"
                         ></v-text-field>
                       </v-col>
                       <v-col cols="3" sm="3">
@@ -140,10 +140,10 @@ export default defineComponent({
         port: 8849,
       },
       {
-        id: "Ötzi",
-        host: "oetzi.pionix.net",
+        id: "Instance on localhost",
+        host: "localhost",
         editable: true,
-        protocol: "wss",
+        protocol: "ws",
         port: 8849,
       },
     ]);
