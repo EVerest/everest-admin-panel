@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-6-DJnNch.js"(exports, module) {
+  "assets/index-8wR5CvxN.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -77510,7 +77510,7 @@ Reason: ${error2}`);
         _: 1
       });
     }
-    const ConfigPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-073f82d7"]]);
+    const ConfigPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-f89b8037"]]);
     const routes = [
       {
         path: "/login",
