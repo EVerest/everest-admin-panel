@@ -76,7 +76,7 @@ This is recommended if you're not using the simulator version.
 ## Documentation
 
 For more information about EVerest, please consult the
-[general documentation](https://everest.github.io/nightly/index.html).
+[general documentation](https://everest.github.io/nightly/).
 The main EVerest repository can be found
 [here](https://github.com/EVerest/everest).
 
