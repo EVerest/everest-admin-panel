@@ -21,10 +21,14 @@ includes a simulator for experimenting without an actual EVerest instance.
 
 ## Features
 
-- **Edit EVerest Configuration Files**: Easily modify your EVerest configuration directly from the admin panel.
-- **Connect to Multiple EVerest Instances**: Manage multiple instances from a single interface.
-- **Simulator**: Experiment and learn without the need for a live EVerest instance.
-- **Restart EVerest**: Restart your EVerest instance with the click of a button.
+- **Edit EVerest Configuration Files**: Easily modify your EVerest
+  configuration directly from the admin panel.
+- **Connect to Multiple EVerest Instances**: Manage multiple instances from a
+  single interface.
+- **Simulator**: Experiment and learn without the need for a live EVerest
+  instance.
+- **Restart EVerest**: Restart your EVerest instance with the click of a
+  button.
 
 ## Demo
 
@@ -93,7 +97,10 @@ Contributions are welcome! If you'd like to contribute, please:
 1. Create an issue to discuss the changes you propose.
 2. Fork the repository.
 3. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-4. Commit your changes (`git commit -s -m 'feat(some-module): amazing new feature'`). Please follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) standard and sign off your commits using the `-s` option.
+4. Commit your changes (`git commit -s -m 'feat(some-module): amazing new
+   feature'`). Please follow the
+   [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+   standard and sign off your commits using the `-s` option.
 5. Push to the branch (`git push origin feature/AmazingFeature`).
 6. Open a pull request.
 
