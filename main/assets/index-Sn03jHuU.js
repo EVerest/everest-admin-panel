@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-DUvu2goT.js"(exports, module) {
+  "assets/index-Sn03jHuU.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -36761,16 +36761,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const zoomIntensity = 5e-3;
           const scaleBy = Math.exp(delta2 * zoomIntensity);
           const newScale = oldScale * scaleBy;
-          static_layer.scale({ x: newScale, y: newScale });
           const newPos = {
             x: pointer.x - mousePointTo.x * newScale,
             y: pointer.y - mousePointTo.y * newScale
           };
-          static_layer.position(newPos);
-          this._bg.width(this._stage.width() / newScale);
-          this._bg.height(this._stage.height() / newScale);
-          this._bg.setAbsolutePosition({ x: 0, y: 0 });
-          static_layer.batchDraw();
+          this.setNewPosAndScale(static_layer, newPos, newScale);
         });
         this._stage.add(static_layer);
         this._stage.add(tooltipLayer);
@@ -36786,6 +36781,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         this.registerListeners();
         this.resizeStage();
       }
+      setNewPosAndScale(static_layer, newPos, newScale) {
+        static_layer.scale({ x: newScale, y: newScale });
+        static_layer.position(newPos);
+        this._bg.width(this._stage.width() / newScale);
+        this._bg.height(this._stage.height() / newScale);
+        this._bg.setAbsolutePosition({ x: 0, y: 0 });
+        static_layer.batchDraw();
+      }
       registerListeners() {
         window.addEventListener("resize", () => this.resizeStage());
       }
@@ -36799,6 +36802,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const containerHeight = container.offsetHeight;
         this._stage.width(containerWidth);
         this._stage.height(containerHeight);
+      }
+      reset_view() {
+        this.setNewPosAndScale(this._konva.static_layer, { x: 0, y: 0 }, 1);
       }
       set_model(model) {
         if (this._model)
@@ -36924,6 +36930,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
         });
         const current_config = computed(evbcStore2.get_current_config);
+        const reset_view = () => {
+          stage.reset_view();
+        };
         const save_config = () => {
           if (!current_config.value)
             return;
@@ -36941,6 +36950,7 @@ Reason: ${error2}`);
           selected_interface,
           stage,
           current_config,
+          reset_view,
           save_config
         };
       }
@@ -36997,6 +37007,9 @@ Reason: ${error2}`);
       }
     });
     const _hoisted_1$4 = /* @__PURE__ */ createBaseVNode("div", { id: "konva-stage" }, null, -1);
+    const _hoisted_2$3 = { id: "stage-controls" };
+    const _hoisted_3$1 = /* @__PURE__ */ createBaseVNode("span", null, "Reset View", -1);
+    const _hoisted_4 = /* @__PURE__ */ createBaseVNode("span", null, "Save Config", -1);
     function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
       return openBlock(), createBlock(VSheet, {
         id: "konva-stage-container",
@@ -37006,13 +37019,39 @@ Reason: ${error2}`);
       }, {
         default: withCtx(() => [
           _hoisted_1$4,
-          _ctx.current_config ? (openBlock(), createBlock(VBtn, {
-            key: 0,
-            id: "config-save-button",
-            icon: "mdi-content-save",
-            color: "primary",
-            onClick: _ctx.save_config
-          }, null, 8, ["onClick"])) : createCommentVNode("", true)
+          createBaseVNode("div", _hoisted_2$3, [
+            createVNode(VTooltip, { location: "left" }, {
+              activator: withCtx(({ props }) => [
+                createVNode(VBtn, mergeProps({
+                  id: "reset-view-button",
+                  icon: "mdi-undo",
+                  color: "primary",
+                  onClick: _ctx.reset_view
+                }, props), null, 16, ["onClick"])
+              ]),
+              default: withCtx(() => [
+                _hoisted_3$1
+              ]),
+              _: 1
+            }),
+            _ctx.current_config ? (openBlock(), createBlock(VTooltip, {
+              key: 0,
+              location: "left"
+            }, {
+              activator: withCtx(({ props }) => [
+                createVNode(VBtn, mergeProps({
+                  id: "config-save-button",
+                  icon: "mdi-content-save",
+                  color: "primary",
+                  onClick: _ctx.save_config
+                }, props), null, 16, ["onClick"])
+              ]),
+              default: withCtx(() => [
+                _hoisted_4
+              ]),
+              _: 1
+            })) : createCommentVNode("", true)
+          ])
         ]),
         _: 1
       });

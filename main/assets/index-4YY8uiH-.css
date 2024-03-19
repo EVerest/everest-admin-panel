@@ -51731,10 +51731,13 @@ html.overflow-y-hidden {
   top: 6px;
   right: 6px;
 }
-#config-save-button {
+#stage-controls {
   position: absolute;
   bottom: 12px;
   right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }.v-sheet {
   display: block;
   border-color: rgba(var(--v-border-color), var(--v-border-opacity));
