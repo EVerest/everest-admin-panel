@@ -2,7 +2,11 @@
 
 ## Introduction
 
-The EVerest Admin Panel is a beta-stage frontend tool designed for graphically editing the EVerest configuration file and controlling or restarting the EVerest process. It provides a user-friendly interface for managing EVerest instances and includes a simulator for experimenting without an actual EVerest instance.
+The EVerest Admin Panel is a beta-stage frontend tool designed for graphically
+editing the EVerest configuration file and controlling or restarting the
+EVerest process.
+It provides a user-friendly interface for managing EVerest instances and
+includes a simulator for experimenting without an actual EVerest instance.
 
 ## Table of Contents
 
@@ -24,10 +28,14 @@ The EVerest Admin Panel is a beta-stage frontend tool designed for graphically e
 
 ## Demo
 
-We continuously deploy the latest version of the admin panel to [GitHub Pages](https://everest.github.io/everest-admin-panel/main). 
-This allows you to try out the admin panel without having to install it locally.
+We continuously deploy the latest version of the admin panel to
+[GitHub Pages](https://everest.github.io/everest-admin-panel/main).
+This allows you to try out the admin panel without having to install it
+locally.
 
-For every pull request we deploy a version to https://everest.github.io/everest-admin-panel/pr-<PR_NUMBER> so you can test the changes before merging.
+For every pull request we deploy a version to
+https://everest.github.io/everest-admin-panel/pr-<PR_NUMBER> so you can test
+the changes before merging.
 
 ## Development
 
@@ -45,7 +53,8 @@ pnpm install
 pnpm dev
 ```
 
-This will start the development server, making the admin panel accessible on `localhost:8080`.
+This will start the development server, making the admin panel accessible on
+`localhost:8080`.
 
 - To build the project, run:
 
@@ -59,16 +68,23 @@ pnpm build
 pnpm preview
 ```
 
-For instructions on setting up an EVerest instance, refer to the [EVerest Quick Start Guide](https://everest.github.io/nightly/general/03_quick_start_guide.html). This is recommended if you're not using the simulator version.
+For instructions on setting up an EVerest instance, refer to the
+[EVerest Quick Start Guide](https://everest.github.io/nightly/general/03_quick_start_guide.html).
+This is recommended if you're not using the simulator version.
 
 
 ## Documentation
 
-For more information about EVerest, please consult the [general documentation](https://everest.github.io/nightly/index.html). The main EVerest repository can be found [here](https://github.com/EVerest/everest).
+For more information about EVerest, please consult the
+[general documentation](https://everest.github.io/nightly/index.html).
+The main EVerest repository can be found
+[here](https://github.com/EVerest/everest).
 
 ## Troubleshooting
 
-As the admin panel is currently in its beta stage, bug reports and feedback are highly appreciated. If you encounter any issues, please feel free to open an issue on our GitHub repository.
+As the admin panel is currently in its beta stage, bug reports and feedback
+are highly appreciated. If you encounter any issues, please feel free to open
+an issue on our GitHub repository.
 
 ## Contributing
 
@@ -93,4 +109,7 @@ The most important technologies used in this project are:
 
 ## License
 
-This project is licensed under the Apache License Version 2.0, January 2004. For more information, please see the [LICENSE](https://github.com/EVerest/everest-admin-panel/blob/main/LICENSE) file in this repository.
+This project is licensed under the Apache License Version 2.0, January 2004.
+For more information, please see the
+[LICENSE](https://github.com/EVerest/everest-admin-panel/blob/main/LICENSE)
+file in this repository.
