@@ -75,18 +75,27 @@
                 </Form>
                 <template v-else>
                   <v-list-subheader lines="two" :disabled="connecting" class="mb-3">
-                    <v-list-item prepend-icon="mdi-server" v-for="(server, index) in servers" :key="server.id"
-                                 @click="connect(server)">
+                        <v-list-item v-for="(server, index) in servers"
+                                     :key="server.id"
+                                     prepend-icon="mdi-server"
+                                     @click="connect(server)"
+                                     v-bind="props">
 
-                        <v-list-item-title>{{ server.id }}</v-list-item-title>
-                      <v-list-item-subtitle>{{ server.host }}</v-list-item-subtitle>
-
-                      <template v-slot:append v-if="server.editable">
-                        <v-list-item-action>
-                          <v-btn variant="text" icon="mdi-pencil" @click.prevent.stop="openEditServerView(index)"></v-btn>
-                        </v-list-item-action>
-                      </template>
-                    </v-list-item>
+                          <v-list-item-title>{{ server.id }}</v-list-item-title>
+                          <v-list-item-subtitle>{{ server.host }}</v-list-item-subtitle>
+                          <template v-slot:append>
+                            <v-list-item-action v-if="server.editable">
+                              <v-btn variant="text" icon="mdi-pencil" @click.prevent.stop="openEditServerView(index)"></v-btn>
+                            </v-list-item-action>
+                            <v-tooltip :text="server.hint" v-if="server.hint">
+                              <template v-slot:activator="{ props }">
+                                <v-list-item-action v-bind="props">
+                                  <v-btn variant="text" icon="mdi-help-circle"></v-btn>
+                                </v-list-item-action>
+                              </template>
+                            </v-tooltip>
+                          </template>
+                        </v-list-item>
                   </v-list-subheader>
                   <v-checkbox v-model="connectAutomatically"
                               label="Automatically connect to this instance"></v-checkbox>
@@ -119,6 +128,7 @@ type ServerItem = {
   host: string;
   editable: boolean;
   protocol: "ws" | "wss";
+  hint?: string;
   port: number;
 };
 
@@ -133,10 +143,11 @@ export default defineComponent({
     const evbc = inject<EVBackendClient>("evbc");
     const servers = reactive<ServerItem[]>([
       {
-        id: "Loopback",
+        id: "Simulator / Mock",
         host: "loopback",
         editable: false,
         protocol: 'ws',
+        hint: "Mock EVerest Instance for testing: simulates behavior without real data transmission. Not perfect, but useful for development.",
         port: 8849,
       },
       {
