@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-TSXhZweo.js"(exports, module) {
+  "assets/index-nqwasZkw.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -81314,7 +81314,6 @@ Reason: ${error2}`);
         this._socket.close();
       }
       async issue_rpc(method, params, notification) {
-        console.log("Issuing RPC request", method, params, notification);
         const id2 = notification ? void 0 : Math.floor(Math.random() * 1024 * 1024);
         const rpc_request = {
           method,
