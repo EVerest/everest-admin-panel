@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 import {LOOPBACK_WAIT_MS} from "@/modules/evbc/connection";
 import {EverestConfigList, EverestInterfaceDefinitionList, EverestModuleDefinitionList} from "@/modules/evbc";
 import SampleManifestList from "@/modules/evbc/sample_module_info";

@@ -1,5 +1,5 @@
-<!-- SPDX-License-Identifier: Apache-2.0 -->
-<!-- Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest -->
+<!-- SPDX-License-Identifier: Apache-2.0
+     Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest -->
 
 <template>
   <v-sheet id="konva-stage-container" width="100%" height="100vh" elevation="0">
