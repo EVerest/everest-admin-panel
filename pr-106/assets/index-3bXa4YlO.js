@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-mnANr3OS.js"(exports, module) {
+  "assets/index-3bXa4YlO.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -42066,11 +42066,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     });
     const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["__scopeId", "data-v-c751cfa8"]]);
     const _sfc_main$A = /* @__PURE__ */ defineComponent$1({
-      computed: {
-        configPreview() {
-          return ConfigPreview;
-        }
-      },
       components: { ConfigPreview },
       setup() {
         const evbcStore2 = useEvbcStore();
