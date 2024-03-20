@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-Sn03jHuU.js"(exports, module) {
+  "assets/index-r0aSwtWz.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -6265,11 +6265,11 @@ var require_index_001 = __commonJS({
     let internalSetCurrentInstance;
     let setInSSRSetupState;
     {
-      const g = getGlobalThis();
+      const g2 = getGlobalThis();
       const registerGlobalSetter = (key, setter) => {
         let setters;
-        if (!(setters = g[key]))
-          setters = g[key] = [];
+        if (!(setters = g2[key]))
+          setters = g2[key] = [];
         setters.push(setter);
         return (v) => {
           if (setters.length > 1)
@@ -9848,12 +9848,12 @@ var require_index_001 = __commonJS({
     class Box {
       constructor(_ref) {
         let {
-          x,
+          x: x2,
           y,
           width,
           height
         } = _ref;
-        this.x = x;
+        this.x = x2;
         this.y = y;
         this.width = width;
         this.height = height;
@@ -9917,12 +9917,12 @@ var require_index_001 = __commonJS({
           return new Box(rect2);
         }
         const to = style.transformOrigin;
-        const x = rect2.x - dx - (1 - sx) * parseFloat(to);
+        const x2 = rect2.x - dx - (1 - sx) * parseFloat(to);
         const y = rect2.y - dy - (1 - sy) * parseFloat(to.slice(to.indexOf(" ") + 1));
         const w = sx ? rect2.width / sx : el2.offsetWidth + 1;
         const h2 = sy ? rect2.height / sy : el2.offsetHeight + 1;
         return new Box({
-          x,
+          x: x2,
           y,
           width: w,
           height: h2
@@ -10081,17 +10081,17 @@ var require_index_001 = __commonJS({
     function toXYZ(_ref) {
       let {
         r,
-        g,
+        g: g2,
         b
       } = _ref;
       const xyz = [0, 0, 0];
       const transform2 = srgbReverseTransform;
       const matrix = srgbReverseMatrix;
       r = transform2(r / 255);
-      g = transform2(g / 255);
+      g2 = transform2(g2 / 255);
       b = transform2(b / 255);
       for (let i2 = 0; i2 < 3; ++i2) {
-        xyz[i2] = matrix[i2][0] * r + matrix[i2][1] * g + matrix[i2][2] * b;
+        xyz[i2] = matrix[i2][0] * r + matrix[i2][1] * g2 + matrix[i2][2] * b;
       }
       return xyz;
     }
@@ -10103,15 +10103,15 @@ var require_index_001 = __commonJS({
     }
     const cssColorRe = /^(?<fn>(?:rgb|hsl)a?)\((?<values>.+)\)/;
     const mappers = {
-      rgb: (r, g, b, a) => ({
+      rgb: (r, g2, b, a) => ({
         r,
-        g,
+        g: g2,
         b,
         a
       }),
-      rgba: (r, g, b, a) => ({
+      rgba: (r, g2, b, a) => ({
         r,
-        g,
+        g: g2,
         b,
         a
       }),
@@ -10213,18 +10213,18 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           a: 1
         };
       const r = rgba2.r / 255;
-      const g = rgba2.g / 255;
+      const g2 = rgba2.g / 255;
       const b = rgba2.b / 255;
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
+      const max = Math.max(r, g2, b);
+      const min = Math.min(r, g2, b);
       let h2 = 0;
       if (max !== min) {
         if (max === r) {
-          h2 = 60 * (0 + (g - b) / (max - min));
-        } else if (max === g) {
+          h2 = 60 * (0 + (g2 - b) / (max - min));
+        } else if (max === g2) {
           h2 = 60 * (2 + (b - r) / (max - min));
         } else if (max === b) {
-          h2 = 60 * (4 + (r - g) / (max - min));
+          h2 = 60 * (4 + (r - g2) / (max - min));
         }
       }
       if (h2 < 0)
@@ -10273,11 +10273,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function RGBtoCSS(_ref) {
       let {
         r,
-        g,
+        g: g2,
         b,
         a
       } = _ref;
-      return a === void 0 ? `rgb(${r}, ${g}, ${b})` : `rgba(${r}, ${g}, ${b}, ${a})`;
+      return a === void 0 ? `rgb(${r}, ${g2}, ${b})` : `rgba(${r}, ${g2}, ${b}, ${a})`;
     }
     function HSVtoCSS(hsva) {
       return RGBtoCSS(HSVtoRGB(hsva));
@@ -10289,19 +10289,19 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function RGBtoHex(_ref2) {
       let {
         r,
-        g,
+        g: g2,
         b,
         a
       } = _ref2;
-      return `#${[toHex(r), toHex(g), toHex(b), a !== void 0 ? toHex(Math.round(a * 255)) : ""].join("")}`;
+      return `#${[toHex(r), toHex(g2), toHex(b), a !== void 0 ? toHex(Math.round(a * 255)) : ""].join("")}`;
     }
     function HexToRGB(hex2) {
       hex2 = parseHex(hex2);
-      let [r, g, b, a] = chunk(hex2, 2).map((c) => parseInt(c, 16));
+      let [r, g2, b, a] = chunk(hex2, 2).map((c) => parseInt(c, 16));
       a = a === void 0 ? a : a / 255;
       return {
         r,
-        g,
+        g: g2,
         b,
         a
       };
@@ -10319,7 +10319,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       hex2 = hex2.replace(/([^0-9a-f])/gi, "F");
       if (hex2.length === 3 || hex2.length === 4) {
-        hex2 = hex2.split("").map((x) => x + x).join("");
+        hex2 = hex2.split("").map((x2) => x2 + x2).join("");
       }
       if (hex2.length !== 6) {
         hex2 = padEnd(padEnd(hex2, 6), 8, "F");
@@ -11732,8 +11732,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     function ExpandTransitionGenerator() {
       let expandedParentClass = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "";
-      let x = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
-      const sizeProperty = x ? "width" : "height";
+      let x2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
+      const sizeProperty = x2 ? "width" : "height";
       const offsetProperty = camelize(`offset-${sizeProperty}`);
       return {
         onBeforeEnter(el2) {
@@ -11810,14 +11810,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             await new Promise((resolve2) => requestAnimationFrame(resolve2));
             el2.style.visibility = "";
             const {
-              x,
+              x: x2,
               y,
               sx,
               sy,
               speed
             } = getDimensions(props.target, el2);
             const animation = animate(el2, [{
-              transform: `translate(${x}px, ${y}px) scale(${sx}, ${sy})`,
+              transform: `translate(${x2}px, ${y}px) scale(${sx}, ${sy})`,
               opacity: 0
             }, {}], {
               duration: 225 * speed,
@@ -11846,14 +11846,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             var _a2;
             await new Promise((resolve2) => requestAnimationFrame(resolve2));
             const {
-              x,
+              x: x2,
               y,
               sx,
               sy,
               speed
             } = getDimensions(props.target, el2);
             const animation = animate(el2, [{}, {
-              transform: `translate(${x}px, ${y}px) scale(${sx}, ${sy})`,
+              transform: `translate(${x2}px, ${y}px) scale(${sx}, ${sy})`,
               opacity: 0
             }], {
               duration: 125 * speed,
@@ -14106,12 +14106,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       const centerX = `${(el2.clientWidth - radius * 2) / 2}px`;
       const centerY = `${(el2.clientHeight - radius * 2) / 2}px`;
-      const x = value.center ? centerX : `${localX - radius}px`;
+      const x2 = value.center ? centerX : `${localX - radius}px`;
       const y = value.center ? centerY : `${localY - radius}px`;
       return {
         radius,
         scale,
-        x,
+        x: x2,
         y,
         centerX,
         centerY
@@ -14135,7 +14135,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           radius,
           scale,
-          x,
+          x: x2,
           y,
           centerX,
           centerY
@@ -14152,7 +14152,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         animation.classList.add("v-ripple__animation--enter");
         animation.classList.add("v-ripple__animation--visible");
-        transform(animation, `translate(${x}, ${y}) scale3d(${scale},${scale},${scale})`);
+        transform(animation, `translate(${x2}, ${y}) scale3d(${scale},${scale},${scale})`);
         animation.dataset.activated = String(performance.now());
         setTimeout(() => {
           animation.classList.remove("v-ripple__animation--enter");
@@ -16826,12 +16826,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           throw new Error(`No samples for touch id ${id2}`);
         }
         const newest = samples[0];
-        const x = [];
+        const x2 = [];
         const y = [];
         for (const val of samples) {
           if (newest[0] - val[0] > HORIZON)
             break;
-          x.push({
+          x2.push({
             t: val[0],
             d: val[1].clientX
           });
@@ -16841,15 +16841,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           });
         }
         return {
-          x: calculateImpulseVelocity(x),
+          x: calculateImpulseVelocity(x2),
           y: calculateImpulseVelocity(y),
           get direction() {
             const {
-              x: x2,
+              x: x3,
               y: y2
             } = this;
-            const [absX, absY] = [Math.abs(x2), Math.abs(y2)];
-            return absX > absY && x2 >= 0 ? "right" : absX > absY && x2 <= 0 ? "left" : absY > absX && y2 >= 0 ? "down" : absY > absX && y2 <= 0 ? "up" : oops$1();
+            const [absX, absY] = [Math.abs(x3), Math.abs(y2)];
+            return absX > absY && x3 >= 0 ? "right" : absX > absY && x3 <= 0 ? "left" : absY > absX && y2 >= 0 ? "down" : absY > absX && y2 <= 0 ? "up" : oops$1();
           }
         };
       }
@@ -17916,10 +17916,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           side,
           align
         } = anchor;
-        const x = align === "left" ? 0 : align === "center" ? box.width / 2 : align === "right" ? box.width : align;
+        const x2 = align === "left" ? 0 : align === "center" ? box.width / 2 : align === "right" ? box.width : align;
         const y = side === "top" ? 0 : side === "bottom" ? box.height : side;
         return elementToViewport({
-          x,
+          x: x2,
           y
         }, box);
       } else if (anchor.side === "left" || anchor.side === "right") {
@@ -17927,10 +17927,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           side,
           align
         } = anchor;
-        const x = side === "left" ? 0 : side === "right" ? box.width : side;
+        const x2 = side === "left" ? 0 : side === "right" ? box.width : side;
         const y = align === "top" ? 0 : align === "center" ? box.height / 2 : align === "bottom" ? box.height : align;
         return elementToViewport({
-          x,
+          x: x2,
           y
         }, box);
       }
@@ -18122,7 +18122,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const targetPoint = anchorToPoint(_placement.anchor, targetBox);
           const contentPoint = anchorToPoint(_placement.origin, box);
           let {
-            x: x2,
+            x: x3,
             y: y2
           } = getOffset$1(targetPoint, contentPoint);
           switch (_placement.anchor.side) {
@@ -18133,10 +18133,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               y2 += offset.value[0];
               break;
             case "left":
-              x2 -= offset.value[0];
+              x3 -= offset.value[0];
               break;
             case "right":
-              x2 += offset.value[0];
+              x3 += offset.value[0];
               break;
           }
           switch (_placement.anchor.align) {
@@ -18147,24 +18147,24 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               y2 += offset.value[1];
               break;
             case "left":
-              x2 -= offset.value[1];
+              x3 -= offset.value[1];
               break;
             case "right":
-              x2 += offset.value[1];
+              x3 += offset.value[1];
               break;
           }
-          box.x += x2;
+          box.x += x3;
           box.y += y2;
           box.width = Math.min(box.width, maxWidth.value);
           box.height = Math.min(box.height, maxHeight.value);
           const overflows = getOverflow(box, viewport);
           return {
             overflows,
-            x: x2,
+            x: x3,
             y: y2
           };
         }
-        let x = 0;
+        let x2 = 0;
         let y = 0;
         const available = {
           x: 0,
@@ -18184,7 +18184,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             y: _y,
             overflows
           } = checkOverflow(placement);
-          x += _x;
+          x2 += _x;
           y += _y;
           contentBox.x += _x;
           contentBox.y += _y;
@@ -18219,11 +18219,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               continue;
           }
           if (overflows.x.before) {
-            x += overflows.x.before;
+            x2 += overflows.x.before;
             contentBox.x += overflows.x.before;
           }
           if (overflows.x.after) {
-            x -= overflows.x.after;
+            x2 -= overflows.x.after;
             contentBox.x -= overflows.x.after;
           }
           if (overflows.y.before) {
@@ -18238,7 +18238,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             const overflows2 = getOverflow(contentBox, viewport);
             available.x = viewport.width - overflows2.x.before - overflows2.x.after;
             available.y = viewport.height - overflows2.y.before - overflows2.y.after;
-            x += overflows2.x.before;
+            x2 += overflows2.x.before;
             contentBox.x += overflows2.x.before;
             y += overflows2.y.before;
             contentBox.y += overflows2.y.before;
@@ -18251,8 +18251,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           transformOrigin: `${placement.origin.side} ${placement.origin.align}`,
           // transform: `translate(${pixelRound(x)}px, ${pixelRound(y)}px)`,
           top: convertToUnit(pixelRound(y)),
-          left: data.isRtl.value ? void 0 : convertToUnit(pixelRound(x)),
-          right: data.isRtl.value ? convertToUnit(pixelRound(-x)) : void 0,
+          left: data.isRtl.value ? void 0 : convertToUnit(pixelRound(x2)),
+          right: data.isRtl.value ? convertToUnit(pixelRound(-x2)) : void 0,
           minWidth: convertToUnit(axis === "y" ? Math.min(minWidth.value, targetBox.width) : minWidth.value),
           maxWidth: convertToUnit(pixelCeil(clamp(available.x, minWidth.value === Infinity ? 0 : minWidth.value, maxWidth.value))),
           maxHeight: convertToUnit(pixelCeil(clamp(available.y, minHeight.value === Infinity ? 0 : minHeight.value, maxHeight.value)))
@@ -18376,7 +18376,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       });
       onScopeDispose(() => {
         scrollElements.forEach((el2, i2) => {
-          const x = parseFloat(el2.style.getPropertyValue("--v-body-scroll-x"));
+          const x2 = parseFloat(el2.style.getPropertyValue("--v-body-scroll-x"));
           const y = parseFloat(el2.style.getPropertyValue("--v-body-scroll-y"));
           const scrollBehavior = el2.style.scrollBehavior;
           el2.style.scrollBehavior = "auto";
@@ -18384,7 +18384,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           el2.style.removeProperty("--v-body-scroll-y");
           el2.style.removeProperty("--v-scrollbar-offset");
           el2.classList.remove("v-overlay-scroll-blocked");
-          el2.scrollLeft = -x;
+          el2.scrollLeft = -x2;
           el2.scrollTop = -y;
           el2.style.scrollBehavior = scrollBehavior;
         });
@@ -19572,46 +19572,46 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       } else
         obj[key] = val.value;
     }
-    function klona(x) {
-      if (typeof x !== "object")
-        return x;
-      var i2 = 0, k, list2, tmp, str = Object.prototype.toString.call(x);
+    function klona(x2) {
+      if (typeof x2 !== "object")
+        return x2;
+      var i2 = 0, k, list2, tmp, str = Object.prototype.toString.call(x2);
       if (str === "[object Object]") {
-        tmp = Object.create(x.__proto__ || null);
+        tmp = Object.create(x2.__proto__ || null);
       } else if (str === "[object Array]") {
-        tmp = Array(x.length);
+        tmp = Array(x2.length);
       } else if (str === "[object Set]") {
         tmp = /* @__PURE__ */ new Set();
-        x.forEach(function(val) {
+        x2.forEach(function(val) {
           tmp.add(klona(val));
         });
       } else if (str === "[object Map]") {
         tmp = /* @__PURE__ */ new Map();
-        x.forEach(function(val, key) {
+        x2.forEach(function(val, key) {
           tmp.set(klona(key), klona(val));
         });
       } else if (str === "[object Date]") {
-        tmp = /* @__PURE__ */ new Date(+x);
+        tmp = /* @__PURE__ */ new Date(+x2);
       } else if (str === "[object RegExp]") {
-        tmp = new RegExp(x.source, x.flags);
+        tmp = new RegExp(x2.source, x2.flags);
       } else if (str === "[object DataView]") {
-        tmp = new x.constructor(klona(x.buffer));
+        tmp = new x2.constructor(klona(x2.buffer));
       } else if (str === "[object ArrayBuffer]") {
-        tmp = x.slice(0);
+        tmp = x2.slice(0);
       } else if (str.slice(-6) === "Array]") {
-        tmp = new x.constructor(x);
+        tmp = new x2.constructor(x2);
       }
       if (tmp) {
-        for (list2 = Object.getOwnPropertySymbols(x); i2 < list2.length; i2++) {
-          set$1(tmp, list2[i2], Object.getOwnPropertyDescriptor(x, list2[i2]));
+        for (list2 = Object.getOwnPropertySymbols(x2); i2 < list2.length; i2++) {
+          set$1(tmp, list2[i2], Object.getOwnPropertyDescriptor(x2, list2[i2]));
         }
-        for (i2 = 0, list2 = Object.getOwnPropertyNames(x); i2 < list2.length; i2++) {
-          if (Object.hasOwnProperty.call(tmp, k = list2[i2]) && tmp[k] === x[k])
+        for (i2 = 0, list2 = Object.getOwnPropertyNames(x2); i2 < list2.length; i2++) {
+          if (Object.hasOwnProperty.call(tmp, k = list2[i2]) && tmp[k] === x2[k])
             continue;
-          set$1(tmp, k, Object.getOwnPropertyDescriptor(x, k));
+          set$1(tmp, k, Object.getOwnPropertyDescriptor(x2, k));
         }
       }
-      return tmp || x;
+      return tmp || x2;
     }
     const FormContextKey = Symbol("vee-validate-form");
     const FieldContextKey = Symbol("vee-validate-field-instance");
@@ -22871,8 +22871,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     });
     function bias(val) {
       const c = 0.501;
-      const x = Math.abs(val);
-      return Math.sign(val) * (x / ((1 / c - 2) * (1 - x) + 1));
+      const x2 = Math.abs(val);
+      return Math.sign(val) * (x2 / ((1 / c - 2) * (1 - x2) + 1));
     }
     function calculateUpdatedOffset(_ref) {
       let {
@@ -23862,7 +23862,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             requestAnimationFrame(() => {
               const rect2 = nullifyTransforms(el2);
               const targetRect = targetEl.getBoundingClientRect();
-              const x = targetRect.x - rect2.x;
+              const x2 = targetRect.x - rect2.x;
               const y = targetRect.y - rect2.y - (rect2.height / 2 - targetRect.height / 2);
               const targetWidth = targetRect.width / 0.75;
               const width = Math.abs(targetWidth - rect2.width) > 1 ? {
@@ -23876,7 +23876,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               el2.style.visibility = "visible";
               targetEl.style.visibility = "hidden";
               animate(el2, {
-                transform: `translate(${x}px, ${y}px) scale(${scale})`,
+                transform: `translate(${x2}px, ${y}px) scale(${scale})`,
                 color,
                 ...width
               }, {
@@ -25888,9 +25888,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           y: m[1] * point.x + m[3] * point.y + m[5]
         };
       }
-      translate(x, y) {
-        this.m[4] += this.m[0] * x + this.m[2] * y;
-        this.m[5] += this.m[1] * x + this.m[3] * y;
+      translate(x2, y) {
+        this.m[4] += this.m[0] * x2 + this.m[2] * y;
+        this.m[5] += this.m[1] * x2 + this.m[3] * y;
         return this;
       }
       scale(sx, sy) {
@@ -26235,8 +26235,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
         imageObj.src = url;
       },
-      _rgbToHex(r, g, b) {
-        return ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+      _rgbToHex(r, g2, b) {
+        return ((1 << 24) + (r << 16) + (g2 << 8) + b).toString(16).slice(1);
       },
       _hexToRgb(hex2) {
         hex2 = hex2.replace(HASH$1, EMPTY_STRING$1);
@@ -26477,29 +26477,29 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return left <= val && val < right;
       },
       _getProjectionToSegment(x1, y1, x2, y2, x3, y3) {
-        var x, y, dist2;
+        var x4, y, dist2;
         var pd2 = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
         if (pd2 == 0) {
-          x = x1;
+          x4 = x1;
           y = y1;
           dist2 = (x3 - x2) * (x3 - x2) + (y3 - y2) * (y3 - y2);
         } else {
           var u = ((x3 - x1) * (x2 - x1) + (y3 - y1) * (y2 - y1)) / pd2;
           if (u < 0) {
-            x = x1;
+            x4 = x1;
             y = y1;
             dist2 = (x1 - x3) * (x1 - x3) + (y1 - y3) * (y1 - y3);
           } else if (u > 1) {
-            x = x2;
+            x4 = x2;
             y = y2;
             dist2 = (x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3);
           } else {
-            x = x1 + u * (x2 - x1);
+            x4 = x1 + u * (x2 - x1);
             y = y1 + u * (y2 - y1);
-            dist2 = (x - x3) * (x - x3) + (y - y3) * (y - y3);
+            dist2 = (x4 - x3) * (x4 - x3) + (y - y3) * (y - y3);
           }
         }
-        return [x, y, dist2];
+        return [x4, y, dist2];
       },
       _getProjectionToLine(pt, line, isClosed) {
         var pc = Util.cloneObject(pt);
@@ -27074,11 +27074,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       ellipse(a0, a1, a2, a3, a4, a5, a6, a7) {
         this._context.ellipse(a0, a1, a2, a3, a4, a5, a6, a7);
       }
-      isPointInPath(x, y, path, fillRule) {
+      isPointInPath(x2, y, path, fillRule) {
         if (path) {
-          return this._context.isPointInPath(path, x, y, fillRule);
+          return this._context.isPointInPath(path, x2, y, fillRule);
         }
-        return this._context.isPointInPath(x, y, fillRule);
+        return this._context.isPointInPath(x2, y, fillRule);
       }
       fill(path2d) {
         if (path2d) {
@@ -27087,17 +27087,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           this._context.fill();
         }
       }
-      fillRect(x, y, width, height) {
-        this._context.fillRect(x, y, width, height);
+      fillRect(x2, y, width, height) {
+        this._context.fillRect(x2, y, width, height);
       }
-      strokeRect(x, y, width, height) {
-        this._context.strokeRect(x, y, width, height);
+      strokeRect(x2, y, width, height) {
+        this._context.strokeRect(x2, y, width, height);
       }
-      fillText(text2, x, y, maxWidth) {
+      fillText(text2, x2, y, maxWidth) {
         if (maxWidth) {
-          this._context.fillText(text2, x, y, maxWidth);
+          this._context.fillText(text2, x2, y, maxWidth);
         } else {
-          this._context.fillText(text2, x, y);
+          this._context.fillText(text2, x2, y);
         }
       }
       measureText(text2) {
@@ -27651,14 +27651,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             relativeTo: this.getParent()
           });
         }
-        var width = Math.ceil(conf.width || rect2.width), height = Math.ceil(conf.height || rect2.height), pixelRatio = conf.pixelRatio, x = conf.x === void 0 ? Math.floor(rect2.x) : conf.x, y = conf.y === void 0 ? Math.floor(rect2.y) : conf.y, offset = conf.offset || 0, drawBorder = conf.drawBorder || false, hitCanvasPixelRatio = conf.hitCanvasPixelRatio || 1;
+        var width = Math.ceil(conf.width || rect2.width), height = Math.ceil(conf.height || rect2.height), pixelRatio = conf.pixelRatio, x2 = conf.x === void 0 ? Math.floor(rect2.x) : conf.x, y = conf.y === void 0 ? Math.floor(rect2.y) : conf.y, offset = conf.offset || 0, drawBorder = conf.drawBorder || false, hitCanvasPixelRatio = conf.hitCanvasPixelRatio || 1;
         if (!width || !height) {
           Util.error("Can not cache the node. Width or height of the node equals 0. Caching is skipped.");
           return;
         }
         width += offset * 2 + 1;
         height += offset * 2 + 1;
-        x -= offset;
+        x2 -= offset;
         y -= offset;
         var cachedSceneCanvas = new SceneCanvas({
           pixelRatio,
@@ -27683,8 +27683,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         sceneContext.save();
         hitContext.save();
-        sceneContext.translate(-x, -y);
-        hitContext.translate(-x, -y);
+        sceneContext.translate(-x2, -y);
+        hitContext.translate(-x2, -y);
         this._isUnderCache = true;
         this._clearSelfAndDescendantCache(ABSOLUTE_OPACITY);
         this._clearSelfAndDescendantCache(ABSOLUTE_SCALE);
@@ -27707,7 +27707,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           scene: cachedSceneCanvas,
           filter: cachedFilterCanvas,
           hit: cachedHitCanvas,
-          x,
+          x: x2,
           y
         });
         this._requestDraw();
@@ -28131,14 +28131,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return trans;
       }
       move(change) {
-        var changeX = change.x, changeY = change.y, x = this.x(), y = this.y();
+        var changeX = change.x, changeY = change.y, x2 = this.x(), y = this.y();
         if (changeX !== void 0) {
-          x += changeX;
+          x2 += changeX;
         }
         if (changeY !== void 0) {
           y += changeY;
         }
-        this.setPosition({ x, y });
+        this.setPosition({ x: x2, y });
         return this;
       }
       _eachAncestorReverse(func, top2) {
@@ -28381,11 +28381,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (transformsEnabled === "all") {
             at.multiply(this.getTransform());
           } else if (transformsEnabled === "position") {
-            const x = this.attrs.x || 0;
+            const x2 = this.attrs.x || 0;
             const y = this.attrs.y || 0;
             const offsetX = this.attrs.offsetX || 0;
             const offsetY = this.attrs.offsetY || 0;
-            at.translate(x - offsetX, y - offsetY);
+            at.translate(x2 - offsetX, y - offsetY);
           }
           at.dirty = false;
           return at;
@@ -28416,9 +28416,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         var _a2, _b;
         var m = this._cache.get(TRANSFORM) || new Transform();
         m.reset();
-        var x = this.x(), y = this.y(), rotation = Konva$2.getAngle(this.rotation()), scaleX = (_a2 = this.attrs.scaleX) !== null && _a2 !== void 0 ? _a2 : 1, scaleY = (_b = this.attrs.scaleY) !== null && _b !== void 0 ? _b : 1, skewX = this.attrs.skewX || 0, skewY = this.attrs.skewY || 0, offsetX = this.attrs.offsetX || 0, offsetY = this.attrs.offsetY || 0;
-        if (x !== 0 || y !== 0) {
-          m.translate(x, y);
+        var x2 = this.x(), y = this.y(), rotation = Konva$2.getAngle(this.rotation()), scaleX = (_a2 = this.attrs.scaleX) !== null && _a2 !== void 0 ? _a2 : 1, scaleY = (_b = this.attrs.scaleY) !== null && _b !== void 0 ? _b : 1, skewX = this.attrs.skewX || 0, skewY = this.attrs.skewY || 0, offsetX = this.attrs.offsetX || 0, offsetY = this.attrs.offsetY || 0;
+        if (x2 !== 0 || y !== 0) {
+          m.translate(x2, y);
         }
         if (rotation !== 0) {
           m.rotate(rotation);
@@ -28459,7 +28459,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       _toKonvaCanvas(config2) {
         config2 = config2 || {};
         var box = this.getClientRect();
-        var stage = this.getStage(), x = config2.x !== void 0 ? config2.x : Math.floor(box.x), y = config2.y !== void 0 ? config2.y : Math.floor(box.y), pixelRatio = config2.pixelRatio || 1, canvas = new SceneCanvas({
+        var stage = this.getStage(), x2 = config2.x !== void 0 ? config2.x : Math.floor(box.x), y = config2.y !== void 0 ? config2.y : Math.floor(box.y), pixelRatio = config2.pixelRatio || 1, canvas = new SceneCanvas({
           width: config2.width || Math.ceil(box.width) || (stage ? stage.width() : 0),
           height: config2.height || Math.ceil(box.height) || (stage ? stage.height() : 0),
           pixelRatio
@@ -28468,8 +28468,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           context._context.imageSmoothingEnabled = false;
         }
         context.save();
-        if (x || y) {
-          context.translate(-1 * x, -1 * y);
+        if (x2 || y) {
+          context.translate(-1 * x2, -1 * y);
         }
         this.drawScene(canvas);
         context.restore();
@@ -29818,7 +29818,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         releaseCapture(evt.pointerId);
       }
       setPointersPositions(evt) {
-        var contentPosition = this._getContentPosition(), x = null, y = null;
+        var contentPosition = this._getContentPosition(), x2 = null, y = null;
         evt = evt ? evt : window.event;
         if (evt.touches !== void 0) {
           this._pointerPositions = [];
@@ -29838,15 +29838,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             });
           });
         } else {
-          x = (evt.clientX - contentPosition.left) / contentPosition.scaleX;
+          x2 = (evt.clientX - contentPosition.left) / contentPosition.scaleX;
           y = (evt.clientY - contentPosition.top) / contentPosition.scaleY;
           this.pointerPos = {
-            x,
+            x: x2,
             y
           };
-          this._pointerPositions = [{ x, y, id: Util._getFirstPointerId(evt) }];
+          this._pointerPositions = [{ x: x2, y, id: Util._getFirstPointerId(evt) }];
           this._changedPointerPositions = [
-            { x, y, id: Util._getFirstPointerId(evt) }
+            { x: x2, y, id: Util._getFirstPointerId(evt) }
           ];
         }
       }
@@ -31485,12 +31485,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         var maxX = points[0];
         var minY = points[1];
         var maxY = points[1];
-        var x, y;
+        var x2, y;
         for (var i2 = 0; i2 < points.length / 2; i2++) {
-          x = points[i2 * 2];
+          x2 = points[i2 * 2];
           y = points[i2 * 2 + 1];
-          minX = Math.min(minX, x);
-          maxX = Math.max(maxX, x);
+          minX = Math.min(minX, x2);
+          maxX = Math.max(maxX, x2);
           minY = Math.min(minY, y);
           maxY = Math.max(maxY, y);
         }
@@ -31607,13 +31607,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         var maxX = points[0];
         var minY = points[1];
         var maxY = points[1];
-        var x, y;
+        var x2, y;
         for (var i2 = 0; i2 < points.length / 2; i2++) {
-          x = points[i2 * 2];
+          x2 = points[i2 * 2];
           y = points[i2 * 2 + 1];
-          if (!isNaN(x)) {
-            minX = Math.min(minX, x);
-            maxX = Math.max(maxX, x);
+          if (!isNaN(x2)) {
+            minX = Math.min(minX, x2);
+            maxX = Math.max(maxX, x2);
           }
           if (!isNaN(y)) {
             minY = Math.min(minY, y);
@@ -31730,10 +31730,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         function CB4(t) {
           return (1 - t) * (1 - t) * (1 - t);
         }
-        var x = P4x * CB1(pct) + P3x * CB2(pct) + P2x * CB3(pct) + P1x * CB4(pct);
+        var x2 = P4x * CB1(pct) + P3x * CB2(pct) + P2x * CB3(pct) + P1x * CB4(pct);
         var y = P4y * CB1(pct) + P3y * CB2(pct) + P2y * CB3(pct) + P1y * CB4(pct);
         return {
-          x,
+          x: x2,
           y
         };
       }
@@ -31747,10 +31747,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         function QB3(t) {
           return (1 - t) * (1 - t);
         }
-        var x = P3x * QB1(pct) + P2x * QB2(pct) + P1x * QB3(pct);
+        var x2 = P3x * QB1(pct) + P2x * QB2(pct) + P1x * QB3(pct);
         var y = P3y * QB1(pct) + P2y * QB2(pct) + P1y * QB3(pct);
         return {
-          x,
+          x: x2,
           y
         };
       }
@@ -32018,26 +32018,26 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         return ca2;
       }
-      static calcLength(x, y, cmd, points) {
+      static calcLength(x2, y, cmd, points) {
         var len, p1, p2, t;
         var path = Path;
         switch (cmd) {
           case "L":
-            return path.getLineLength(x, y, points[0], points[1]);
+            return path.getLineLength(x2, y, points[0], points[1]);
           case "C":
             len = 0;
-            p1 = path.getPointOnCubicBezier(0, x, y, points[0], points[1], points[2], points[3], points[4], points[5]);
+            p1 = path.getPointOnCubicBezier(0, x2, y, points[0], points[1], points[2], points[3], points[4], points[5]);
             for (t = 0.01; t <= 1; t += 0.01) {
-              p2 = path.getPointOnCubicBezier(t, x, y, points[0], points[1], points[2], points[3], points[4], points[5]);
+              p2 = path.getPointOnCubicBezier(t, x2, y, points[0], points[1], points[2], points[3], points[4], points[5]);
               len += path.getLineLength(p1.x, p1.y, p2.x, p2.y);
               p1 = p2;
             }
             return len;
           case "Q":
             len = 0;
-            p1 = path.getPointOnQuadraticBezier(0, x, y, points[0], points[1], points[2], points[3]);
+            p1 = path.getPointOnQuadraticBezier(0, x2, y, points[0], points[1], points[2], points[3]);
             for (t = 0.01; t <= 1; t += 0.01) {
-              p2 = path.getPointOnQuadraticBezier(t, x, y, points[0], points[1], points[2], points[3]);
+              p2 = path.getPointOnQuadraticBezier(t, x2, y, points[0], points[1], points[2], points[3]);
               len += path.getLineLength(p1.x, p1.y, p2.x, p2.y);
               p1 = p2;
             }
@@ -32424,41 +32424,41 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return this.getText().height();
       }
       _sync() {
-        var text2 = this.getText(), tag = this.getTag(), width, height, pointerDirection, pointerWidth, x, y, pointerHeight;
+        var text2 = this.getText(), tag = this.getTag(), width, height, pointerDirection, pointerWidth, x2, y, pointerHeight;
         if (text2 && tag) {
           width = text2.width();
           height = text2.height();
           pointerDirection = tag.pointerDirection();
           pointerWidth = tag.pointerWidth();
           pointerHeight = tag.pointerHeight();
-          x = 0;
+          x2 = 0;
           y = 0;
           switch (pointerDirection) {
             case UP:
-              x = width / 2;
+              x2 = width / 2;
               y = -1 * pointerHeight;
               break;
             case RIGHT$1:
-              x = width + pointerWidth;
+              x2 = width + pointerWidth;
               y = height / 2;
               break;
             case DOWN:
-              x = width / 2;
+              x2 = width / 2;
               y = height + pointerHeight;
               break;
             case LEFT$1:
-              x = -1 * pointerWidth;
+              x2 = -1 * pointerWidth;
               y = height / 2;
               break;
           }
           tag.setAttrs({
-            x: -1 * x,
+            x: -1 * x2,
             y: -1 * y,
             width,
             height
           });
           text2.setAttrs({
-            x: -1 * x,
+            x: -1 * x2,
             y: -1 * y
           });
         }
@@ -32515,20 +32515,20 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         context.fillStrokeShape(this);
       }
       getSelfRect() {
-        var x = 0, y = 0, pointerWidth = this.pointerWidth(), pointerHeight = this.pointerHeight(), direction = this.pointerDirection(), width = this.width(), height = this.height();
+        var x2 = 0, y = 0, pointerWidth = this.pointerWidth(), pointerHeight = this.pointerHeight(), direction = this.pointerDirection(), width = this.width(), height = this.height();
         if (direction === UP) {
           y -= pointerHeight;
           height += pointerHeight;
         } else if (direction === DOWN) {
           height += pointerHeight;
         } else if (direction === LEFT$1) {
-          x -= pointerWidth * 1.5;
+          x2 -= pointerWidth * 1.5;
           width += pointerWidth;
         } else if (direction === RIGHT$1) {
           width += pointerWidth * 1.5;
         }
         return {
-          x,
+          x: x2,
           y,
           width,
           height
@@ -32671,7 +32671,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
       }
       _sceneFunc(context) {
-        var anim = this.animation(), index = this.frameIndex(), ix4 = index * 4, set2 = this.animations()[anim], offsets = this.frameOffsets(), x = set2[ix4 + 0], y = set2[ix4 + 1], width = set2[ix4 + 2], height = set2[ix4 + 3], image2 = this.image();
+        var anim = this.animation(), index = this.frameIndex(), ix4 = index * 4, set2 = this.animations()[anim], offsets = this.frameOffsets(), x2 = set2[ix4 + 0], y = set2[ix4 + 1], width = set2[ix4 + 2], height = set2[ix4 + 3], image2 = this.image();
         if (this.hasFill() || this.hasStroke()) {
           context.beginPath();
           context.rect(0, 0, width, height);
@@ -32681,9 +32681,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         if (image2) {
           if (offsets) {
             var offset = offsets[anim], ix2 = index * 2;
-            context.drawImage(image2, x, y, width, height, offset[ix2 + 0], offset[ix2 + 1], width, height);
+            context.drawImage(image2, x2, y, width, height, offset[ix2 + 0], offset[ix2 + 1], width, height);
           } else {
-            context.drawImage(image2, x, y, width, height, 0, 0, width, height);
+            context.drawImage(image2, x2, y, width, height, 0, 0, width, height);
           }
         }
       }
@@ -32754,9 +32754,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         context.moveTo(0, 0 - outerRadius);
         for (var n = 1; n < numPoints * 2; n++) {
           var radius = n % 2 === 0 ? outerRadius : innerRadius;
-          var x = radius * Math.sin(n * Math.PI / numPoints);
+          var x2 = radius * Math.sin(n * Math.PI / numPoints);
           var y = -1 * radius * Math.cos(n * Math.PI / numPoints);
-          context.lineTo(x, y);
+          context.lineTo(x2, y);
         }
         context.closePath();
         context.fillStrokeShape(this);
@@ -33399,12 +33399,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         var maxX = points[0] || 0;
         var minY = points[1] || 0;
         var maxY = points[1] || 0;
-        var x, y;
+        var x2, y;
         for (var i2 = 0; i2 < points.length / 2; i2++) {
-          x = points[i2 * 2];
+          x2 = points[i2 * 2];
           y = points[i2 * 2 + 1];
-          minX = Math.min(minX, x);
-          maxX = Math.max(maxX, x);
+          minX = Math.min(minX, x2);
+          maxX = Math.max(maxX, x2);
           minY = Math.min(minY, y);
           maxY = Math.max(maxY, y);
         }
@@ -33526,11 +33526,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
     }
     function rotateAroundPoint(shape, angleRad, point) {
-      const x = point.x + (shape.x - point.x) * Math.cos(angleRad) - (shape.y - point.y) * Math.sin(angleRad);
+      const x2 = point.x + (shape.x - point.x) * Math.cos(angleRad) - (shape.y - point.y) * Math.sin(angleRad);
       const y = point.y + (shape.x - point.x) * Math.sin(angleRad) + (shape.y - point.y) * Math.cos(angleRad);
       return Object.assign(Object.assign({}, shape), {
         rotation: shape.rotation + angleRad,
-        x,
+        x: x2,
         y
       });
     }
@@ -33870,7 +33870,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
       }
       _handleMouseMove(e) {
-        var x, y, newHypotenuse;
+        var x2, y, newHypotenuse;
         var anchorNode = this.findOne("." + this._movingAnchorName);
         var stage = anchorNode.getStage();
         stage.setPointersPositions(e);
@@ -33890,9 +33890,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         if (this._movingAnchorName === "rotater") {
           var attrs = this._getNodeRect();
-          x = anchorNode.x() - attrs.width / 2;
+          x2 = anchorNode.x() - attrs.width / 2;
           y = -anchorNode.y() + attrs.height / 2;
-          let delta2 = Math.atan2(-y, x) + Math.PI / 2;
+          let delta2 = Math.atan2(-y, x2) + Math.PI / 2;
           if (attrs.height < 0) {
             delta2 -= Math.PI;
           }
@@ -33919,9 +33919,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             newHypotenuse = Math.sqrt(Math.pow(comparePoint.x - anchorNode.x(), 2) + Math.pow(comparePoint.y - anchorNode.y(), 2));
             var reverseX = this.findOne(".top-left").x() > comparePoint.x ? -1 : 1;
             var reverseY = this.findOne(".top-left").y() > comparePoint.y ? -1 : 1;
-            x = newHypotenuse * this.cos * reverseX;
+            x2 = newHypotenuse * this.cos * reverseX;
             y = newHypotenuse * this.sin * reverseY;
-            this.findOne(".top-left").x(comparePoint.x - x);
+            this.findOne(".top-left").x(comparePoint.x - x2);
             this.findOne(".top-left").y(comparePoint.y - y);
           }
         } else if (this._movingAnchorName === "top-center") {
@@ -33938,9 +33938,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             newHypotenuse = Math.sqrt(Math.pow(anchorNode.x() - comparePoint.x, 2) + Math.pow(comparePoint.y - anchorNode.y(), 2));
             var reverseX = this.findOne(".top-right").x() < comparePoint.x ? -1 : 1;
             var reverseY = this.findOne(".top-right").y() > comparePoint.y ? -1 : 1;
-            x = newHypotenuse * this.cos * reverseX;
+            x2 = newHypotenuse * this.cos * reverseX;
             y = newHypotenuse * this.sin * reverseY;
-            this.findOne(".top-right").x(comparePoint.x + x);
+            this.findOne(".top-right").x(comparePoint.x + x2);
             this.findOne(".top-right").y(comparePoint.y - y);
           }
           var pos = anchorNode.position();
@@ -33962,9 +33962,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             newHypotenuse = Math.sqrt(Math.pow(comparePoint.x - anchorNode.x(), 2) + Math.pow(anchorNode.y() - comparePoint.y, 2));
             var reverseX = comparePoint.x < anchorNode.x() ? -1 : 1;
             var reverseY = anchorNode.y() < comparePoint.y ? -1 : 1;
-            x = newHypotenuse * this.cos * reverseX;
+            x2 = newHypotenuse * this.cos * reverseX;
             y = newHypotenuse * this.sin * reverseY;
-            anchorNode.x(comparePoint.x - x);
+            anchorNode.x(comparePoint.x - x2);
             anchorNode.y(comparePoint.y + y);
           }
           pos = anchorNode.position();
@@ -33984,9 +33984,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             newHypotenuse = Math.sqrt(Math.pow(anchorNode.x() - comparePoint.x, 2) + Math.pow(anchorNode.y() - comparePoint.y, 2));
             var reverseX = this.findOne(".bottom-right").x() < comparePoint.x ? -1 : 1;
             var reverseY = this.findOne(".bottom-right").y() < comparePoint.y ? -1 : 1;
-            x = newHypotenuse * this.cos * reverseX;
+            x2 = newHypotenuse * this.cos * reverseX;
             y = newHypotenuse * this.sin * reverseY;
-            this.findOne(".bottom-right").x(comparePoint.x + x);
+            this.findOne(".bottom-right").x(comparePoint.x + x2);
             this.findOne(".bottom-right").y(comparePoint.y + y);
           }
         } else {
@@ -34010,12 +34010,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           });
         }
         var absPos = this.findOne(".top-left").getAbsolutePosition();
-        x = absPos.x;
+        x2 = absPos.x;
         y = absPos.y;
         var width = this.findOne(".bottom-right").x() - this.findOne(".top-left").x();
         var height = this.findOne(".bottom-right").y() - this.findOne(".top-left").y();
         this._fitNodesInto({
-          x,
+          x: x2,
           y,
           width,
           height,
@@ -34892,7 +34892,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     ];
     function filterGaussBlurRGBA(imageData, radius) {
       var pixels = imageData.data, width = imageData.width, height = imageData.height;
-      var x, y, i2, p2, yp, yi, yw, r_sum, g_sum, b_sum, a_sum, r_out_sum, g_out_sum, b_out_sum, a_out_sum, r_in_sum, g_in_sum, b_in_sum, a_in_sum, pr2, pg, pb, pa, rbs;
+      var x2, y, i2, p2, yp, yi, yw, r_sum, g_sum, b_sum, a_sum, r_out_sum, g_out_sum, b_out_sum, a_out_sum, r_in_sum, g_in_sum, b_in_sum, a_in_sum, pr2, pg, pb, pa, rbs;
       var div2 = radius + radius + 1, widthMinus1 = width - 1, heightMinus1 = height - 1, radiusPlus1 = radius + 1, sumFactor = radiusPlus1 * (radiusPlus1 + 1) / 2, stackStart = new BlurStack(), stackEnd = null, stack2 = stackStart, stackIn = null, stackOut = null, mul_sum = mul_table[radius], shg_sum = shg_table[radius];
       for (i2 = 1; i2 < div2; i2++) {
         stack2 = stack2.next = new BlurStack();
@@ -34934,7 +34934,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         stackIn = stackStart;
         stackOut = stackEnd;
-        for (x = 0; x < width; x++) {
+        for (x2 = 0; x2 < width; x2++) {
           pixels[yi + 3] = pa = a_sum * mul_sum >> shg_sum;
           if (pa !== 0) {
             pa = 255 / pa;
@@ -34952,7 +34952,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           g_out_sum -= stackIn.g;
           b_out_sum -= stackIn.b;
           a_out_sum -= stackIn.a;
-          p2 = yw + ((p2 = x + radius + 1) < widthMinus1 ? p2 : widthMinus1) << 2;
+          p2 = yw + ((p2 = x2 + radius + 1) < widthMinus1 ? p2 : widthMinus1) << 2;
           r_in_sum += stackIn.r = pixels[p2];
           g_in_sum += stackIn.g = pixels[p2 + 1];
           b_in_sum += stackIn.b = pixels[p2 + 2];
@@ -34975,9 +34975,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         yw += width;
       }
-      for (x = 0; x < width; x++) {
+      for (x2 = 0; x2 < width; x2++) {
         g_in_sum = b_in_sum = a_in_sum = r_in_sum = g_sum = b_sum = a_sum = r_sum = 0;
-        yi = x << 2;
+        yi = x2 << 2;
         r_out_sum = radiusPlus1 * (pr2 = pixels[yi]);
         g_out_sum = radiusPlus1 * (pg = pixels[yi + 1]);
         b_out_sum = radiusPlus1 * (pb = pixels[yi + 2]);
@@ -34996,7 +34996,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         yp = width;
         for (i2 = 1; i2 <= radius; i2++) {
-          yi = yp + x << 2;
+          yi = yp + x2 << 2;
           r_sum += (stack2.r = pr2 = pixels[yi]) * (rbs = radiusPlus1 - i2);
           g_sum += (stack2.g = pg = pixels[yi + 1]) * rbs;
           b_sum += (stack2.b = pb = pixels[yi + 2]) * rbs;
@@ -35010,7 +35010,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             yp += width;
           }
         }
-        yi = x;
+        yi = x2;
         stackIn = stackStart;
         stackOut = stackEnd;
         for (y = 0; y < height; y++) {
@@ -35032,7 +35032,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           g_out_sum -= stackIn.g;
           b_out_sum -= stackIn.b;
           a_out_sum -= stackIn.a;
-          p2 = x + ((p2 = y + radiusPlus1) < heightMinus1 ? p2 : heightMinus1) * width << 2;
+          p2 = x2 + ((p2 = y + radiusPlus1) < heightMinus1 ? p2 : heightMinus1) * width << 2;
           r_sum += r_in_sum += stackIn.r = pixels[p2];
           g_sum += g_in_sum += stackIn.g = pixels[p2 + 1];
           b_sum += b_in_sum += stackIn.b = pixels[p2 + 2];
@@ -35146,17 +35146,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           otherY = 0;
         }
         var offsetYOther = (y - 1 + otherY) * w * 4;
-        var x = w;
+        var x2 = w;
         do {
-          var offset = offsetY + (x - 1) * 4;
+          var offset = offsetY + (x2 - 1) * 4;
           var otherX = dirX;
-          if (x + otherX < 1) {
+          if (x2 + otherX < 1) {
             otherX = 0;
           }
-          if (x + otherX > w) {
+          if (x2 + otherX > w) {
             otherX = 0;
           }
-          var offsetOther = offsetYOther + (x - 1 + otherX) * 4;
+          var offsetOther = offsetYOther + (x2 - 1 + otherX) * 4;
           var dR = data[offset] - data[offsetOther];
           var dG = data[offset + 1] - data[offsetOther + 1];
           var dB = data[offset + 2] - data[offsetOther + 2];
@@ -35173,10 +35173,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           dif *= strength;
           if (blend) {
             var r = data[offset] + dif;
-            var g = data[offset + 1] + dif;
+            var g2 = data[offset + 1] + dif;
             var b = data[offset + 2] + dif;
             data[offset] = r > 255 ? 255 : r < 0 ? 0 : r;
-            data[offset + 1] = g > 255 ? 255 : g < 0 ? 0 : g;
+            data[offset + 1] = g2 > 255 ? 255 : g2 < 0 ? 0 : g2;
             data[offset + 2] = b > 255 ? 255 : b < 0 ? 0 : b;
           } else {
             var grey2 = greyLevel - dif;
@@ -35187,7 +35187,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }
             data[offset] = data[offset + 1] = data[offset + 2] = grey2;
           }
-        } while (--x);
+        } while (--x2);
       } while (--y);
     };
     Factory.addGetterSetter(Node$1, "embossStrength", 0.5, getNumberValidator(), Factory.afterSetFilter);
@@ -35207,7 +35207,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return toValue2;
     }
     const Enhance = function(imageData) {
-      var data = imageData.data, nSubPixels = data.length, rMin = data[0], rMax = rMin, r, gMin = data[1], gMax = gMin, g, bMin = data[2], bMax = bMin, b, i2;
+      var data = imageData.data, nSubPixels = data.length, rMin = data[0], rMax = rMin, r, gMin = data[1], gMax = gMin, g2, bMin = data[2], bMax = bMin, b, i2;
       var enhanceAmount = this.enhance();
       if (enhanceAmount === 0) {
         return;
@@ -35219,11 +35219,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         } else if (r > rMax) {
           rMax = r;
         }
-        g = data[i2 + 1];
-        if (g < gMin) {
-          gMin = g;
-        } else if (g > gMax) {
-          gMax = g;
+        g2 = data[i2 + 1];
+        if (g2 < gMin) {
+          gMin = g2;
+        } else if (g2 > gMax) {
+          gMax = g2;
         }
         b = data[i2 + 2];
         if (b < bMin) {
@@ -35288,15 +35288,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       var rr = 0.299 * v + 0.701 * vsu + 0.167 * vsw, rg = 0.587 * v - 0.587 * vsu + 0.33 * vsw, rb = 0.114 * v - 0.114 * vsu - 0.497 * vsw;
       var gr = 0.299 * v - 0.299 * vsu - 0.328 * vsw, gg2 = 0.587 * v + 0.413 * vsu + 0.035 * vsw, gb = 0.114 * v - 0.114 * vsu + 0.293 * vsw;
       var br = 0.299 * v - 0.3 * vsu + 1.25 * vsw, bg = 0.587 * v - 0.586 * vsu - 1.05 * vsw, bb = 0.114 * v + 0.886 * vsu - 0.2 * vsw;
-      var r, g, b, a;
+      var r, g2, b, a;
       for (i2 = 0; i2 < nPixels; i2 += 4) {
         r = data[i2 + 0];
-        g = data[i2 + 1];
+        g2 = data[i2 + 1];
         b = data[i2 + 2];
         a = data[i2 + 3];
-        data[i2 + 0] = rr * r + rg * g + rb * b + l;
-        data[i2 + 1] = gr * r + gg2 * g + gb * b + l;
-        data[i2 + 2] = br * r + bg * g + bb * b + l;
+        data[i2 + 0] = rr * r + rg * g2 + rb * b + l;
+        data[i2 + 1] = gr * r + gg2 * g2 + gb * b + l;
+        data[i2 + 2] = br * r + bg * g2 + bb * b + l;
         data[i2 + 3] = a;
       }
     };
@@ -35306,15 +35306,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       var rr = 0.299 * v + 0.701 * vsu + 0.167 * vsw, rg = 0.587 * v - 0.587 * vsu + 0.33 * vsw, rb = 0.114 * v - 0.114 * vsu - 0.497 * vsw;
       var gr = 0.299 * v - 0.299 * vsu - 0.328 * vsw, gg2 = 0.587 * v + 0.413 * vsu + 0.035 * vsw, gb = 0.114 * v - 0.114 * vsu + 0.293 * vsw;
       var br = 0.299 * v - 0.3 * vsu + 1.25 * vsw, bg = 0.587 * v - 0.586 * vsu - 1.05 * vsw, bb = 0.114 * v + 0.886 * vsu - 0.2 * vsw;
-      var r, g, b, a;
+      var r, g2, b, a;
       for (i2 = 0; i2 < nPixels; i2 += 4) {
         r = data[i2 + 0];
-        g = data[i2 + 1];
+        g2 = data[i2 + 1];
         b = data[i2 + 2];
         a = data[i2 + 3];
-        data[i2 + 0] = rr * r + rg * g + rb * b;
-        data[i2 + 1] = gr * r + gg2 * g + gb * b;
-        data[i2 + 2] = br * r + bg * g + bb * b;
+        data[i2 + 0] = rr * r + rg * g2 + rb * b;
+        data[i2 + 1] = gr * r + gg2 * g2 + gb * b;
+        data[i2 + 2] = br * r + bg * g2 + bb * b;
         data[i2 + 3] = a;
       }
     };
@@ -35330,11 +35330,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
     };
     var ToPolar = function(src, dst, opt) {
-      var srcPixels = src.data, dstPixels = dst.data, xSize = src.width, ySize = src.height, xMid = opt.polarCenterX || xSize / 2, yMid = opt.polarCenterY || ySize / 2, i2, x, y, r = 0, g = 0, b = 0, a = 0;
+      var srcPixels = src.data, dstPixels = dst.data, xSize = src.width, ySize = src.height, xMid = opt.polarCenterX || xSize / 2, yMid = opt.polarCenterY || ySize / 2, i2, x2, y, r = 0, g2 = 0, b = 0, a = 0;
       var rad, rMax = Math.sqrt(xMid * xMid + yMid * yMid);
-      x = xSize - xMid;
+      x2 = xSize - xMid;
       y = ySize - yMid;
-      rad = Math.sqrt(x * x + y * y);
+      rad = Math.sqrt(x2 * x2 + y * y);
       rMax = rad > rMax ? rad : rMax;
       var rSize = ySize, tSize = xSize, radius, theta2;
       var conversion = 360 / tSize * Math.PI / 180, sin, cos;
@@ -35342,33 +35342,33 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         sin = Math.sin(theta2 * conversion);
         cos = Math.cos(theta2 * conversion);
         for (radius = 0; radius < rSize; radius += 1) {
-          x = Math.floor(xMid + rMax * radius / rSize * cos);
+          x2 = Math.floor(xMid + rMax * radius / rSize * cos);
           y = Math.floor(yMid + rMax * radius / rSize * sin);
-          i2 = (y * xSize + x) * 4;
+          i2 = (y * xSize + x2) * 4;
           r = srcPixels[i2 + 0];
-          g = srcPixels[i2 + 1];
+          g2 = srcPixels[i2 + 1];
           b = srcPixels[i2 + 2];
           a = srcPixels[i2 + 3];
           i2 = (theta2 + radius * xSize) * 4;
           dstPixels[i2 + 0] = r;
-          dstPixels[i2 + 1] = g;
+          dstPixels[i2 + 1] = g2;
           dstPixels[i2 + 2] = b;
           dstPixels[i2 + 3] = a;
         }
       }
     };
     var FromPolar = function(src, dst, opt) {
-      var srcPixels = src.data, dstPixels = dst.data, xSize = src.width, ySize = src.height, xMid = opt.polarCenterX || xSize / 2, yMid = opt.polarCenterY || ySize / 2, i2, x, y, dx, dy, r = 0, g = 0, b = 0, a = 0;
+      var srcPixels = src.data, dstPixels = dst.data, xSize = src.width, ySize = src.height, xMid = opt.polarCenterX || xSize / 2, yMid = opt.polarCenterY || ySize / 2, i2, x2, y, dx, dy, r = 0, g2 = 0, b = 0, a = 0;
       var rad, rMax = Math.sqrt(xMid * xMid + yMid * yMid);
-      x = xSize - xMid;
+      x2 = xSize - xMid;
       y = ySize - yMid;
-      rad = Math.sqrt(x * x + y * y);
+      rad = Math.sqrt(x2 * x2 + y * y);
       rMax = rad > rMax ? rad : rMax;
       var rSize = ySize, tSize = xSize, radius, theta2, phaseShift = opt.polarRotation || 0;
       var x1, y1;
-      for (x = 0; x < xSize; x += 1) {
+      for (x2 = 0; x2 < xSize; x2 += 1) {
         for (y = 0; y < ySize; y += 1) {
-          dx = x - xMid;
+          dx = x2 - xMid;
           dy = y - yMid;
           radius = Math.sqrt(dx * dx + dy * dy) * rSize / rMax;
           theta2 = (Math.atan2(dy, dx) * 180 / Math.PI + 360 + phaseShift) % 360;
@@ -35377,12 +35377,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           y1 = Math.floor(radius);
           i2 = (y1 * xSize + x1) * 4;
           r = srcPixels[i2 + 0];
-          g = srcPixels[i2 + 1];
+          g2 = srcPixels[i2 + 1];
           b = srcPixels[i2 + 2];
           a = srcPixels[i2 + 3];
-          i2 = (y * xSize + x) * 4;
+          i2 = (y * xSize + x2) * 4;
           dstPixels[i2 + 0] = r;
-          dstPixels[i2 + 1] = g;
+          dstPixels[i2 + 1] = g2;
           dstPixels[i2 + 2] = b;
           dstPixels[i2 + 3] = a;
         }
@@ -35390,7 +35390,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     };
     const Kaleidoscope = function(imageData) {
       var xSize = imageData.width, ySize = imageData.height;
-      var x, y, xoff, i2, r, g, b, a, srcPos, dstPos;
+      var x2, y, xoff, i2, r, g2, b, a, srcPos, dstPos;
       var power = Math.round(this.kaleidoscopePower());
       var angle2 = Math.round(this.kaleidoscopeAngle());
       var offset = Math.floor(xSize * (angle2 % 360) / 360);
@@ -35420,16 +35420,16 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         xDelta = -1;
       }
       for (y = 0; y < ySize; y += 1) {
-        for (x = xStart; x !== xEnd; x += xDelta) {
-          xoff = Math.round(x + offset) % xSize;
+        for (x2 = xStart; x2 !== xEnd; x2 += xDelta) {
+          xoff = Math.round(x2 + offset) % xSize;
           srcPos = (xSize * y + xoff) * 4;
           r = scratchData.data[srcPos + 0];
-          g = scratchData.data[srcPos + 1];
+          g2 = scratchData.data[srcPos + 1];
           b = scratchData.data[srcPos + 2];
           a = scratchData.data[srcPos + 3];
-          dstPos = (xSize * y + x) * 4;
+          dstPos = (xSize * y + x2) * 4;
           scratchData.data[dstPos + 0] = r;
-          scratchData.data[dstPos + 1] = g;
+          scratchData.data[dstPos + 1] = g2;
           scratchData.data[dstPos + 2] = b;
           scratchData.data[dstPos + 3] = a;
         }
@@ -35437,15 +35437,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       for (y = 0; y < ySize; y += 1) {
         sectionSize = Math.floor(minSectionSize);
         for (i2 = 0; i2 < power; i2 += 1) {
-          for (x = 0; x < sectionSize + 1; x += 1) {
-            srcPos = (xSize * y + x) * 4;
+          for (x2 = 0; x2 < sectionSize + 1; x2 += 1) {
+            srcPos = (xSize * y + x2) * 4;
             r = scratchData.data[srcPos + 0];
-            g = scratchData.data[srcPos + 1];
+            g2 = scratchData.data[srcPos + 1];
             b = scratchData.data[srcPos + 2];
             a = scratchData.data[srcPos + 3];
-            dstPos = (xSize * y + sectionSize * 2 - x - 1) * 4;
+            dstPos = (xSize * y + sectionSize * 2 - x2 - 1) * 4;
             scratchData.data[dstPos + 0] = r;
-            scratchData.data[dstPos + 1] = g;
+            scratchData.data[dstPos + 1] = g2;
             scratchData.data[dstPos + 2] = b;
             scratchData.data[dstPos + 3] = a;
           }
@@ -35456,8 +35456,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     };
     Factory.addGetterSetter(Node$1, "kaleidoscopePower", 2, getNumberValidator(), Factory.afterSetFilter);
     Factory.addGetterSetter(Node$1, "kaleidoscopeAngle", 0, getNumberValidator(), Factory.afterSetFilter);
-    function pixelAt(idata, x, y) {
-      var idx = (y * idata.width + x) * 4;
+    function pixelAt(idata, x2, y) {
+      var idx = (y * idata.width + x2) * 4;
       var d = [];
       d.push(idata.data[idx++], idata.data[idx++], idata.data[idx++], idata.data[idx++]);
       return d;
@@ -35508,13 +35508,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       var halfSide = Math.floor(side / 2);
       var maskResult = [];
       for (var y = 0; y < sh; y++) {
-        for (var x = 0; x < sw; x++) {
-          var so = y * sw + x;
+        for (var x2 = 0; x2 < sw; x2++) {
+          var so = y * sw + x2;
           var a = 0;
           for (var cy = 0; cy < side; cy++) {
             for (var cx = 0; cx < side; cx++) {
               var scy2 = y + cy - halfSide;
-              var scx = x + cx - halfSide;
+              var scx = x2 + cx - halfSide;
               if (scy2 >= 0 && scy2 < sh && scx >= 0 && scx < sw) {
                 var srcOff = scy2 * sw + scx;
                 var wt = weights[cy * side + cx];
@@ -35533,13 +35533,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       var halfSide = Math.floor(side / 2);
       var maskResult = [];
       for (var y = 0; y < sh; y++) {
-        for (var x = 0; x < sw; x++) {
-          var so = y * sw + x;
+        for (var x2 = 0; x2 < sw; x2++) {
+          var so = y * sw + x2;
           var a = 0;
           for (var cy = 0; cy < side; cy++) {
             for (var cx = 0; cx < side; cx++) {
               var scy2 = y + cy - halfSide;
-              var scx = x + cx - halfSide;
+              var scx = x2 + cx - halfSide;
               if (scy2 >= 0 && scy2 < sh && scx >= 0 && scx < sw) {
                 var srcOff = scy2 * sw + scx;
                 var wt = weights[cy * side + cx];
@@ -35558,13 +35558,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       var halfSide = Math.floor(side / 2);
       var maskResult = [];
       for (var y = 0; y < sh; y++) {
-        for (var x = 0; x < sw; x++) {
-          var so = y * sw + x;
+        for (var x2 = 0; x2 < sw; x2++) {
+          var so = y * sw + x2;
           var a = 0;
           for (var cy = 0; cy < side; cy++) {
             for (var cx = 0; cx < side; cx++) {
               var scy2 = y + cy - halfSide;
-              var scx = x + cx - halfSide;
+              var scx = x2 + cx - halfSide;
               if (scy2 >= 0 && scy2 < sh && scx >= 0 && scx < sw) {
                 var srcOff = scy2 * sw + scx;
                 var wt = weights[cy * side + cx];
@@ -35598,7 +35598,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     };
     Factory.addGetterSetter(Node$1, "noise", 0.2, getNumberValidator(), Factory.afterSetFilter);
     const Pixelate = function(imageData) {
-      var pixelSize = Math.ceil(this.pixelSize()), width = imageData.width, height = imageData.height, x, y, i2, red2, green2, blue2, alpha2, nBinsX = Math.ceil(width / pixelSize), nBinsY = Math.ceil(height / pixelSize), xBinStart, xBinEnd, yBinStart, yBinEnd, xBin, yBin, pixelsInBin, data = imageData.data;
+      var pixelSize = Math.ceil(this.pixelSize()), width = imageData.width, height = imageData.height, x2, y, i2, red2, green2, blue2, alpha2, nBinsX = Math.ceil(width / pixelSize), nBinsY = Math.ceil(height / pixelSize), xBinStart, xBinEnd, yBinStart, yBinEnd, xBin, yBin, pixelsInBin, data = imageData.data;
       if (pixelSize <= 0) {
         Util.error("pixelSize value can not be <= 0");
         return;
@@ -35614,15 +35614,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           yBinStart = yBin * pixelSize;
           yBinEnd = yBinStart + pixelSize;
           pixelsInBin = 0;
-          for (x = xBinStart; x < xBinEnd; x += 1) {
-            if (x >= width) {
+          for (x2 = xBinStart; x2 < xBinEnd; x2 += 1) {
+            if (x2 >= width) {
               continue;
             }
             for (y = yBinStart; y < yBinEnd; y += 1) {
               if (y >= height) {
                 continue;
               }
-              i2 = (width * y + x) * 4;
+              i2 = (width * y + x2) * 4;
               red2 += data[i2 + 0];
               green2 += data[i2 + 1];
               blue2 += data[i2 + 2];
@@ -35634,15 +35634,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           green2 = green2 / pixelsInBin;
           blue2 = blue2 / pixelsInBin;
           alpha2 = alpha2 / pixelsInBin;
-          for (x = xBinStart; x < xBinEnd; x += 1) {
-            if (x >= width) {
+          for (x2 = xBinStart; x2 < xBinEnd; x2 += 1) {
+            if (x2 >= width) {
               continue;
             }
             for (y = yBinStart; y < yBinEnd; y += 1) {
               if (y >= height) {
                 continue;
               }
-              i2 = (width * y + x) * 4;
+              i2 = (width * y + x2) * 4;
               data[i2 + 0] = red2;
               data[i2 + 1] = green2;
               data[i2 + 2] = blue2;
@@ -35732,39 +35732,39 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
     });
     const Sepia = function(imageData) {
-      var data = imageData.data, nPixels = data.length, i2, r, g, b;
+      var data = imageData.data, nPixels = data.length, i2, r, g2, b;
       for (i2 = 0; i2 < nPixels; i2 += 4) {
         r = data[i2 + 0];
-        g = data[i2 + 1];
+        g2 = data[i2 + 1];
         b = data[i2 + 2];
-        data[i2 + 0] = Math.min(255, r * 0.393 + g * 0.769 + b * 0.189);
-        data[i2 + 1] = Math.min(255, r * 0.349 + g * 0.686 + b * 0.168);
-        data[i2 + 2] = Math.min(255, r * 0.272 + g * 0.534 + b * 0.131);
+        data[i2 + 0] = Math.min(255, r * 0.393 + g2 * 0.769 + b * 0.189);
+        data[i2 + 1] = Math.min(255, r * 0.349 + g2 * 0.686 + b * 0.168);
+        data[i2 + 2] = Math.min(255, r * 0.272 + g2 * 0.534 + b * 0.131);
       }
     };
     const Solarize = function(imageData) {
       var data = imageData.data, w = imageData.width, h2 = imageData.height, w4 = w * 4, y = h2;
       do {
         var offsetY = (y - 1) * w4;
-        var x = w;
+        var x2 = w;
         do {
-          var offset = offsetY + (x - 1) * 4;
+          var offset = offsetY + (x2 - 1) * 4;
           var r = data[offset];
-          var g = data[offset + 1];
+          var g2 = data[offset + 1];
           var b = data[offset + 2];
           if (r > 127) {
             r = 255 - r;
           }
-          if (g > 127) {
-            g = 255 - g;
+          if (g2 > 127) {
+            g2 = 255 - g2;
           }
           if (b > 127) {
             b = 255 - b;
           }
           data[offset] = r;
-          data[offset + 1] = g;
+          data[offset + 1] = g2;
           data[offset + 2] = b;
-        } while (--x);
+        } while (--x2);
       } while (--y);
     };
     const Threshold = function(imageData) {
@@ -36127,23 +36127,23 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
       }
     }
-    function check_hit(x, y, terminal_distribution) {
+    function check_hit(x2, y, terminal_distribution) {
       let align = null;
       let index = null;
-      if (0 < x && x < SIZE.FRAME_WIDTH) {
+      if (0 < x2 && x2 < SIZE.FRAME_WIDTH) {
         if (-SIZE.TERMINAL < y && y < 0) {
           align = "top";
-          index = Math.floor(terminal_distribution.top.length * x / SIZE.FRAME_WIDTH + 0.5);
+          index = Math.floor(terminal_distribution.top.length * x2 / SIZE.FRAME_WIDTH + 0.5);
         } else if (y > SIZE.FRAME_HEIGHT && y < SIZE.FRAME_HEIGHT + SIZE.TERMINAL) {
           align = "bottom";
-          index = Math.floor(terminal_distribution.bottom.length * x / SIZE.FRAME_WIDTH + 0.5);
+          index = Math.floor(terminal_distribution.bottom.length * x2 / SIZE.FRAME_WIDTH + 0.5);
         }
       }
       if (0 < y && y < SIZE.FRAME_HEIGHT) {
-        if (-SIZE.TERMINAL < x && x < 0) {
+        if (-SIZE.TERMINAL < x2 && x2 < 0) {
           align = "left";
           index = Math.floor(terminal_distribution.left.length * y / SIZE.FRAME_HEIGHT + 0.5);
-        } else if (x > SIZE.FRAME_WIDTH && x < SIZE.FRAME_WIDTH + SIZE.TERMINAL) {
+        } else if (x2 > SIZE.FRAME_WIDTH && x2 < SIZE.FRAME_WIDTH + SIZE.TERMINAL) {
           align = "right";
           index = Math.floor(terminal_distribution.right.length * y / SIZE.FRAME_HEIGHT + 0.5);
         }
@@ -36381,24 +36381,24 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         terminal_ids.forEach((terminal_id, index) => {
           const terminal_view = this._terminal_views[terminal_id];
           const list_offset = (index + 0.5) * size2 / terminal_count;
-          const x = x_offset + (horizontal_align ? list_offset : -SIZE.TERMINAL / 2);
+          const x2 = x_offset + (horizontal_align ? list_offset : -SIZE.TERMINAL / 2);
           const y = y_offset + (horizontal_align ? -SIZE.TERMINAL / 2 : list_offset);
           terminal_view.set_alignment(alignment);
           if (animate2) {
             terminal_view.to({
               duration: 0.2,
               ease: "EaseIn",
-              x,
+              x: x2,
               y
             });
           } else {
-            terminal_view.x(x);
+            terminal_view.x(x2);
             terminal_view.y(y);
           }
           terminal_update_event.terminals.push({
             alignment,
             id: terminal_id,
-            x: x + this.group.x(),
+            x: x2 + this.group.x(),
             y: y + this.group.y()
           });
         });
@@ -36779,7 +36779,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         context.set_container(this._stage.container());
         this.context.add_observer((ev) => this._handle_stage_context_event(ev));
         this.registerListeners();
-        this.resizeStage();
+        setTimeout(() => this.resizeStage(), 1500);
       }
       setNewPosAndScale(static_layer, newPos, newScale) {
         static_layer.scale({ x: newScale, y: newScale });
@@ -37015,7 +37015,7 @@ Reason: ${error2}`);
         id: "konva-stage-container",
         width: "100%",
         height: "100vh",
-        elevation: "4"
+        elevation: "0"
       }, {
         default: withCtx(() => [
           _hoisted_1$4,
@@ -37764,8 +37764,8 @@ Reason: ${error2}`);
     }
     const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$2]]);
     var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
-    function getDefaultExportFromCjs(x) {
-      return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+    function getDefaultExportFromCjs(x2) {
+      return x2 && x2.__esModule && Object.prototype.hasOwnProperty.call(x2, "default") ? x2["default"] : x2;
     }
     function getAugmentedNamespace(n) {
       if (n.__esModule)
@@ -37922,15 +37922,15 @@ Reason: ${error2}`);
         return c2.emptyStr() ? c1 : c1.emptyStr() ? c2 : str`${c1}${c2}`;
       }
       exports2.strConcat = strConcat;
-      function interpolate(x) {
-        return typeof x == "number" || typeof x == "boolean" || x === null ? x : safeStringify(Array.isArray(x) ? x.join(",") : x);
+      function interpolate(x2) {
+        return typeof x2 == "number" || typeof x2 == "boolean" || x2 === null ? x2 : safeStringify(Array.isArray(x2) ? x2.join(",") : x2);
       }
-      function stringify(x) {
-        return new _Code(safeStringify(x));
+      function stringify(x2) {
+        return new _Code(safeStringify(x2));
       }
       exports2.stringify = stringify;
-      function safeStringify(x) {
-        return JSON.stringify(x).replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
+      function safeStringify(x2) {
+        return JSON.stringify(x2).replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029");
       }
       exports2.safeStringify = safeStringify;
       function getProperty(key) {
@@ -38784,8 +38784,8 @@ Reason: ${error2}`);
         for (const n in from)
           names2[n] = (names2[n] || 0) - (from[n] || 0);
       }
-      function not2(x) {
-        return typeof x == "boolean" || typeof x == "number" || x === null ? !x : (0, code_12._)`!${par2(x)}`;
+      function not2(x2) {
+        return typeof x2 == "boolean" || typeof x2 == "number" || x2 === null ? !x2 : (0, code_12._)`!${par2(x2)}`;
       }
       exports2.not = not2;
       const andCode = mappend(exports2.operators.AND);
@@ -38799,10 +38799,10 @@ Reason: ${error2}`);
       }
       exports2.or = or2;
       function mappend(op) {
-        return (x, y) => x === code_12.nil ? y : y === code_12.nil ? x : (0, code_12._)`${par2(x)} ${op} ${par2(y)}`;
+        return (x2, y) => x2 === code_12.nil ? y : y === code_12.nil ? x2 : (0, code_12._)`${par2(x2)} ${op} ${par2(y)}`;
       }
-      function par2(x) {
-        return x instanceof code_12.Name ? x : (0, code_12._)`(${x})`;
+      function par2(x2) {
+        return x2 instanceof code_12.Name ? x2 : (0, code_12._)`(${x2})`;
       }
     })(codegen);
     var util = {};
@@ -38888,8 +38888,8 @@ Reason: ${error2}`);
       exports2.unescapeJsonPointer = unescapeJsonPointer;
       function eachItem(xs, f) {
         if (Array.isArray(xs)) {
-          for (const x of xs)
-            f(x);
+          for (const x2 of xs)
+            f(x2);
         } else {
           f(xs);
         }
@@ -39161,8 +39161,8 @@ Reason: ${error2}`);
     rules.getRules = rules.isJSONType = void 0;
     const _jsonTypes = ["string", "number", "integer", "boolean", "null", "object", "array"];
     const jsonTypes = new Set(_jsonTypes);
-    function isJSONType(x) {
-      return typeof x == "string" && jsonTypes.has(x);
+    function isJSONType(x2) {
+      return typeof x2 == "string" && jsonTypes.has(x2);
     }
     rules.isJSONType = isJSONType;
     function getRules() {
@@ -40775,8 +40775,8 @@ Reason: ${error2}`);
           if (sets.length > 1) {
             sets[0] = sets[0].slice(0, -1);
             var xl = sets.length - 1;
-            for (var x = 1; x < xl; ++x) {
-              sets[x] = sets[x].slice(1, -1);
+            for (var x2 = 1; x2 < xl; ++x2) {
+              sets[x2] = sets[x2].slice(1, -1);
             }
             sets[xl] = sets[xl].slice(1);
             return sets.join("");
@@ -41268,8 +41268,8 @@ Reason: ${error2}`);
             var fieldCount = isLastFieldIPv4Address ? 7 : 8;
             var lastFieldsStart = lastFields.length - fieldCount;
             var fields = Array(fieldCount);
-            for (var x = 0; x < fieldCount; ++x) {
-              fields[x] = firstFields[x] || lastFields[lastFieldsStart + x] || "";
+            for (var x2 = 0; x2 < fieldCount; ++x2) {
+              fields[x2] = firstFields[x2] || lastFields[lastFieldsStart + x2] || "";
             }
             if (isLastFieldIPv4Address) {
               fields[fieldCount - 1] = _normalizeIPv4(fields[fieldCount - 1], protocol);
@@ -41650,8 +41650,8 @@ Reason: ${error2}`);
               var unknownHeaders = false;
               var headers = {};
               var hfields = mailtoComponents.query.split("&");
-              for (var x = 0, xl = hfields.length; x < xl; ++x) {
-                var hfield = hfields[x].split("=");
+              for (var x2 = 0, xl = hfields.length; x2 < xl; ++x2) {
+                var hfield = hfields[x2].split("=");
                 switch (hfield[0]) {
                   case "to":
                     var toAddrs = hfield[1].split(",");
@@ -41695,8 +41695,8 @@ Reason: ${error2}`);
             var components = mailtoComponents;
             var to = toArray(mailtoComponents.to);
             if (to) {
-              for (var x = 0, xl = to.length; x < xl; ++x) {
-                var toAddr = String(to[x]);
+              for (var x2 = 0, xl = to.length; x2 < xl; ++x2) {
+                var toAddr = String(to[x2]);
                 var atIdx = toAddr.lastIndexOf("@");
                 var localPart = toAddr.slice(0, atIdx).replace(PCT_ENCODED, decodeUnreserved).replace(PCT_ENCODED, toUpperCase).replace(NOT_LOCAL_PART, pctEncChar);
                 var domain = toAddr.slice(atIdx + 1);
@@ -41705,7 +41705,7 @@ Reason: ${error2}`);
                 } catch (e) {
                   components.error = components.error || "Email address's domain name can not be converted to " + (!options.iri ? "ASCII" : "Unicode") + " via punycode: " + e;
                 }
-                to[x] = localPart + "@" + domain;
+                to[x2] = localPart + "@" + domain;
               }
               components.path = to.join(",");
             }
@@ -67593,11 +67593,11 @@ Reason: ${error2}`);
       } else
         thing[propOrOldValue] = value;
     }
-    function is(x, y) {
-      if (x === y) {
-        return x !== 0 || 1 / x === 1 / y;
+    function is(x2, y) {
+      if (x2 === y) {
+        return x2 !== 0 || 1 / x2 === 1 / y;
       } else {
-        return x !== x && y !== y;
+        return x2 !== x2 && y !== y;
       }
     }
     function isMap(target2) {
@@ -70196,13 +70196,13 @@ Reason: ${error2}`);
             if (!canvasRef.value)
               return;
             const {
-              x,
+              x: x2,
               y
             } = val;
             _dotPosition.value = val;
             emit2("update:color", {
               h: ((_a2 = props.color) == null ? void 0 : _a2.h) ?? 0,
-              s: clamp(x, 0, canvasWidth.value) / canvasWidth.value,
+              s: clamp(x2, 0, canvasWidth.value) / canvasWidth.value,
               v: 1 - clamp(y, 0, canvasHeight.value) / canvasHeight.value,
               a: ((_b = props.color) == null ? void 0 : _b.a) ?? 1
             });
@@ -70210,14 +70210,14 @@ Reason: ${error2}`);
         });
         const dotStyles = computed(() => {
           const {
-            x,
+            x: x2,
             y
           } = dotPosition.value;
           const radius = parseInt(props.dotSize, 10) / 2;
           return {
             width: convertToUnit(props.dotSize),
             height: convertToUnit(props.dotSize),
-            transform: `translate(${convertToUnit(x - radius)}, ${convertToUnit(y - radius)})`
+            transform: `translate(${convertToUnit(x2 - radius)}, ${convertToUnit(y - radius)})`
           };
         });
         const {
@@ -70233,7 +70233,7 @@ Reason: ${error2}`);
           canvasWidth.value = width;
           canvasHeight.value = height;
         });
-        function updateDotPosition(x, y, rect2) {
+        function updateDotPosition(x2, y, rect2) {
           const {
             left,
             top: top2,
@@ -70241,7 +70241,7 @@ Reason: ${error2}`);
             height
           } = rect2;
           dotPosition.value = {
-            x: clamp(x - left, 0, width),
+            x: clamp(x2 - left, 0, width),
             y: clamp(y - top2, 0, height)
           };
         }
@@ -77117,48 +77117,387 @@ Reason: ${error2}`);
       })) : createCommentVNode("", true);
     }
     const EvModuleInfo = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["render", _sfc_render$1]]);
+    const M = {
+      name: "splitpanes",
+      emits: ["ready", "resize", "resized", "pane-click", "pane-maximize", "pane-add", "pane-remove", "splitter-click"],
+      props: {
+        horizontal: { type: Boolean },
+        pushOtherPanes: { type: Boolean, default: true },
+        dblClickSplitter: { type: Boolean, default: true },
+        rtl: { type: Boolean, default: false },
+        firstSplitter: { type: Boolean }
+      },
+      provide() {
+        return {
+          requestUpdate: this.requestUpdate,
+          onPaneAdd: this.onPaneAdd,
+          onPaneRemove: this.onPaneRemove,
+          onPaneClick: this.onPaneClick
+        };
+      },
+      data: () => ({
+        container: null,
+        ready: false,
+        panes: [],
+        touch: {
+          mouseDown: false,
+          dragging: false,
+          activeSplitter: null
+        },
+        splitterTaps: {
+          splitter: null,
+          timeoutId: null
+        }
+      }),
+      computed: {
+        panesCount() {
+          return this.panes.length;
+        },
+        indexedPanes() {
+          return this.panes.reduce((e, i2) => (e[i2.id] = i2) && e, {});
+        }
+      },
+      methods: {
+        updatePaneComponents() {
+          this.panes.forEach((e) => {
+            e.update && e.update({
+              [this.horizontal ? "height" : "width"]: `${this.indexedPanes[e.id].size}%`
+            });
+          });
+        },
+        bindEvents() {
+          document.addEventListener("mousemove", this.onMouseMove, { passive: false }), document.addEventListener("mouseup", this.onMouseUp), "ontouchstart" in window && (document.addEventListener("touchmove", this.onMouseMove, { passive: false }), document.addEventListener("touchend", this.onMouseUp));
+        },
+        unbindEvents() {
+          document.removeEventListener("mousemove", this.onMouseMove, { passive: false }), document.removeEventListener("mouseup", this.onMouseUp), "ontouchstart" in window && (document.removeEventListener("touchmove", this.onMouseMove, { passive: false }), document.removeEventListener("touchend", this.onMouseUp));
+        },
+        onMouseDown(e, i2) {
+          this.bindEvents(), this.touch.mouseDown = true, this.touch.activeSplitter = i2;
+        },
+        onMouseMove(e) {
+          this.touch.mouseDown && (e.preventDefault(), this.touch.dragging = true, this.calculatePanesSize(this.getCurrentMouseDrag(e)), this.$emit("resize", this.panes.map((i2) => ({ min: i2.min, max: i2.max, size: i2.size }))));
+        },
+        onMouseUp() {
+          this.touch.dragging && this.$emit("resized", this.panes.map((e) => ({ min: e.min, max: e.max, size: e.size }))), this.touch.mouseDown = false, setTimeout(() => {
+            this.touch.dragging = false, this.unbindEvents();
+          }, 100);
+        },
+        onSplitterClick(e, i2) {
+          "ontouchstart" in window && (e.preventDefault(), this.dblClickSplitter && (this.splitterTaps.splitter === i2 ? (clearTimeout(this.splitterTaps.timeoutId), this.splitterTaps.timeoutId = null, this.onSplitterDblClick(e, i2), this.splitterTaps.splitter = null) : (this.splitterTaps.splitter = i2, this.splitterTaps.timeoutId = setTimeout(() => {
+            this.splitterTaps.splitter = null;
+          }, 500)))), this.touch.dragging || this.$emit("splitter-click", this.panes[i2]);
+        },
+        onSplitterDblClick(e, i2) {
+          let s = 0;
+          this.panes = this.panes.map((n, t) => (n.size = t === i2 ? n.max : n.min, t !== i2 && (s += n.min), n)), this.panes[i2].size -= s, this.$emit("pane-maximize", this.panes[i2]), this.$emit("resized", this.panes.map((n) => ({ min: n.min, max: n.max, size: n.size })));
+        },
+        onPaneClick(e, i2) {
+          this.$emit("pane-click", this.indexedPanes[i2]);
+        },
+        getCurrentMouseDrag(e) {
+          const i2 = this.container.getBoundingClientRect(), { clientX: s, clientY: n } = "ontouchstart" in window && e.touches ? e.touches[0] : e;
+          return {
+            x: s - i2.left,
+            y: n - i2.top
+          };
+        },
+        getCurrentDragPercentage(e) {
+          e = e[this.horizontal ? "y" : "x"];
+          const i2 = this.container[this.horizontal ? "clientHeight" : "clientWidth"];
+          return this.rtl && !this.horizontal && (e = i2 - e), e * 100 / i2;
+        },
+        calculatePanesSize(e) {
+          const i2 = this.touch.activeSplitter;
+          let s = {
+            prevPanesSize: this.sumPrevPanesSize(i2),
+            nextPanesSize: this.sumNextPanesSize(i2),
+            prevReachedMinPanes: 0,
+            nextReachedMinPanes: 0
+          };
+          const n = 0 + (this.pushOtherPanes ? 0 : s.prevPanesSize), t = 100 - (this.pushOtherPanes ? 0 : s.nextPanesSize), a = Math.max(Math.min(this.getCurrentDragPercentage(e), t), n);
+          let r = [i2, i2 + 1], o = this.panes[r[0]] || null, h2 = this.panes[r[1]] || null;
+          const l = o.max < 100 && a >= o.max + s.prevPanesSize, u = h2.max < 100 && a <= 100 - (h2.max + this.sumNextPanesSize(i2 + 1));
+          if (l || u) {
+            l ? (o.size = o.max, h2.size = Math.max(100 - o.max - s.prevPanesSize - s.nextPanesSize, 0)) : (o.size = Math.max(100 - h2.max - s.prevPanesSize - this.sumNextPanesSize(i2 + 1), 0), h2.size = h2.max);
+            return;
+          }
+          if (this.pushOtherPanes) {
+            const d = this.doPushOtherPanes(s, a);
+            if (!d)
+              return;
+            ({ sums: s, panesToResize: r } = d), o = this.panes[r[0]] || null, h2 = this.panes[r[1]] || null;
+          }
+          o !== null && (o.size = Math.min(Math.max(a - s.prevPanesSize - s.prevReachedMinPanes, o.min), o.max)), h2 !== null && (h2.size = Math.min(Math.max(100 - a - s.nextPanesSize - s.nextReachedMinPanes, h2.min), h2.max));
+        },
+        doPushOtherPanes(e, i2) {
+          const s = this.touch.activeSplitter, n = [s, s + 1];
+          return i2 < e.prevPanesSize + this.panes[n[0]].min && (n[0] = this.findPrevExpandedPane(s).index, e.prevReachedMinPanes = 0, n[0] < s && this.panes.forEach((t, a) => {
+            a > n[0] && a <= s && (t.size = t.min, e.prevReachedMinPanes += t.min);
+          }), e.prevPanesSize = this.sumPrevPanesSize(n[0]), n[0] === void 0) ? (e.prevReachedMinPanes = 0, this.panes[0].size = this.panes[0].min, this.panes.forEach((t, a) => {
+            a > 0 && a <= s && (t.size = t.min, e.prevReachedMinPanes += t.min);
+          }), this.panes[n[1]].size = 100 - e.prevReachedMinPanes - this.panes[0].min - e.prevPanesSize - e.nextPanesSize, null) : i2 > 100 - e.nextPanesSize - this.panes[n[1]].min && (n[1] = this.findNextExpandedPane(s).index, e.nextReachedMinPanes = 0, n[1] > s + 1 && this.panes.forEach((t, a) => {
+            a > s && a < n[1] && (t.size = t.min, e.nextReachedMinPanes += t.min);
+          }), e.nextPanesSize = this.sumNextPanesSize(n[1] - 1), n[1] === void 0) ? (e.nextReachedMinPanes = 0, this.panes[this.panesCount - 1].size = this.panes[this.panesCount - 1].min, this.panes.forEach((t, a) => {
+            a < this.panesCount - 1 && a >= s + 1 && (t.size = t.min, e.nextReachedMinPanes += t.min);
+          }), this.panes[n[0]].size = 100 - e.prevPanesSize - e.nextReachedMinPanes - this.panes[this.panesCount - 1].min - e.nextPanesSize, null) : { sums: e, panesToResize: n };
+        },
+        sumPrevPanesSize(e) {
+          return this.panes.reduce((i2, s, n) => i2 + (n < e ? s.size : 0), 0);
+        },
+        sumNextPanesSize(e) {
+          return this.panes.reduce((i2, s, n) => i2 + (n > e + 1 ? s.size : 0), 0);
+        },
+        findPrevExpandedPane(e) {
+          return [...this.panes].reverse().find((s) => s.index < e && s.size > s.min) || {};
+        },
+        findNextExpandedPane(e) {
+          return this.panes.find((s) => s.index > e + 1 && s.size > s.min) || {};
+        },
+        checkSplitpanesNodes() {
+          Array.from(this.container.children).forEach((i2) => {
+            const s = i2.classList.contains("splitpanes__pane"), n = i2.classList.contains("splitpanes__splitter");
+            !s && !n && (i2.parentNode.removeChild(i2), console.warn("Splitpanes: Only <pane> elements are allowed at the root of <splitpanes>. One of your DOM nodes was removed."));
+          });
+        },
+        addSplitter(e, i2, s = false) {
+          const n = e - 1, t = document.createElement("div");
+          t.classList.add("splitpanes__splitter"), s || (t.onmousedown = (a) => this.onMouseDown(a, n), typeof window < "u" && "ontouchstart" in window && (t.ontouchstart = (a) => this.onMouseDown(a, n)), t.onclick = (a) => this.onSplitterClick(a, n + 1)), this.dblClickSplitter && (t.ondblclick = (a) => this.onSplitterDblClick(a, n + 1)), i2.parentNode.insertBefore(t, i2);
+        },
+        removeSplitter(e) {
+          e.onmousedown = void 0, e.onclick = void 0, e.ondblclick = void 0, e.parentNode.removeChild(e);
+        },
+        redoSplitters() {
+          const e = Array.from(this.container.children);
+          e.forEach((s) => {
+            s.className.includes("splitpanes__splitter") && this.removeSplitter(s);
+          });
+          let i2 = 0;
+          e.forEach((s) => {
+            s.className.includes("splitpanes__pane") && (!i2 && this.firstSplitter ? this.addSplitter(i2, s, true) : i2 && this.addSplitter(i2, s), i2++);
+          });
+        },
+        requestUpdate({ target: e, ...i2 }) {
+          const s = this.indexedPanes[e._.uid];
+          Object.entries(i2).forEach(([n, t]) => s[n] = t);
+        },
+        onPaneAdd(e) {
+          let i2 = -1;
+          Array.from(e.$el.parentNode.children).some((t) => (t.className.includes("splitpanes__pane") && i2++, t === e.$el));
+          const s = parseFloat(e.minSize), n = parseFloat(e.maxSize);
+          this.panes.splice(i2, 0, {
+            id: e._.uid,
+            index: i2,
+            min: isNaN(s) ? 0 : s,
+            max: isNaN(n) ? 100 : n,
+            size: e.size === null ? null : parseFloat(e.size),
+            givenSize: e.size,
+            update: e.update
+          }), this.panes.forEach((t, a) => t.index = a), this.ready && this.$nextTick(() => {
+            this.redoSplitters(), this.resetPaneSizes({ addedPane: this.panes[i2] }), this.$emit("pane-add", { index: i2, panes: this.panes.map((t) => ({ min: t.min, max: t.max, size: t.size })) });
+          });
+        },
+        onPaneRemove(e) {
+          const i2 = this.panes.findIndex((n) => n.id === e._.uid), s = this.panes.splice(i2, 1)[0];
+          this.panes.forEach((n, t) => n.index = t), this.$nextTick(() => {
+            this.redoSplitters(), this.resetPaneSizes({ removedPane: { ...s, index: i2 } }), this.$emit("pane-remove", { removed: s, panes: this.panes.map((n) => ({ min: n.min, max: n.max, size: n.size })) });
+          });
+        },
+        resetPaneSizes(e = {}) {
+          !e.addedPane && !e.removedPane ? this.initialPanesSizing() : this.panes.some((i2) => i2.givenSize !== null || i2.min || i2.max < 100) ? this.equalizeAfterAddOrRemove(e) : this.equalize(), this.ready && this.$emit("resized", this.panes.map((i2) => ({ min: i2.min, max: i2.max, size: i2.size })));
+        },
+        equalize() {
+          const e = 100 / this.panesCount;
+          let i2 = 0;
+          const s = [], n = [];
+          this.panes.forEach((t) => {
+            t.size = Math.max(Math.min(e, t.max), t.min), i2 -= t.size, t.size >= t.max && s.push(t.id), t.size <= t.min && n.push(t.id);
+          }), i2 > 0.1 && this.readjustSizes(i2, s, n);
+        },
+        initialPanesSizing() {
+          let e = 100;
+          const i2 = [], s = [];
+          let n = 0;
+          this.panes.forEach((a) => {
+            e -= a.size, a.size !== null && n++, a.size >= a.max && i2.push(a.id), a.size <= a.min && s.push(a.id);
+          });
+          let t = 100;
+          e > 0.1 && (this.panes.forEach((a) => {
+            a.size === null && (a.size = Math.max(Math.min(e / (this.panesCount - n), a.max), a.min)), t -= a.size;
+          }), t > 0.1 && this.readjustSizes(e, i2, s));
+        },
+        equalizeAfterAddOrRemove({ addedPane: e, removedPane: i2 } = {}) {
+          let s = 100 / this.panesCount, n = 0;
+          const t = [], a = [];
+          e && e.givenSize !== null && (s = (100 - e.givenSize) / (this.panesCount - 1)), this.panes.forEach((r) => {
+            n -= r.size, r.size >= r.max && t.push(r.id), r.size <= r.min && a.push(r.id);
+          }), !(Math.abs(n) < 0.1) && (this.panes.forEach((r) => {
+            e && e.givenSize !== null && e.id === r.id || (r.size = Math.max(Math.min(s, r.max), r.min)), n -= r.size, r.size >= r.max && t.push(r.id), r.size <= r.min && a.push(r.id);
+          }), n > 0.1 && this.readjustSizes(n, t, a));
+        },
+        readjustSizes(e, i2, s) {
+          let n;
+          e > 0 ? n = e / (this.panesCount - i2.length) : n = e / (this.panesCount - s.length), this.panes.forEach((t, a) => {
+            if (e > 0 && !i2.includes(t.id)) {
+              const r = Math.max(Math.min(t.size + n, t.max), t.min), o = r - t.size;
+              e -= o, t.size = r;
+            } else if (!s.includes(t.id)) {
+              const r = Math.max(Math.min(t.size + n, t.max), t.min), o = r - t.size;
+              e -= o, t.size = r;
+            }
+            t.update({
+              [this.horizontal ? "height" : "width"]: `${this.indexedPanes[t.id].size}%`
+            });
+          }), Math.abs(e) > 0.1 && this.$nextTick(() => {
+            this.ready && console.warn("Splitpanes: Could not resize panes correctly due to their constraints.");
+          });
+        }
+      },
+      watch: {
+        panes: {
+          deep: true,
+          immediate: false,
+          handler() {
+            this.updatePaneComponents();
+          }
+        },
+        horizontal() {
+          this.updatePaneComponents();
+        },
+        firstSplitter() {
+          this.redoSplitters();
+        },
+        dblClickSplitter(e) {
+          [...this.container.querySelectorAll(".splitpanes__splitter")].forEach((s, n) => {
+            s.ondblclick = e ? (t) => this.onSplitterDblClick(t, n) : void 0;
+          });
+        }
+      },
+      beforeUnmount() {
+        this.ready = false;
+      },
+      mounted() {
+        this.container = this.$refs.container, this.checkSplitpanesNodes(), this.redoSplitters(), this.resetPaneSizes(), this.$emit("ready"), this.ready = true;
+      },
+      render() {
+        return h(
+          "div",
+          {
+            ref: "container",
+            class: [
+              "splitpanes",
+              `splitpanes--${this.horizontal ? "horizontal" : "vertical"}`,
+              {
+                "splitpanes--dragging": this.touch.dragging
+              }
+            ]
+          },
+          this.$slots.default()
+        );
+      }
+    }, S = (e, i2) => {
+      const s = e.__vccOpts || e;
+      for (const [n, t] of i2)
+        s[n] = t;
+      return s;
+    }, x = {
+      name: "pane",
+      inject: ["requestUpdate", "onPaneAdd", "onPaneRemove", "onPaneClick"],
+      props: {
+        size: { type: [Number, String], default: null },
+        minSize: { type: [Number, String], default: 0 },
+        maxSize: { type: [Number, String], default: 100 }
+      },
+      data: () => ({
+        style: {}
+      }),
+      mounted() {
+        this.onPaneAdd(this);
+      },
+      beforeUnmount() {
+        this.onPaneRemove(this);
+      },
+      methods: {
+        update(e) {
+          this.style = e;
+        }
+      },
+      computed: {
+        sizeNumber() {
+          return this.size || this.size === 0 ? parseFloat(this.size) : null;
+        },
+        minSizeNumber() {
+          return parseFloat(this.minSize);
+        },
+        maxSizeNumber() {
+          return parseFloat(this.maxSize);
+        }
+      },
+      watch: {
+        sizeNumber(e) {
+          this.requestUpdate({ target: this, size: e });
+        },
+        minSizeNumber(e) {
+          this.requestUpdate({ target: this, min: e });
+        },
+        maxSizeNumber(e) {
+          this.requestUpdate({ target: this, max: e });
+        }
+      }
+    };
+    function P(e, i2, s, n, t, a) {
+      return openBlock(), createElementBlock("div", {
+        class: "splitpanes__pane",
+        onClick: i2[0] || (i2[0] = (r) => a.onPaneClick(r, e._.uid)),
+        style: normalizeStyle(e.style)
+      }, [
+        renderSlot(e.$slots, "default")
+      ], 4);
+    }
+    const g = /* @__PURE__ */ S(x, [["render", P]]);
     const _sfc_main = /* @__PURE__ */ defineComponent$1({
       components: {
         EvConfigCanvas,
         EvModuleList,
-        EvModuleInfo
+        EvModuleInfo,
+        Splitpanes: M,
+        Pane: g
+      },
+      methods: {
+        on_splitpanes_resize() {
+          window.dispatchEvent(new Event("resize"));
+        }
       }
     });
     function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
       const _component_ev_module_list = resolveComponent("ev-module-list");
+      const _component_pane = resolveComponent("pane");
       const _component_ev_config_canvas = resolveComponent("ev-config-canvas");
       const _component_ev_module_info = resolveComponent("ev-module-info");
+      const _component_splitpanes = resolveComponent("splitpanes");
       return openBlock(), createBlock(VContainer, {
         fluid: "",
-        class: "fill-height"
+        class: "fill-height px-0 py-0"
       }, {
         default: withCtx(() => [
-          createVNode(VRow, { class: "fill-height" }, {
+          createVNode(_component_splitpanes, {
+            class: "default-theme",
+            style: { "height": "calc(100vh - 64px)" },
+            onResize: _ctx.on_splitpanes_resize
+          }, {
             default: withCtx(() => [
-              createVNode(VCol, {
-                cols: "2",
-                class: "overflow-y-auto pa-0",
-                style: { "max-height": "calc(100vh - 96px)" }
-              }, {
+              createVNode(_component_pane, { size: "15" }, {
                 default: withCtx(() => [
                   createVNode(_component_ev_module_list)
                 ]),
                 _: 1
               }),
-              createVNode(VCol, {
-                class: "pt-0",
-                cols: "7"
-              }, {
+              createVNode(_component_pane, { size: "70" }, {
                 default: withCtx(() => [
                   createVNode(_component_ev_config_canvas)
                 ]),
                 _: 1
               }),
-              createVNode(VCol, {
-                cols: "3",
-                class: "overflow-y-auto pa-0 pr-2",
-                style: { "max-height": "calc(100vh - 96px)" }
-              }, {
+              createVNode(_component_pane, { size: "15" }, {
                 default: withCtx(() => [
                   createVNode(_component_ev_module_info)
                 ]),
@@ -77166,12 +77505,12 @@ Reason: ${error2}`);
               })
             ]),
             _: 1
-          })
+          }, 8, ["onResize"])
         ]),
         _: 1
       });
     }
-    const ConfigPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-dd1b2d1f"]]);
+    const ConfigPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-f89b8037"]]);
     const routes = [
       {
         path: "/login",
