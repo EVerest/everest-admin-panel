@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-r0aSwtWz.js"(exports, module) {
+  "assets/index-HXl27mL0.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -9260,7 +9260,7 @@ var require_index_001 = __commonJS({
           if (notification) {
             notyf$1.dismiss(notification);
           }
-          await router$1.push({ path: "/login", query: { auto_connect: "false" } });
+          await router$1.push({ path: "/connect", query: { auto_connect: "false" } });
         }
       },
       created() {
@@ -19490,7 +19490,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$6], ["__scopeId", "data-v-cadf9cf6"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$6], ["__scopeId", "data-v-da10c89f"]]);
     /**
       * vee-validate v4.12.6
       * (c) 2024 Abdelrahman Awad
@@ -21535,17 +21535,18 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const evbc2 = inject$1("evbc");
         const servers = reactive([
           {
-            id: "Loopback",
+            id: "Simulator / Mock",
             host: "loopback",
             editable: false,
             protocol: "ws",
+            hint: "Mock EVerest Instance for testing: simulates behavior without real data transmission. Not perfect, but useful for development.",
             port: 8849
           },
           {
-            id: "Ötzi",
-            host: "oetzi.pionix.net",
+            id: "Instance on localhost",
+            host: "localhost",
             editable: true,
-            protocol: "wss",
+            protocol: "ws",
             port: 8849
           }
         ]);
@@ -25191,7 +25192,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                                     modelValue: _ctx.host.value.value,
                                                     "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.host.value.value = $event),
                                                     "error-messages": _ctx.host.errorMessage.value,
-                                                    hint: "For example, oetzi.pionix.net"
+                                                    hint: "For example, localhost"
                                                   }, null, 8, ["modelValue", "error-messages"])
                                                 ]),
                                                 _: 1
@@ -25261,11 +25262,40 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                     }, {
                                       default: withCtx(() => [
                                         (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.servers, (server, index) => {
-                                          return openBlock(), createBlock(VListItem, {
-                                            "prepend-icon": "mdi-server",
+                                          return openBlock(), createBlock(VListItem, mergeProps({
                                             key: server.id,
+                                            "prepend-icon": "mdi-server",
                                             onClick: ($event) => _ctx.connect(server)
-                                          }, createSlots({
+                                          }, _ctx.props), {
+                                            append: withCtx(() => [
+                                              server.editable ? (openBlock(), createBlock(VListItemAction, { key: 0 }, {
+                                                default: withCtx(() => [
+                                                  createVNode(VBtn, {
+                                                    variant: "text",
+                                                    icon: "mdi-pencil",
+                                                    onClick: withModifiers(($event) => _ctx.openEditServerView(index), ["prevent", "stop"])
+                                                  }, null, 8, ["onClick"])
+                                                ]),
+                                                _: 2
+                                              }, 1024)) : createCommentVNode("", true),
+                                              server.hint ? (openBlock(), createBlock(VTooltip, {
+                                                key: 1,
+                                                text: server.hint
+                                              }, {
+                                                activator: withCtx(({ props }) => [
+                                                  createVNode(VListItemAction, normalizeProps(guardReactiveProps(props)), {
+                                                    default: withCtx(() => [
+                                                      createVNode(VBtn, {
+                                                        variant: "text",
+                                                        icon: "mdi-help-circle"
+                                                      })
+                                                    ]),
+                                                    _: 2
+                                                  }, 1040)
+                                                ]),
+                                                _: 2
+                                              }, 1032, ["text"])) : createCommentVNode("", true)
+                                            ]),
                                             default: withCtx(() => [
                                               createVNode(VListItemTitle, null, {
                                                 default: withCtx(() => [
@@ -25281,24 +25311,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                               }, 1024)
                                             ]),
                                             _: 2
-                                          }, [
-                                            server.editable ? {
-                                              name: "append",
-                                              fn: withCtx(() => [
-                                                createVNode(VListItemAction, null, {
-                                                  default: withCtx(() => [
-                                                    createVNode(VBtn, {
-                                                      variant: "text",
-                                                      icon: "mdi-pencil",
-                                                      onClick: withModifiers(($event) => _ctx.openEditServerView(index), ["prevent", "stop"])
-                                                    }, null, 8, ["onClick"])
-                                                  ]),
-                                                  _: 2
-                                                }, 1024)
-                                              ]),
-                                              key: "0"
-                                            } : void 0
-                                          ]), 1032, ["onClick"]);
+                                          }, 1040, ["onClick"]);
                                         }), 128))
                                       ]),
                                       _: 1
@@ -25353,7 +25366,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const LoginPage = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$5]]);
+    const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$5]]);
     var isVue2 = false;
     /*!
      * pinia v2.1.7
@@ -77513,9 +77526,9 @@ Reason: ${error2}`);
     const ConfigPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-f89b8037"]]);
     const routes = [
       {
-        path: "/login",
-        name: "login",
-        component: LoginPage
+        path: "/connect",
+        name: "connect",
+        component: ConnectPage
       },
       {
         path: "/",
@@ -77536,14 +77549,14 @@ Reason: ${error2}`);
     });
     router.beforeEach((to, from, next2) => {
       const evbc2 = inject$1("evbc");
-      const userIsLoggedIn = evbc2 == null ? void 0 : evbc2.initialized;
-      if (to.path === "/" && userIsLoggedIn) {
+      const userIsConnected = evbc2 == null ? void 0 : evbc2.initialized;
+      if (to.path === "/" && userIsConnected) {
         next2("/config");
       } else if (to.matched.some((record) => record.meta.requiresConnection)) {
-        if (userIsLoggedIn) {
+        if (userIsConnected) {
           next2();
         } else {
-          next2("/login");
+          next2("/connect");
         }
       } else {
         next2();
