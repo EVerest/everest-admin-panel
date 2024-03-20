@@ -193,7 +193,6 @@ export default class ModuleView {
     this._title = title;
 
     this.group.add(frame, topStroke, typeInfo, title, ...this._terminal_views);
-    this.group.cache();
   }
 
   get_terminal_placement(id: number) {
