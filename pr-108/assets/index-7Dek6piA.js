@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-b9GOXVqj.js"(exports, module) {
+  "assets/index-7Dek6piA.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -19490,7 +19490,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$6], ["__scopeId", "data-v-da10c89f"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$6], ["__scopeId", "data-v-88cf8617"]]);
     /**
       * vee-validate v4.12.6
       * (c) 2024 Abdelrahman Awad
@@ -42064,7 +42064,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
-    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["__scopeId", "data-v-c751cfa8"]]);
+    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["__scopeId", "data-v-fcb98d9a"]]);
     const _sfc_main$A = /* @__PURE__ */ defineComponent$1({
       components: { ConfigPreview },
       setup() {
@@ -81329,7 +81329,7 @@ Reason: ${error2}`);
         };
       }
     });
-    const IconButtonWithTooltip = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-40228a16"]]);
+    const IconButtonWithTooltip = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-6395d6b5"]]);
     let evbcStore;
     const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
       created() {
@@ -81975,7 +81975,7 @@ Reason: ${error2}`);
         _: 1
       });
     }
-    const ConfigPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-f89b8037"]]);
+    const ConfigPage = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render], ["__scopeId", "data-v-a690e077"]]);
     const routes = [
       {
         path: "/connect",
