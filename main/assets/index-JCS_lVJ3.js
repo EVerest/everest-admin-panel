@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-QcxcaYcO.js"(exports, module) {
+  "assets/index-JCS_lVJ3.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -9241,7 +9241,7 @@ var require_index_001 = __commonJS({
         drawer: false,
         evbc_disconnected: false,
         evbc_status: "",
-        version: "0.1.0"
+        version: "0.2.0"
       }),
       computed: {
         connectionUrl() {
