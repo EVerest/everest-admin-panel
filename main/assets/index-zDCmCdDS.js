@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-JCS_lVJ3.js"(exports, module) {
+  "assets/index-zDCmCdDS.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -36288,7 +36288,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
         this._title = title2;
         this.group.add(frame, topStroke, typeInfo, title2, ...this._terminal_views);
-        this.group.cache();
       }
       get_terminal_placement(id2) {
         const terminal_view = this._terminal_views[id2];
