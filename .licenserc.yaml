@@ -1,0 +1,34 @@
+header:
+  license:
+    spdx-id: Apache-2.0
+    copyright-owner: Pionix GmbH and Contributors to EVerest
+    software-name: EVerest Admin Panel
+    content: |
+      SPDX-License-Identifier: Apache-2.0
+      Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+      
+
+  paths-ignore:
+    - 'dist'
+    - 'licenses'
+    - '**/*.md'
+    - 'LICENSE'
+    - 'NOTICE'
+    - '.licenserc.yaml'
+    - '.browserslistrc'
+    - '**/*.json'
+    - 'pnpm-lock.yaml'
+    - '**/*.svg'
+    - '**/*.png'
+    - '**/*.jpg'
+    - '**/*.jpeg'
+    - '**/*.webmanifest'
+    - 'public/robots.txt'
+    - 'src/.prettierrc'
+    - '.nvmrc'
+
+  comment: on-failure
+
+dependency:
+  files:
+    - package.json      # If this is a npm project.
