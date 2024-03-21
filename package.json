@@ -36,8 +36,6 @@
     "splitpanes": "^3.1.5",
     "vee-validate": "^4.12.6",
     "vue": "^3.4.19",
-    "vue-class-component": "^7.2.6",
-    "vue-property-decorator": "^9.1.2",
     "vue-router": "4.2.5",
     "vuetify": "^3.5.4"
   },

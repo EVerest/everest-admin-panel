@@ -18,8 +18,6 @@ konva                    MIT           ^8.3.5           git://github.com/konvajs
 register-service-worker  MIT           ^1.7.2           git+https://github.com/yyx990803/register-service-worker.git
 roboto-fontface          Apache-2.0    *                git+https://github.com/choffmeister/roboto-fontface-bower.git
 vue                      MIT           ^2.6.14          git+https://github.com/vuejs/vue.git
-vue-class-component      MIT           ^7.2.3           git+https://github.com/vuejs/vue-class-component.git
-vue-property-decorator   MIT           ^9.1.2           git+https://github.com/kaorun343/vue-property-decorator.git
 vue-router               MIT           ^3.5.1           git+https://github.com/vuejs/vue-router.git
 vuetify                  MIT           ^2.6.0           git+https://github.com/vuetifyjs/vuetify.git
 vuex                     MIT           ^3.6.2           git+https://github.com/vuejs/vuex.git
