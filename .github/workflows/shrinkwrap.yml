@@ -1,0 +1,35 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+
+
+name: Generate and Publish npm-shrinkwrap
+# The purpose of this job is to generate an npm-shrinkwrap.json which is needed for the yocto layer
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-shrinkwrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Generate npm-shrinkwrap.json
+        run: |
+          npm install
+          npm shrinkwrap
+
+      - name: Publish npm-shrinkwrap.json as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: npm-shrinkwrap
+          path: npm-shrinkwrap.json
+
