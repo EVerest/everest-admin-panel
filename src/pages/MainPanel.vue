@@ -4,7 +4,7 @@
 <template>
   <v-app>
     <v-app-bar color="primary">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click="drawer = !drawer" data-cy="hamburger-menu"></v-app-bar-nav-icon>
       <v-spacer/>
       <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo_white.svg"/>
       <v-toolbar-title class="app-bar-title">EVerest Admin Panel</v-toolbar-title>
@@ -17,7 +17,8 @@
         </v-list-item>
         <v-tooltip location="end">
           <template v-slot:activator="{ props }">
-            <v-list-item @click="changeInstance()" append-icon="mdi-image-filter-hdr" link v-bind="props">
+            <v-list-item @click="changeInstance()" append-icon="mdi-image-filter-hdr" link v-bind="props"
+                         data-cy="switch-instance">
               <v-list-item-title>Change EVerest instance</v-list-item-title>
             </v-list-item>
           </template>
