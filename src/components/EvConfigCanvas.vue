@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import {computed, ComputedRef, defineComponent, inject, onMounted, ref, watch} from 'vue';
+import {computed, ComputedRef, defineComponent, inject, onBeforeUnmount, onMounted, ref, watch} from 'vue';
 import {useEvbcStore} from '@/store/evbc';
 import ConfigStage from "@/modules/evconf_konva/config_stage";
 import EVConfigModel from "@/modules/evbc/config_model";
@@ -68,6 +68,10 @@ export default defineComponent({
       if (current_config.value) {
         stage.set_model(current_config.value);
       }
+    });
+
+    onBeforeUnmount(() => {
+      stage.destroy();
     });
 
 
