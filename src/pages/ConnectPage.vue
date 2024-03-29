@@ -62,7 +62,12 @@
                     </v-row>
                     <v-row>
                       <v-col>
-                        <v-btn icon="mdi-delete" elevation="2" @click="deleteItem()">
+                        <v-btn
+                            icon="mdi-delete"
+                            elevation="2"
+                            v-if="currentView === ComponentViews.EDIT"
+                            @click="deleteItem()"
+                        >
                         </v-btn>
                       </v-col>
                       <v-spacer />
