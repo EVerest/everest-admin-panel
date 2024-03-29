@@ -40,6 +40,9 @@ export default class ConfigStage {
   constructor(private config: StageConfig, context: ConfigStageContext) {
     this._stage = new Konva.Stage(config);
 
+    // bind this to the resize function. This is necessary to remove the listener later on
+    this.resizeStage = this.resizeStage.bind(this);
+
     // allow drag with left and right mouse button
     Konva.dragButtons = [0, 2];
     // prevent context menu on right click
@@ -145,18 +148,22 @@ export default class ConfigStage {
   }
 
   private registerListeners() {
-    window.addEventListener('resize', () => this.resizeStage());
+    window.addEventListener('resize', this.resizeStage);
   }
 
-  // TODO : Call this method when the stage is destroyed
   private unregisterListeners() {
-    // TODO : Probably won't work
     window.removeEventListener('resize', this.resizeStage);
+  }
+
+  public destroy() {
+    this.unregisterListeners();
+    this._stage.destroy();
   }
 
   public resizeStage(): void {
     // debugger;
     const container = document.getElementById(this.config.container as string) as HTMLDivElement;
+    if (!container) return;
 
     const containerWidth = container.offsetWidth;
     const containerHeight = container.offsetHeight;
