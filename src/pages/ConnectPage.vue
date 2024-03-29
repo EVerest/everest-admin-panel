@@ -13,7 +13,7 @@
                   <v-toolbar-title>Choose EVerest instance</v-toolbar-title>
 
                   <v-spacer></v-spacer>
-                  <v-btn icon="mdi-plus" :disabled="connecting" @click="openAddServerView"></v-btn>
+                  <v-btn icon="mdi-plus" :disabled="connecting" @click="openAddServerView" data-cy="add-everest-instance"></v-btn>
                 </template>
                 <template v-else>
                   <v-toolbar-title>{{ currentView === ComponentViews.ADD  ? "Add" : "Edit" }} server instance</v-toolbar-title>
