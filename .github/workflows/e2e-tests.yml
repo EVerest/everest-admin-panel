@@ -1,0 +1,48 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+name: Cypress Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - spr/main/*
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-e2e-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: ['chrome', 'firefox']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v6
+        with:
+          start: pnpm preview
+          build: pnpm build
+          wait-on: 'http://localhost:4173' # Adjust according to your server port
+          wait-on-timeout: 60
+          command: pnpm exec cypress run --browser ${{ matrix.browser }} --headless --config baseUrl=http://localhost:4173
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        name: Upload cypress screenshots if tests fail
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        name: Upload cypress videos if tests fail
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          if-no-files-found: ignore
