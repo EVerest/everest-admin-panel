@@ -30,6 +30,7 @@
                             v-model="instanceId.value.value"
                             :error-messages="instanceId.errorMessage.value"
                             hint="For example 'Local', 'Development'..."
+                            data-cy="instance-name-field"
                         >
                         </v-text-field>
                       </v-col>
@@ -39,6 +40,7 @@
                         <v-select v-model="protocol.value.value"
                                   :error-messages="protocol.errorMessage.value"
                                   label="Protocol"
+                                  data-cy="protocol-select-field"
                                   :items="[ { value: 'ws', title: 'ws://' }, { value: 'wss', title: 'wss://' } ]"
                         ></v-select>
                       </v-col>
@@ -47,6 +49,7 @@
                           label="EVerest instance host address"
                           v-model="host.value.value"
                           :error-messages="host.errorMessage.value"
+                          data-cy="host-address-field"
                           hint="For example, localhost"
                         ></v-text-field>
                       </v-col>
@@ -55,6 +58,7 @@
                                       label="Port"
                                       v-model="port.value.value"
                                       :error-messages="port.errorMessage.value"
+                                      data-cy="port-field"
                                       hint="For example, 8849"
                         >
                         </v-text-field>
@@ -67,13 +71,19 @@
                             elevation="2"
                             v-if="currentView === ComponentViews.EDIT"
                             @click="deleteItem()"
-                        >
-                        </v-btn>
+                            data-cy="delete-instance"
+                        ></v-btn>
                       </v-col>
                       <v-spacer />
                       <v-col class="text-right">
                         <v-btn class="mx-4" icon="mdi-close" elevation="2" @click="closeEdit()"></v-btn>
-                        <v-btn icon="mdi-check" elevation="2" type="submit" :disabled="!meta.valid"></v-btn>
+                        <v-btn
+                            icon="mdi-check"
+                            elevation="2"
+                            type="submit"
+                            :disabled="!meta.valid"
+                            data-cy="save-instance"
+                        ></v-btn>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -83,14 +93,19 @@
                         <v-list-item v-for="(server, index) in servers"
                                      :key="server.id"
                                      prepend-icon="mdi-server"
-                                     @click="connect(server)"
-                                     v-bind="props">
+                                     data-cy="server-list-item"
+                                     @click="connect(server)">
 
                           <v-list-item-title>{{ server.id }}</v-list-item-title>
                           <v-list-item-subtitle>{{ server.host }}</v-list-item-subtitle>
                           <template v-slot:append>
                             <v-list-item-action v-if="server.editable">
-                              <v-btn variant="text" icon="mdi-pencil" @click.prevent.stop="openEditServerView(index)"></v-btn>
+                              <v-btn
+                                  variant="text"
+                                  icon="mdi-pencil"
+                                  @click.prevent.stop="openEditServerView(index)"
+                                  data-cy="edit-instance"
+                              ></v-btn>
                             </v-list-item-action>
                             <v-tooltip :text="server.hint" v-if="server.hint">
                               <template v-slot:activator="{ props }">
@@ -103,6 +118,7 @@
                         </v-list-item>
                   </v-list-subheader>
                   <v-checkbox v-model="connectAutomatically"
+                              data-cy="auto-connect-checkbox"
                               label="Automatically connect to this instance"></v-checkbox>
                   <v-alert v-bind:text="error.status" prominent type="error" icon="mdi-cloud-alert" v-model="error.active" closable>
                   </v-alert>

@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        browser: ['chrome', 'firefox']
+        browser: ['electron', 'firefox']
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
@@ -27,11 +27,11 @@ jobs:
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
         with:
-          start: pnpm preview
+          start: pnpm dlx http-server dist -p 4173
           build: pnpm build
           wait-on: 'http://localhost:4173' # Adjust according to your server port
           wait-on-timeout: 60
-          command: pnpm exec cypress run --browser ${{ matrix.browser }} --headless --config baseUrl=http://localhost:4173
+          command: pnpm exec cypress run --browser ${{ matrix.browser }} --headless --config baseUrl=http://localhost:4173,video=true
       - uses: actions/upload-artifact@v4
         if: failure()
         name: Upload cypress screenshots if tests fail
