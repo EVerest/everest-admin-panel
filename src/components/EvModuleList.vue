@@ -3,7 +3,7 @@
 
 <template>
   <v-expansion-panels class="ma-0">
-    <v-expansion-panel>
+    <v-expansion-panel data-cy="modules-expansion-panel">
       <v-expansion-panel-title> Available modules</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-text-field v-model="search"
@@ -12,6 +12,7 @@
                       label="Search"
                       density="compact"
                       variant="outlined"
+                      data-cy="modules-search"
                       clearable
         ></v-text-field>
         <v-list class="ma-0">
@@ -21,6 +22,7 @@
                   v-bind="props"
                   :title="module.type"
                   @click.stop="add_module_to_config(module.type)"
+                  data-cy="module-list-item"
               >
                 <template v-slot:append>
                   <v-icon>mdi-plus</v-icon>

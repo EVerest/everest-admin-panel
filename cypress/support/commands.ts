@@ -35,3 +35,29 @@
 //     }
 //   }
 // }
+
+export {}; // declare this is a module, see https://stackoverflow.com/questions/57132428/augmentations-for-the-global-scope-can-only-be-directly-nested-in-external-modul
+
+
+import {addMatchImageSnapshotCommand} from '@simonsmith/cypress-image-snapshot/command'
+
+addMatchImageSnapshotCommand({
+    failureThreshold: 0.05
+})
+
+Cypress.Commands.add('connectToSimulator', () => {
+    cy.clearAllLocalStorage();
+    cy.visit('/');
+    cy.get('[data-cy="server-list-item').contains('Simulator').click();
+    cy.get('[data-cy="hamburger-menu"]').should('be.visible');
+});
+
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      connectToSimulator(): Chainable<void>
+    }
+  }
+}
+
