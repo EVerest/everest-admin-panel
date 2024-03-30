@@ -35,3 +35,18 @@
 //     }
 //   }
 // }
+export {};
+
+declare global {
+  namespace Cypress {
+    interface Chainable {
+      connectToSimulator(): Chainable<void>;
+    }
+  }
+}
+
+Cypress.Commands.add('connectToSimulator', () => {
+    cy.visit('/');
+    cy.get('[data-cy="server-list-item').contains('Simulator').click();
+    cy.get('[data-cy="hamburger-menu"]').should('be.visible');
+})
