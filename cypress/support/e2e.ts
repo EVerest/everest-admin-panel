@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 // ***********************************************************
 // This example support/e2e.ts is processed and
 // loaded automatically before your test files.

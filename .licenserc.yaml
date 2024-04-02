@@ -26,6 +26,8 @@ header:
     - 'public/robots.txt'
     - 'src/.prettierrc'
     - '.nvmrc'
+    - '**/.gitkeep'
+    - '**/*.json5'
 
   comment: on-failure
 
