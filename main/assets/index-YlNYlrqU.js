@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-zDCmCdDS.js"(exports, module) {
+  "assets/index-YlNYlrqU.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -19364,7 +19364,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           createVNode(VAppBar, { color: "primary" }, {
             default: withCtx(() => [
               createVNode(VAppBarNavIcon, {
-                onClick: _cache[0] || (_cache[0] = ($event) => _ctx.drawer = !_ctx.drawer)
+                onClick: _cache[0] || (_cache[0] = ($event) => _ctx.drawer = !_ctx.drawer),
+                "data-cy": "hamburger-menu"
               }),
               createVNode(VSpacer),
               createVNode(VImg, {
@@ -19416,7 +19417,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                         onClick: _cache[1] || (_cache[1] = ($event) => _ctx.changeInstance()),
                         "append-icon": "mdi-image-filter-hdr",
                         link: ""
-                      }, props), {
+                      }, props, { "data-cy": "switch-instance" }), {
                         default: withCtx(() => [
                           createVNode(VListItemTitle, null, {
                             default: withCtx(() => [
@@ -19490,7 +19491,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$6], ["__scopeId", "data-v-da10c89f"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$6], ["__scopeId", "data-v-08d84a28"]]);
     /**
       * vee-validate v4.12.6
       * (c) 2024 Abdelrahman Awad
@@ -25125,7 +25126,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                     createVNode(VBtn, {
                                       icon: "mdi-plus",
                                       disabled: _ctx.connecting,
-                                      onClick: _ctx.openAddServerView
+                                      onClick: _ctx.openAddServerView,
+                                      "data-cy": "add-everest-instance"
                                     }, null, 8, ["disabled", "onClick"])
                                   ], 64)) : (openBlock(), createBlock(VToolbarTitle, { key: 1 }, {
                                     default: withCtx(() => [
@@ -25157,7 +25159,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                                     modelValue: _ctx.instanceId.value.value,
                                                     "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.instanceId.value.value = $event),
                                                     "error-messages": _ctx.instanceId.errorMessage.value,
-                                                    hint: "For example 'Local', 'Development'..."
+                                                    hint: "For example 'Local', 'Development'...",
+                                                    "data-cy": "instance-name-field"
                                                   }, null, 8, ["modelValue", "error-messages"])
                                                 ]),
                                                 _: 1
@@ -25177,6 +25180,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                                     "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => _ctx.protocol.value.value = $event),
                                                     "error-messages": _ctx.protocol.errorMessage.value,
                                                     label: "Protocol",
+                                                    "data-cy": "protocol-select-field",
                                                     items: [{ value: "ws", title: "ws://" }, { value: "wss", title: "wss://" }]
                                                   }, null, 8, ["modelValue", "error-messages"])
                                                 ]),
@@ -25192,6 +25196,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                                     modelValue: _ctx.host.value.value,
                                                     "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => _ctx.host.value.value = $event),
                                                     "error-messages": _ctx.host.errorMessage.value,
+                                                    "data-cy": "host-address-field",
                                                     hint: "For example, localhost"
                                                   }, null, 8, ["modelValue", "error-messages"])
                                                 ]),
@@ -25208,6 +25213,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                                     modelValue: _ctx.port.value.value,
                                                     "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => _ctx.port.value.value = $event),
                                                     "error-messages": _ctx.port.errorMessage.value,
+                                                    "data-cy": "port-field",
                                                     hint: "For example, 8849"
                                                   }, null, 8, ["modelValue", "error-messages"])
                                                 ]),
@@ -25220,11 +25226,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                             default: withCtx(() => [
                                               createVNode(VCol, null, {
                                                 default: withCtx(() => [
-                                                  createVNode(VBtn, {
+                                                  _ctx.currentView === _ctx.ComponentViews.EDIT ? (openBlock(), createBlock(VBtn, {
+                                                    key: 0,
                                                     icon: "mdi-delete",
                                                     elevation: "2",
-                                                    onClick: _cache[4] || (_cache[4] = ($event) => _ctx.deleteItem())
-                                                  })
+                                                    onClick: _cache[4] || (_cache[4] = ($event) => _ctx.deleteItem()),
+                                                    "data-cy": "delete-instance"
+                                                  })) : createCommentVNode("", true)
                                                 ]),
                                                 _: 1
                                               }),
@@ -25241,7 +25249,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                                     icon: "mdi-check",
                                                     elevation: "2",
                                                     type: "submit",
-                                                    disabled: !_ctx.meta.valid
+                                                    disabled: !_ctx.meta.valid,
+                                                    "data-cy": "save-instance"
                                                   }, null, 8, ["disabled"])
                                                 ]),
                                                 _: 1
@@ -25262,18 +25271,20 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                     }, {
                                       default: withCtx(() => [
                                         (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.servers, (server, index) => {
-                                          return openBlock(), createBlock(VListItem, mergeProps({
+                                          return openBlock(), createBlock(VListItem, {
                                             key: server.id,
                                             "prepend-icon": "mdi-server",
+                                            "data-cy": "server-list-item",
                                             onClick: ($event) => _ctx.connect(server)
-                                          }, _ctx.props), {
+                                          }, {
                                             append: withCtx(() => [
                                               server.editable ? (openBlock(), createBlock(VListItemAction, { key: 0 }, {
                                                 default: withCtx(() => [
                                                   createVNode(VBtn, {
                                                     variant: "text",
                                                     icon: "mdi-pencil",
-                                                    onClick: withModifiers(($event) => _ctx.openEditServerView(index), ["prevent", "stop"])
+                                                    onClick: withModifiers(($event) => _ctx.openEditServerView(index), ["prevent", "stop"]),
+                                                    "data-cy": "edit-instance"
                                                   }, null, 8, ["onClick"])
                                                 ]),
                                                 _: 2
@@ -25311,7 +25322,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                               }, 1024)
                                             ]),
                                             _: 2
-                                          }, 1040, ["onClick"]);
+                                          }, 1032, ["onClick"]);
                                         }), 128))
                                       ]),
                                       _: 1
@@ -25319,6 +25330,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                     createVNode(VCheckbox, {
                                       modelValue: _ctx.connectAutomatically,
                                       "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => _ctx.connectAutomatically = $event),
+                                      "data-cy": "auto-connect-checkbox",
                                       label: "Automatically connect to this instance"
                                     }, null, 8, ["modelValue"]),
                                     createVNode(VAlert, {
@@ -36722,6 +36734,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         __publicField(this, "_bg");
         this.config = config2;
         this._stage = new Konva.Stage(config2);
+        this.resizeStage = this.resizeStage.bind(this);
         Konva.dragButtons = [0, 2];
         this._stage.on("contextmenu", (e) => e.evt.preventDefault());
         const tooltipLayer = new Konva.Layer({});
@@ -36802,14 +36815,19 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         static_layer.batchDraw();
       }
       registerListeners() {
-        window.addEventListener("resize", () => this.resizeStage());
+        window.addEventListener("resize", this.resizeStage);
       }
-      // TODO : Call this method when the stage is destroyed
       unregisterListeners() {
         window.removeEventListener("resize", this.resizeStage);
       }
+      destroy() {
+        this.unregisterListeners();
+        this._stage.destroy();
+      }
       resizeStage() {
         const container = document.getElementById(this.config.container);
+        if (!container)
+          return;
         const containerWidth = container.offsetWidth;
         const containerHeight = container.offsetHeight;
         this._stage.width(containerWidth);
@@ -42089,6 +42107,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             stage.set_model(current_config.value);
           }
         });
+        onBeforeUnmount(() => {
+          stage.destroy();
+        });
         const current_config = computed(evbcStore2.get_current_config);
         const reset_view = () => {
           stage.reset_view();
@@ -42680,7 +42701,7 @@ Reason: ${error2}`);
       const _component_ev_dialog = resolveComponent("ev-dialog");
       return openBlock(), createBlock(VExpansionPanels, { class: "ma-0" }, {
         default: withCtx(() => [
-          createVNode(VExpansionPanel, null, {
+          createVNode(VExpansionPanel, { "data-cy": "modules-expansion-panel" }, {
             default: withCtx(() => [
               createVNode(VExpansionPanelTitle, null, {
                 default: withCtx(() => [
@@ -42698,6 +42719,7 @@ Reason: ${error2}`);
                     label: "Search",
                     density: "compact",
                     variant: "outlined",
+                    "data-cy": "modules-search",
                     clearable: ""
                   }, null, 8, ["modelValue"])) : createCommentVNode("", true),
                   createVNode(VList, { class: "ma-0" }, {
@@ -42711,7 +42733,8 @@ Reason: ${error2}`);
                           activator: withCtx(({ props }) => [
                             createVNode(VListItem, mergeProps(props, {
                               title: module2.type,
-                              onClick: withModifiers(($event) => _ctx.add_module_to_config(module2.type), ["stop"])
+                              onClick: withModifiers(($event) => _ctx.add_module_to_config(module2.type), ["stop"]),
+                              "data-cy": "module-list-item"
                             }), {
                               append: withCtx(() => [
                                 createVNode(VIcon, null, {
