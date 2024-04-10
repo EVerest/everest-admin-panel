@@ -3,15 +3,16 @@
 // Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 
 import {defineStore} from 'pinia';
-import {reactive, ref} from 'vue';
+import {reactive, Ref, ref} from 'vue';
 import EVConfigModel from "@/modules/evbc/config_model";
 import ConfigStageContext, {SelectionType} from "@/modules/evconf_konva/stage_context";
-import {ConnectionID, ModuleInstanceID, Terminal} from "@/modules/evbc";
+import {ConnectionID, EverestConfigList, ModuleInstanceID, Terminal} from "@/modules/evbc";
 
 export const useEvbcStore = defineStore('evbc', () => {
   const selection = ref({ type: "NONE" } as SelectionType);
   const current_config = ref<EVConfigModel | null>(null);
   const config_context = reactive(new ConfigStageContext());
+  const available_configs: Ref<EverestConfigList> = ref({});
 
   config_context.add_observer((ev) => {
     if (ev.type === "SELECT") {
@@ -31,6 +32,7 @@ export const useEvbcStore = defineStore('evbc', () => {
   const get_selected_connection = (): ConnectionID | null => get_is_config_opened() && selection.value.type === "CONNECTION" ? selection.value.id : null;
 
   return {
+    available_configs,
     selection,
     current_config,
     config_context,
