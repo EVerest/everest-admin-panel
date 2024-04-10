@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-NEiC2uPb.js"(exports, module) {
+  "assets/index-tyfML7jL.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -42359,7 +42359,7 @@ Reason: ${error2}`);
       }, 8, ["model-value", "onClick:outside"]);
     }
     const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$3]]);
-    const _withScopeId = (n) => (pushScopeId("data-v-fbfc7392"), n = n(), popScopeId(), n);
+    const _withScopeId = (n) => (pushScopeId("data-v-c5fdfa72"), n = n(), popScopeId(), n);
     const _hoisted_1$4 = { class: "btn-container" };
     const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
     const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Abort", -1));
@@ -42411,7 +42411,7 @@ Reason: ${error2}`);
                     variant: "flat",
                     density: "compact",
                     icon: "mdi-plus",
-                    "data-cy": "abort-create-config-btn"
+                    "data-cy": "plus-create-config-btn"
                   }, props, {
                     onClick: _cache[0] || (_cache[0] = ($event) => state.value = 1)
                   }), null, 16)
@@ -42453,7 +42453,7 @@ Reason: ${error2}`);
                     variant: "flat",
                     density: "compact",
                     icon: "mdi-check",
-                    "data-cy": "create-config-btn"
+                    "data-cy": "accept-create-config-btn"
                   }, props, {
                     disabled: !configNameValid.value,
                     onClick: _cache[2] || (_cache[2] = ($event) => createConfig())
@@ -42478,7 +42478,7 @@ Reason: ${error2}`);
         };
       }
     });
-    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-fbfc7392"]]);
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-c5fdfa72"]]);
     let evbcStore;
     let evbc;
     let notyf;
@@ -42903,7 +42903,7 @@ Reason: ${error2}`);
           }, 8, ["disabled"]),
           createVNode(VExpansionPanel, { value: "configs" }, {
             default: withCtx(() => [
-              createVNode(VExpansionPanelTitle, null, {
+              createVNode(VExpansionPanelTitle, { "data-cy": "configs-expansion-panel" }, {
                 default: withCtx(() => [
                   createTextVNode(toDisplayString(_ctx.config_list.length == 0 ? "No configs available" : "Available configs"), 1)
                 ]),
@@ -42922,7 +42922,8 @@ Reason: ${error2}`);
                         }, {
                           activator: withCtx(({ props }) => [
                             createVNode(VListItem, mergeProps({ title: config2 }, props, {
-                              onClick: ($event) => _ctx.load_config_if_empty(config2)
+                              onClick: ($event) => _ctx.load_config_if_empty(config2),
+                              "data-cy": "config-list-item"
                             }), {
                               append: withCtx(() => [
                                 createVNode(VIcon, null, {
