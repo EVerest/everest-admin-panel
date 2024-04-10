@@ -2,8 +2,8 @@
      Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-expansion-panels class="ma-0">
-    <v-expansion-panel data-cy="modules-expansion-panel">
+  <v-expansion-panels class="ma-0" v-model="expansionPanelState">
+    <v-expansion-panel data-cy="modules-expansion-panel" value="modules" :disabled="!current_config">
       <v-expansion-panel-title> Available modules</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-text-field v-model="search"
@@ -34,15 +34,16 @@
         </v-list>
       </v-expansion-panel-text>
     </v-expansion-panel>
-    <v-expansion-panel :disabled="config_list.length == 0">
-      <v-expansion-panel-title>
+    <v-expansion-panel value="configs">
+      <v-expansion-panel-title data-cy="configs-expansion-panel">
         {{ config_list.length == 0 ? "No configs available" : "Available configs" }}
       </v-expansion-panel-title>
       <v-expansion-panel-text>
+        <create-config @create-config="create_config"></create-config>
         <v-list class="ma-0">
           <v-tooltip location="right" v-for="config in config_list" :key="config" open-delay="500">
             <template v-slot:activator="{ props }">
-              <v-list-item :title="config" v-bind="props" @click="load_config_if_empty(config)">
+              <v-list-item :title="config" v-bind="props" @click="load_config_if_empty(config)" data-cy="config-list-item">
                 <template v-slot:append>
                   <v-icon>mdi-upload</v-icon>
                 </template>
@@ -62,7 +63,7 @@
           @deny="close_dialog()"
       />
     </v-expansion-panel>
-    <v-expansion-panel>
+    <v-expansion-panel value="commands">
       <v-expansion-panel-title> Issue commands</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-list>
@@ -84,6 +85,7 @@ import EVBackendClient from "@/modules/evbc/client";
 import EvDialog from "@/components/EvDialog.vue";
 import EVConfigModel from "@/modules/evbc/config_model";
 import {Notyf} from "notyf";
+import CreateConfig from "@/components/CreateConfig.vue";
 
 let evbcStore: ReturnType<typeof useEvbcStore>;
 let evbc: EVBackendClient;
@@ -95,10 +97,12 @@ export default defineComponent({
       show_dialog: false,
       config_to_load: null,
       search: "",
+      expansionPanelState: ["configs"],
     } as {
       show_dialog: boolean;
       config_to_load: string | null;
       search: string;
+      expansionPanelState: string[];
     };
   },
   created() {
@@ -106,7 +110,7 @@ export default defineComponent({
     evbc = inject<EVBackendClient>('evbc') as EVBackendClient;
     notyf = inject<Notyf>('notyf');
   },
-  components: {EvDialog},
+  components: {CreateConfig, EvDialog},
   computed: {
     current_config(): EVConfigModel | null {
       return evbcStore.current_config;
@@ -152,9 +156,7 @@ export default defineComponent({
       if (evbcStore.current_config) {
         added_module_id = evbcStore.current_config.add_new_module_instance(type);
       } else {
-        const new_config = evbc.create_empty_config("test_config");
-        added_module_id = new_config.add_new_module_instance(type);
-        evbcStore.setOpenedConfig(new_config);
+        throw new Error("No config loaded");
       }
       if (evbcStore.get_selected_terminal()) {
         const selectedTerminal = evbcStore.get_selected_terminal();
@@ -169,6 +171,11 @@ export default defineComponent({
         evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
       }
     },
+    create_config(name: string) {
+      const new_config = evbc.create_empty_config(name);
+      evbcStore.setOpenedConfig(new_config);
+      this.expansionPanelState = ["modules"];
+    },
     load_config_if_empty(name: string) {
       if (!this.current_config) {
         this.load_config(name);
@@ -182,6 +189,7 @@ export default defineComponent({
       this.show_dialog = false;
       const new_config = evbc.load_config(name);
       evbcStore.setOpenedConfig(new_config)
+      this.expansionPanelState = ["modules"];
     },
     restart_modules() {
       evbc._cxn.rpc_issuer.restart_modules().then(() => {
