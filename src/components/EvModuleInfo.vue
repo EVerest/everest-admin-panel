@@ -100,10 +100,10 @@
 import { defineComponent, computed } from "vue";
 import { Vjsf } from "@koumoul/vjsf";
 import IconButtonWithTooltip from "./IconButtonWithTooltip.vue";
-import { ModuleInstanceModel, Terminal, ConnectionID, ModuleInstanceID } from "@/modules/evbc";
-import EVConfigModel from "@/modules/evbc/config_model";
+import { ConnectionID, ModuleInstanceID } from "@/modules/evbc";
 import ConfigStageContext from "@/modules/evconf_konva/stage_context";
 import { useEvbcStore } from "@/store/evbc";
+import {storeToRefs} from "pinia";
 
 export default defineComponent({
   components: {
@@ -112,13 +112,14 @@ export default defineComponent({
   },
   setup() {
     const evbcStore = useEvbcStore();
+    const { current_config } = storeToRefs(evbcStore);
 
     const module_node = computed(() => {
       const instance_id = evbcStore.get_selected_module_instance();
       if (instance_id === null) {
         return null;
       }
-      const instance = evbcStore.get_current_config().get_module_instance(instance_id);
+      const instance = current_config.value.get_module_instance(instance_id);
       return {
         instance_id,
         instance,
@@ -129,18 +130,14 @@ export default defineComponent({
       return evbcStore.get_selected_terminal();
     });
 
-    const config_model = computed((): EVConfigModel => {
-      return evbcStore.get_current_config();
-    });
-
     const connection = computed(() => {
       const connection_id = evbcStore.get_selected_connection();
       if (connection_id === null) {
         return null;
       }
-      const cxn = config_model.value.get_connection(connection_id);
-      const requiring_module = config_model.value.get_module_instance(cxn.requiring_instance_id);
-      const implementing_module = config_model.value.get_module_instance(cxn.providing_instance_id);
+      const cxn = current_config.value.get_connection(connection_id);
+      const requiring_module = current_config.value.get_module_instance(cxn.requiring_instance_id);
+      const implementing_module = current_config.value.get_module_instance(cxn.providing_instance_id);
 
       return {
         from: {
@@ -165,24 +162,24 @@ export default defineComponent({
       return [
         (v: string) => {
           const instance_id = module_node.value.instance_id;
-          const result = config_model.value.update_module_id(instance_id, v);
+          const result = current_config.value.update_module_id(instance_id, v);
           return result || "This module id is not available";
         },
       ];
     });
 
     function delete_connection(id: ConnectionID) {
-      config_model.value.delete_connection(id);
+      current_config.value.delete_connection(id);
     }
 
     function delete_module_instance(id: ModuleInstanceID) {
-      config_model.value.delete_module_instance(id);
+      current_config.value.delete_module_instance(id);
     }
 
     return {
       module_node,
       terminal,
-      config_model,
+      current_config,
       connection,
       context,
       moduleIDRules,

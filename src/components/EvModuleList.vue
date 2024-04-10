@@ -109,7 +109,7 @@ export default defineComponent({
   components: {EvDialog},
   computed: {
     current_config(): EVConfigModel | null {
-      return evbcStore.get_current_config();
+      return evbcStore.current_config;
     },
     show_search(): boolean {
       return !evbcStore.get_selected_terminal();
@@ -150,8 +150,8 @@ export default defineComponent({
   methods: {
     add_module_to_config(type: string) {
       let added_module_id: number;
-      if (evbcStore.get_current_config()) {
-        added_module_id = evbcStore.get_current_config()!.add_new_module_instance(type);
+      if (evbcStore.current_config) {
+        added_module_id = evbcStore.current_config.add_new_module_instance(type);
       } else {
         const new_config = evbc.create_empty_config("test_config");
         added_module_id = new_config.add_new_module_instance(type);
@@ -159,7 +159,7 @@ export default defineComponent({
       }
       if (evbcStore.get_selected_terminal()) {
         const selectedTerminal = evbcStore.get_selected_terminal();
-        const addedModuleInstance = evbcStore.get_current_config().get_module_instance(added_module_id);
+        const addedModuleInstance = evbcStore.current_config.get_module_instance(added_module_id);
         const terminals = Object.values(addedModuleInstance.view_config.terminals).flat();
         let terminalToClick;
         if (selectedTerminal.type === "requirement") {
