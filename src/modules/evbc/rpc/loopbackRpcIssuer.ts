@@ -1,7 +1,12 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 import {LOOPBACK_WAIT_MS} from "@/modules/evbc/connection";
-import {EverestConfigList, EverestInterfaceDefinitionList, EverestModuleDefinitionList} from "@/modules/evbc";
+import {
+    EverestConfig,
+    EverestConfigList,
+    EverestInterfaceDefinitionList,
+    EverestModuleDefinitionList
+} from "@/modules/evbc";
 import SampleManifestList from "@/modules/evbc/sample_module_info";
 import SampleInterfaceList from "@/modules/evbc/sample_interfaces_list";
 import SampleConfigList from "@/modules/evbc/sample_config_list";
@@ -34,10 +39,23 @@ export class LoopbackRpcIssuer extends RpcIssuer {
     }
 
     public async get_configs(): Promise<EverestConfigList> {
-        return this.random_wait_resolve<EverestConfigList>(SampleConfigList);
+        const configs = LoopbackRpcIssuer.getConfigsFromLocalStorageOrDefault();
+        return this.random_wait_resolve<EverestConfigList>(configs);
     }
 
-    public async save_config(): Promise<void> {
+    private static getConfigsFromLocalStorageOrDefault() {
+        const configsString = localStorage.getItem("configs");
+        if (configsString) {
+            return Object.assign({}, SampleConfigList, JSON.parse(configsString));
+        } else {
+            return SampleConfigList;
+        }
+    }
+
+    public async save_config(params: {name: string, config: EverestConfig}): Promise<void> {
+        const configs = LoopbackRpcIssuer.getConfigsFromLocalStorageOrDefault();
+        configs[params.name] = params.config;
+        localStorage.setItem("configs", JSON.stringify(configs));
         return this.random_wait_resolve();
     }
 
