@@ -42,6 +42,7 @@ import EVConfigModel from "@/modules/evbc/config_model";
 import EVBackendClient from "@/modules/evbc/client";
 import {Notyf} from "notyf";
 import ConfigPreview from "@/components/ConfigPreview.vue";
+import {storeToRefs} from "pinia";
 
 export default defineComponent({
   components: {ConfigPreview},
@@ -51,6 +52,7 @@ export default defineComponent({
     const evbc = inject<EVBackendClient>('evbc');
     const selected_interface: string | null = null;
     const notyf = inject<Notyf>('notyf');
+    const { current_config: current_config } = storeToRefs(evbcStore);
 
     ref(false);
 
@@ -75,8 +77,6 @@ export default defineComponent({
     });
 
 
-    const current_config: ComputedRef<EVConfigModel> = computed(evbcStore.get_current_config);
-
     const reset_view = () => {
       stage.reset_view();
     };
@@ -93,7 +93,7 @@ export default defineComponent({
           });
     };
 
-    watch(current_config, (new_config, old_config) => {
+    watch(current_config, (new_config: EVConfigModel, old_config: EVConfigModel) => {
       if (old_config) {
         // FIXME (aw): should we ask for something here?
       }
