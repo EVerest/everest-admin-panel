@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-2Cmb2z6e.js"(exports, module) {
+  "assets/index-NSCRaCBN.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -86310,9 +86310,21 @@ Reason: ${error2}`);
         return this.random_wait_resolve(SampleInterfaceList);
       }
       async get_configs() {
-        return this.random_wait_resolve(SampleConfigList);
+        const configs = LoopbackRpcIssuer.getConfigsFromLocalStorageOrDefault();
+        return this.random_wait_resolve(configs);
       }
-      async save_config() {
+      static getConfigsFromLocalStorageOrDefault() {
+        const configsString = localStorage.getItem("configs");
+        if (configsString) {
+          return Object.assign({}, SampleConfigList, JSON.parse(configsString));
+        } else {
+          return SampleConfigList;
+        }
+      }
+      async save_config(params) {
+        const configs = LoopbackRpcIssuer.getConfigsFromLocalStorageOrDefault();
+        configs[params.name] = params.config;
+        localStorage.setItem("configs", JSON.stringify(configs));
         return this.random_wait_resolve();
       }
       async restart_modules() {
