@@ -97,51 +97,50 @@
 </template>
 
 <script lang="ts">
-import {defineComponent} from "vue";
+import { defineComponent, computed } from "vue";
 import { Vjsf } from "@koumoul/vjsf";
 import IconButtonWithTooltip from "./IconButtonWithTooltip.vue";
 import { ModuleInstanceModel, Terminal, ConnectionID, ModuleInstanceID } from "@/modules/evbc";
 import EVConfigModel from "@/modules/evbc/config_model";
 import ConfigStageContext from "@/modules/evconf_konva/stage_context";
-import {useEvbcStore} from "@/store/evbc";
-
-let evbcStore: ReturnType<typeof useEvbcStore>;
+import { useEvbcStore } from "@/store/evbc";
 
 export default defineComponent({
-  created() {
-    evbcStore = useEvbcStore();
+  components: {
+    Vjsf,
+    IconButtonWithTooltip,
   },
-  computed: {
-    // FIXME (aw): this is not how it works!
-    module_node(): { instance_id: number; instance: ModuleInstanceModel } {
+  setup() {
+    const evbcStore = useEvbcStore();
+
+    const module_node = computed(() => {
       const instance_id = evbcStore.get_selected_module_instance();
       if (instance_id === null) {
         return null;
       }
-      const instance = this.config_model.get_module_instance(instance_id);
+      const instance = evbcStore.get_current_config().get_module_instance(instance_id);
       return {
         instance_id,
         instance,
       };
-    },
-    terminal(): Terminal {
+    });
+
+    const terminal = computed(() => {
       return evbcStore.get_selected_terminal();
-    },
-    config_model: function (): EVConfigModel {
+    });
+
+    const config_model = computed((): EVConfigModel => {
       return evbcStore.get_current_config();
-    },
-    connection: function (): {
-      from: { type: string; id: string; name: string };
-      to: { type: string; id: string; name: string };
-      id: ConnectionID;
-    } {
+    });
+
+    const connection = computed(() => {
       const connection_id = evbcStore.get_selected_connection();
       if (connection_id === null) {
         return null;
       }
-      const cxn = this.config_model.get_connection(connection_id);
-      const requiring_module = this.config_model.get_module_instance(cxn.requiring_instance_id);
-      const implementing_module = this.config_model.get_module_instance(cxn.providing_instance_id);
+      const cxn = config_model.value.get_connection(connection_id);
+      const requiring_module = config_model.value.get_module_instance(cxn.requiring_instance_id);
+      const implementing_module = config_model.value.get_module_instance(cxn.providing_instance_id);
 
       return {
         from: {
@@ -156,31 +155,40 @@ export default defineComponent({
         },
         id: connection_id,
       };
-    },
-    context: function (): ConfigStageContext {
+    });
+
+    const context = computed((): ConfigStageContext => {
       return evbcStore.config_context;
-    },
-    moduleIDRules: function () {
+    });
+
+    const moduleIDRules = computed(() => {
       return [
         (v: string) => {
-          const instance_id = this.module_node.instance_id;
-          const result = this.config_model.update_module_id(instance_id, v);
+          const instance_id = module_node.value.instance_id;
+          const result = config_model.value.update_module_id(instance_id, v);
           return result || "This module id is not available";
         },
       ];
-    },
-  },
-  methods: {
-    delete_connection(id: ConnectionID) {
-      this.config_model.delete_connection(id);
-    },
-    delete_module_instance(id: ModuleInstanceID) {
-      this.config_model.delete_module_instance(id);
-    },
-  },
-  components: {
-    Vjsf,
-    IconButtonWithTooltip,
+    });
+
+    function delete_connection(id: ConnectionID) {
+      config_model.value.delete_connection(id);
+    }
+
+    function delete_module_instance(id: ModuleInstanceID) {
+      config_model.value.delete_module_instance(id);
+    }
+
+    return {
+      module_node,
+      terminal,
+      config_model,
+      connection,
+      context,
+      moduleIDRules,
+      delete_connection,
+      delete_module_instance,
+    };
   },
 });
 </script>
