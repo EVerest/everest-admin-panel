@@ -10,6 +10,7 @@ import {
 } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, {ConnectionStatus} from "./connection";
+import {useEvbcStore} from "@/store/evbc";
 
 type ConnectionStateEvent = {
   type: "INFO" | "INITIALIZED" | "FAILED" | "RECONNECT" | "IDLE";
@@ -33,7 +34,7 @@ class EVBackendClient {
   _cxn: EVBackendConnection = null;
   _event_handler_map: ClientEventHandlerMap = {};
   _last_event_map: LastEventMap = {};
-  _configs: EverestConfigList;
+  private evbcStore = useEvbcStore();
   readonly everest_definitions: EverestDefinitions = {
     modules: null,
     interfaces: null,
@@ -70,10 +71,10 @@ class EVBackendClient {
   // - these shouldn't be callable, until we're successfully connected
   // - it would be nice, if we got an object after successful connection, that contains that
   load_config(name: string) {
-    if (!(name in this._configs)) {
+    if (!(name in this.evbcStore.available_configs)) {
       throw Error(`Configuration "${name}" not found`);
     }
-    const config = this._configs[name];
+    const config = this.evbcStore.available_configs[name];
     return new EVConfigModel(this.everest_definitions, name, config);
   }
 
@@ -135,8 +136,9 @@ class EVBackendClient {
   }
 
   async _reload_configs(): Promise<void> {
-    this._configs = await this._cxn.rpc_issuer.get_configs();
-    this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(this._configs).length} config files` });
+    const cfgs = (await this._cxn.rpc_issuer.get_configs());
+    Object.assign(this.evbcStore.available_configs, cfgs);
+    this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(cfgs).length} config files` });
   }
 
   _reload_instance_data(): Promise<void[]> {

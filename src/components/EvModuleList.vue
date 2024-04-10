@@ -143,8 +143,7 @@ export default defineComponent({
       }
     },
     config_list(): Array<string> {
-      const configs: Record<string, unknown> = evbc._configs;
-      return Object.entries(configs).map(([key]) => key);
+      return Object.entries(evbcStore.available_configs).map(([key]) => key);
     },
   },
   methods: {
