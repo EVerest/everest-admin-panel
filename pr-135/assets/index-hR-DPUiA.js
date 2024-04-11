@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-EbHXZrZ5.js"(exports, module) {
+  "assets/index-hR-DPUiA.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -48859,7 +48859,7 @@ Reason: ${error2}`);
     })(ajv, ajv.exports);
     var ajvExports = ajv.exports;
     const Ajv$2 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
-    const _withScopeId = (n) => (pushScopeId("data-v-eaee7f3b"), n = n(), popScopeId(), n);
+    const _withScopeId = (n) => (pushScopeId("data-v-8c45851a"), n = n(), popScopeId(), n);
     const _hoisted_1$4 = { class: "btn-container" };
     const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
     const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
@@ -48880,7 +48880,7 @@ Reason: ${error2}`);
         const { available_configs } = storeToRefs(evbcStore2);
         const configContent = ref$1(null);
         const errors2 = ref$1(null);
-        const showErrorDialog = computed(() => errors2.value !== null);
+        const showErrorDialog = computed(() => !!errors2.value);
         function onAcceptBtnClick() {
           if (validateConfigName() === true) {
             emit2("createConfig", configName.value, configContent.value ?? void 0);
@@ -48891,6 +48891,7 @@ Reason: ${error2}`);
           state.value = 0;
           configName.value = "";
           configContent.value = null;
+          errors2.value = null;
         }
         function uploadConfigPrompt() {
           const input = document.createElement("input");
@@ -48938,7 +48939,7 @@ Reason: ${error2}`);
           if (valid) {
             return true;
           } else {
-            return validate2.errors.toString();
+            return JSON.stringify(validate2.errors, null, 2);
           }
         }
         async function getConfigJsonSchema() {
@@ -49062,7 +49063,7 @@ Reason: ${error2}`);
             createVNode(VDialog, {
               modelValue: showErrorDialog.value,
               "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => showErrorDialog.value = $event),
-              onClose: _cache[7] || (_cache[7] = ($event) => resetDialog())
+              "onClick:outside": _cache[7] || (_cache[7] = ($event) => resetDialog())
             }, {
               default: withCtx(() => [
                 createVNode(VCard, { color: "danger" }, {
@@ -49105,7 +49106,7 @@ Reason: ${error2}`);
         };
       }
     });
-    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-eaee7f3b"]]);
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-8c45851a"]]);
     let evbcStore;
     let evbc;
     let notyf;
