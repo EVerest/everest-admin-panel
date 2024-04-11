@@ -6,6 +6,8 @@
     "allowSyntheticDefaultImports": true
   },
   "include": [
-    "vite.config.ts"
+    "vite.config.ts",
+    "build-tools/fetch-schemas-plugin.ts",
+    "schemas.config.ts"
   ]
 }

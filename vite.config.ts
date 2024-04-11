@@ -7,7 +7,8 @@ import {defineConfig, loadEnv} from "vite";
 import {commonjsDeps} from '@koumoul/vjsf/utils/build';
 import {fileURLToPath} from "node:url";
 import commonjs from "@rollup/plugin-commonjs";
-import { VitePWA } from 'vite-plugin-pwa';
+import {VitePWA} from 'vite-plugin-pwa';
+import {vitePluginFetchSchemas} from "./build-tools/fetch-schemas-plugin";
 
 export default defineConfig(({ mode}) => {
     loadEnv(mode, process.cwd(), '');
@@ -33,7 +34,8 @@ export default defineConfig(({ mode}) => {
         Vuetify({
             autoImport: true,
         }),
-        VitePWA({ registerType: 'autoUpdate' })
+        VitePWA({registerType: 'autoUpdate'}),
+        vitePluginFetchSchemas(),
     ],
     resolve: {
         alias: {
