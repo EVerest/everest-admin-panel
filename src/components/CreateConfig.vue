@@ -56,17 +56,22 @@
 
 <script setup lang="ts">
 import {computed, ref} from "vue";
+import {useEvbcStore} from "@/store/evbc";
+import {storeToRefs} from "pinia";
 
-  enum ComponentStates {
+enum ComponentStates {
     DEFAULT,
     ASK_USER_FOR_CONFIG_NAME,
   }
+
+const evbcStore = useEvbcStore();
   const state = ref<ComponentStates>(ComponentStates.DEFAULT);
   const configName = ref<string>("");
   const configNameValid = computed<boolean>(() => validateConfigName() === true);
   const emit = defineEmits<{
     createConfig: [name: string],
   }>();
+const {available_configs} = storeToRefs(evbcStore);
 
   function createConfig() {
     if (validateConfigName() === true) {
@@ -91,6 +96,8 @@ import {computed, ref} from "vue";
       return "The name must not contain the file extension";
     } else if (!/^[a-zA-Z0-9-_]+$/.test(configName.value)) {
       return "The name must only contain letters, numbers, dashes and underscores";
+    } else if (Object.keys(available_configs.value).includes(configName.value.trim())) {
+      return "The name must be unique";
     } else {
       return true;
     }
