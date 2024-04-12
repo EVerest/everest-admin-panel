@@ -244,11 +244,9 @@ class EVConfigModel {
     return this._instances[id];
   }
 
-  interfaces_match(provide: string, requirement: string) {
-    if (provide === requirement) return true;
-    // still difficult to read :(
-    if (this._interface_parents[provide].has(requirement)) return true;
-    return false;
+  interfaces_match(provide: string, requirement: string): boolean {
+    return provide === requirement ||
+        (this._interface_parents[provide]?.has(requirement) ?? false);
   }
 
   serialize(): EverestConfig {
