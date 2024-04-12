@@ -76,6 +76,15 @@ For instructions on setting up an EVerest instance, refer to the
 [EVerest Quick Start Guide](https://everest.github.io/nightly/general/03_quick_start_guide.html).
 This is recommended if you're not using the simulator version.
 
+### Releasing a new version
+
+To release a new version, follow these steps:
+1. Generate a changelog using [cocogitto](https://github.com/cocogitto/cocogitto): `cog changelog vX.Y.Z..HEAD`. Copy it.
+2. Update the version in `package.json`.
+3. Commit the changes, the commit message should look like this: `chore(release): vX.Y.Z`.
+4. Create a new tag with the version number: `git tag -a vX.Y.Z`. Use the changelog as the tag message.
+5. Push the changes and the tag: `git push origin main --follow-tags`. For this you need to have the necessary permissions.
+6. The CI will automatically create a GitHub release. Add the changelog to the release description.
 
 ## Documentation
 
