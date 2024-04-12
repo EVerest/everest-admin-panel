@@ -228,10 +228,14 @@ export default class ModuleView {
       ev.normal.forEach((id) => {
         this._terminal_views[id].set_appearence("NORMAL");
       });
-      this.group.cache();
+      if (this.group.children.length > 0) {
+        this.group.cache();
+      }
     } else if (ev.type === "MODULE_MODEL_UPDATE") {
       this._title.setText(this._vm.id);
-      this.group.cache();
+      if (this.group.children.length > 0) {
+        this.group.cache();
+      }
     }
   }
 
@@ -315,7 +319,9 @@ export default class ModuleView {
     const end_align = this._vm.terminal_lookup[view.terminal_id].alignment;
 
     this._recalculate_terminal_position(end_align, this._vm.terminal_dist[end_align]);
-    this.group.cache();
+    if (this.group.children.length > 0) {
+      this.group.cache();
+    }
   }
 
   _recalculate_terminal_position(alignment: TerminalAlignment, terminal_ids: number[], animate = false) {
