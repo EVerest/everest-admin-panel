@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+
+name: Package EVerest Admin Panel
+
+on:
+  pull_request:
+    branches:
+      - main
+      - spr/main/*
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  workflow_dispatch: {}
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm build
+      - name: Tar
+        if: startsWith(github.ref, 'refs/tags/') && success()
+        run: tar -C dist -czf everest-admin-panel.tar.gz ./
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/') && success()
+        with:
+          files: everest-admin-panel.tar.gz
