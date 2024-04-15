@@ -29,3 +29,9 @@ pnpm-debug.log*
 # cypress
 cypress/videos
 cypress/screenshots
+
+# schemas
+/public/schemas/*.json
+
+# vitest
+/coverage

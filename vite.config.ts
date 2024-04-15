@@ -23,6 +23,13 @@ export default defineConfig(({ mode}) => {
         },
         minify: false
     },
+        test: {
+            include: ['**/*.test.ts', '**/*.test.vue'],
+            coverage: {
+                reporter: ['json-summary'],
+                reportOnFailure: true,
+            }
+        },
     define: {
         VITE_APP_VERSION: JSON.stringify(process.env.npm_package_version),
     },
