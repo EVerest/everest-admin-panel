@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-EF1SsQss.js"(exports, module) {
+  "assets/index-t8wwjsHg.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -48859,7 +48859,18 @@ Reason: ${error2}`);
     })(ajv, ajv.exports);
     var ajvExports = ajv.exports;
     const Ajv$2 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
-    const _withScopeId = (n) => (pushScopeId("data-v-a7df99fb"), n = n(), popScopeId(), n);
+    function urlToPublicAsset(filePath) {
+      let base2 = "/everest-admin-panel/pr-138";
+      if (!base2.endsWith("/")) {
+        base2 += "/";
+      }
+      if (!filePath.startsWith("/")) {
+        return base2 + filePath;
+      } else {
+        return base2 + filePath.slice(1);
+      }
+    }
+    const _withScopeId = (n) => (pushScopeId("data-v-fcfd6d00"), n = n(), popScopeId(), n);
     const _hoisted_1$4 = { class: "btn-container" };
     const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
     const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
@@ -48943,7 +48954,7 @@ Reason: ${error2}`);
           }
         }
         async function getConfigJsonSchema() {
-          const response = await fetch(`${"/everest-admin-panel/pr-138"}/public/schemas/config.json`);
+          const response = await fetch(urlToPublicAsset("schemas/config.json"));
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
@@ -49106,7 +49117,7 @@ Reason: ${error2}`);
         };
       }
     });
-    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-a7df99fb"]]);
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-fcfd6d00"]]);
     let evbcStore;
     let evbc;
     let notyf;
