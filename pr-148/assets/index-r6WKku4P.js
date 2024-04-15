@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-xwivAxda.js"(exports, module) {
+  "assets/index-r6WKku4P.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -42197,7 +42197,7 @@ Reason: ${error2}`);
     const _hoisted_2$4 = { id: "stage-controls" };
     const _hoisted_3$2 = /* @__PURE__ */ createBaseVNode("span", null, "Show config preview", -1);
     const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", null, "Reset View", -1);
-    const _hoisted_5 = /* @__PURE__ */ createBaseVNode("span", null, "Save Config", -1);
+    const _hoisted_5$1 = /* @__PURE__ */ createBaseVNode("span", null, "Save Config", -1);
     function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
       const _component_config_preview = resolveComponent("config-preview");
       return openBlock(), createBlock(VSheet, {
@@ -42259,7 +42259,7 @@ Reason: ${error2}`);
                 }, props), null, 16, ["onClick"])
               ]),
               default: withCtx(() => [
-                _hoisted_5
+                _hoisted_5$1
               ]),
               _: 1
             })) : createCommentVNode("", true)
@@ -42359,652 +42359,7 @@ Reason: ${error2}`);
       }, 8, ["model-value", "onClick:outside"]);
     }
     const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$3]]);
-    const _withScopeId = (n) => (pushScopeId("data-v-3616d0d5"), n = n(), popScopeId(), n);
-    const _hoisted_1$4 = { class: "btn-container" };
-    const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
-    const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Abort", -1));
-    const _hoisted_4 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
-    const _sfc_main$z = /* @__PURE__ */ defineComponent$1({
-      __name: "CreateConfig",
-      emits: ["createConfig"],
-      setup(__props, { emit: __emit }) {
-        const evbcStore2 = useEvbcStore();
-        const state = ref$1(
-          0
-          /* DEFAULT */
-        );
-        const configName = ref$1("");
-        const configNameValid = computed(() => validateConfigName() === true);
-        const emit2 = __emit;
-        const { available_configs } = storeToRefs(evbcStore2);
-        function createConfig() {
-          if (validateConfigName() === true) {
-            emit2("createConfig", configName.value);
-            state.value = 0;
-            configName.value = "";
-          }
-        }
-        function abortConfigCreation() {
-          state.value = 0;
-          configName.value = "";
-        }
-        function validateConfigName() {
-          if (configName.value.trim().length === 0) {
-            return "Please enter a name";
-          } else if (/.*(\.json|\.ya?ml)$/.test(configName.value)) {
-            return "The name must not contain the file extension";
-          } else if (!/^[a-zA-Z0-9-_]+$/.test(configName.value)) {
-            return "The name must only contain letters, numbers, dashes and underscores";
-          } else if (Object.keys(available_configs.value).includes(configName.value.trim())) {
-            return "The name must be unique";
-          } else {
-            return true;
-          }
-        }
-        return (_ctx, _cache) => {
-          return openBlock(), createElementBlock(Fragment, null, [
-            createBaseVNode("div", _hoisted_1$4, [
-              state.value == 0 ? (openBlock(), createBlock(VTooltip, {
-                key: 0,
-                location: "right",
-                "open-delay": "500"
-              }, {
-                activator: withCtx(({ props }) => [
-                  createVNode(VBtn, mergeProps({
-                    color: "default",
-                    variant: "flat",
-                    density: "compact",
-                    icon: "mdi-plus",
-                    "data-cy": "plus-create-config-btn"
-                  }, props, {
-                    onClick: _cache[0] || (_cache[0] = ($event) => state.value = 1)
-                  }), null, 16)
-                ]),
-                default: withCtx(() => [
-                  _hoisted_2$3
-                ]),
-                _: 1
-              })) : createCommentVNode("", true),
-              state.value == 1 ? (openBlock(), createBlock(VTooltip, {
-                key: 1,
-                location: "right",
-                "open-delay": "500"
-              }, {
-                activator: withCtx(({ props }) => [
-                  createVNode(VBtn, mergeProps({
-                    color: "default",
-                    variant: "flat",
-                    density: "compact",
-                    "data-cy": "abort-create-config-btn",
-                    icon: "mdi-close"
-                  }, props, {
-                    onClick: _cache[1] || (_cache[1] = ($event) => abortConfigCreation())
-                  }), null, 16)
-                ]),
-                default: withCtx(() => [
-                  _hoisted_3$1
-                ]),
-                _: 1
-              })) : createCommentVNode("", true),
-              state.value == 1 ? (openBlock(), createBlock(VTooltip, {
-                key: 2,
-                location: "right",
-                "open-delay": "500"
-              }, {
-                activator: withCtx(({ props }) => [
-                  createVNode(VBtn, mergeProps({
-                    color: "default",
-                    variant: "flat",
-                    density: "compact",
-                    icon: "mdi-check",
-                    "data-cy": "accept-create-config-btn"
-                  }, props, {
-                    disabled: !configNameValid.value,
-                    onClick: _cache[2] || (_cache[2] = ($event) => createConfig())
-                  }), null, 16, ["disabled"])
-                ]),
-                default: withCtx(() => [
-                  _hoisted_4
-                ]),
-                _: 1
-              })) : createCommentVNode("", true)
-            ]),
-            state.value === 1 ? (openBlock(), createBlock(VTextField, {
-              key: 0,
-              density: "compact",
-              modelValue: configName.value,
-              "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => configName.value = $event),
-              "data-cy": "config-name-input",
-              placeholder: "config name",
-              rules: [validateConfigName]
-            }, null, 8, ["modelValue", "rules"])) : createCommentVNode("", true)
-          ], 64);
-        };
-      }
-    });
-    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-3616d0d5"]]);
-    let evbcStore;
-    let evbc;
-    let notyf;
-    const _sfc_main$y = /* @__PURE__ */ defineComponent$1({
-      data: () => {
-        return {
-          show_dialog: false,
-          config_to_load: null,
-          search: "",
-          expansionPanelState: ["configs"]
-        };
-      },
-      created() {
-        evbcStore = useEvbcStore();
-        evbc = inject$1("evbc");
-        notyf = inject$1("notyf");
-      },
-      components: { CreateConfig, EvDialog },
-      computed: {
-        current_config() {
-          return evbcStore.current_config;
-        },
-        show_search() {
-          return !evbcStore.get_selected_terminal();
-        },
-        filtered_module_list() {
-          const selectedTerminal = evbcStore.get_selected_terminal();
-          if (selectedTerminal) {
-            return Object.entries(evbc.everest_definitions.modules).filter(([, value]) => {
-              if (selectedTerminal.type === "requirement") {
-                return value.provides && Object.values(value.provides).some((e) => e.interface === selectedTerminal.interface);
-              } else {
-                return value.requires && Object.values(value.requires).some((e) => e.interface === selectedTerminal.interface);
-              }
-            }).map(([key, value]) => ({
-              type: key,
-              description: value.description
-            }));
-          } else {
-            return Object.entries(evbc.everest_definitions.modules).filter(([key, value]) => {
-              return !this.search || this.search.trim() === "" || key.toLowerCase().includes(this.search.toLowerCase()) || value.description.toLowerCase().includes(this.search.toLowerCase());
-            }).map(([key, value]) => ({
-              type: key,
-              description: value.description
-            }));
-          }
-        },
-        config_list() {
-          return Object.entries(evbcStore.available_configs).map(([key]) => key);
-        }
-      },
-      methods: {
-        add_module_to_config(type2) {
-          let added_module_id;
-          if (evbcStore.current_config) {
-            added_module_id = evbcStore.current_config.add_new_module_instance(type2);
-          } else {
-            throw new Error("No config loaded");
-          }
-          if (evbcStore.get_selected_terminal()) {
-            const selectedTerminal = evbcStore.get_selected_terminal();
-            const addedModuleInstance = evbcStore.current_config.get_module_instance(added_module_id);
-            const terminals = Object.values(addedModuleInstance.view_config.terminals).flat();
-            let terminalToClick;
-            if (selectedTerminal.type === "requirement") {
-              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "provide");
-            } else {
-              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
-            }
-            evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
-          }
-        },
-        create_config(name) {
-          const new_config = evbc.create_empty_config(name);
-          evbcStore.setOpenedConfig(new_config);
-          this.expansionPanelState = ["modules"];
-        },
-        load_config_if_empty(name) {
-          if (!this.current_config) {
-            this.load_config(name);
-            return;
-          }
-          this.config_to_load = name;
-          this.show_dialog = true;
-        },
-        load_config(name) {
-          if (!name)
-            return;
-          this.show_dialog = false;
-          const new_config = evbc.load_config(name);
-          evbcStore.setOpenedConfig(new_config);
-          this.expansionPanelState = ["modules"];
-        },
-        restart_modules() {
-          evbc._cxn.rpc_issuer.restart_modules().then(() => {
-            notyf.success("Issued restart modules command");
-          });
-        },
-        close_dialog() {
-          this.show_dialog = false;
-        }
-      }
-    });
-    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
-    const allowedVariants = ["default", "accordion", "inset", "popout"];
-    const makeVExpansionPanelsProps = propsFactory({
-      color: String,
-      flat: Boolean,
-      static: Boolean,
-      tile: Boolean,
-      variant: {
-        type: String,
-        default: "default",
-        validator: (v) => allowedVariants.includes(v)
-      },
-      readonly: Boolean,
-      ...makeComponentProps(),
-      ...makeGroupProps(),
-      ...makeTagProps(),
-      ...makeThemeProps()
-    }, "VExpansionPanels");
-    const VExpansionPanels = genericComponent()({
-      name: "VExpansionPanels",
-      props: makeVExpansionPanelsProps(),
-      emits: {
-        "update:modelValue": (val) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        useGroup(props, VExpansionPanelSymbol);
-        const {
-          themeClasses
-        } = provideTheme(props);
-        const variantClass = computed(() => props.variant && `v-expansion-panels--variant-${props.variant}`);
-        provideDefaults({
-          VExpansionPanel: {
-            color: toRef(props, "color"),
-            readonly: toRef(props, "readonly")
-          },
-          VExpansionPanelTitle: {
-            static: toRef(props, "static")
-          }
-        });
-        useRender(() => createVNode(props.tag, {
-          "class": ["v-expansion-panels", {
-            "v-expansion-panels--flat": props.flat,
-            "v-expansion-panels--tile": props.tile
-          }, themeClasses.value, variantClass.value, props.class],
-          "style": props.style
-        }, slots));
-        return {};
-      }
-    });
-    const makeVExpansionPanelTextProps = propsFactory({
-      ...makeComponentProps(),
-      ...makeLazyProps()
-    }, "VExpansionPanelText");
-    const VExpansionPanelText = genericComponent()({
-      name: "VExpansionPanelText",
-      props: makeVExpansionPanelTextProps(),
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const expansionPanel = inject$1(VExpansionPanelSymbol);
-        if (!expansionPanel)
-          throw new Error("[Vuetify] v-expansion-panel-text needs to be placed inside v-expansion-panel");
-        const {
-          hasContent,
-          onAfterLeave
-        } = useLazy(props, expansionPanel.isSelected);
-        useRender(() => createVNode(VExpandTransition, {
-          "onAfterLeave": onAfterLeave
-        }, {
-          default: () => {
-            var _a2;
-            return [withDirectives(createVNode("div", {
-              "class": ["v-expansion-panel-text", props.class],
-              "style": props.style
-            }, [slots.default && hasContent.value && createVNode("div", {
-              "class": "v-expansion-panel-text__wrapper"
-            }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])]), [[vShow, expansionPanel.isSelected.value]])];
-          }
-        }));
-        return {};
-      }
-    });
-    const makeVExpansionPanelTitleProps = propsFactory({
-      color: String,
-      expandIcon: {
-        type: IconValue,
-        default: "$expand"
-      },
-      collapseIcon: {
-        type: IconValue,
-        default: "$collapse"
-      },
-      hideActions: Boolean,
-      static: Boolean,
-      ripple: {
-        type: [Boolean, Object],
-        default: false
-      },
-      readonly: Boolean,
-      ...makeComponentProps()
-    }, "VExpansionPanelTitle");
-    const VExpansionPanelTitle = genericComponent()({
-      name: "VExpansionPanelTitle",
-      directives: {
-        Ripple
-      },
-      props: makeVExpansionPanelTitleProps(),
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const expansionPanel = inject$1(VExpansionPanelSymbol);
-        if (!expansionPanel)
-          throw new Error("[Vuetify] v-expansion-panel-title needs to be placed inside v-expansion-panel");
-        const {
-          backgroundColorClasses,
-          backgroundColorStyles
-        } = useBackgroundColor(props, "color");
-        const slotProps = computed(() => ({
-          collapseIcon: props.collapseIcon,
-          disabled: expansionPanel.disabled.value,
-          expanded: expansionPanel.isSelected.value,
-          expandIcon: props.expandIcon,
-          readonly: props.readonly
-        }));
-        useRender(() => {
-          var _a2;
-          return withDirectives(createVNode("button", {
-            "class": ["v-expansion-panel-title", {
-              "v-expansion-panel-title--active": expansionPanel.isSelected.value,
-              "v-expansion-panel-title--static": props.static
-            }, backgroundColorClasses.value, props.class],
-            "style": [backgroundColorStyles.value, props.style],
-            "type": "button",
-            "tabindex": expansionPanel.disabled.value ? -1 : void 0,
-            "disabled": expansionPanel.disabled.value,
-            "aria-expanded": expansionPanel.isSelected.value,
-            "onClick": !props.readonly ? expansionPanel.toggle : void 0
-          }, [createVNode("span", {
-            "class": "v-expansion-panel-title__overlay"
-          }, null), (_a2 = slots.default) == null ? void 0 : _a2.call(slots, slotProps.value), !props.hideActions && createVNode("span", {
-            "class": "v-expansion-panel-title__icon"
-          }, [slots.actions ? slots.actions(slotProps.value) : createVNode(VIcon, {
-            "icon": expansionPanel.isSelected.value ? props.collapseIcon : props.expandIcon
-          }, null)])]), [[resolveDirective("ripple"), props.ripple]]);
-        });
-        return {};
-      }
-    });
-    const makeVExpansionPanelProps = propsFactory({
-      title: String,
-      text: String,
-      bgColor: String,
-      ...makeComponentProps(),
-      ...makeElevationProps(),
-      ...makeGroupItemProps(),
-      ...makeLazyProps(),
-      ...makeRoundedProps(),
-      ...makeTagProps(),
-      ...makeVExpansionPanelTitleProps()
-    }, "VExpansionPanel");
-    const VExpansionPanel = genericComponent()({
-      name: "VExpansionPanel",
-      props: makeVExpansionPanelProps(),
-      emits: {
-        "group:selected": (val) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const groupItem = useGroupItem(props, VExpansionPanelSymbol);
-        const {
-          backgroundColorClasses,
-          backgroundColorStyles
-        } = useBackgroundColor(props, "bgColor");
-        const {
-          elevationClasses
-        } = useElevation(props);
-        const {
-          roundedClasses
-        } = useRounded(props);
-        const isDisabled = computed(() => (groupItem == null ? void 0 : groupItem.disabled.value) || props.disabled);
-        const selectedIndices = computed(() => groupItem.group.items.value.reduce((arr, item, index) => {
-          if (groupItem.group.selected.value.includes(item.id))
-            arr.push(index);
-          return arr;
-        }, []));
-        const isBeforeSelected = computed(() => {
-          const index = groupItem.group.items.value.findIndex((item) => item.id === groupItem.id);
-          return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === 1);
-        });
-        const isAfterSelected = computed(() => {
-          const index = groupItem.group.items.value.findIndex((item) => item.id === groupItem.id);
-          return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === -1);
-        });
-        provide(VExpansionPanelSymbol, groupItem);
-        provideDefaults({
-          VExpansionPanelText: {
-            eager: toRef(props, "eager")
-          },
-          VExpansionPanelTitle: {
-            readonly: toRef(props, "readonly")
-          }
-        });
-        useRender(() => {
-          const hasText = !!(slots.text || props.text);
-          const hasTitle = !!(slots.title || props.title);
-          return createVNode(props.tag, {
-            "class": ["v-expansion-panel", {
-              "v-expansion-panel--active": groupItem.isSelected.value,
-              "v-expansion-panel--before-active": isBeforeSelected.value,
-              "v-expansion-panel--after-active": isAfterSelected.value,
-              "v-expansion-panel--disabled": isDisabled.value
-            }, roundedClasses.value, backgroundColorClasses.value, props.class],
-            "style": [backgroundColorStyles.value, props.style]
-          }, {
-            default: () => {
-              var _a2;
-              return [createVNode("div", {
-                "class": ["v-expansion-panel__shadow", ...elevationClasses.value]
-              }, null), hasTitle && createVNode(VExpansionPanelTitle, {
-                "key": "title",
-                "collapseIcon": props.collapseIcon,
-                "color": props.color,
-                "expandIcon": props.expandIcon,
-                "hideActions": props.hideActions,
-                "ripple": props.ripple
-              }, {
-                default: () => [slots.title ? slots.title() : props.title]
-              }), hasText && createVNode(VExpansionPanelText, {
-                "key": "text"
-              }, {
-                default: () => [slots.text ? slots.text() : props.text]
-              }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots)];
-            }
-          });
-        });
-        return {};
-      }
-    });
-    function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
-      const _component_create_config = resolveComponent("create-config");
-      const _component_ev_dialog = resolveComponent("ev-dialog");
-      return openBlock(), createBlock(VExpansionPanels, {
-        class: "ma-0",
-        modelValue: _ctx.expansionPanelState,
-        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => _ctx.expansionPanelState = $event)
-      }, {
-        default: withCtx(() => [
-          createVNode(VExpansionPanel, {
-            "data-cy": "modules-expansion-panel",
-            value: "modules",
-            disabled: !_ctx.current_config
-          }, {
-            default: withCtx(() => [
-              createVNode(VExpansionPanelTitle, null, {
-                default: withCtx(() => [
-                  createTextVNode(" Available modules")
-                ]),
-                _: 1
-              }),
-              createVNode(VExpansionPanelText, null, {
-                default: withCtx(() => [
-                  _ctx.show_search ? (openBlock(), createBlock(VTextField, {
-                    key: 0,
-                    modelValue: _ctx.search,
-                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.search = $event),
-                    "hide-details": "",
-                    label: "Search",
-                    density: "compact",
-                    variant: "outlined",
-                    "data-cy": "modules-search",
-                    clearable: ""
-                  }, null, 8, ["modelValue"])) : createCommentVNode("", true),
-                  createVNode(VList, { class: "ma-0" }, {
-                    default: withCtx(() => [
-                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.filtered_module_list, (module2) => {
-                        return openBlock(), createBlock(VTooltip, {
-                          location: "right",
-                          key: module2.type,
-                          "open-delay": "500"
-                        }, {
-                          activator: withCtx(({ props }) => [
-                            createVNode(VListItem, mergeProps(props, {
-                              title: module2.type,
-                              onClick: withModifiers(($event) => _ctx.add_module_to_config(module2.type), ["stop"]),
-                              "data-cy": "module-list-item"
-                            }), {
-                              append: withCtx(() => [
-                                createVNode(VIcon, null, {
-                                  default: withCtx(() => [
-                                    createTextVNode("mdi-plus")
-                                  ]),
-                                  _: 1
-                                })
-                              ]),
-                              _: 2
-                            }, 1040, ["title", "onClick"])
-                          ]),
-                          default: withCtx(() => [
-                            createBaseVNode("span", null, toDisplayString(`${module2.type}: ${module2.description}`), 1)
-                          ]),
-                          _: 2
-                        }, 1024);
-                      }), 128))
-                    ]),
-                    _: 1
-                  })
-                ]),
-                _: 1
-              })
-            ]),
-            _: 1
-          }, 8, ["disabled"]),
-          createVNode(VExpansionPanel, { value: "configs" }, {
-            default: withCtx(() => [
-              createVNode(VExpansionPanelTitle, { "data-cy": "configs-expansion-panel" }, {
-                default: withCtx(() => [
-                  createTextVNode(toDisplayString(_ctx.config_list.length == 0 ? "No configs available" : "Available configs"), 1)
-                ]),
-                _: 1
-              }),
-              createVNode(VExpansionPanelText, null, {
-                default: withCtx(() => [
-                  createVNode(_component_create_config, { onCreateConfig: _ctx.create_config }, null, 8, ["onCreateConfig"]),
-                  createVNode(VList, { class: "ma-0" }, {
-                    default: withCtx(() => [
-                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.config_list, (config2) => {
-                        return openBlock(), createBlock(VTooltip, {
-                          location: "right",
-                          key: config2,
-                          "open-delay": "500"
-                        }, {
-                          activator: withCtx(({ props }) => [
-                            createVNode(VListItem, mergeProps({ title: config2 }, props, {
-                              onClick: ($event) => _ctx.load_config_if_empty(config2),
-                              "data-cy": "config-list-item"
-                            }), {
-                              append: withCtx(() => [
-                                createVNode(VIcon, null, {
-                                  default: withCtx(() => [
-                                    createTextVNode("mdi-upload")
-                                  ]),
-                                  _: 1
-                                })
-                              ]),
-                              _: 2
-                            }, 1040, ["title", "onClick"])
-                          ]),
-                          default: withCtx(() => [
-                            createBaseVNode("span", null, toDisplayString(config2), 1)
-                          ]),
-                          _: 2
-                        }, 1024);
-                      }), 128))
-                    ]),
-                    _: 1
-                  })
-                ]),
-                _: 1
-              }),
-              createVNode(_component_ev_dialog, {
-                show_dialog: _ctx.show_dialog,
-                title: "Warning",
-                text: "Do you want to discard the current config and load the new one?",
-                accept_text: "Load config",
-                deny_text: "Don't load config",
-                onAccept: _cache[1] || (_cache[1] = ($event) => _ctx.load_config(_ctx.config_to_load)),
-                onDeny: _cache[2] || (_cache[2] = ($event) => _ctx.close_dialog())
-              }, null, 8, ["show_dialog"])
-            ]),
-            _: 1
-          }),
-          createVNode(VExpansionPanel, { value: "commands" }, {
-            default: withCtx(() => [
-              createVNode(VExpansionPanelTitle, null, {
-                default: withCtx(() => [
-                  createTextVNode(" Issue commands")
-                ]),
-                _: 1
-              }),
-              createVNode(VExpansionPanelText, null, {
-                default: withCtx(() => [
-                  createVNode(VList, null, {
-                    default: withCtx(() => [
-                      createVNode(VListItem, {
-                        onClick: _cache[3] || (_cache[3] = ($event) => _ctx.restart_modules()),
-                        title: "Restart modules"
-                      }, {
-                        append: withCtx(() => [
-                          createVNode(VIcon, null, {
-                            default: withCtx(() => [
-                              createTextVNode("mdi-run")
-                            ]),
-                            _: 1
-                          })
-                        ]),
-                        _: 1
-                      })
-                    ]),
-                    _: 1
-                  })
-                ]),
-                _: 1
-              })
-            ]),
-            _: 1
-          })
-        ]),
-        _: 1
-      }, 8, ["modelValue"]);
-    }
-    const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$2]]);
-    var _2019 = { exports: {} };
+    var ajv = { exports: {} };
     var core$3 = {};
     var validate = {};
     var boolSchema = {};
@@ -49088,253 +48443,6 @@ Reason: ${error2}`);
       metadata_1.contentVocabulary
     ];
     draft7.default = draft7Vocabularies;
-    var dynamic$1 = {};
-    var dynamicAnchor$1 = {};
-    Object.defineProperty(dynamicAnchor$1, "__esModule", { value: true });
-    dynamicAnchor$1.dynamicAnchor = void 0;
-    const codegen_1$4 = codegen;
-    const names_1$2 = names$2;
-    const compile_1$1 = compile$2;
-    const ref_1$1 = ref;
-    const def$9 = {
-      keyword: "$dynamicAnchor",
-      schemaType: "string",
-      code: (cxt) => dynamicAnchor(cxt, cxt.schema)
-    };
-    function dynamicAnchor(cxt, anchor) {
-      const { gen, it: it2 } = cxt;
-      it2.schemaEnv.root.dynamicAnchors[anchor] = true;
-      const v = (0, codegen_1$4._)`${names_1$2.default.dynamicAnchors}${(0, codegen_1$4.getProperty)(anchor)}`;
-      const validate2 = it2.errSchemaPath === "#" ? it2.validateName : _getValidate(cxt);
-      gen.if((0, codegen_1$4._)`!${v}`, () => gen.assign(v, validate2));
-    }
-    dynamicAnchor$1.dynamicAnchor = dynamicAnchor;
-    function _getValidate(cxt) {
-      const { schemaEnv, schema: schema2, self: self2 } = cxt.it;
-      const { root, baseId, localRefs, meta } = schemaEnv.root;
-      const { schemaId } = self2.opts;
-      const sch = new compile_1$1.SchemaEnv({ schema: schema2, schemaId, root, baseId, localRefs, meta });
-      compile_1$1.compileSchema.call(self2, sch);
-      return (0, ref_1$1.getValidate)(cxt, sch);
-    }
-    dynamicAnchor$1.default = def$9;
-    var dynamicRef$1 = {};
-    Object.defineProperty(dynamicRef$1, "__esModule", { value: true });
-    dynamicRef$1.dynamicRef = void 0;
-    const codegen_1$3 = codegen;
-    const names_1$1 = names$2;
-    const ref_1 = ref;
-    const def$8 = {
-      keyword: "$dynamicRef",
-      schemaType: "string",
-      code: (cxt) => dynamicRef(cxt, cxt.schema)
-    };
-    function dynamicRef(cxt, ref2) {
-      const { gen, keyword: keyword2, it: it2 } = cxt;
-      if (ref2[0] !== "#")
-        throw new Error(`"${keyword2}" only supports hash fragment reference`);
-      const anchor = ref2.slice(1);
-      if (it2.allErrors) {
-        _dynamicRef();
-      } else {
-        const valid = gen.let("valid", false);
-        _dynamicRef(valid);
-        cxt.ok(valid);
-      }
-      function _dynamicRef(valid) {
-        if (it2.schemaEnv.root.dynamicAnchors[anchor]) {
-          const v = gen.let("_v", (0, codegen_1$3._)`${names_1$1.default.dynamicAnchors}${(0, codegen_1$3.getProperty)(anchor)}`);
-          gen.if(v, _callRef(v, valid), _callRef(it2.validateName, valid));
-        } else {
-          _callRef(it2.validateName, valid)();
-        }
-      }
-      function _callRef(validate2, valid) {
-        return valid ? () => gen.block(() => {
-          (0, ref_1.callRef)(cxt, validate2);
-          gen.let(valid, true);
-        }) : () => (0, ref_1.callRef)(cxt, validate2);
-      }
-    }
-    dynamicRef$1.dynamicRef = dynamicRef;
-    dynamicRef$1.default = def$8;
-    var recursiveAnchor = {};
-    Object.defineProperty(recursiveAnchor, "__esModule", { value: true });
-    const dynamicAnchor_1$1 = dynamicAnchor$1;
-    const util_1$4 = util;
-    const def$7 = {
-      keyword: "$recursiveAnchor",
-      schemaType: "boolean",
-      code(cxt) {
-        if (cxt.schema)
-          (0, dynamicAnchor_1$1.dynamicAnchor)(cxt, "");
-        else
-          (0, util_1$4.checkStrictMode)(cxt.it, "$recursiveAnchor: false is ignored");
-      }
-    };
-    recursiveAnchor.default = def$7;
-    var recursiveRef = {};
-    Object.defineProperty(recursiveRef, "__esModule", { value: true });
-    const dynamicRef_1$1 = dynamicRef$1;
-    const def$6 = {
-      keyword: "$recursiveRef",
-      schemaType: "string",
-      code: (cxt) => (0, dynamicRef_1$1.dynamicRef)(cxt, cxt.schema)
-    };
-    recursiveRef.default = def$6;
-    Object.defineProperty(dynamic$1, "__esModule", { value: true });
-    const dynamicAnchor_1 = dynamicAnchor$1;
-    const dynamicRef_1 = dynamicRef$1;
-    const recursiveAnchor_1 = recursiveAnchor;
-    const recursiveRef_1 = recursiveRef;
-    const dynamic = [dynamicAnchor_1.default, dynamicRef_1.default, recursiveAnchor_1.default, recursiveRef_1.default];
-    dynamic$1.default = dynamic;
-    var next$1 = {};
-    var dependentRequired = {};
-    Object.defineProperty(dependentRequired, "__esModule", { value: true });
-    const dependencies_1$1 = dependencies;
-    const def$5 = {
-      keyword: "dependentRequired",
-      type: "object",
-      schemaType: "object",
-      error: dependencies_1$1.error,
-      code: (cxt) => (0, dependencies_1$1.validatePropertyDeps)(cxt)
-    };
-    dependentRequired.default = def$5;
-    var dependentSchemas = {};
-    Object.defineProperty(dependentSchemas, "__esModule", { value: true });
-    const dependencies_1 = dependencies;
-    const def$4 = {
-      keyword: "dependentSchemas",
-      type: "object",
-      schemaType: "object",
-      code: (cxt) => (0, dependencies_1.validateSchemaDeps)(cxt)
-    };
-    dependentSchemas.default = def$4;
-    var limitContains = {};
-    Object.defineProperty(limitContains, "__esModule", { value: true });
-    const util_1$3 = util;
-    const def$3 = {
-      keyword: ["maxContains", "minContains"],
-      type: "array",
-      schemaType: "number",
-      code({ keyword: keyword2, parentSchema, it: it2 }) {
-        if (parentSchema.contains === void 0) {
-          (0, util_1$3.checkStrictMode)(it2, `"${keyword2}" without "contains" is ignored`);
-        }
-      }
-    };
-    limitContains.default = def$3;
-    Object.defineProperty(next$1, "__esModule", { value: true });
-    const dependentRequired_1 = dependentRequired;
-    const dependentSchemas_1 = dependentSchemas;
-    const limitContains_1 = limitContains;
-    const next = [dependentRequired_1.default, dependentSchemas_1.default, limitContains_1.default];
-    next$1.default = next;
-    var unevaluated$1 = {};
-    var unevaluatedProperties = {};
-    Object.defineProperty(unevaluatedProperties, "__esModule", { value: true });
-    const codegen_1$2 = codegen;
-    const util_1$2 = util;
-    const names_1 = names$2;
-    const error$3 = {
-      message: "must NOT have unevaluated properties",
-      params: ({ params }) => (0, codegen_1$2._)`{unevaluatedProperty: ${params.unevaluatedProperty}}`
-    };
-    const def$2 = {
-      keyword: "unevaluatedProperties",
-      type: "object",
-      schemaType: ["boolean", "object"],
-      trackErrors: true,
-      error: error$3,
-      code(cxt) {
-        const { gen, schema: schema2, data, errsCount, it: it2 } = cxt;
-        if (!errsCount)
-          throw new Error("ajv implementation error");
-        const { allErrors, props } = it2;
-        if (props instanceof codegen_1$2.Name) {
-          gen.if((0, codegen_1$2._)`${props} !== true`, () => gen.forIn("key", data, (key) => gen.if(unevaluatedDynamic(props, key), () => unevaluatedPropCode(key))));
-        } else if (props !== true) {
-          gen.forIn("key", data, (key) => props === void 0 ? unevaluatedPropCode(key) : gen.if(unevaluatedStatic(props, key), () => unevaluatedPropCode(key)));
-        }
-        it2.props = true;
-        cxt.ok((0, codegen_1$2._)`${errsCount} === ${names_1.default.errors}`);
-        function unevaluatedPropCode(key) {
-          if (schema2 === false) {
-            cxt.setParams({ unevaluatedProperty: key });
-            cxt.error();
-            if (!allErrors)
-              gen.break();
-            return;
-          }
-          if (!(0, util_1$2.alwaysValidSchema)(it2, schema2)) {
-            const valid = gen.name("valid");
-            cxt.subschema({
-              keyword: "unevaluatedProperties",
-              dataProp: key,
-              dataPropType: util_1$2.Type.Str
-            }, valid);
-            if (!allErrors)
-              gen.if((0, codegen_1$2.not)(valid), () => gen.break());
-          }
-        }
-        function unevaluatedDynamic(evaluatedProps, key) {
-          return (0, codegen_1$2._)`!${evaluatedProps} || !${evaluatedProps}[${key}]`;
-        }
-        function unevaluatedStatic(evaluatedProps, key) {
-          const ps = [];
-          for (const p2 in evaluatedProps) {
-            if (evaluatedProps[p2] === true)
-              ps.push((0, codegen_1$2._)`${key} !== ${p2}`);
-          }
-          return (0, codegen_1$2.and)(...ps);
-        }
-      }
-    };
-    unevaluatedProperties.default = def$2;
-    var unevaluatedItems = {};
-    Object.defineProperty(unevaluatedItems, "__esModule", { value: true });
-    const codegen_1$1 = codegen;
-    const util_1$1 = util;
-    const error$2 = {
-      message: ({ params: { len } }) => (0, codegen_1$1.str)`must NOT have more than ${len} items`,
-      params: ({ params: { len } }) => (0, codegen_1$1._)`{limit: ${len}}`
-    };
-    const def$1 = {
-      keyword: "unevaluatedItems",
-      type: "array",
-      schemaType: ["boolean", "object"],
-      error: error$2,
-      code(cxt) {
-        const { gen, schema: schema2, data, it: it2 } = cxt;
-        const items2 = it2.items || 0;
-        if (items2 === true)
-          return;
-        const len = gen.const("len", (0, codegen_1$1._)`${data}.length`);
-        if (schema2 === false) {
-          cxt.setParams({ len: items2 });
-          cxt.fail((0, codegen_1$1._)`${len} > ${items2}`);
-        } else if (typeof schema2 == "object" && !(0, util_1$1.alwaysValidSchema)(it2, schema2)) {
-          const valid = gen.var("valid", (0, codegen_1$1._)`${len} <= ${items2}`);
-          gen.if((0, codegen_1$1.not)(valid), () => validateItems(valid, items2));
-          cxt.ok(valid);
-        }
-        it2.items = true;
-        function validateItems(valid, from) {
-          gen.forRange("i", from, len, (i2) => {
-            cxt.subschema({ keyword: "unevaluatedItems", dataProp: i2, dataPropType: util_1$1.Type.Num }, valid);
-            if (!it2.allErrors)
-              gen.if((0, codegen_1$1.not)(valid), () => gen.break());
-          });
-        }
-      }
-    };
-    unevaluatedItems.default = def$1;
-    Object.defineProperty(unevaluated$1, "__esModule", { value: true });
-    const unevaluatedProperties_1 = unevaluatedProperties;
-    const unevaluatedItems_1 = unevaluatedItems;
-    const unevaluated = [unevaluatedProperties_1.default, unevaluatedItems_1.default];
-    unevaluated$1.default = unevaluated;
     var discriminator = {};
     var types = {};
     (function(exports2) {
@@ -49346,19 +48454,19 @@ Reason: ${error2}`);
       })(exports2.DiscrError || (exports2.DiscrError = {}));
     })(types);
     Object.defineProperty(discriminator, "__esModule", { value: true });
-    const codegen_1 = codegen;
+    const codegen_1$4 = codegen;
     const types_1 = types;
-    const compile_1 = compile$2;
-    const util_1 = util;
-    const error$1 = {
+    const compile_1$1 = compile$2;
+    const util_1$4 = util;
+    const error$3 = {
       message: ({ params: { discrError, tagName } }) => discrError === types_1.DiscrError.Tag ? `tag "${tagName}" must be string` : `value of tag "${tagName}" must be in oneOf`,
-      params: ({ params: { discrError, tag, tagName } }) => (0, codegen_1._)`{error: ${discrError}, tag: ${tagName}, tagValue: ${tag}}`
+      params: ({ params: { discrError, tag, tagName } }) => (0, codegen_1$4._)`{error: ${discrError}, tag: ${tagName}, tagValue: ${tag}}`
     };
-    const def = {
+    const def$9 = {
       keyword: "discriminator",
       type: "object",
       schemaType: "object",
-      error: error$1,
+      error: error$3,
       code(cxt) {
         const { gen, data, schema: schema2, parentSchema, it: it2 } = cxt;
         const { oneOf: oneOf2 } = parentSchema;
@@ -49373,14 +48481,14 @@ Reason: ${error2}`);
         if (!oneOf2)
           throw new Error("discriminator: requires oneOf keyword");
         const valid = gen.let("valid", false);
-        const tag = gen.const("tag", (0, codegen_1._)`${data}${(0, codegen_1.getProperty)(tagName)}`);
-        gen.if((0, codegen_1._)`typeof ${tag} == "string"`, () => validateMapping(), () => cxt.error(false, { discrError: types_1.DiscrError.Tag, tag, tagName }));
+        const tag = gen.const("tag", (0, codegen_1$4._)`${data}${(0, codegen_1$4.getProperty)(tagName)}`);
+        gen.if((0, codegen_1$4._)`typeof ${tag} == "string"`, () => validateMapping(), () => cxt.error(false, { discrError: types_1.DiscrError.Tag, tag, tagName }));
         cxt.ok(valid);
         function validateMapping() {
           const mapping = getMapping();
           gen.if(false);
           for (const tagValue in mapping) {
-            gen.elseIf((0, codegen_1._)`${tag} === ${tagValue}`);
+            gen.elseIf((0, codegen_1$4._)`${tag} === ${tagValue}`);
             gen.assign(valid, applyTagSchema(mapping[tagValue]));
           }
           gen.else();
@@ -49390,7 +48498,7 @@ Reason: ${error2}`);
         function applyTagSchema(schemaProp) {
           const _valid = gen.name("valid");
           const schCxt = cxt.subschema({ keyword: "oneOf", schemaProp }, _valid);
-          cxt.mergeEvaluated(schCxt, codegen_1.Name);
+          cxt.mergeEvaluated(schCxt, codegen_1$4.Name);
           return _valid;
         }
         function getMapping() {
@@ -49400,9 +48508,9 @@ Reason: ${error2}`);
           let tagRequired = true;
           for (let i2 = 0; i2 < oneOf2.length; i2++) {
             let sch = oneOf2[i2];
-            if ((sch === null || sch === void 0 ? void 0 : sch.$ref) && !(0, util_1.schemaHasRulesButRef)(sch, it2.self.RULES)) {
-              sch = compile_1.resolveRef.call(it2.self, it2.schemaEnv.root, it2.baseId, sch === null || sch === void 0 ? void 0 : sch.$ref);
-              if (sch instanceof compile_1.SchemaEnv)
+            if ((sch === null || sch === void 0 ? void 0 : sch.$ref) && !(0, util_1$4.schemaHasRulesButRef)(sch, it2.self.RULES)) {
+              sch = compile_1$1.resolveRef.call(it2.self, it2.schemaEnv.root, it2.baseId, sch === null || sch === void 0 ? void 0 : sch.$ref);
+              if (sch instanceof compile_1$1.SchemaEnv)
                 sch = sch.schema;
             }
             const propSch = (_a2 = sch === null || sch === void 0 ? void 0 : sch.properties) === null || _a2 === void 0 ? void 0 : _a2[tagName];
@@ -49438,10 +48546,1350 @@ Reason: ${error2}`);
         }
       }
     };
-    discriminator.default = def;
+    discriminator.default = def$9;
+    const $schema$7 = "http://json-schema.org/draft-07/schema#";
+    const $id$7 = "http://json-schema.org/draft-07/schema#";
+    const title$7 = "Core schema meta-schema";
+    const definitions = {
+      schemaArray: {
+        type: "array",
+        minItems: 1,
+        items: {
+          $ref: "#"
+        }
+      },
+      nonNegativeInteger: {
+        type: "integer",
+        minimum: 0
+      },
+      nonNegativeIntegerDefault0: {
+        allOf: [
+          {
+            $ref: "#/definitions/nonNegativeInteger"
+          },
+          {
+            "default": 0
+          }
+        ]
+      },
+      simpleTypes: {
+        "enum": [
+          "array",
+          "boolean",
+          "integer",
+          "null",
+          "number",
+          "object",
+          "string"
+        ]
+      },
+      stringArray: {
+        type: "array",
+        items: {
+          type: "string"
+        },
+        uniqueItems: true,
+        "default": []
+      }
+    };
+    const type$7 = [
+      "object",
+      "boolean"
+    ];
+    const properties$7 = {
+      $id: {
+        type: "string",
+        format: "uri-reference"
+      },
+      $schema: {
+        type: "string",
+        format: "uri"
+      },
+      $ref: {
+        type: "string",
+        format: "uri-reference"
+      },
+      $comment: {
+        type: "string"
+      },
+      title: {
+        type: "string"
+      },
+      description: {
+        type: "string"
+      },
+      "default": true,
+      readOnly: {
+        type: "boolean",
+        "default": false
+      },
+      examples: {
+        type: "array",
+        items: true
+      },
+      multipleOf: {
+        type: "number",
+        exclusiveMinimum: 0
+      },
+      maximum: {
+        type: "number"
+      },
+      exclusiveMaximum: {
+        type: "number"
+      },
+      minimum: {
+        type: "number"
+      },
+      exclusiveMinimum: {
+        type: "number"
+      },
+      maxLength: {
+        $ref: "#/definitions/nonNegativeInteger"
+      },
+      minLength: {
+        $ref: "#/definitions/nonNegativeIntegerDefault0"
+      },
+      pattern: {
+        type: "string",
+        format: "regex"
+      },
+      additionalItems: {
+        $ref: "#"
+      },
+      items: {
+        anyOf: [
+          {
+            $ref: "#"
+          },
+          {
+            $ref: "#/definitions/schemaArray"
+          }
+        ],
+        "default": true
+      },
+      maxItems: {
+        $ref: "#/definitions/nonNegativeInteger"
+      },
+      minItems: {
+        $ref: "#/definitions/nonNegativeIntegerDefault0"
+      },
+      uniqueItems: {
+        type: "boolean",
+        "default": false
+      },
+      contains: {
+        $ref: "#"
+      },
+      maxProperties: {
+        $ref: "#/definitions/nonNegativeInteger"
+      },
+      minProperties: {
+        $ref: "#/definitions/nonNegativeIntegerDefault0"
+      },
+      required: {
+        $ref: "#/definitions/stringArray"
+      },
+      additionalProperties: {
+        $ref: "#"
+      },
+      definitions: {
+        type: "object",
+        additionalProperties: {
+          $ref: "#"
+        },
+        "default": {}
+      },
+      properties: {
+        type: "object",
+        additionalProperties: {
+          $ref: "#"
+        },
+        "default": {}
+      },
+      patternProperties: {
+        type: "object",
+        additionalProperties: {
+          $ref: "#"
+        },
+        propertyNames: {
+          format: "regex"
+        },
+        "default": {}
+      },
+      dependencies: {
+        type: "object",
+        additionalProperties: {
+          anyOf: [
+            {
+              $ref: "#"
+            },
+            {
+              $ref: "#/definitions/stringArray"
+            }
+          ]
+        }
+      },
+      propertyNames: {
+        $ref: "#"
+      },
+      "const": true,
+      "enum": {
+        type: "array",
+        items: true,
+        minItems: 1,
+        uniqueItems: true
+      },
+      type: {
+        anyOf: [
+          {
+            $ref: "#/definitions/simpleTypes"
+          },
+          {
+            type: "array",
+            items: {
+              $ref: "#/definitions/simpleTypes"
+            },
+            minItems: 1,
+            uniqueItems: true
+          }
+        ]
+      },
+      format: {
+        type: "string"
+      },
+      contentMediaType: {
+        type: "string"
+      },
+      contentEncoding: {
+        type: "string"
+      },
+      "if": {
+        $ref: "#"
+      },
+      then: {
+        $ref: "#"
+      },
+      "else": {
+        $ref: "#"
+      },
+      allOf: {
+        $ref: "#/definitions/schemaArray"
+      },
+      anyOf: {
+        $ref: "#/definitions/schemaArray"
+      },
+      oneOf: {
+        $ref: "#/definitions/schemaArray"
+      },
+      not: {
+        $ref: "#"
+      }
+    };
+    const require$$3$1 = {
+      $schema: $schema$7,
+      $id: $id$7,
+      title: title$7,
+      definitions,
+      type: type$7,
+      properties: properties$7,
+      "default": true
+    };
+    (function(module2, exports2) {
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
+      const core_12 = core$3;
+      const draft7_1 = draft7;
+      const discriminator_1 = discriminator;
+      const draft7MetaSchema = require$$3$1;
+      const META_SUPPORT_DATA2 = ["/properties"];
+      const META_SCHEMA_ID = "http://json-schema.org/draft-07/schema";
+      class Ajv2 extends core_12.default {
+        _addVocabularies() {
+          super._addVocabularies();
+          draft7_1.default.forEach((v) => this.addVocabulary(v));
+          if (this.opts.discriminator)
+            this.addKeyword(discriminator_1.default);
+        }
+        _addDefaultMetaSchema() {
+          super._addDefaultMetaSchema();
+          if (!this.opts.meta)
+            return;
+          const metaSchema2 = this.opts.$data ? this.$dataMetaSchema(draft7MetaSchema, META_SUPPORT_DATA2) : draft7MetaSchema;
+          this.addMetaSchema(metaSchema2, META_SCHEMA_ID, false);
+          this.refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
+        }
+        defaultMeta() {
+          return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
+        }
+      }
+      module2.exports = exports2 = Ajv2;
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.default = Ajv2;
+      var validate_12 = validate;
+      Object.defineProperty(exports2, "KeywordCxt", { enumerable: true, get: function() {
+        return validate_12.KeywordCxt;
+      } });
+      var codegen_12 = codegen;
+      Object.defineProperty(exports2, "_", { enumerable: true, get: function() {
+        return codegen_12._;
+      } });
+      Object.defineProperty(exports2, "str", { enumerable: true, get: function() {
+        return codegen_12.str;
+      } });
+      Object.defineProperty(exports2, "stringify", { enumerable: true, get: function() {
+        return codegen_12.stringify;
+      } });
+      Object.defineProperty(exports2, "nil", { enumerable: true, get: function() {
+        return codegen_12.nil;
+      } });
+      Object.defineProperty(exports2, "Name", { enumerable: true, get: function() {
+        return codegen_12.Name;
+      } });
+      Object.defineProperty(exports2, "CodeGen", { enumerable: true, get: function() {
+        return codegen_12.CodeGen;
+      } });
+      var validation_error_12 = validation_error;
+      Object.defineProperty(exports2, "ValidationError", { enumerable: true, get: function() {
+        return validation_error_12.default;
+      } });
+      var ref_error_12 = ref_error;
+      Object.defineProperty(exports2, "MissingRefError", { enumerable: true, get: function() {
+        return ref_error_12.default;
+      } });
+    })(ajv, ajv.exports);
+    var ajvExports = ajv.exports;
+    const Ajv$2 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
+    function urlToPublicAsset(filePath) {
+      let base2 = "/everest-admin-panel/pr-148";
+      if (!base2.endsWith("/")) {
+        base2 += "/";
+      }
+      if (!filePath.startsWith("/")) {
+        return base2 + filePath;
+      } else {
+        return base2 + filePath.slice(1);
+      }
+    }
+    const _withScopeId = (n) => (pushScopeId("data-v-fcfd6d00"), n = n(), popScopeId(), n);
+    const _hoisted_1$4 = { class: "btn-container" };
+    const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
+    const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
+    const _hoisted_4 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Abort", -1));
+    const _hoisted_5 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
+    const _sfc_main$z = /* @__PURE__ */ defineComponent$1({
+      __name: "CreateConfig",
+      emits: ["createConfig"],
+      setup(__props, { emit: __emit }) {
+        const evbcStore2 = useEvbcStore();
+        const state = ref$1(
+          0
+          /* DEFAULT */
+        );
+        const configName = ref$1("");
+        const configNameValid = computed(() => validateConfigName() === true);
+        const emit2 = __emit;
+        const { available_configs } = storeToRefs(evbcStore2);
+        const configContent = ref$1(null);
+        const errors2 = ref$1(null);
+        const showErrorDialog = computed(() => !!errors2.value);
+        function onAcceptBtnClick() {
+          if (validateConfigName() === true) {
+            emit2("createConfig", configName.value, configContent.value ?? void 0);
+            resetDialog();
+          }
+        }
+        function resetDialog() {
+          state.value = 0;
+          configName.value = "";
+          configContent.value = null;
+          errors2.value = null;
+        }
+        function uploadConfigPrompt() {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = ".json,.yaml,.yml";
+          input.click();
+          input.onchange = (e) => {
+            var _a2;
+            const file = (_a2 = e.target.files) == null ? void 0 : _a2[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = async (e2) => {
+                var _a3;
+                const parseResult = await parseConfig((_a3 = e2.target) == null ? void 0 : _a3.result);
+                if (!parseResult.errors) {
+                  configContent.value = parseResult.config;
+                  configName.value = file.name.replace(/\.[^.]+$/, "");
+                  state.value = 1;
+                } else {
+                  errors2.value = parseResult.errors;
+                }
+              };
+              reader.readAsText(file);
+            }
+          };
+        }
+        function validateConfigName() {
+          if (configName.value.trim().length === 0) {
+            return "Please enter a name";
+          } else if (/.*(\.json|\.ya?ml)$/.test(configName.value)) {
+            return "The name must not contain the file extension";
+          } else if (!/^[a-zA-Z0-9-_]+$/.test(configName.value)) {
+            return "The name must only contain letters, numbers, dashes and underscores";
+          } else if (Object.keys(available_configs.value).includes(configName.value.trim())) {
+            return "The name must be unique";
+          } else {
+            return true;
+          }
+        }
+        async function validateConfigContent(content2) {
+          const ajv2 = new Ajv$2();
+          const schema2 = await getConfigJsonSchema();
+          const validate2 = ajv2.compile(schema2);
+          const valid = validate2(content2);
+          if (valid) {
+            return true;
+          } else {
+            return JSON.stringify(validate2.errors, null, 2);
+          }
+        }
+        async function getConfigJsonSchema() {
+          const response = await fetch(urlToPublicAsset("schemas/config.json"));
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return await response.json();
+        }
+        async function parseConfig(content2) {
+          try {
+            const config2 = jsYaml.load(content2);
+            const validationResult = await validateConfigContent(config2);
+            if (validationResult === true) {
+              return { errors: null, config: config2 };
+            } else {
+              return { errors: validationResult, config: null };
+            }
+          } catch (e) {
+            return { errors: e.toString(), config: null };
+          }
+        }
+        return (_ctx, _cache) => {
+          return openBlock(), createElementBlock(Fragment, null, [
+            createBaseVNode("div", _hoisted_1$4, [
+              state.value == 0 ? (openBlock(), createBlock(VTooltip, {
+                key: 0,
+                location: "right",
+                "open-delay": "500"
+              }, {
+                activator: withCtx(({ props }) => [
+                  createVNode(VBtn, mergeProps({
+                    color: "default",
+                    variant: "flat",
+                    density: "compact",
+                    icon: "mdi-upload",
+                    "data-cy": "upload-config-btn"
+                  }, props, {
+                    onClick: _cache[0] || (_cache[0] = ($event) => uploadConfigPrompt())
+                  }), null, 16)
+                ]),
+                default: withCtx(() => [
+                  _hoisted_2$3
+                ]),
+                _: 1
+              })) : createCommentVNode("", true),
+              state.value == 0 ? (openBlock(), createBlock(VTooltip, {
+                key: 1,
+                location: "right",
+                "open-delay": "500"
+              }, {
+                activator: withCtx(({ props }) => [
+                  createVNode(VBtn, mergeProps({
+                    color: "default",
+                    variant: "flat",
+                    density: "compact",
+                    icon: "mdi-plus",
+                    "data-cy": "plus-create-config-btn"
+                  }, props, {
+                    onClick: _cache[1] || (_cache[1] = ($event) => state.value = 1)
+                  }), null, 16)
+                ]),
+                default: withCtx(() => [
+                  _hoisted_3$1
+                ]),
+                _: 1
+              })) : createCommentVNode("", true),
+              state.value == 1 ? (openBlock(), createBlock(VTooltip, {
+                key: 2,
+                location: "right",
+                "open-delay": "500"
+              }, {
+                activator: withCtx(({ props }) => [
+                  createVNode(VBtn, mergeProps({
+                    color: "default",
+                    variant: "flat",
+                    density: "compact",
+                    "data-cy": "abort-create-config-btn",
+                    icon: "mdi-close"
+                  }, props, {
+                    onClick: _cache[2] || (_cache[2] = ($event) => resetDialog())
+                  }), null, 16)
+                ]),
+                default: withCtx(() => [
+                  _hoisted_4
+                ]),
+                _: 1
+              })) : createCommentVNode("", true),
+              state.value == 1 ? (openBlock(), createBlock(VTooltip, {
+                key: 3,
+                location: "right",
+                "open-delay": "500"
+              }, {
+                activator: withCtx(({ props }) => [
+                  createVNode(VBtn, mergeProps({
+                    color: "default",
+                    variant: "flat",
+                    density: "compact",
+                    icon: "mdi-check",
+                    "data-cy": "accept-create-config-btn"
+                  }, props, {
+                    disabled: !configNameValid.value,
+                    onClick: _cache[3] || (_cache[3] = ($event) => onAcceptBtnClick())
+                  }), null, 16, ["disabled"])
+                ]),
+                default: withCtx(() => [
+                  _hoisted_5
+                ]),
+                _: 1
+              })) : createCommentVNode("", true)
+            ]),
+            state.value === 1 ? (openBlock(), createBlock(VTextField, {
+              key: 0,
+              density: "compact",
+              modelValue: configName.value,
+              "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => configName.value = $event),
+              "data-cy": "config-name-input",
+              placeholder: "config name",
+              rules: [validateConfigName]
+            }, null, 8, ["modelValue", "rules"])) : createCommentVNode("", true),
+            createVNode(VDialog, {
+              modelValue: showErrorDialog.value,
+              "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => showErrorDialog.value = $event),
+              "onClick:outside": _cache[7] || (_cache[7] = ($event) => resetDialog())
+            }, {
+              default: withCtx(() => [
+                createVNode(VCard, { color: "danger" }, {
+                  default: withCtx(() => [
+                    createVNode(VCardTitle, null, {
+                      default: withCtx(() => [
+                        createTextVNode("Couldn't load config")
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(VCardText, null, {
+                      default: withCtx(() => [
+                        createBaseVNode("pre", null, [
+                          createBaseVNode("code", null, toDisplayString(errors2.value), 1)
+                        ])
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(VCardActions, null, {
+                      default: withCtx(() => [
+                        createVNode(VBtn, {
+                          color: "primary",
+                          onClick: _cache[5] || (_cache[5] = ($event) => resetDialog())
+                        }, {
+                          default: withCtx(() => [
+                            createTextVNode("OK")
+                          ]),
+                          _: 1
+                        })
+                      ]),
+                      _: 1
+                    })
+                  ]),
+                  _: 1
+                })
+              ]),
+              _: 1
+            }, 8, ["modelValue"])
+          ], 64);
+        };
+      }
+    });
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-fcfd6d00"]]);
+    let evbcStore;
+    let evbc;
+    let notyf;
+    const _sfc_main$y = /* @__PURE__ */ defineComponent$1({
+      data: () => {
+        return {
+          show_dialog: false,
+          config_to_load: null,
+          search: "",
+          expansionPanelState: ["configs"]
+        };
+      },
+      created() {
+        evbcStore = useEvbcStore();
+        evbc = inject$1("evbc");
+        notyf = inject$1("notyf");
+      },
+      components: { CreateConfig, EvDialog },
+      computed: {
+        current_config() {
+          return evbcStore.current_config;
+        },
+        show_search() {
+          return !evbcStore.get_selected_terminal();
+        },
+        filtered_module_list() {
+          const selectedTerminal = evbcStore.get_selected_terminal();
+          if (selectedTerminal) {
+            return Object.entries(evbc.everest_definitions.modules).filter(([, value]) => {
+              if (selectedTerminal.type === "requirement") {
+                return value.provides && Object.values(value.provides).some((e) => e.interface === selectedTerminal.interface);
+              } else {
+                return value.requires && Object.values(value.requires).some((e) => e.interface === selectedTerminal.interface);
+              }
+            }).map(([key, value]) => ({
+              type: key,
+              description: value.description
+            }));
+          } else {
+            return Object.entries(evbc.everest_definitions.modules).filter(([key, value]) => {
+              return !this.search || this.search.trim() === "" || key.toLowerCase().includes(this.search.toLowerCase()) || value.description.toLowerCase().includes(this.search.toLowerCase());
+            }).map(([key, value]) => ({
+              type: key,
+              description: value.description
+            }));
+          }
+        },
+        config_list() {
+          return Object.entries(evbcStore.available_configs).map(([key]) => key);
+        }
+      },
+      methods: {
+        add_module_to_config(type2) {
+          let added_module_id;
+          if (evbcStore.current_config) {
+            added_module_id = evbcStore.current_config.add_new_module_instance(type2);
+          } else {
+            throw new Error("No config loaded");
+          }
+          if (evbcStore.get_selected_terminal()) {
+            const selectedTerminal = evbcStore.get_selected_terminal();
+            const addedModuleInstance = evbcStore.current_config.get_module_instance(added_module_id);
+            const terminals = Object.values(addedModuleInstance.view_config.terminals).flat();
+            let terminalToClick;
+            if (selectedTerminal.type === "requirement") {
+              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "provide");
+            } else {
+              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
+            }
+            evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
+          }
+        },
+        create_config(name, content2) {
+          const new_config = evbc.create_config_model(name, content2);
+          evbcStore.setOpenedConfig(new_config);
+          this.expansionPanelState = ["modules"];
+        },
+        load_config_if_empty(name) {
+          if (!this.current_config) {
+            this.load_config(name);
+            return;
+          }
+          this.config_to_load = name;
+          this.show_dialog = true;
+        },
+        load_config(name) {
+          if (!name)
+            return;
+          this.show_dialog = false;
+          const new_config = evbc.load_config(name);
+          evbcStore.setOpenedConfig(new_config);
+          this.expansionPanelState = ["modules"];
+        },
+        restart_modules() {
+          evbc._cxn.rpc_issuer.restart_modules().then(() => {
+            notyf.success("Issued restart modules command");
+          });
+        },
+        close_dialog() {
+          this.show_dialog = false;
+        }
+      }
+    });
+    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
+    const allowedVariants = ["default", "accordion", "inset", "popout"];
+    const makeVExpansionPanelsProps = propsFactory({
+      color: String,
+      flat: Boolean,
+      static: Boolean,
+      tile: Boolean,
+      variant: {
+        type: String,
+        default: "default",
+        validator: (v) => allowedVariants.includes(v)
+      },
+      readonly: Boolean,
+      ...makeComponentProps(),
+      ...makeGroupProps(),
+      ...makeTagProps(),
+      ...makeThemeProps()
+    }, "VExpansionPanels");
+    const VExpansionPanels = genericComponent()({
+      name: "VExpansionPanels",
+      props: makeVExpansionPanelsProps(),
+      emits: {
+        "update:modelValue": (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useGroup(props, VExpansionPanelSymbol);
+        const {
+          themeClasses
+        } = provideTheme(props);
+        const variantClass = computed(() => props.variant && `v-expansion-panels--variant-${props.variant}`);
+        provideDefaults({
+          VExpansionPanel: {
+            color: toRef(props, "color"),
+            readonly: toRef(props, "readonly")
+          },
+          VExpansionPanelTitle: {
+            static: toRef(props, "static")
+          }
+        });
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-expansion-panels", {
+            "v-expansion-panels--flat": props.flat,
+            "v-expansion-panels--tile": props.tile
+          }, themeClasses.value, variantClass.value, props.class],
+          "style": props.style
+        }, slots));
+        return {};
+      }
+    });
+    const makeVExpansionPanelTextProps = propsFactory({
+      ...makeComponentProps(),
+      ...makeLazyProps()
+    }, "VExpansionPanelText");
+    const VExpansionPanelText = genericComponent()({
+      name: "VExpansionPanelText",
+      props: makeVExpansionPanelTextProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const expansionPanel = inject$1(VExpansionPanelSymbol);
+        if (!expansionPanel)
+          throw new Error("[Vuetify] v-expansion-panel-text needs to be placed inside v-expansion-panel");
+        const {
+          hasContent,
+          onAfterLeave
+        } = useLazy(props, expansionPanel.isSelected);
+        useRender(() => createVNode(VExpandTransition, {
+          "onAfterLeave": onAfterLeave
+        }, {
+          default: () => {
+            var _a2;
+            return [withDirectives(createVNode("div", {
+              "class": ["v-expansion-panel-text", props.class],
+              "style": props.style
+            }, [slots.default && hasContent.value && createVNode("div", {
+              "class": "v-expansion-panel-text__wrapper"
+            }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])]), [[vShow, expansionPanel.isSelected.value]])];
+          }
+        }));
+        return {};
+      }
+    });
+    const makeVExpansionPanelTitleProps = propsFactory({
+      color: String,
+      expandIcon: {
+        type: IconValue,
+        default: "$expand"
+      },
+      collapseIcon: {
+        type: IconValue,
+        default: "$collapse"
+      },
+      hideActions: Boolean,
+      static: Boolean,
+      ripple: {
+        type: [Boolean, Object],
+        default: false
+      },
+      readonly: Boolean,
+      ...makeComponentProps()
+    }, "VExpansionPanelTitle");
+    const VExpansionPanelTitle = genericComponent()({
+      name: "VExpansionPanelTitle",
+      directives: {
+        Ripple
+      },
+      props: makeVExpansionPanelTitleProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const expansionPanel = inject$1(VExpansionPanelSymbol);
+        if (!expansionPanel)
+          throw new Error("[Vuetify] v-expansion-panel-title needs to be placed inside v-expansion-panel");
+        const {
+          backgroundColorClasses,
+          backgroundColorStyles
+        } = useBackgroundColor(props, "color");
+        const slotProps = computed(() => ({
+          collapseIcon: props.collapseIcon,
+          disabled: expansionPanel.disabled.value,
+          expanded: expansionPanel.isSelected.value,
+          expandIcon: props.expandIcon,
+          readonly: props.readonly
+        }));
+        useRender(() => {
+          var _a2;
+          return withDirectives(createVNode("button", {
+            "class": ["v-expansion-panel-title", {
+              "v-expansion-panel-title--active": expansionPanel.isSelected.value,
+              "v-expansion-panel-title--static": props.static
+            }, backgroundColorClasses.value, props.class],
+            "style": [backgroundColorStyles.value, props.style],
+            "type": "button",
+            "tabindex": expansionPanel.disabled.value ? -1 : void 0,
+            "disabled": expansionPanel.disabled.value,
+            "aria-expanded": expansionPanel.isSelected.value,
+            "onClick": !props.readonly ? expansionPanel.toggle : void 0
+          }, [createVNode("span", {
+            "class": "v-expansion-panel-title__overlay"
+          }, null), (_a2 = slots.default) == null ? void 0 : _a2.call(slots, slotProps.value), !props.hideActions && createVNode("span", {
+            "class": "v-expansion-panel-title__icon"
+          }, [slots.actions ? slots.actions(slotProps.value) : createVNode(VIcon, {
+            "icon": expansionPanel.isSelected.value ? props.collapseIcon : props.expandIcon
+          }, null)])]), [[resolveDirective("ripple"), props.ripple]]);
+        });
+        return {};
+      }
+    });
+    const makeVExpansionPanelProps = propsFactory({
+      title: String,
+      text: String,
+      bgColor: String,
+      ...makeComponentProps(),
+      ...makeElevationProps(),
+      ...makeGroupItemProps(),
+      ...makeLazyProps(),
+      ...makeRoundedProps(),
+      ...makeTagProps(),
+      ...makeVExpansionPanelTitleProps()
+    }, "VExpansionPanel");
+    const VExpansionPanel = genericComponent()({
+      name: "VExpansionPanel",
+      props: makeVExpansionPanelProps(),
+      emits: {
+        "group:selected": (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const groupItem = useGroupItem(props, VExpansionPanelSymbol);
+        const {
+          backgroundColorClasses,
+          backgroundColorStyles
+        } = useBackgroundColor(props, "bgColor");
+        const {
+          elevationClasses
+        } = useElevation(props);
+        const {
+          roundedClasses
+        } = useRounded(props);
+        const isDisabled = computed(() => (groupItem == null ? void 0 : groupItem.disabled.value) || props.disabled);
+        const selectedIndices = computed(() => groupItem.group.items.value.reduce((arr, item, index) => {
+          if (groupItem.group.selected.value.includes(item.id))
+            arr.push(index);
+          return arr;
+        }, []));
+        const isBeforeSelected = computed(() => {
+          const index = groupItem.group.items.value.findIndex((item) => item.id === groupItem.id);
+          return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === 1);
+        });
+        const isAfterSelected = computed(() => {
+          const index = groupItem.group.items.value.findIndex((item) => item.id === groupItem.id);
+          return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === -1);
+        });
+        provide(VExpansionPanelSymbol, groupItem);
+        provideDefaults({
+          VExpansionPanelText: {
+            eager: toRef(props, "eager")
+          },
+          VExpansionPanelTitle: {
+            readonly: toRef(props, "readonly")
+          }
+        });
+        useRender(() => {
+          const hasText = !!(slots.text || props.text);
+          const hasTitle = !!(slots.title || props.title);
+          return createVNode(props.tag, {
+            "class": ["v-expansion-panel", {
+              "v-expansion-panel--active": groupItem.isSelected.value,
+              "v-expansion-panel--before-active": isBeforeSelected.value,
+              "v-expansion-panel--after-active": isAfterSelected.value,
+              "v-expansion-panel--disabled": isDisabled.value
+            }, roundedClasses.value, backgroundColorClasses.value, props.class],
+            "style": [backgroundColorStyles.value, props.style]
+          }, {
+            default: () => {
+              var _a2;
+              return [createVNode("div", {
+                "class": ["v-expansion-panel__shadow", ...elevationClasses.value]
+              }, null), hasTitle && createVNode(VExpansionPanelTitle, {
+                "key": "title",
+                "collapseIcon": props.collapseIcon,
+                "color": props.color,
+                "expandIcon": props.expandIcon,
+                "hideActions": props.hideActions,
+                "ripple": props.ripple
+              }, {
+                default: () => [slots.title ? slots.title() : props.title]
+              }), hasText && createVNode(VExpansionPanelText, {
+                "key": "text"
+              }, {
+                default: () => [slots.text ? slots.text() : props.text]
+              }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots)];
+            }
+          });
+        });
+        return {};
+      }
+    });
+    function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+      const _component_create_config = resolveComponent("create-config");
+      const _component_ev_dialog = resolveComponent("ev-dialog");
+      return openBlock(), createBlock(VExpansionPanels, {
+        class: "ma-0",
+        modelValue: _ctx.expansionPanelState,
+        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => _ctx.expansionPanelState = $event)
+      }, {
+        default: withCtx(() => [
+          createVNode(VExpansionPanel, {
+            "data-cy": "modules-expansion-panel",
+            value: "modules",
+            disabled: !_ctx.current_config
+          }, {
+            default: withCtx(() => [
+              createVNode(VExpansionPanelTitle, null, {
+                default: withCtx(() => [
+                  createTextVNode(" Available modules")
+                ]),
+                _: 1
+              }),
+              createVNode(VExpansionPanelText, null, {
+                default: withCtx(() => [
+                  _ctx.show_search ? (openBlock(), createBlock(VTextField, {
+                    key: 0,
+                    modelValue: _ctx.search,
+                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.search = $event),
+                    "hide-details": "",
+                    label: "Search",
+                    density: "compact",
+                    variant: "outlined",
+                    "data-cy": "modules-search",
+                    clearable: ""
+                  }, null, 8, ["modelValue"])) : createCommentVNode("", true),
+                  createVNode(VList, { class: "ma-0" }, {
+                    default: withCtx(() => [
+                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.filtered_module_list, (module2) => {
+                        return openBlock(), createBlock(VTooltip, {
+                          location: "right",
+                          key: module2.type,
+                          "open-delay": "500"
+                        }, {
+                          activator: withCtx(({ props }) => [
+                            createVNode(VListItem, mergeProps(props, {
+                              title: module2.type,
+                              onClick: withModifiers(($event) => _ctx.add_module_to_config(module2.type), ["stop"]),
+                              "data-cy": "module-list-item"
+                            }), {
+                              append: withCtx(() => [
+                                createVNode(VIcon, null, {
+                                  default: withCtx(() => [
+                                    createTextVNode("mdi-plus")
+                                  ]),
+                                  _: 1
+                                })
+                              ]),
+                              _: 2
+                            }, 1040, ["title", "onClick"])
+                          ]),
+                          default: withCtx(() => [
+                            createBaseVNode("span", null, toDisplayString(`${module2.type}: ${module2.description}`), 1)
+                          ]),
+                          _: 2
+                        }, 1024);
+                      }), 128))
+                    ]),
+                    _: 1
+                  })
+                ]),
+                _: 1
+              })
+            ]),
+            _: 1
+          }, 8, ["disabled"]),
+          createVNode(VExpansionPanel, { value: "configs" }, {
+            default: withCtx(() => [
+              createVNode(VExpansionPanelTitle, { "data-cy": "configs-expansion-panel" }, {
+                default: withCtx(() => [
+                  createTextVNode(toDisplayString(_ctx.config_list.length == 0 ? "No configs available" : "Available configs"), 1)
+                ]),
+                _: 1
+              }),
+              createVNode(VExpansionPanelText, null, {
+                default: withCtx(() => [
+                  createVNode(_component_create_config, { onCreateConfig: _ctx.create_config }, null, 8, ["onCreateConfig"]),
+                  createVNode(VList, { class: "ma-0" }, {
+                    default: withCtx(() => [
+                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.config_list, (config2) => {
+                        return openBlock(), createBlock(VTooltip, {
+                          location: "right",
+                          key: config2,
+                          "open-delay": "500"
+                        }, {
+                          activator: withCtx(({ props }) => [
+                            createVNode(VListItem, mergeProps({ title: config2 }, props, {
+                              onClick: ($event) => _ctx.load_config_if_empty(config2),
+                              "data-cy": "config-list-item"
+                            }), {
+                              append: withCtx(() => [
+                                createVNode(VIcon, null, {
+                                  default: withCtx(() => [
+                                    createTextVNode("mdi-file-document-arrow-right")
+                                  ]),
+                                  _: 1
+                                })
+                              ]),
+                              _: 2
+                            }, 1040, ["title", "onClick"])
+                          ]),
+                          default: withCtx(() => [
+                            createBaseVNode("span", null, toDisplayString(config2), 1)
+                          ]),
+                          _: 2
+                        }, 1024);
+                      }), 128))
+                    ]),
+                    _: 1
+                  })
+                ]),
+                _: 1
+              }),
+              createVNode(_component_ev_dialog, {
+                show_dialog: _ctx.show_dialog,
+                title: "Warning",
+                text: "Do you want to discard the current config and load the new one?",
+                accept_text: "Load config",
+                deny_text: "Don't load config",
+                onAccept: _cache[1] || (_cache[1] = ($event) => _ctx.load_config(_ctx.config_to_load)),
+                onDeny: _cache[2] || (_cache[2] = ($event) => _ctx.close_dialog())
+              }, null, 8, ["show_dialog"])
+            ]),
+            _: 1
+          }),
+          createVNode(VExpansionPanel, { value: "commands" }, {
+            default: withCtx(() => [
+              createVNode(VExpansionPanelTitle, null, {
+                default: withCtx(() => [
+                  createTextVNode(" Issue commands")
+                ]),
+                _: 1
+              }),
+              createVNode(VExpansionPanelText, null, {
+                default: withCtx(() => [
+                  createVNode(VList, null, {
+                    default: withCtx(() => [
+                      createVNode(VListItem, {
+                        onClick: _cache[3] || (_cache[3] = ($event) => _ctx.restart_modules()),
+                        title: "Restart modules"
+                      }, {
+                        append: withCtx(() => [
+                          createVNode(VIcon, null, {
+                            default: withCtx(() => [
+                              createTextVNode("mdi-run")
+                            ]),
+                            _: 1
+                          })
+                        ]),
+                        _: 1
+                      })
+                    ]),
+                    _: 1
+                  })
+                ]),
+                _: 1
+              })
+            ]),
+            _: 1
+          })
+        ]),
+        _: 1
+      }, 8, ["modelValue"]);
+    }
+    const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$2]]);
+    var _2019 = { exports: {} };
+    var dynamic$1 = {};
+    var dynamicAnchor$1 = {};
+    Object.defineProperty(dynamicAnchor$1, "__esModule", { value: true });
+    dynamicAnchor$1.dynamicAnchor = void 0;
+    const codegen_1$3 = codegen;
+    const names_1$2 = names$2;
+    const compile_1 = compile$2;
+    const ref_1$1 = ref;
+    const def$8 = {
+      keyword: "$dynamicAnchor",
+      schemaType: "string",
+      code: (cxt) => dynamicAnchor(cxt, cxt.schema)
+    };
+    function dynamicAnchor(cxt, anchor) {
+      const { gen, it: it2 } = cxt;
+      it2.schemaEnv.root.dynamicAnchors[anchor] = true;
+      const v = (0, codegen_1$3._)`${names_1$2.default.dynamicAnchors}${(0, codegen_1$3.getProperty)(anchor)}`;
+      const validate2 = it2.errSchemaPath === "#" ? it2.validateName : _getValidate(cxt);
+      gen.if((0, codegen_1$3._)`!${v}`, () => gen.assign(v, validate2));
+    }
+    dynamicAnchor$1.dynamicAnchor = dynamicAnchor;
+    function _getValidate(cxt) {
+      const { schemaEnv, schema: schema2, self: self2 } = cxt.it;
+      const { root, baseId, localRefs, meta } = schemaEnv.root;
+      const { schemaId } = self2.opts;
+      const sch = new compile_1.SchemaEnv({ schema: schema2, schemaId, root, baseId, localRefs, meta });
+      compile_1.compileSchema.call(self2, sch);
+      return (0, ref_1$1.getValidate)(cxt, sch);
+    }
+    dynamicAnchor$1.default = def$8;
+    var dynamicRef$1 = {};
+    Object.defineProperty(dynamicRef$1, "__esModule", { value: true });
+    dynamicRef$1.dynamicRef = void 0;
+    const codegen_1$2 = codegen;
+    const names_1$1 = names$2;
+    const ref_1 = ref;
+    const def$7 = {
+      keyword: "$dynamicRef",
+      schemaType: "string",
+      code: (cxt) => dynamicRef(cxt, cxt.schema)
+    };
+    function dynamicRef(cxt, ref2) {
+      const { gen, keyword: keyword2, it: it2 } = cxt;
+      if (ref2[0] !== "#")
+        throw new Error(`"${keyword2}" only supports hash fragment reference`);
+      const anchor = ref2.slice(1);
+      if (it2.allErrors) {
+        _dynamicRef();
+      } else {
+        const valid = gen.let("valid", false);
+        _dynamicRef(valid);
+        cxt.ok(valid);
+      }
+      function _dynamicRef(valid) {
+        if (it2.schemaEnv.root.dynamicAnchors[anchor]) {
+          const v = gen.let("_v", (0, codegen_1$2._)`${names_1$1.default.dynamicAnchors}${(0, codegen_1$2.getProperty)(anchor)}`);
+          gen.if(v, _callRef(v, valid), _callRef(it2.validateName, valid));
+        } else {
+          _callRef(it2.validateName, valid)();
+        }
+      }
+      function _callRef(validate2, valid) {
+        return valid ? () => gen.block(() => {
+          (0, ref_1.callRef)(cxt, validate2);
+          gen.let(valid, true);
+        }) : () => (0, ref_1.callRef)(cxt, validate2);
+      }
+    }
+    dynamicRef$1.dynamicRef = dynamicRef;
+    dynamicRef$1.default = def$7;
+    var recursiveAnchor = {};
+    Object.defineProperty(recursiveAnchor, "__esModule", { value: true });
+    const dynamicAnchor_1$1 = dynamicAnchor$1;
+    const util_1$3 = util;
+    const def$6 = {
+      keyword: "$recursiveAnchor",
+      schemaType: "boolean",
+      code(cxt) {
+        if (cxt.schema)
+          (0, dynamicAnchor_1$1.dynamicAnchor)(cxt, "");
+        else
+          (0, util_1$3.checkStrictMode)(cxt.it, "$recursiveAnchor: false is ignored");
+      }
+    };
+    recursiveAnchor.default = def$6;
+    var recursiveRef = {};
+    Object.defineProperty(recursiveRef, "__esModule", { value: true });
+    const dynamicRef_1$1 = dynamicRef$1;
+    const def$5 = {
+      keyword: "$recursiveRef",
+      schemaType: "string",
+      code: (cxt) => (0, dynamicRef_1$1.dynamicRef)(cxt, cxt.schema)
+    };
+    recursiveRef.default = def$5;
+    Object.defineProperty(dynamic$1, "__esModule", { value: true });
+    const dynamicAnchor_1 = dynamicAnchor$1;
+    const dynamicRef_1 = dynamicRef$1;
+    const recursiveAnchor_1 = recursiveAnchor;
+    const recursiveRef_1 = recursiveRef;
+    const dynamic = [dynamicAnchor_1.default, dynamicRef_1.default, recursiveAnchor_1.default, recursiveRef_1.default];
+    dynamic$1.default = dynamic;
+    var next$1 = {};
+    var dependentRequired = {};
+    Object.defineProperty(dependentRequired, "__esModule", { value: true });
+    const dependencies_1$1 = dependencies;
+    const def$4 = {
+      keyword: "dependentRequired",
+      type: "object",
+      schemaType: "object",
+      error: dependencies_1$1.error,
+      code: (cxt) => (0, dependencies_1$1.validatePropertyDeps)(cxt)
+    };
+    dependentRequired.default = def$4;
+    var dependentSchemas = {};
+    Object.defineProperty(dependentSchemas, "__esModule", { value: true });
+    const dependencies_1 = dependencies;
+    const def$3 = {
+      keyword: "dependentSchemas",
+      type: "object",
+      schemaType: "object",
+      code: (cxt) => (0, dependencies_1.validateSchemaDeps)(cxt)
+    };
+    dependentSchemas.default = def$3;
+    var limitContains = {};
+    Object.defineProperty(limitContains, "__esModule", { value: true });
+    const util_1$2 = util;
+    const def$2 = {
+      keyword: ["maxContains", "minContains"],
+      type: "array",
+      schemaType: "number",
+      code({ keyword: keyword2, parentSchema, it: it2 }) {
+        if (parentSchema.contains === void 0) {
+          (0, util_1$2.checkStrictMode)(it2, `"${keyword2}" without "contains" is ignored`);
+        }
+      }
+    };
+    limitContains.default = def$2;
+    Object.defineProperty(next$1, "__esModule", { value: true });
+    const dependentRequired_1 = dependentRequired;
+    const dependentSchemas_1 = dependentSchemas;
+    const limitContains_1 = limitContains;
+    const next = [dependentRequired_1.default, dependentSchemas_1.default, limitContains_1.default];
+    next$1.default = next;
+    var unevaluated$1 = {};
+    var unevaluatedProperties = {};
+    Object.defineProperty(unevaluatedProperties, "__esModule", { value: true });
+    const codegen_1$1 = codegen;
+    const util_1$1 = util;
+    const names_1 = names$2;
+    const error$2 = {
+      message: "must NOT have unevaluated properties",
+      params: ({ params }) => (0, codegen_1$1._)`{unevaluatedProperty: ${params.unevaluatedProperty}}`
+    };
+    const def$1 = {
+      keyword: "unevaluatedProperties",
+      type: "object",
+      schemaType: ["boolean", "object"],
+      trackErrors: true,
+      error: error$2,
+      code(cxt) {
+        const { gen, schema: schema2, data, errsCount, it: it2 } = cxt;
+        if (!errsCount)
+          throw new Error("ajv implementation error");
+        const { allErrors, props } = it2;
+        if (props instanceof codegen_1$1.Name) {
+          gen.if((0, codegen_1$1._)`${props} !== true`, () => gen.forIn("key", data, (key) => gen.if(unevaluatedDynamic(props, key), () => unevaluatedPropCode(key))));
+        } else if (props !== true) {
+          gen.forIn("key", data, (key) => props === void 0 ? unevaluatedPropCode(key) : gen.if(unevaluatedStatic(props, key), () => unevaluatedPropCode(key)));
+        }
+        it2.props = true;
+        cxt.ok((0, codegen_1$1._)`${errsCount} === ${names_1.default.errors}`);
+        function unevaluatedPropCode(key) {
+          if (schema2 === false) {
+            cxt.setParams({ unevaluatedProperty: key });
+            cxt.error();
+            if (!allErrors)
+              gen.break();
+            return;
+          }
+          if (!(0, util_1$1.alwaysValidSchema)(it2, schema2)) {
+            const valid = gen.name("valid");
+            cxt.subschema({
+              keyword: "unevaluatedProperties",
+              dataProp: key,
+              dataPropType: util_1$1.Type.Str
+            }, valid);
+            if (!allErrors)
+              gen.if((0, codegen_1$1.not)(valid), () => gen.break());
+          }
+        }
+        function unevaluatedDynamic(evaluatedProps, key) {
+          return (0, codegen_1$1._)`!${evaluatedProps} || !${evaluatedProps}[${key}]`;
+        }
+        function unevaluatedStatic(evaluatedProps, key) {
+          const ps = [];
+          for (const p2 in evaluatedProps) {
+            if (evaluatedProps[p2] === true)
+              ps.push((0, codegen_1$1._)`${key} !== ${p2}`);
+          }
+          return (0, codegen_1$1.and)(...ps);
+        }
+      }
+    };
+    unevaluatedProperties.default = def$1;
+    var unevaluatedItems = {};
+    Object.defineProperty(unevaluatedItems, "__esModule", { value: true });
+    const codegen_1 = codegen;
+    const util_1 = util;
+    const error$1 = {
+      message: ({ params: { len } }) => (0, codegen_1.str)`must NOT have more than ${len} items`,
+      params: ({ params: { len } }) => (0, codegen_1._)`{limit: ${len}}`
+    };
+    const def = {
+      keyword: "unevaluatedItems",
+      type: "array",
+      schemaType: ["boolean", "object"],
+      error: error$1,
+      code(cxt) {
+        const { gen, schema: schema2, data, it: it2 } = cxt;
+        const items2 = it2.items || 0;
+        if (items2 === true)
+          return;
+        const len = gen.const("len", (0, codegen_1._)`${data}.length`);
+        if (schema2 === false) {
+          cxt.setParams({ len: items2 });
+          cxt.fail((0, codegen_1._)`${len} > ${items2}`);
+        } else if (typeof schema2 == "object" && !(0, util_1.alwaysValidSchema)(it2, schema2)) {
+          const valid = gen.var("valid", (0, codegen_1._)`${len} <= ${items2}`);
+          gen.if((0, codegen_1.not)(valid), () => validateItems(valid, items2));
+          cxt.ok(valid);
+        }
+        it2.items = true;
+        function validateItems(valid, from) {
+          gen.forRange("i", from, len, (i2) => {
+            cxt.subschema({ keyword: "unevaluatedItems", dataProp: i2, dataPropType: util_1.Type.Num }, valid);
+            if (!it2.allErrors)
+              gen.if((0, codegen_1.not)(valid), () => gen.break());
+          });
+        }
+      }
+    };
+    unevaluatedItems.default = def;
+    Object.defineProperty(unevaluated$1, "__esModule", { value: true });
+    const unevaluatedProperties_1 = unevaluatedProperties;
+    const unevaluatedItems_1 = unevaluatedItems;
+    const unevaluated = [unevaluatedProperties_1.default, unevaluatedItems_1.default];
+    unevaluated$1.default = unevaluated;
     var jsonSchema201909 = {};
-    const $schema$7 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$7 = "https://json-schema.org/draft/2019-09/schema";
+    const $schema$6 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$6 = "https://json-schema.org/draft/2019-09/schema";
     const $vocabulary$6 = {
       "https://json-schema.org/draft/2019-09/vocab/core": true,
       "https://json-schema.org/draft/2019-09/vocab/applicator": true,
@@ -49451,7 +49899,7 @@ Reason: ${error2}`);
       "https://json-schema.org/draft/2019-09/vocab/content": true
     };
     const $recursiveAnchor$6 = true;
-    const title$7 = "Core and Validation specifications meta-schema";
+    const title$6 = "Core and Validation specifications meta-schema";
     const allOf = [
       {
         $ref: "meta/core"
@@ -49472,11 +49920,11 @@ Reason: ${error2}`);
         $ref: "meta/content"
       }
     ];
-    const type$7 = [
+    const type$6 = [
       "object",
       "boolean"
     ];
-    const properties$7 = {
+    const properties$6 = {
       definitions: {
         $comment: "While no longer an official keyword as it is replaced by $defs, this keyword is retained in the meta-schema to prevent incompatible extensions as it remains in common use.",
         type: "object",
@@ -49501,27 +49949,27 @@ Reason: ${error2}`);
       }
     };
     const require$$0$1 = {
-      $schema: $schema$7,
-      $id: $id$7,
+      $schema: $schema$6,
+      $id: $id$6,
       $vocabulary: $vocabulary$6,
       $recursiveAnchor: $recursiveAnchor$6,
-      title: title$7,
+      title: title$6,
       allOf,
-      type: type$7,
-      properties: properties$7
+      type: type$6,
+      properties: properties$6
     };
-    const $schema$6 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$6 = "https://json-schema.org/draft/2019-09/meta/applicator";
+    const $schema$5 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$5 = "https://json-schema.org/draft/2019-09/meta/applicator";
     const $vocabulary$5 = {
       "https://json-schema.org/draft/2019-09/vocab/applicator": true
     };
     const $recursiveAnchor$5 = true;
-    const title$6 = "Applicator vocabulary meta-schema";
-    const type$6 = [
+    const title$5 = "Applicator vocabulary meta-schema";
+    const type$5 = [
       "object",
       "boolean"
     ];
-    const properties$6 = {
+    const properties$5 = {
       additionalItems: {
         $recursiveRef: "#"
       },
@@ -49605,27 +50053,27 @@ Reason: ${error2}`);
       }
     };
     const require$$1 = {
-      $schema: $schema$6,
-      $id: $id$6,
+      $schema: $schema$5,
+      $id: $id$5,
       $vocabulary: $vocabulary$5,
       $recursiveAnchor: $recursiveAnchor$5,
-      title: title$6,
-      type: type$6,
-      properties: properties$6,
+      title: title$5,
+      type: type$5,
+      properties: properties$5,
       $defs: $defs$1
     };
-    const $schema$5 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$5 = "https://json-schema.org/draft/2019-09/meta/content";
+    const $schema$4 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$4 = "https://json-schema.org/draft/2019-09/meta/content";
     const $vocabulary$4 = {
       "https://json-schema.org/draft/2019-09/vocab/content": true
     };
     const $recursiveAnchor$4 = true;
-    const title$5 = "Content vocabulary meta-schema";
-    const type$5 = [
+    const title$4 = "Content vocabulary meta-schema";
+    const type$4 = [
       "object",
       "boolean"
     ];
-    const properties$5 = {
+    const properties$4 = {
       contentMediaType: {
         type: "string"
       },
@@ -49637,26 +50085,26 @@ Reason: ${error2}`);
       }
     };
     const require$$2 = {
-      $schema: $schema$5,
-      $id: $id$5,
+      $schema: $schema$4,
+      $id: $id$4,
       $vocabulary: $vocabulary$4,
       $recursiveAnchor: $recursiveAnchor$4,
-      title: title$5,
-      type: type$5,
-      properties: properties$5
+      title: title$4,
+      type: type$4,
+      properties: properties$4
     };
-    const $schema$4 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$4 = "https://json-schema.org/draft/2019-09/meta/core";
+    const $schema$3 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$3 = "https://json-schema.org/draft/2019-09/meta/core";
     const $vocabulary$3 = {
       "https://json-schema.org/draft/2019-09/vocab/core": true
     };
     const $recursiveAnchor$3 = true;
-    const title$4 = "Core vocabulary meta-schema";
-    const type$4 = [
+    const title$3 = "Core vocabulary meta-schema";
+    const type$3 = [
       "object",
       "boolean"
     ];
-    const properties$4 = {
+    const properties$3 = {
       $id: {
         type: "string",
         format: "uri-reference",
@@ -49704,52 +50152,52 @@ Reason: ${error2}`);
         "default": {}
       }
     };
-    const require$$3$1 = {
-      $schema: $schema$4,
-      $id: $id$4,
-      $vocabulary: $vocabulary$3,
-      $recursiveAnchor: $recursiveAnchor$3,
-      title: title$4,
-      type: type$4,
-      properties: properties$4
-    };
-    const $schema$3 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$3 = "https://json-schema.org/draft/2019-09/meta/format";
-    const $vocabulary$2 = {
-      "https://json-schema.org/draft/2019-09/vocab/format": true
-    };
-    const $recursiveAnchor$2 = true;
-    const title$3 = "Format vocabulary meta-schema";
-    const type$3 = [
-      "object",
-      "boolean"
-    ];
-    const properties$3 = {
-      format: {
-        type: "string"
-      }
-    };
-    const require$$4 = {
+    const require$$3 = {
       $schema: $schema$3,
       $id: $id$3,
-      $vocabulary: $vocabulary$2,
-      $recursiveAnchor: $recursiveAnchor$2,
+      $vocabulary: $vocabulary$3,
+      $recursiveAnchor: $recursiveAnchor$3,
       title: title$3,
       type: type$3,
       properties: properties$3
     };
     const $schema$2 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$2 = "https://json-schema.org/draft/2019-09/meta/meta-data";
-    const $vocabulary$1 = {
-      "https://json-schema.org/draft/2019-09/vocab/meta-data": true
+    const $id$2 = "https://json-schema.org/draft/2019-09/meta/format";
+    const $vocabulary$2 = {
+      "https://json-schema.org/draft/2019-09/vocab/format": true
     };
-    const $recursiveAnchor$1 = true;
-    const title$2 = "Meta-data vocabulary meta-schema";
+    const $recursiveAnchor$2 = true;
+    const title$2 = "Format vocabulary meta-schema";
     const type$2 = [
       "object",
       "boolean"
     ];
     const properties$2 = {
+      format: {
+        type: "string"
+      }
+    };
+    const require$$4 = {
+      $schema: $schema$2,
+      $id: $id$2,
+      $vocabulary: $vocabulary$2,
+      $recursiveAnchor: $recursiveAnchor$2,
+      title: title$2,
+      type: type$2,
+      properties: properties$2
+    };
+    const $schema$1 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$1 = "https://json-schema.org/draft/2019-09/meta/meta-data";
+    const $vocabulary$1 = {
+      "https://json-schema.org/draft/2019-09/vocab/meta-data": true
+    };
+    const $recursiveAnchor$1 = true;
+    const title$1 = "Meta-data vocabulary meta-schema";
+    const type$1 = [
+      "object",
+      "boolean"
+    ];
+    const properties$1 = {
       title: {
         type: "string"
       },
@@ -49775,26 +50223,26 @@ Reason: ${error2}`);
       }
     };
     const require$$5 = {
-      $schema: $schema$2,
-      $id: $id$2,
+      $schema: $schema$1,
+      $id: $id$1,
       $vocabulary: $vocabulary$1,
       $recursiveAnchor: $recursiveAnchor$1,
-      title: title$2,
-      type: type$2,
-      properties: properties$2
+      title: title$1,
+      type: type$1,
+      properties: properties$1
     };
-    const $schema$1 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$1 = "https://json-schema.org/draft/2019-09/meta/validation";
+    const $schema = "https://json-schema.org/draft/2019-09/schema";
+    const $id = "https://json-schema.org/draft/2019-09/meta/validation";
     const $vocabulary = {
       "https://json-schema.org/draft/2019-09/vocab/validation": true
     };
     const $recursiveAnchor = true;
-    const title$1 = "Validation vocabulary meta-schema";
-    const type$1 = [
+    const title = "Validation vocabulary meta-schema";
+    const type = [
       "object",
       "boolean"
     ];
-    const properties$1 = {
+    const properties = {
       multipleOf: {
         type: "number",
         exclusiveMinimum: 0
@@ -49904,20 +50352,20 @@ Reason: ${error2}`);
       }
     };
     const require$$6 = {
-      $schema: $schema$1,
-      $id: $id$1,
+      $schema,
+      $id,
       $vocabulary,
       $recursiveAnchor,
-      title: title$1,
-      type: type$1,
-      properties: properties$1,
+      title,
+      type,
+      properties,
       $defs
     };
     Object.defineProperty(jsonSchema201909, "__esModule", { value: true });
     const metaSchema = require$$0$1;
     const applicator = require$$1;
     const content = require$$2;
-    const core = require$$3$1;
+    const core = require$$3;
     const format$1 = require$$4;
     const metadata = require$$5;
     const validation = require$$6;
@@ -50181,318 +50629,6 @@ Reason: ${error2}`);
       }
     })(formats);
     var limit = {};
-    var ajv = { exports: {} };
-    const $schema = "http://json-schema.org/draft-07/schema#";
-    const $id = "http://json-schema.org/draft-07/schema#";
-    const title = "Core schema meta-schema";
-    const definitions = {
-      schemaArray: {
-        type: "array",
-        minItems: 1,
-        items: {
-          $ref: "#"
-        }
-      },
-      nonNegativeInteger: {
-        type: "integer",
-        minimum: 0
-      },
-      nonNegativeIntegerDefault0: {
-        allOf: [
-          {
-            $ref: "#/definitions/nonNegativeInteger"
-          },
-          {
-            "default": 0
-          }
-        ]
-      },
-      simpleTypes: {
-        "enum": [
-          "array",
-          "boolean",
-          "integer",
-          "null",
-          "number",
-          "object",
-          "string"
-        ]
-      },
-      stringArray: {
-        type: "array",
-        items: {
-          type: "string"
-        },
-        uniqueItems: true,
-        "default": []
-      }
-    };
-    const type = [
-      "object",
-      "boolean"
-    ];
-    const properties = {
-      $id: {
-        type: "string",
-        format: "uri-reference"
-      },
-      $schema: {
-        type: "string",
-        format: "uri"
-      },
-      $ref: {
-        type: "string",
-        format: "uri-reference"
-      },
-      $comment: {
-        type: "string"
-      },
-      title: {
-        type: "string"
-      },
-      description: {
-        type: "string"
-      },
-      "default": true,
-      readOnly: {
-        type: "boolean",
-        "default": false
-      },
-      examples: {
-        type: "array",
-        items: true
-      },
-      multipleOf: {
-        type: "number",
-        exclusiveMinimum: 0
-      },
-      maximum: {
-        type: "number"
-      },
-      exclusiveMaximum: {
-        type: "number"
-      },
-      minimum: {
-        type: "number"
-      },
-      exclusiveMinimum: {
-        type: "number"
-      },
-      maxLength: {
-        $ref: "#/definitions/nonNegativeInteger"
-      },
-      minLength: {
-        $ref: "#/definitions/nonNegativeIntegerDefault0"
-      },
-      pattern: {
-        type: "string",
-        format: "regex"
-      },
-      additionalItems: {
-        $ref: "#"
-      },
-      items: {
-        anyOf: [
-          {
-            $ref: "#"
-          },
-          {
-            $ref: "#/definitions/schemaArray"
-          }
-        ],
-        "default": true
-      },
-      maxItems: {
-        $ref: "#/definitions/nonNegativeInteger"
-      },
-      minItems: {
-        $ref: "#/definitions/nonNegativeIntegerDefault0"
-      },
-      uniqueItems: {
-        type: "boolean",
-        "default": false
-      },
-      contains: {
-        $ref: "#"
-      },
-      maxProperties: {
-        $ref: "#/definitions/nonNegativeInteger"
-      },
-      minProperties: {
-        $ref: "#/definitions/nonNegativeIntegerDefault0"
-      },
-      required: {
-        $ref: "#/definitions/stringArray"
-      },
-      additionalProperties: {
-        $ref: "#"
-      },
-      definitions: {
-        type: "object",
-        additionalProperties: {
-          $ref: "#"
-        },
-        "default": {}
-      },
-      properties: {
-        type: "object",
-        additionalProperties: {
-          $ref: "#"
-        },
-        "default": {}
-      },
-      patternProperties: {
-        type: "object",
-        additionalProperties: {
-          $ref: "#"
-        },
-        propertyNames: {
-          format: "regex"
-        },
-        "default": {}
-      },
-      dependencies: {
-        type: "object",
-        additionalProperties: {
-          anyOf: [
-            {
-              $ref: "#"
-            },
-            {
-              $ref: "#/definitions/stringArray"
-            }
-          ]
-        }
-      },
-      propertyNames: {
-        $ref: "#"
-      },
-      "const": true,
-      "enum": {
-        type: "array",
-        items: true,
-        minItems: 1,
-        uniqueItems: true
-      },
-      type: {
-        anyOf: [
-          {
-            $ref: "#/definitions/simpleTypes"
-          },
-          {
-            type: "array",
-            items: {
-              $ref: "#/definitions/simpleTypes"
-            },
-            minItems: 1,
-            uniqueItems: true
-          }
-        ]
-      },
-      format: {
-        type: "string"
-      },
-      contentMediaType: {
-        type: "string"
-      },
-      contentEncoding: {
-        type: "string"
-      },
-      "if": {
-        $ref: "#"
-      },
-      then: {
-        $ref: "#"
-      },
-      "else": {
-        $ref: "#"
-      },
-      allOf: {
-        $ref: "#/definitions/schemaArray"
-      },
-      anyOf: {
-        $ref: "#/definitions/schemaArray"
-      },
-      oneOf: {
-        $ref: "#/definitions/schemaArray"
-      },
-      not: {
-        $ref: "#"
-      }
-    };
-    const require$$3 = {
-      $schema,
-      $id,
-      title,
-      definitions,
-      type,
-      properties,
-      "default": true
-    };
-    (function(module2, exports2) {
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
-      const core_12 = core$3;
-      const draft7_1 = draft7;
-      const discriminator_1 = discriminator;
-      const draft7MetaSchema = require$$3;
-      const META_SUPPORT_DATA2 = ["/properties"];
-      const META_SCHEMA_ID = "http://json-schema.org/draft-07/schema";
-      class Ajv2 extends core_12.default {
-        _addVocabularies() {
-          super._addVocabularies();
-          draft7_1.default.forEach((v) => this.addVocabulary(v));
-          if (this.opts.discriminator)
-            this.addKeyword(discriminator_1.default);
-        }
-        _addDefaultMetaSchema() {
-          super._addDefaultMetaSchema();
-          if (!this.opts.meta)
-            return;
-          const metaSchema2 = this.opts.$data ? this.$dataMetaSchema(draft7MetaSchema, META_SUPPORT_DATA2) : draft7MetaSchema;
-          this.addMetaSchema(metaSchema2, META_SCHEMA_ID, false);
-          this.refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
-        }
-        defaultMeta() {
-          return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
-        }
-      }
-      module2.exports = exports2 = Ajv2;
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.default = Ajv2;
-      var validate_12 = validate;
-      Object.defineProperty(exports2, "KeywordCxt", { enumerable: true, get: function() {
-        return validate_12.KeywordCxt;
-      } });
-      var codegen_12 = codegen;
-      Object.defineProperty(exports2, "_", { enumerable: true, get: function() {
-        return codegen_12._;
-      } });
-      Object.defineProperty(exports2, "str", { enumerable: true, get: function() {
-        return codegen_12.str;
-      } });
-      Object.defineProperty(exports2, "stringify", { enumerable: true, get: function() {
-        return codegen_12.stringify;
-      } });
-      Object.defineProperty(exports2, "nil", { enumerable: true, get: function() {
-        return codegen_12.nil;
-      } });
-      Object.defineProperty(exports2, "Name", { enumerable: true, get: function() {
-        return codegen_12.Name;
-      } });
-      Object.defineProperty(exports2, "CodeGen", { enumerable: true, get: function() {
-        return codegen_12.CodeGen;
-      } });
-      var validation_error_12 = validation_error;
-      Object.defineProperty(exports2, "ValidationError", { enumerable: true, get: function() {
-        return validation_error_12.default;
-      } });
-      var ref_error_12 = ref_error;
-      Object.defineProperty(exports2, "MissingRefError", { enumerable: true, get: function() {
-        return ref_error_12.default;
-      } });
-    })(ajv, ajv.exports);
-    var ajvExports = ajv.exports;
     (function(exports2) {
       Object.defineProperty(exports2, "__esModule", { value: true });
       exports2.formatLimitDefinition = void 0;
@@ -86499,8 +86635,8 @@ Reason: ${error2}`);
         const config2 = this.evbcStore.available_configs[name];
         return new EVConfigModel(this.everest_definitions, name, config2);
       }
-      create_empty_config(name) {
-        return new EVConfigModel(this.everest_definitions, name);
+      create_config_model(name, config2) {
+        return new EVConfigModel(this.everest_definitions, name, config2 ?? void 0);
       }
       async save_config(config2) {
         await this._cxn.rpc_issuer.save_config({
