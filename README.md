@@ -33,13 +33,13 @@ includes a simulator for experimenting without an actual EVerest instance.
 ## Demo
 
 We continuously deploy the latest version of the admin panel to
-[GitHub Pages](https://everest.github.io/everest-admin-panel/main).
+GitHub Pages: [Demo](https://everest.github.io/everest-admin-panel/main).
 This allows you to try out the admin panel without having to install it
 locally.
 
 For every pull request we deploy a version to
-https://everest.github.io/everest-admin-panel/pr-<PR_NUMBER> so you can test
-the changes before merging.
+`https://everest.github.io/everest-admin-panel/pr-<PR_NUMBER>` so you can test
+the changes before a pull request is merged.
 
 ## Development
 
