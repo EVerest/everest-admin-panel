@@ -45,7 +45,7 @@
             <template v-slot:activator="{ props }">
               <v-list-item :title="config" v-bind="props" @click="load_config_if_empty(config)" data-cy="config-list-item">
                 <template v-slot:append>
-                  <v-icon>mdi-upload</v-icon>
+                  <v-icon>mdi-file-document-arrow-right</v-icon>
                 </template>
               </v-list-item>
             </template>
@@ -86,6 +86,7 @@ import EvDialog from "@/components/EvDialog.vue";
 import EVConfigModel from "@/modules/evbc/config_model";
 import {Notyf} from "notyf";
 import CreateConfig from "@/components/CreateConfig.vue";
+import {EverestConfig} from "@/modules/evbc";
 
 let evbcStore: ReturnType<typeof useEvbcStore>;
 let evbc: EVBackendClient;
@@ -171,8 +172,8 @@ export default defineComponent({
         evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
       }
     },
-    create_config(name: string) {
-      const new_config = evbc.create_empty_config(name);
+    create_config(name: string, content?: EverestConfig) {
+      const new_config = evbc.create_config_model(name, content);
       evbcStore.setOpenedConfig(new_config);
       this.expansionPanelState = ["modules"];
     },

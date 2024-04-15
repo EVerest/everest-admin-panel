@@ -1,13 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 
-import {
-  EventHandler,
-  EverestConfigList,
-  EverestDefinitions,
-  EverestInterfaceDefinitionList,
-  EverestModuleDefinitionList,
-} from ".";
+import {EventHandler, EverestConfig, EverestDefinitions,} from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, {ConnectionStatus} from "./connection";
 import {useEvbcStore} from "@/store/evbc";
@@ -78,8 +72,8 @@ class EVBackendClient {
     return new EVConfigModel(this.everest_definitions, name, config);
   }
 
-  create_empty_config(name: string): EVConfigModel {
-    return new EVConfigModel(this.everest_definitions, name);
+  create_config_model(name: string, config?: EverestConfig): EVConfigModel {
+    return new EVConfigModel(this.everest_definitions, name, config ?? undefined);
   }
 
   async save_config(config: EVConfigModel) {
