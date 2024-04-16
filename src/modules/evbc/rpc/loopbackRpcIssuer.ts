@@ -7,9 +7,9 @@ import {
     EverestInterfaceDefinitionList,
     EverestModuleDefinitionList
 } from "@/modules/evbc";
-import SampleManifestList from "@/modules/evbc/sample_module_info";
-import SampleInterfaceList from "@/modules/evbc/sample_interfaces_list";
-import SampleConfigList from "@/modules/evbc/sample_config_list";
+import SampleManifestList from "@/modules/evbc/simulator-sample-data/sample_module_info";
+import SampleInterfaceList from "@/modules/evbc/simulator-sample-data/sample_interfaces_list";
+import SampleConfigList from "@/modules/evbc/simulator-sample-data/sample_config_list";
 import {RpcIssuer} from "@/modules/evbc/rpc/abstractRpcIssuer";
 
 /**

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
 
-import { EverestInterfaceDefinitionList } from ".";
+import {EverestInterfaceDefinitionList} from "../index";
 
 export default {
   ISO15118_ac_charger: {
