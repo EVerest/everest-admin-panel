@@ -86,6 +86,10 @@ To release a new version, follow these steps:
 5. Push the changes and the tag: `git push origin main --follow-tags`. For this you need to have the necessary permissions.
 6. The CI will automatically create a GitHub release. Add the changelog to the release description.
 
+### Updating the simulator data
+
+Find a detailed guide on how to update the simulator data [here](src/modules/evbc/simulator-sample-data/README.md).
+
 ## Documentation
 
 For more information about EVerest, please consult the
