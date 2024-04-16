@@ -4,2253 +4,2490 @@
 import {EverestInterfaceDefinitionList} from "../index";
 
 export default {
-  ISO15118_ac_charger: {
-    cmds: {
-      set_max_current: {
-        arguments: {
-          max_current: {
-            description: "EVSE maximum current in ampere",
-            maximum: 4000,
-            minimum: 0,
-            type: "number",
-          },
+  "ISO15118_charger": {
+    "cmds": {
+      "ac_contactor_closed": {
+        "arguments": {
+          "status": {
+            "description": "Set to true when contactor is closed, false when contactor is open",
+            "type": "boolean"
+          }
         },
-        description: "Sets the maximum current of EVSE",
+        "description": "This message is an async response to a previously published AC_Close_Contactor or AC_Open_Contactor."
       },
-      set_nominal_voltage: {
-        arguments: {
-          voltage: {
-            description: "Nominal voltage in volt",
-            maximum: 10000,
-            minimum: 0,
-            type: "number",
+      "authorization_response": {
+        "arguments": {
+          "authorization_status": {
+            "$ref": "/authorization#/AuthorizationStatus",
+            "description": "Authorization status of the ID Token",
+            "type": "string"
           },
+          "certificate_status": {
+            "$ref": "/authorization#/CertificateStatus",
+            "description": "Certificate status information",
+            "type": "string"
+          }
         },
-        description: "Sets nominal voltage of the EVSE",
+        "description": "This message is an async response to a previously published Require_Auth_EIM or Require_Auth_PnC. The SECC informs the EVCC whether the authorization is accecpted or not."
       },
-      set_rcd: {
-        arguments: {
-          rcd_err: {
-            description: "True if the RCD has detected an error.",
-            type: "boolean",
-          },
+      "cable_check_finished": {
+        "arguments": {
+          "status": {
+            "description": "Set to true when cable check is okay",
+            "type": "boolean"
+          }
         },
-        description:
-          "Sets the status of the Residual Current Device (RCD). If rcd_err is equal to true, the RCD has detected an error.",
+        "description": "Cable check is finished, voltage is under 20V and insulation resistor on the cable is alright"
       },
-    },
-    description: "This interface defines an ISO15118 AC Charger",
-    parent: "ISO15118_charger",
-    vars: {
-      e_amount: {
-        description:
-          "Amount of energy (unit: Wh) reflecting the EV's estimate how much energy is needed to fulfill the user configured charging goal for the current charging session. This might include energy for other purposes than solely charging the HV battery of an EV.",
-        maximum: 200000,
-        minimum: 0,
-        type: "number",
-      },
-      ev_max_current: {
-        description: "Maximum current (unit: A) supported by the EV per phase.",
-        maximum: 4000,
-        minimum: 0,
-        type: "number",
-      },
-      ev_max_voltage: {
-        description:
-          "The RMS of the maximal nominal voltage (unit: V) the vehicle can accept, measured between one phase and neutral.",
-        maximum: 10000,
-        minimum: 0,
-        type: "number",
-      },
-      ev_min_current: {
-        description:
-          "EVMinCurrent (unit: A) is used to indicate to the SECC that charging below this minimum is not energy/cost efficient for the EV. It is recommended that the SECC considers this value during the target setting process (e.g. sale tariff table should account for this value).",
-        maximum: 4000,
-        minimum: 0,
-        type: "number",
-      },
-    },
-  },
-  ISO15118_charger: {
-    cmds: {
-      set_evse_notification: {
-        arguments: {
-          max_delay: {
-            description:
-              "Indicates the time in seconds until it expects the EVCC to react on the action request indicated in the coresponding EVSENotification",
-            type: "integer",
-          },
-          notification: {
-            description: "EVSE notification",
-            enum: ["None", "StopCharging", "ReNegotiation"],
-            type: "string",
-          },
+      "certificate_response": {
+        "arguments": {
+          "exi_stream_status": {
+            "$ref": "/iso15118_charger#/Response_Exi_Stream_Status",
+            "description": "The response raw EXI stream and the status from the CSMS",
+            "type": "object"
+          }
         },
-        description:
-          "Sets a notification value used by the SECC to influence the behaviour of the EVCC. The EVSENotification contains an action that the SECC wants the EVCC to perform",
+        "description": "This message is an async response to a previously published Certificate_Request. The new/updated Contract Certificate (including the certificate chain) and the corresponding encrypted private key are sent via the SECC to the EVCC."
       },
-      set_evseid: {
-        arguments: {
-          id: {
-            description: "EVSE ID",
-            pattern: "^[A-Z]{2}\\*[A-Z0-9]{3}\\*E[A-Z0-9][A-Z0-9\\*]{30}$",
-            type: "string",
-          },
+      "dlink_ready": {
+        "arguments": {
+          "value": {
+            "description": "Set to true when link becomes ready, false when the link is terminated",
+            "type": "boolean"
+          }
         },
-        description:
-          "Sets the ID that uniquely identifies the EVSE. The EVSEID shall match the following structure: <EVSEID> = <Country Code> <S> <EVSE Operator ID> <S> <ID Type> <Power Outlet ID>",
+        "description": "Signals dlink_ready from SLAC layer according to ISO15118-3"
       },
-      set_meter_reading: {
-        arguments: {
-          id: {
-            description: "Meter ID",
-            pattern: "/^[A-Za-z0-9]{1,32}$/",
-            type: "string",
-          },
-          timestamp: {
-            description: "Timestamp (unix epoch time)",
-            type: "integer",
-          },
-          value: {
-            description: "Current meter reading",
-            type: "number",
-          },
+      "receipt_is_required": {
+        "arguments": {
+          "receipt_required": {
+            "description": "Set to true when receipt is required, set to false when not",
+            "type": "boolean"
+          }
         },
-        description: "Sets the current meter reading in Watthours from the EVSE.",
+        "description": "This element is used by the SECC to indicate that the EVCC is required to send a MeteringReceiptReq message for the purpose of signing the meter info record."
       },
-      set_receipt_required: {
-        arguments: {
-          receipt_required: {
-            description: "Receipt required",
-            type: "boolean",
-          },
+      "reset_error": {
+        "description": "Reset all errors"
+      },
+      "send_error": {
+        "arguments": {
+          "error": {
+            "$ref": "/iso15118_charger#/EvseError",
+            "description": "The EVSE error enum",
+            "type": "string"
+          }
         },
-        description:
-          "Optional: Indicate that the EVCC is required to send a MeteringReceiptReq message for the purpose of signing the meter info record. If ReceiptRequired is equal to True, the EVCC is required to send a MeteringReceiptReq message including the signature.",
+        "description": "An error has happend. Send this error to inform the EV."
       },
-    },
-    description: "This base interface defines an abstract ISO15118 Charger",
-    vars: {
-      MISSING_charge_progress: {
-        description:
-          "This message element is used to request the EVSE to fulfill all conditions that the energy transfer can start as soon as the EV onboard system begins to retrieve energy. If ChargeProgress is equal to ‘Start’ the EVSE is requested to prepare the energy flow for an immediate start, if ChargeProgress is equal to ‘Stop’ the EVSE is requested to stop the energy flow, if ChargeProgress is equal to ‘Renegotiate’ the energy flow is neither stopped nor started, instead the renegotiation mechanisms defined in this standard apply.",
-        enum: ["Start", "Stop", "Renegotiate"],
-        type: "string",
-      },
-      MISSING_emaid: {
-        description: "The e-Mobility Account Identifier (EMAID) identifies the charging contract.",
-        pattern: "^[A-Za-z]{2}\\*[A-Za-z0-9]{3}\\*[A-Za-z0-9]{9}\\*[A-Za-z0-9]{0,1}$",
-        type: "string",
-      },
-      MISSING_evccid: {
-        description: "Contains the MAC adress of the EVCC in a human readable format (six hexadecimal encoded bytes)",
-        pattern: "^[A-Fa-f0-9]{2}(:[A-Fa-f0-9]{2}){5}$",
-        type: "string",
-      },
-      MISSING_selected_service: {
-        description: "Used for indicating a service selected by the EVCC",
-        type: "object",
-      },
-      departure_time: {
-        description:
-          "Optional: Is used to indicate when the vehicle intends to finish the charging process. Format: hh:mm:ss",
-        type: "integer",
-      },
-      requested_energy_tranfer_mode: {
-        description: "Energy transfer mode requested by the EVCC.",
-        enum: ["AC_single_phase_core", "AC_three_phase_core", "DC_core", "DC_extended", "DC_combo_core", "DC_unique"],
-        type: "string",
-      },
-      selected_payment_option: {
-        description: "Used for indicating the selected payment type for services invoked by the EVCC",
-        enum: ["Contract", "ExternalPayment"],
-        type: "string",
-      },
-    },
-  },
-  ISO15118_dc_charger: {
-    cmds: {
-      MISSING_set_evse_current_regulation_tolerance: {
-        arguments: {
-          current: {
-            description: "Current in Ampere",
-            maximum: 400,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Optional: Sets the absolute magnitude of the current regulation tolerance of the EVSE",
-      },
-      MISSING_set_evse_energy_to_be_delivered: {
-        arguments: {
-          energy: {
-            description: "Energy in Watthours",
-            maximum: 200000,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Optional: Amount of energy to be delivered by the EVSE.",
-      },
-      set_evse_current_limit_achieved: {
-        arguments: {
-          current_limit_achieved: {
-            description: "True, if the EVSE has reached its current limit, false otherwise",
-            type: "boolean",
-          },
-        },
-        description:
-          "Sets the EVSECurrentLimitAchieved flag that indicates whether the EVSE has reached its current limit.",
-      },
-      set_evse_maximum_current_limit: {
-        arguments: {
-          max_current: {
-            description: "Maximum current in Ampere",
-            maximum: 400,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Optional: Sets the maximum current the EVSE can deliver.",
-      },
-      set_evse_maximum_power_limit: {
-        arguments: {
-          max_power: {
-            description: "Maximum power in Watt",
-            maximum: 200000,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Optional: Sets the maximum power the EVSE can deliver.",
-      },
-      set_evse_maximum_voltage_limit: {
-        arguments: {
-          max_voltage: {
-            description: "Maximum voltage in Volt",
-            maximum: 1000,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Optional: Sets the maximum voltage the EVSE can deliver.",
-      },
-      set_evse_minimum_current_limit: {
-        arguments: {
-          min_current: {
-            description: "Minimum current in Ampere",
-            maximum: 400,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Sets the minimum current the EVSE can deliver with the expected accuracy.",
-      },
-      set_evse_minimum_voltage_limit: {
-        arguments: {
-          min_voltage: {
-            description: "Minimum voltage in Volt",
-            maximum: 1000,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Sets the minimum voltage the EVSE can deliver with the expected accuracy",
-      },
-      set_evse_peak_current_ripple: {
-        arguments: {
-          current: {
-            description: "Current in Ampere",
-            maximum: 400,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Peak-to-peak magnitude of the current ripple of the EVSE",
-      },
-      set_evse_power_limit_achieved: {
-        arguments: {
-          power_limit_achieved: {
-            description: "True, if the EVSE has reached its power limit, false otherwise",
-            type: "boolean",
-          },
-        },
-        description:
-          "Sets the EVSEPowerLimitAchieved flag that indicates whether the EVSE has reached its power limit.",
-      },
-      set_evse_present_current: {
-        arguments: {
-          current: {
-            description: "Output current in Ampere",
-            maximum: 400,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Sets the output current of the EVSE",
-      },
-      set_evse_present_voltage: {
-        arguments: {
-          voltage: {
-            description: "Output voltage in Volt",
-            maximum: 1000,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Sets the output voltage of the EVSE.",
-      },
-      set_evse_voltage_limit_achieved: {
-        arguments: {
-          voltage_limit_achieved: {
-            description: "True, if the EVSE has reached its voltage limit, false otherwise",
-            type: "boolean",
-          },
-        },
-        description:
-          "Sets the EVSEVoltageLimitAchieved flag that indicates whether the EVSE has reached its voltage limit.",
-      },
-    },
-    description: "This interface defines an ISO15118 DC Charger",
-    parent: "ISO15118_charger",
-    vars: {
-      MISSING_bulk_charging_complete: {
-        description: "If set to true, the EV indicates that bulk charge (approx. 80% SOC) is complete.",
-        type: "boolean",
-      },
-      MISSING_charging_complete: {
-        description: "If set to true, the EV indicates that full charge (100% SOC)is complete.",
-        type: "boolean",
-      },
-      MISSING_ev_dc_error_code: {
-        description: "Indicates the EV internal status.",
-        enum: [
-          "NO_ERROR",
-          "FAILED_RESSTemperatureInhibit",
-          "FAILED_EV_ShiftPosition",
-          "FAILED_ChargerConnerctorLockFault",
-          "FAILED_EVRESSMalfunction",
-          "FAILED_ChargingCurrentdifferential",
-          "FAILED_ChargingVoltageOutOfRange",
-          "Reserved A-C",
-          "FAILED_ChargingSystemIncompatibility",
-          "NoData",
-        ],
-        type: "string",
-      },
-      MISSING_ev_ready_for_charging: {
-        description: "If set to TRUE, the EV is ready to charge.",
-        type: "boolean",
-      },
-      MISSING_ev_soc: {
-        description: "State of charge (soc) of the EV's battery.",
-        maximum: 100,
-        minimum: 0,
-        type: "integer",
-      },
-      dc_evse_status: {
-        description: "Current status of the EVSE",
-        type: "object",
-      },
-      ev_energy_capacity: {
-        description: "Optional: Energy capacity (unit: Wh) of the EV",
-        maximum: 200000,
-        minimum: 0,
-        type: "number",
-      },
-      ev_energy_request: {
-        description: "Optional: Amount of energy (unit: Wh) the EV requests from the EVSE",
-        maximum: 200000,
-        minimum: 0,
-        type: "number",
-      },
-      ev_maximum_current_limit: {
-        description: "Maximum EV current (unit: A) limit",
-        maximum: 400,
-        minimum: 0,
-        type: "number",
-      },
-      ev_maximum_power_limit: {
-        description: "Maximum EV power (unit: W) limit",
-        maximum: 200000,
-        minimum: 0,
-        type: "number",
-      },
-      ev_maximum_voltage_limit: {
-        description: "Maximum EV voltage (unit: V) limit",
-        maximum: 1000,
-        minimum: 0,
-        type: "number",
-      },
-      ev_target_current: {
-        description: "Instantaneous current (unit: A) requested by the EV",
-        maximum: 400,
-        minimum: 0,
-        type: "number",
-      },
-      ev_target_voltage: {
-        description: "Target voltage (unit: V) requested by the EV",
-        maximum: 1000,
-        minimum: 0,
-        type: "number",
-      },
-      remaining_time_to_bulk_soc: {
-        description: "Optional: Estimated or calculated time (unit: s) until bulk charge (80% SOC) is complete.",
-        maximum: 172800,
-        minimum: 0,
-        type: "integer",
-      },
-      remaining_time_to_full_soc: {
-        description: "Optional: Estimated or calculated time (unit: s) until full charge (100% SOC) is complete.",
-        maximum: 172800,
-        minimum: 0,
-        type: "integer",
-      },
-    },
-  },
-  auth: {
-    cmds: {
-      get_authorization: {
-        description:
-          "This returns a validated auth token or null if none could be validated. If a validated token is returned, ownership is transferred to the caller and it is removed from this module.",
-        result: {
-          description:
-            "The auth token that can be used for signing etc. This will return null if no token could be validated.",
-          maxLength: 20,
-          minLength: 1,
-          type: ["null", "string"],
-        },
-      },
-    },
-    description: "Interface of authentication framework",
-    vars: {
-      authorization_available: {
-        description:
-          "True: Validated auth token available, use get_authorization to consume it. False: no token available.",
-        type: "boolean",
-      },
-    },
-  },
-  auth_token_provider: {
-    description: "Provide some authentication token",
-    vars: {
-      token: {
-        additionalProperties: false,
-        description: "Arbitrary auth token string and type of token provider (string provided in UI)",
-        properties: {
-          timeout: {
-            description: "Time (in s) the token can be considered valid by the auth framework",
-            maximum: 120,
-            minimum: 1,
-            type: "number",
-          },
-          token: {
-            description:
-              "Arbitrary token string: this has to be printable case insensitive ascii: !!!FIXME!!! write a regex to allow only printable ascii",
-            maxLength: 20,
-            minLength: 1,
-            type: "string",
-          },
-          type: {
-            description: "Type of token provider",
-            maxLength: 32,
-            minLength: 2,
-            type: "string",
-          },
-        },
-        required: ["token", "type"],
-        type: "object",
-      },
-    },
-  },
-  auth_token_validator: {
-    cmds: {
-      validate_token: {
-        arguments: {
-          token: {
-            description:
-              "Arbitrary token string: this has to be printable case insensitive ascii: !!!FIXME!!! write a regex to allow only printable ascii",
-            maxLength: 20,
-            minLength: 1,
-            type: "string",
-          },
-        },
-        description: "Validate auth token and return result (with optional reason string)",
-        result: {
-          additionalProperties: false,
-          description:
-            "Result object containing validation result enum value (key: result) and optional reason string (key: reason)",
-          properties: {
-            reason: {
-              minLength: 5,
-              type: "string",
+      "session_setup": {
+        "arguments": {
+          "payment_options": {
+            "description": "Providing a list of payment options to the EVCC",
+            "items": {
+              "$ref": "/iso15118_charger#/PaymentOption",
+              "description": "These are the payment options a SECC offers to the EVCC",
+              "type": "string"
             },
-            result: {
-              enum: ["Accepted", "Blocked", "Expired", "Invalid"],
-              type: "string",
+            "maxItems": 2,
+            "minItems": 1,
+            "type": "array"
+          },
+          "supported_certificate_service": {
+            "description": "The charger supports the certificate installation/update service and has a connection to an SA for this purpose",
+            "type": "boolean"
+          }
+        },
+        "description": "At each session start this info should be sent to the module."
+      },
+      "setup": {
+        "arguments": {
+          "debug_mode": {
+            "description": "Enable/Disable debug mode",
+            "type": "boolean"
+          },
+          "evse_id": {
+            "$ref": "/iso15118_charger#/EVSEID",
+            "description": "Set an ID that uniquely identifies the EVSE and the power outlet the vehicle is connected to ",
+            "type": "object"
+          },
+          "physical_values": {
+            "$ref": "/iso15118_charger#/SetupPhysicalValues",
+            "description": "Set up initial physical values for a AC or DC charging session",
+            "type": "object"
+          },
+          "sae_j2847_mode": {
+            "$ref": "/iso15118_charger#/SAE_J2847_Bidi_Mode",
+            "description": "Charger is supporting SAE J2847 V2G/V2H version",
+            "type": "string"
+          },
+          "supported_energy_transfer_modes": {
+            "description": "Available energy transfer modes supported by the EVSE",
+            "items": {
+              "$ref": "/iso15118_charger#/EnergyTransferMode",
+              "description": "The different energy modes supported by the SECC",
+              "type": "string"
             },
-          },
-          required: ["result"],
-          type: "object",
+            "maxItems": 6,
+            "minItems": 1,
+            "type": "array"
+          }
         },
+        "description": "At startup all necessary info should be sent to the module once."
       },
+      "stop_charging": {
+        "arguments": {
+          "stop": {
+            "description": "Set to true when to stop, set to false when to continue",
+            "type": "boolean"
+          }
+        },
+        "description": "Stops the charging process"
+      },
+      "update_ac_max_current": {
+        "arguments": {
+          "max_current": {
+            "description": "Max current in A",
+            "maximum": 400,
+            "minimum": 0,
+            "type": "number"
+          }
+        },
+        "description": "Update the maximum allowed line current restriction per phase"
+      },
+      "update_dc_maximum_limits": {
+        "arguments": {
+          "maximum_limits": {
+            "$ref": "/iso15118_charger#/DC_EVSEMaximumLimits",
+            "description": "Maximum values (current, power and voltage) the EVSE can deliver",
+            "type": "object"
+          }
+        },
+        "description": "Update the maximum limits"
+      },
+      "update_dc_minimum_limits": {
+        "arguments": {
+          "minimum_limits": {
+            "$ref": "/iso15118_charger#/DC_EVSEMinimumLimits",
+            "description": "Minimum values (current and voltage) the EVSE can deliver",
+            "type": "object"
+          }
+        },
+        "description": "Update the minimum limits"
+      },
+      "update_dc_present_values": {
+        "arguments": {
+          "present_voltage_current": {
+            "$ref": "/iso15118_charger#/DC_EVSEPresentVoltage_Current",
+            "description": "Present voltage and current",
+            "type": "object"
+          }
+        },
+        "description": "Update the present values from the DC powersupply"
+      },
+      "update_isolation_status": {
+        "arguments": {
+          "isolation_status": {
+            "$ref": "/iso15118_charger#/IsolationStatus",
+            "description": "Result of the isolation monitoring",
+            "type": "string"
+          }
+        },
+        "description": "Update the isolation condition"
+      },
+      "update_meter_info": {
+        "arguments": {
+          "powermeter": {
+            "$ref": "/powermeter#/Powermeter",
+            "description": "Includes the meterInfo record containing the latest meter reading and other meter relevant data",
+            "type": "object"
+          }
+        },
+        "description": "Update meter info"
+      }
     },
-    description: "Checks provided tokens for validity",
-  },
-  board_support_AC: {
-    cmds: {
-      allow_power_on: {
-        arguments: {
-          value: {
-            description: "True: allow power on, false: do not allow power on.",
-            type: "boolean",
-          },
-        },
-        description: "Sets allow_power_on flag. If false, Relais must never be switched on.",
+    "description": "This interface defines a ISO15118 charger.",
+    "vars": {
+      "AC_Close_Contactor": {
+        "description": "The contactor should be closed",
+        "type": "null"
       },
-      enable: {
-        arguments: {
-          value: {
-            description: "True: enabled, false: disabled.",
-            type: "boolean",
-          },
-        },
-        description:
-          "Enables or disables the EVSE. Typically disabled results in control pilot state F. It must not accept cars for new charging sessions if disabled.",
+      "AC_EAmount": {
+        "description": "[Wh] Amount of energy reflecting the EV's estimate how much energy is needed to fulfill the user configured charging goal for the current charging session",
+        "maximum": 200000,
+        "minimum": 0,
+        "type": "number"
       },
-      force_unlock: {
-        description: "Force unlock motor lock",
-        result: {
-          description: "Returns true if unlocking sequence was successfully executed",
-          type: "boolean",
-        },
+      "AC_EVMaxCurrent": {
+        "description": "[A] Maximum current supported by the EV per phase",
+        "maximum": 400,
+        "minimum": 0,
+        "type": "number"
       },
-      get_hw_capabilities: {
-        description: "Get Hardware capability/limits",
-        result: {
-          description: "Hardware capability/limits",
-          max_current_A: {
-            description: "Maximum current (ampere) the hardware can handle",
-            type: "number",
-          },
-          max_phase_count: {
-            description: "Max nr of phases the hardware can use",
-            maximum: 3,
-            minimum: 1,
-            type: "integer",
-          },
-          min_current_A: {
-            description:
-              "Minimum current (ampere) the hardware can use to charge. Values below may be set but may result in pause instead.",
-            type: "number",
-          },
-          min_phase_count: {
-            description: "Minimum nr of phases the hardware can use",
-            maximum: 3,
-            minimum: 1,
-            type: "integer",
-          },
-          supports_changing_phases_during_charging: {
-            description:
-              "Indicates whether changing number of phases is supported during charging (true) or not (false)",
-            type: "boolean",
-          },
-          type: "object",
-        },
+      "AC_EVMaxVoltage": {
+        "description": "[V] The RMS of the maximal nominal voltage the vehicle can accept, measured between one phase and neutral",
+        "maximum": 1000,
+        "minimum": 0,
+        "type": "number"
       },
-      pwm_F: {
-        description: "Turns PWM off with Error F (constant negative voltage)",
+      "AC_EVMinCurrent": {
+        "description": "[A] EVMinCurrent is used to indicate to the SECC that charging below this minimum is not energy/cost efficient for the EV",
+        "maximum": 400,
+        "minimum": 0,
+        "type": "number"
       },
-      pwm_off: {
-        description: "Turns PWM off (constant high voltage)",
+      "AC_Open_Contactor": {
+        "description": "The contactor should be opened",
+        "type": "null"
       },
-      pwm_on: {
-        arguments: {
-          value: {
-            description: "PWM duty cycle (>0, <1)",
-            maximum: 1,
-            minimum: 0,
-            type: "number",
-          },
-        },
-        description: "Turns PWM on with duty cycle",
+      "Certificate_Request": {
+        "$ref": "/iso15118_charger#/Request_Exi_Stream_Schema",
+        "description": "The vehicle requests the SECC to deliver the certificate that belong  to the currently valid contract of the vehicle. Response will be reported async via  set_Get_Certificate_Response",
+        "type": "object"
       },
-      setup: {
-        arguments: {
-          country_code: {
-            description: "A two-letter country code in ISO 3166-1 alpha-2 format",
-            type: "string",
-          },
-          has_ventilation: {
-            description: "true: Allow mode D charging, false: do not allow mode D charging",
-            type: "boolean",
-          },
-          rcd_enabled: {
-            description: "true: enable RCD, false: disable RCD",
-            type: "boolean",
-          },
-          three_phases: {
-            description: "true: Three phases enabled, false: only single phase",
-            type: "boolean",
-          },
-        },
-        description: "Setup config options",
+      "DC_BulkChargingComplete": {
+        "description": "Optional: If set to TRUE, the EV indicates that bulk charge (approx. 80% SOC) is complete",
+        "type": "boolean"
       },
-      switch_three_phases_while_charging: {
-        arguments: {
-          value: {
-            description: "True: switch to 3ph, False: switch to 1ph",
-            type: "boolean",
-          },
-        },
-        description:
-          "Special command to force switching between one and three phases while charging is active. HW must go through some special sequence to ensure safe operation.",
+      "DC_BulkSOC": {
+        "description": "Optional: [%] SOC at which the EV considers a fast charge process to end",
+        "maximum": 100,
+        "minimum": 0,
+        "type": "number"
       },
-    },
-    description:
-      "This interface defines the board support driver for AC power path: ControlPilot, Relais, RCD and motor lock",
-    vars: {
-      event: {
-        description: "Event from ControlPilot signal/Relais/RCD",
-        enum: [
-          "CarPluggedIn",
-          "CarRequestedPower",
-          "PowerOn",
-          "PowerOff",
-          "CarRequestedStopPower",
-          "CarUnplugged",
-          "ErrorE",
-          "ErrorDF",
-          "ErrorRelais",
-          "ErrorRCD",
-          "ErrorVentilationNotAvailable",
-          "ErrorOverCurrent",
-          "RestartMatching",
-          "PermanentFault",
-        ],
-        type: "string",
+      "DC_ChargingComplete": {
+        "description": "Optional: If set to TRUE, the EV indicates that full charge (100% SOC) is complete",
+        "type": "boolean"
       },
-      nr_of_phases_available: {
-        description: "Instantaneous phase count available to car",
-        maximum: 3,
-        minimum: 1,
-        type: "integer",
+      "DC_EVEnergyCapacity": {
+        "description": "Optional: [Wh] Energy capacity of the EV",
+        "maximum": 200000,
+        "minimum": 0,
+        "type": "number"
       },
-      telemetry: {
-        additionalProperties: false,
-        description: "Other telemetry",
-        properties: {
-          fan_rpm: {
-            description: "RPM of the fan. 0 if off or no fan available.",
-            type: "number",
-          },
-          rcd_current: {
-            description: "Residual current in mA",
-            type: "number",
-          },
-          relais_on: {
-            description: "true if power to the car is currently on, false if off",
-            type: "boolean",
-          },
-          supply_voltage_12V: {
-            description: "Internal 12V supply voltage",
-            type: "number",
-          },
-          supply_voltage_minus_12V: {
-            description: "Internal -12V supply voltage",
-            type: "number",
-          },
-          temperature: {
-            description: "Current temperature of the EVSE in degree celsius",
-            type: "number",
-          },
-        },
-        type: "object",
+      "DC_EVEnergyRequest": {
+        "description": "Optional: [Wh] Amount of energy the EV requests from the EVSE",
+        "maximum": 200000,
+        "minimum": 0,
+        "type": "number"
       },
-    },
-  },
-  board_support_AC_debug: {
-    description: "This interface defines the board support debug information that is not used for actual control",
-    vars: {
-      cp_hi_voltage: {
-        description: "Voltage of high part of PWM",
-        type: "number",
+      "DC_EVMaximumLimits": {
+        "$ref": "/iso15118_charger#/DC_EVMaximumLimits",
+        "description": "Maximum Values (current, power and voltage) supported and allowed by the EV",
+        "type": "object"
       },
-      cp_lo_voltage: {
-        description: "Voltage of low part of PWM",
-        type: "number",
+      "DC_EVRemainingTime": {
+        "$ref": "/iso15118_charger#/DC_EVRemainingTime",
+        "description": "Estimated or calculated time until bulk and full charge is complete",
+        "type": "object"
       },
-      has_ventilation: {
-        description: "True if ventilated charging is allowed",
-        type: "boolean",
+      "DC_EVStatus": {
+        "$ref": "/iso15118_charger#/DC_EVStatusType",
+        "description": "Current status of the EV",
+        "type": "object"
       },
-      is_power_on: {
-        description: "True if Relais are currently closed (power on)",
-        type: "boolean",
+      "DC_EVTargetVoltageCurrent": {
+        "$ref": "/iso15118_charger#/DC_EVTargetValues",
+        "description": "Target voltage and current requested by the EV",
+        "type": "object"
       },
-      pwm_running: {
-        description: "True if ventilated charging is allowed",
-        type: "boolean",
+      "DC_FullSOC": {
+        "description": "Optional: [%] SOC at which the EV considers the battery to be fully charged",
+        "maximum": 100,
+        "minimum": 0,
+        "type": "number"
       },
-      rcd_current: {
-        description: "Residual current measurement",
-        type: "number",
+      "DC_Open_Contactor": {
+        "description": "The contactor should be opened",
+        "type": "null"
       },
-      rcd_reclosing_allowed: {
-        description: "True if RCD may reclose after fault according to local regulations",
-        type: "boolean",
+      "DepartureTime": {
+        "description": "Optional: [RFC3339 UTC] This element is used to indicate when the vehicle intends to finish the charging process",
+        "format": "date-time",
+        "type": "string"
       },
-      simplified_mode: {
-        description: "True if car uses simplified mode of IEC61851",
-        type: "boolean",
+      "EVCCIDD": {
+        "description": "Specifies the EVs identification in a readable format. It contains the MAC address of the EVCC in uppercase",
+        "pattern": "^[A-F0-9]{2}(:[A-F0-9]{2}){5}$",
+        "type": "string"
       },
-      supply_12V_voltage: {
-        description: "Voltage of +12V supply",
-        type: "number",
-      },
-      supply_N12V_voltage: {
-        description: "Voltage of -12V supply",
-        type: "number",
-      },
-      three_phases: {
-        description: "config option for three phase/single phase operation",
-        type: "boolean",
-      },
-      three_phases_active: {
-        description: "True if three phases is enabled for current charging session",
-        type: "boolean",
-      },
-    },
-  },
-  car_simulator: {
-    cmds: {
-      enable: {
-        arguments: {
-          value: {
-            description: "Enable/Disable simulation mode",
-            type: "boolean",
-          },
-        },
-        description:
-          "Sets the ID that uniquely identifies the EVSE. The EVSEID shall match the following structure: <EVSEID> = <Country Code> <S> <EVSE Operator ID> <S> <ID Type> <Power Outlet ID>",
-      },
-      executeChargingSession: {
-        arguments: {
-          value: {
-            description: "Charging simulation string",
-            type: "string",
-          },
-        },
-        description: "Executes a charging simulation string",
-      },
-    },
-    description:
-      "This defines a car simulator that can execute a full charging session, from plugging in to plugging out. It uses HIL or SIL simulation controllers from e.g. the Yeti HIL simulator.",
-    vars: {
-      enabled: {
-        description: "Indicates whether simulation is currently enabled or not",
-        type: "boolean",
-      },
-    },
-  },
-  debug_json: {
-    description:
-      "This interface defines a generic JSON object debug variable publisher for use in any module. Can be used to display debug variables e.g. in web interface.",
-    vars: {
-      debug_json: {
-        description: "Provides the debug object as a json object",
-        type: "object",
-      },
-      title: {
-        description: "Title of the Debug object",
-        type: "string",
-      },
-    },
-  },
-  dummy: {
-    description: "Dummy interface for testing",
-    vars: {
-      token: {
-        additionalProperties: false,
-        description: "Arbitrary auth token string and type of token provider (string provided in UI)",
-        properties: {
-          heart: {
-            description: "Type of token provider",
-            maxLength: 32,
-            minLength: 2,
-            type: "string",
-          },
-          token: {
-            description:
-              "Arbitrary token string: this has to be printable case insensitive ascii: !!!FIXME!!! write a regex to allow only printable ascii",
-            maxLength: 20,
-            minLength: 1,
-            type: "string",
-          },
-        },
-        required: ["token", "heart"],
-        type: "object",
-      },
-    },
-  },
-  empty: {
-    description: "This interface is empty and can be used for a config-only (main) implementation",
-  },
-  energy: {
-    cmds: {
-      enforce_limits: {
-        arguments: {
-          limits_export: {
-            additionalProperties: false,
-            description: "Enforced limits that must be respected.",
-            properties: {
-              limit: {
-                ac_current_A: {
-                  additionalProperties: false,
-                  description: "AC current limit object",
-                  properties: {
-                    current_A: {
-                      description: "AC current limit per phase in Ampere",
-                      maximum: 0,
-                      type: "number",
-                    },
-                    phase_count: {
-                      description: "Limit to number of phases. Omit if number of phases are not limited.",
-                      maximum: 3,
-                      minimum: 1,
-                      type: "integer",
-                    },
-                  },
-                  required: ["current_A"],
-                  type: "object",
-                },
-                description: "Enforced limits",
-                total_power_W: {
-                  description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                  maximum: 0,
-                  type: "number",
-                },
-                type: "object",
-              },
-              valid_until: {
-                description:
-                  "Limits are valid until this timepoint in RFC3339 UTC. If no new update is received, power consumption must be stopped afer that timepoint.",
-                format: "date-time",
-                type: "string",
-              },
+      "EV_AppProtocol": {
+        "description": "Debug_Lite - This request message provides a list of charging protocols supported by the EVCC",
+        "items": {
+          "additionalProperties": false,
+          "description": "This message element is used by the EVCC for transmitting the list of supported protocols",
+          "properties": {
+            "Priority": {
+              "description": "This message element is used by the EVCC for indicating the protocol priority of a specific protocol allowing the SECC to select a protocol based on priorities",
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
             },
-            type: "object",
-          },
-          limits_import: {
-            additionalProperties: false,
-            description: "Enforced limits that must be respected.",
-            properties: {
-              limit: {
-                ac_current_A: {
-                  additionalProperties: false,
-                  description: "AC current limit object",
-                  properties: {
-                    current_A: {
-                      description: "AC current limit per phase in Ampere",
-                      minimum: 0,
-                      type: "number",
-                    },
-                    phase_count: {
-                      description: "Limit to number of phases. Omit if number of phases are not limited.",
-                      maximum: 3,
-                      minimum: 1,
-                      type: "integer",
-                    },
-                  },
-                  required: ["current_A"],
-                  type: "object",
-                },
-                description: "Enforced limits",
-                total_power_W: {
-                  description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                  minimum: 0,
-                  type: "number",
-                },
-                type: "object",
-              },
-              valid_until: {
-                description:
-                  "Limits are valid until this timepoint in RFC3339 UTC. If no new update is received, power consumption must be stopped afer that timepoint.",
-                format: "date-time",
-                type: "string",
-              },
+            "ProtocolNamespace": {
+              "description": "This message element is used by the EVCC to uniquely identify the Namespace URI of a specific protocol supported by the EVCC",
+              "maxLength": 100,
+              "minLength": 1,
+              "type": "string"
             },
-            type: "object",
-          },
-          schedule_export: {
-            description:
-              "Informative only. Do not use for actual limiting. Energy export/limits time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-            items: {
-              additionalProperties: false,
-              description: "One entry for the time series",
-              properties: {
-                limit: {
-                  ac_current_A: {
-                    additionalProperties: false,
-                    description: "AC current limit object",
-                    properties: {
-                      current_A: {
-                        description: "AC current limit per phase in Ampere",
-                        maximum: 0,
-                        type: "number",
-                      },
-                      phase_count: {
-                        description: "Limit to number of phases. Omit if number of phases are not limited.",
-                        maximum: 3,
-                        minimum: 1,
-                        type: "integer",
-                      },
-                    },
-                    required: ["current_A"],
-                    type: "object",
-                  },
-                  description: "Limit for this timestamp",
-                  required: ["limit_type"],
-                  total_power_W: {
-                    description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                    maximum: 0,
-                    type: "number",
-                  },
-                  type: "object",
-                },
-                timestamp: {
-                  description:
-                    "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                  format: "date-time",
-                  type: "string",
-                },
-              },
-              required: ["timestamp", "limit"],
-              type: "object",
+            "SchemaID": {
+              "description": "This message element is used by the EVCC to indicate the SchemaID assigned by the EVCC to the protocol",
+              "maximum": 255,
+              "minimum": 0,
+              "type": "integer"
             },
-            type: "array",
-          },
-          schedule_import: {
-            description:
-              "Informative only. Do not use for actual limiting. Energy import/limits time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-            items: {
-              additionalProperties: false,
-              description: "One entry for the time series",
-              properties: {
-                limit: {
-                  ac_current_A: {
-                    additionalProperties: false,
-                    description: "AC current limit object",
-                    properties: {
-                      current_A: {
-                        description: "AC current limit per phase in Ampere",
-                        minimum: 0,
-                        type: "number",
-                      },
-                      phase_count: {
-                        description: "Limit to number of phases. Omit if number of phases are not limited.",
-                        maximum: 3,
-                        minimum: 1,
-                        type: "integer",
-                      },
-                    },
-                    required: ["current_A"],
-                    type: "object",
-                  },
-                  description: "Limit for this timestamp",
-                  required: ["limit_type"],
-                  total_power_W: {
-                    description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                    minimum: 0,
-                    type: "number",
-                  },
-                  type: "object",
-                },
-                timestamp: {
-                  description:
-                    "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                  format: "date-time",
-                  type: "string",
-                },
-              },
-              required: ["timestamp", "limit"],
-              type: "object",
+            "VersionNumberMajor": {
+              "description": "This message element is used by the EVCC to indicate the major version number of the protocol",
+              "minimum": 0,
+              "type": "integer"
             },
-            type: "array",
+            "VersionNumberMinor": {
+              "description": "This message element is used by the EVCC to indicate the minor version number of the protocol",
+              "minimum": 0,
+              "type": "integer"
+            }
           },
-          uuid: {
-            description: "UUID of node that this limit applies to",
-            type: "string",
-          },
+          "type": "object"
         },
-        description: "The EnergyManager enforces a limit using this command.",
+        "maxItems": 20,
+        "minItems": 1,
+        "type": "array"
       },
-    },
-    description:
-      "This interface defines a forecast schedule of energy import/export capability/limits, pricing and current energy usage.",
-    vars: {
-      energy: {
-        description:
-          "Energy object to supply/limit energy import (direction from grid to car) and/or consume/limit energy export (car to grid).",
-        properties: {
-          children: {
-            description: "Array of child nodes (in the direction to consumer/car",
-            type: "array",
-          },
-          energy_usage: {
-            description: "Energy usage of this node (powermeter struct)",
-            type: "object",
-          },
-          node_type: {
-            description:
-              "Type of energy source/sink. Use Limit if this purely enforces limits but is not a physical energy source/sink.",
-            enum: ["Grid", "GridConnection", "Solar", "Battery", "Fuse", "Evse"],
-            type: "string",
-          },
-          optimizer_target: {
-            additionalProperties: false,
-            description: "User defined optimizer targets for this evse",
-            properties: {
-              car_battery_soc: {
-                description: "Car battery State Of Charge in percent",
-                type: "number",
-              },
-              charge_to_max_percent: {
-                description: "Charge car battery to max NN percent",
-                type: "number",
-              },
-              energy_amount_needed: {
-                description: "Amount of kwh the car needs to fulfill its charging target",
-                type: "number",
-              },
-              full_autonomy: {
-                description: "Only charge from locally generated energy. Do not draw power from grid for charging.",
-                type: "boolean",
-              },
-              leave_time: {
-                description:
-                  "RFC3339 UTC format time when the car needs to drive away with charging targets fullfilled. Will charge cheapest within this timeframe.",
-                type: "string",
-              },
-              price_limit: {
-                description:
-                  "Always charge if price below this limit. This includes solar charging and price for solar energy if price levels set correctly.",
-                type: "number",
-              },
-            },
-            type: "object",
-          },
-          schedule_export: {
-            description:
-              "Energy export/limits time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-            items: {
-              additionalProperties: false,
-              description: "One entry for the time series",
-              properties: {
-                limit: {
-                  ac_current_A: {
-                    additionalProperties: false,
-                    description: "AC current limit object",
-                    properties: {
-                      max_current_A: {
-                        description: "Max AC current limit per phase in Ampere",
-                        minimum: 0,
-                        type: "number",
-                      },
-                      max_phase_count: {
-                        description: "Max Limit of number of phases. Omit if number of phases are not limited.",
-                        maximum: 3,
-                        minimum: 1,
-                        type: "integer",
-                      },
-                      min_current_A: {
-                        description: "Minimal AC current limit per phase in Ampere to be able to discharge",
-                        minimum: 0,
-                        type: "number",
-                      },
-                      min_phase_count: {
-                        description: "Minimum number of phases that can be used for proper operation.",
-                        maximum: 3,
-                        minimum: 1,
-                        type: "integer",
-                      },
-                      supports_changing_phases_during_charging: {
-                        description: "Indicate whether phase switching is allowed during charging or not",
-                        type: "boolean",
-                      },
-                    },
-                    required: ["max_current_A"],
-                    type: "object",
-                  },
-                  description: "Limit for this timestamp",
-                  limit_type: {
-                    description: "Hard limits need to be enforced by EnergyManager, Soft limits may be ignored.",
-                    enum: ["Hard", "Soft"],
-                    type: "string",
-                  },
-                  required: ["limit_type"],
-                  total_power_W: {
-                    description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                    maximum: 0,
-                    type: "number",
-                  },
-                  type: "object",
-                },
-                price_per_kwh: {
-                  additionalProperties: false,
-                  description: "Price information for this timepoint",
-                  properties: {
-                    currency: {
-                      description: "Currency in 3 digit ISO 4217",
-                      maxLength: 3,
-                      minLength: 3,
-                      type: "string",
-                    },
-                    value: {
-                      description: "Price per kWh (earning)",
-                      type: "number",
-                    },
-                  },
-                  required: ["value", "currency"],
-                  type: "object",
-                },
-                timestamp: {
-                  description:
-                    "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                  format: "date-time",
-                  type: "string",
-                },
-              },
-              required: ["timestamp", "limit"],
-              type: "object",
-            },
-            type: "array",
-          },
-          schedule_import: {
-            description:
-              "Energy import/limits time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-            items: {
-              additionalProperties: false,
-              description: "One entry for the time series",
-              properties: {
-                capabilities: {
-                  ac_current_A: {
-                    additionalProperties: false,
-                    description: "AC current limit object",
-                    properties: {
-                      max_current_A: {
-                        description: "Max AC current limit per phase in Ampere",
-                        minimum: 0,
-                        type: "number",
-                      },
-                      max_phase_count: {
-                        description: "Max Limit of number of phases. Omit if number of phases are not limited.",
-                        maximum: 3,
-                        minimum: 1,
-                        type: "integer",
-                      },
-                      min_current_A: {
-                        description: "Minimal AC current limit per phase in Ampere to be able to charge",
-                        minimum: 0,
-                        type: "number",
-                      },
-                      min_phase_count: {
-                        description: "Minimum number of phases that can be used for proper operation.",
-                        maximum: 3,
-                        minimum: 1,
-                        type: "integer",
-                      },
-                      supports_changing_phases_during_charging: {
-                        description: "Indicate whether phase switching is allowed during charging or not",
-                        type: "boolean",
-                      },
-                    },
-                    required: ["max_current_A"],
-                    type: "object",
-                  },
-                  description: "Limit for this timestamp",
-                  limit_type: {
-                    description: "Hard limits need to be enforced by EnergyManager, Soft limits may be ignored.",
-                    enum: ["Hard", "Soft"],
-                    type: "string",
-                  },
-                  required: ["limit_type"],
-                  total_power_W: {
-                    description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                    minimum: 0,
-                    type: "number",
-                  },
-                  type: "object",
-                },
-                price_per_kwh: {
-                  additionalProperties: false,
-                  description: "Price information for this timepoint",
-                  properties: {
-                    currency: {
-                      description: "Currency in 3 digit ISO 4217",
-                      maxLength: 3,
-                      minLength: 3,
-                      type: "string",
-                    },
-                    value: {
-                      description: "Price per kWh (cost)",
-                      type: "number",
-                    },
-                  },
-                  required: ["value", "currency"],
-                  type: "object",
-                },
-                timestamp: {
-                  description:
-                    "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                  format: "date-time",
-                  type: "string",
-                },
-              },
-              required: ["timestamp", "capabilities"],
-              type: "object",
-            },
-            type: "array",
-          },
-          uuid: {
-            description:
-              "UUID for this node. This UUID will be used again when enforce_limits() command propagates through the tree.",
-            type: "string",
-          },
-        },
-        required: ["node_type", "uuid"],
-        type: "object",
+      "RequestedEnergyTransferMode": {
+        "$ref": "/iso15118_charger#/EnergyTransferMode",
+        "description": "Selected energy transfer mode for charging that is requested by the EVCC.",
+        "type": "string"
       },
-    },
+      "Require_Auth_EIM": {
+        "description": "An EIM authorization is requiered",
+        "type": "null"
+      },
+      "Require_Auth_PnC": {
+        "$ref": "/authorization#/ProvidedIdToken",
+        "description": "The EVCC provides the payment details for a PnC authorization by sending the signature certificate chain and eMAID.",
+        "type": "object"
+      },
+      "SelectedPaymentOption": {
+        "$ref": "/iso15118_charger#/PaymentOption",
+        "description": "This element is used for indicating the payment type",
+        "type": "string"
+      },
+      "Selected_Protocol": {
+        "description": "Debug - Contains the selected protocol",
+        "type": "string"
+      },
+      "Start_CableCheck": {
+        "description": "The charger should now start a cable check",
+        "type": "null"
+      },
+      "V2G_Messages": {
+        "$ref": "/iso15118_charger#/V2G_Messages",
+        "description": "Debug - This element contains all V2G elements and should be used for debug purposes only",
+        "type": "object"
+      },
+      "V2G_Setup_Finished": {
+        "description": "V2G_Setup_Finished from ISO15118-3. Trigger when EV sends a PowerDeliveryReq message with ChargeProgess equals Start or Stop",
+        "type": "null"
+      },
+      "currentDemand_Finished": {
+        "description": "The charging process was finished",
+        "type": "null"
+      },
+      "currentDemand_Started": {
+        "description": "The charging process has started and the EV wants to be charged",
+        "type": "null"
+      },
+      "dlink_error": {
+        "description": "Terminate the data link and restart the matching process.",
+        "type": "null"
+      },
+      "dlink_pause": {
+        "description": "Request power saving mode, while staying MATCHED.",
+        "type": "null"
+      },
+      "dlink_terminate": {
+        "description": "Terminate the data link and become UNMATCHED.",
+        "type": "null"
+      },
+      "sae_bidi_mode_active": {
+        "description": "The SAE J2847 bidi mode is active",
+        "type": "null"
+      }
+    }
   },
-  energy_manager: {
-    description: "This interface defines the global EnergyManager",
-    vars: {},
-  },
-  energy_price_information: {
-    description: "This interface defines the interface for an energy price forecast",
-    vars: {
-      energy_price_schedule: {
-        additionalProperties: false,
-        description: "Forecast JSON Object containing timestamps and the price forecast for both import and export.",
-        properties: {
-          schedule_export: {
-            description:
-              "Pricing time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-            items: {
-              additionalProperties: false,
-              description: "One entry for the time series",
-              properties: {
-                price_per_kwh: {
-                  additionalProperties: false,
-                  description: "Price information for this timepoint",
-                  properties: {
-                    currency: {
-                      description: "Currency in 3 digit ISO 4217",
-                      maxLength: 3,
-                      minLength: 3,
-                      type: "string",
-                    },
-                    value: {
-                      description: "Price per kWh (earning)",
-                      type: "number",
-                    },
-                  },
-                  required: ["value", "currency"],
-                  type: "object",
-                },
-                timestamp: {
-                  description:
-                    "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                  format: "date-time",
-                  type: "string",
-                },
-              },
-              required: ["timestamp", "price_per_kwh"],
-              type: "object",
-            },
-            type: "array",
-          },
-          schedule_import: {
-            description:
-              "Pricing time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-            items: {
-              additionalProperties: false,
-              description: "One entry for the time series",
-              properties: {
-                price_per_kwh: {
-                  additionalProperties: false,
-                  description: "Price information for this timepoint",
-                  properties: {
-                    currency: {
-                      description: "Currency in 3 digit ISO 4217",
-                      maxLength: 3,
-                      minLength: 3,
-                      type: "string",
-                    },
-                    value: {
-                      description: "Price per kWh (cost)",
-                      type: "number",
-                    },
-                  },
-                  required: ["value", "currency"],
-                  type: "object",
-                },
-                timestamp: {
-                  description:
-                    "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                  format: "date-time",
-                  type: "string",
-                },
-              },
-              required: ["timestamp", "price_per_kwh"],
-              type: "object",
-            },
-            type: "array",
-          },
-        },
-        type: "object",
+  "ISO15118_ev": {
+    "cmds": {
+      "enable_sae_j2847_v2g_v2h": {
+        "description": "Enable the SAE J2847 2 V2H V2G"
       },
-    },
-  },
-  evse_manager: {
-    cmds: {
-      accept_new_session: {
-        description:
-          "Call when cleanup is done and new cars are allowed to plugin. Do not use multiple cleanup handlers, call from only one module!",
-        result: {
-          description: "Returns true if successful",
-          type: "boolean",
-        },
+      "pause_charging": {
+        "description": "Pause the ev charging communication process"
       },
-      cancel_charging: {
-        description: "Cancels charging, can only be resumed by replugging car",
-        result: {
-          description: "Returns true if successful",
-          type: "boolean",
+      "set_bpt_dc_params": {
+        "arguments": {
+          "EV_BPT_Parameters": {
+            "$ref": "/iso15118_ev#/DC_EV_BPT_Parameters",
+            "description": "BPT parameters for dc charging",
+            "type": "object"
+          }
         },
+        "description": "Set the bpt parameters for dc charging"
       },
-      cancel_reservation: {
-        description: "Cancels current reservation",
-        result: {
-          description: "Indicates if cancelling reservation was successful or not",
-          type: "boolean",
+      "set_dc_params": {
+        "arguments": {
+          "EV_Parameters": {
+            "$ref": "/iso15118_ev#/DC_EVParameters",
+            "description": "Target parameters for dc charging",
+            "type": "object"
+          }
         },
+        "description": "Set the target parameters for a dc charging process"
       },
-      disable: {
-        description: "Disables the evse",
-        result: {
-          description:
-            "Returns true if evse was disabled (or was disabled before), returns false if it could not be disabled (i.e. due to communication error with hardware)",
-          type: "boolean",
-        },
+      "set_fault": {
+        "description": "TODO_SL: Set the different ev faults to communicate these errors to the charging station"
       },
-      enable: {
-        description: "Enables the evse",
-        result: {
-          description:
-            "Returns true if evse was enabled (or was enabled before), returns false if enable failed e.g. due to permanent fault.",
-          type: "boolean",
-        },
-      },
-      force_unlock: {
-        description:
-          "Force unlock connector now. During normal operation, connector will be locked/unlocked in the correct sequence. Do not use this function except if explicitly requested by e.g. management cloud.",
-        result: {
-          description: "Returns true if unlocking sequence was successfully executed",
-          type: "boolean",
-        },
-      },
-      get_signed_meter_value: {
-        description: "Returns a signed meter value. Includes current auth token if session is running.",
-        result: {
-          description: "Signed meter value",
-          type: "string",
-        },
-      },
-      pause_charging: {
-        description: "Pauses charging",
-        result: {
-          description: "Returns true if successfully paused or was already in paused_by_evse mode",
-          type: "boolean",
-        },
-      },
-      reserve_now: {
-        arguments: {
-          auth_token: {
-            description: "The authentication token that this evse is reserved for",
-            type: "string",
-          },
-          timeout: {
-            description: "timeout [s] until this reservation expires",
-            type: "number",
-          },
-        },
-        description: "Reserves this evse for a given auth token",
-        result: {
-          description: "Indicates if reservation was successful or not",
-          type: "boolean",
-        },
-      },
-      resume_charging: {
-        description: "Resumes charging",
-        result: {
-          description: "Returns true if resume was successful, false otherwise (e.g. resuming a car pause won't work)",
-          type: "boolean",
-        },
-      },
-      set_local_max_current: {
-        arguments: {
-          max_current: {
-            description: "maximum current",
-            type: "number",
-          },
-        },
-        description: "Sets the local maximum current limit for any phase.",
-        result: {
-          description: "Returns success or error code",
-          enum: ["Success", "Error_OutOfRange", "Error_Hardware"],
-          type: "string",
-        },
-      },
-      switch_three_phases_while_charging: {
-        arguments: {
-          three_phases: {
-            description: "True if switching three phases whilst charging, false if not",
-            type: "boolean",
-          },
-        },
-        description: "Switch three phases while charging",
-        result: {
-          description: "Returns success or error code",
-          enum: ["Success", "Error_NotSupported", "Error_NotCharging", "Error_Hardware"],
-          type: "string",
-        },
-      },
-    },
-    description: "This interface defines the main evse manager",
-    vars: {
-      limits: {
-        additionalProperties: false,
-        description: "Limits of this evse, published on change",
-        properties: {
-          max_current: {
-            description: "Instantaneous maximum current available to car",
-            type: "number",
-          },
-          nr_of_phases_available: {
-            description: "Instantaneous phase count available to car",
-            maximum: 3,
-            minimum: 1,
-            type: "integer",
-          },
-        },
-        required: ["max_current", "nr_of_phases_available"],
-        type: "object",
-      },
-      powermeter: {
-        description: "FIXME: use powermeter type here",
-        type: "object",
-      },
-      reservation: {
-        additionalProperties: false,
-        description: "Current reservation status, published on change",
-        properties: {
-          auth_token: {
-            description: "token for which evse is reserved for",
-            maxLength: 20,
-            minLength: 1,
-            type: "string",
-          },
-          reserved: {
-            description: "true if currently reserved",
-            type: "boolean",
-          },
-          valid_until: {
-            description: "timestamp (abs time) when reservation expires",
-            type: "number",
-          },
-        },
-        required: ["reserved", "auth_token", "valid_until"],
-        type: "object",
-      },
-      session_events: {
-        additionalProperties: false,
-        description: "Emits all events related to sessions",
-        properties: {
-          error: {
-            description: "Details on error type",
-            enum: ["Car", "CarDiodeFault", "Relais", "RCD", "VentilationNotAvailable", "OverCurrent"],
-            type: "string",
-          },
-          event: {
-            description: "Event enum. For some events an additional object is set, see below.",
-            enum: [
-              "Enabled",
-              "Disabled",
-              "SessionStarted",
-              "AuthRequired",
-              "ChargingStarted",
-              "ChargingPausedEV",
-              "ChargingPausedEVSE",
-              "ChargingResumed",
-              "SessionFinished",
-              "Error",
-              "PermanentFault",
+      "start_charging": {
+        "arguments": {
+          "EnergyTransferMode": {
+            "description": "Selected energy transfer mode for charging that is requested by the EVCC",
+            "enum": [
+              "AC_single_phase_core",
+              "AC_three_phase_core",
+              "DC_core",
+              "DC_extended",
+              "DC_combo_core",
+              "DC_unique"
             ],
-            type: "string",
+            "type": "string"
           },
-          session_finished: {
-            additionalProperties: false,
-            description: "data for SessionFinished event",
-            properties: {
-              energy_Wh_export: {
-                description: "Session end Wh",
-                type: "number",
-              },
-              energy_Wh_import: {
-                description: "Session end Wh",
-                type: "number",
-              },
-              signed_meter_value: {
-                description: "Signed meter value",
-                type: "string",
-              },
-              timestamp: {
-                description: "Session end timestamp",
-                type: "number",
-              },
+          "PaymentOption": {
+            "description": "This element is used for indicating the payment type",
+            "enum": [
+              "Contract",
+              "ExternalPayment"
+            ],
+            "type": "string"
+          }
+        },
+        "description": "Start the ev charging process",
+        "result": {
+          "description": "Returns true if the evcc simulation started",
+          "type": "boolean"
+        }
+      },
+      "stop_charging": {
+        "description": "Stop the ev charging communication process"
+      }
+    },
+    "description": "This interface defines a simple ISO15118 ev.",
+    "vars": {
+      "AC_EVPowerReady": {
+        "description": "The car is ready for power (HLC)",
+        "type": "boolean"
+      },
+      "AC_EVSEMaxCurrent": {
+        "description": "EVSE max current per phase",
+        "maximum": 400,
+        "minimum": 0,
+        "type": "number"
+      },
+      "AC_StopFromCharger": {
+        "description": "The charger wants to stop the charging process",
+        "type": "null"
+      },
+      "DC_PowerOn": {
+        "description": "The ev wants to close the dc contactors",
+        "type": "null"
+      },
+      "V2G_Session_Finished": {
+        "description": "The v2g session between the charger and the car is finished",
+        "type": "null"
+      }
+    }
+  },
+  "ac_rcd": {
+    "cmds": {
+      "reset": {
+        "description": "Resets the RCD after a trigger. May not be supported by actual hardware.",
+        "result": {
+          "description": "True: Reset successfull, False: Reset failed.",
+          "type": "boolean"
+        }
+      },
+      "self_test": {
+        "description": "Executes a self test of the RCD. If it fails, an error of type Selftest should be raised."
+      }
+    },
+    "description": "This interface provides an AC Residual Current Monitor (RCD). Actual emergency switch off is done in HW directly, but this interface allows some control and telemetry.",
+    "errors": [
+      {
+        "reference": "/errors/ac_rcd"
+      }
+    ],
+    "vars": {
+      "rcd_current_mA": {
+        "description": "Residual current in mA. Note that this does not trigger anything, it is merely for reporting.",
+        "type": "number"
+      }
+    }
+  },
+  "auth": {
+    "cmds": {
+      "set_connection_timeout": {
+        "arguments": {
+          "connection_timeout": {
+            "description": "Connection timeout in seconds",
+            "maximum": 300,
+            "minimum": 10,
+            "type": "integer"
+          }
+        },
+        "description": "Sets the connection timeout"
+      },
+      "set_master_pass_group_id": {
+        "arguments": {
+          "master_pass_group_id": {
+            "description": "The master pass group id",
+            "maxLength": 36,
+            "type": "string"
+          }
+        },
+        "description": "Sets the master pass group id. IdTokens that have this id as parent_id_token belong to the Master Pass Group.  This means they can stop any ongoing transaction, but cannot start transactions. This can, for example, be used by law enforcement personal to stop any ongoing transaction when an EV has to be towed away. If master_pass_group_id  is an empty string, it is not used."
+      }
+    },
+    "description": "Interface of authentication framework",
+    "vars": {
+      "token_validation_status": {
+        "$ref": "/authorization#/TokenValidationStatusMessage",
+        "description": "Emits all events related to current token validation",
+        "type": "object"
+      }
+    }
+  },
+  "auth_token_provider": {
+    "description": "Interface to provide a token",
+    "vars": {
+      "provided_token": {
+        "$ref": "/authorization#/ProvidedIdToken",
+        "description": "The provided token",
+        "type": "object"
+      }
+    }
+  },
+  "auth_token_validator": {
+    "cmds": {
+      "validate_token": {
+        "arguments": {
+          "provided_token": {
+            "$ref": "/authorization#/ProvidedIdToken",
+            "description": "Contains information about the authorization request",
+            "type": "object"
+          }
+        },
+        "description": "Validate auth token and return result (with optional reason string)",
+        "result": {
+          "$ref": "/authorization#/ValidationResult",
+          "description": "Result object containing validation result",
+          "type": "object"
+        }
+      }
+    },
+    "description": "Checks provided tokens for validity"
+  },
+  "bank_session_token_provider": {
+    "cmds": {
+      "get_bank_session_token": {
+        "description": "Returns the token.",
+        "result": {
+          "$ref": "/bank_transaction#/BankSessionToken",
+          "description": "token",
+          "type": "object"
+        }
+      }
+    },
+    "description": "Provides the token that can be used to uniquely identify the session in the bank statement."
+  },
+  "bank_transaction_summary_provider": {
+    "description": "Provides information of the session that was committed to the bank. This data may be needed for accounting purposes.",
+    "vars": {
+      "bank_transaction_summary": {
+        "$ref": "/bank_transaction#/BankTransactionSummary",
+        "description": "Summary of a bank transaction. Depends on bank and the backend. Therefore it's mostly opaque data at the moment.",
+        "type": "object"
+      }
+    }
+  },
+  "car_simulator": {
+    "cmds": {
+      "enable": {
+        "arguments": {
+          "value": {
+            "description": "Enable/Disable simulation mode",
+            "type": "boolean"
+          }
+        },
+        "description": "Sets the ID that uniquely identifies the EVSE. The EVSEID shall match the following structure: <EVSEID> = <Country Code> <S> <EVSE Operator ID> <S> <ID Type> <Power Outlet ID>"
+      },
+      "executeChargingSession": {
+        "arguments": {
+          "value": {
+            "description": "Charging simulation string",
+            "type": "string"
+          }
+        },
+        "description": "Executes a charging simulation string"
+      }
+    },
+    "description": "This defines a car simulator that can execute a full charging session, from plugging in to plugging out. It uses HIL or SIL simulation controllers from e.g. the Yeti HIL simulator.",
+    "vars": {
+      "enabled": {
+        "description": "Indicates whether simulation is currently enabled or not",
+        "type": "boolean"
+      }
+    }
+  },
+  "connector_lock": {
+    "cmds": {
+      "lock": {
+        "description": "Lock connector lock"
+      },
+      "unlock": {
+        "description": "Unlock connector lock (e.g. normal unlock or enforced by OCPP)"
+      }
+    },
+    "description": "This interface defines one connector locking motor (e.g. for AC sockets with no fixed attached cable)",
+    "errors": [
+      {
+        "reference": "/errors/connector_lock"
+      }
+    ]
+  },
+  "debug_json": {
+    "description": "This interface defines a generic JSON object debug variable publisher for use in any module. Can be used to display debug variables e.g. in web interface.",
+    "vars": {
+      "debug_json": {
+        "description": "Provides the debug object as a json object",
+        "type": "object"
+      },
+      "title": {
+        "description": "Title of the Debug object",
+        "type": "string"
+      }
+    }
+  },
+  "empty": {
+    "description": "This interface is empty and can be used for a config-only (main) implementation"
+  },
+  "energy": {
+    "cmds": {
+      "enforce_limits": {
+        "arguments": {
+          "value": {
+            "$ref": "/energy#/EnforcedLimits",
+            "description": "Limit object that will be routed through the tree.",
+            "type": "object"
+          }
+        },
+        "description": "The EnergyManager enforces a limit using this command."
+      }
+    },
+    "description": "This interface is the internal energy management inteface between nodes.",
+    "vars": {
+      "energy_flow_request": {
+        "$ref": "/energy#/EnergyFlowRequest",
+        "description": "Request energy flow to supply/limit energy import (direction from grid to car) and/or consume/limit energy export (car to grid).",
+        "type": "object"
+      }
+    }
+  },
+  "energy_manager": {
+    "description": "This interface defines the global EnergyManager",
+    "vars": {}
+  },
+  "energy_price_information": {
+    "description": "This interface defines the interface for an energy price forecast",
+    "vars": {
+      "energy_pricing": {
+        "$ref": "/energy_price_information#/EnergyPriceSchedule",
+        "description": "Forecast JSON Object containing timestamps and the price forecast for both import and export.",
+        "type": "object"
+      }
+    }
+  },
+  "ev_slac": {
+    "cmds": {
+      "reset": {
+        "description": "Reset SLAC"
+      },
+      "trigger_matching": {
+        "description": "Trigger start of matching process",
+        "result": {
+          "description": "True on success, returns False if transition was unexpected and cannot be handled by SLAC state machine.",
+          "type": "boolean"
+        }
+      }
+    },
+    "description": "ISO15118-3 SLAC interface for EV side",
+    "vars": {
+      "dlink_ready": {
+        "description": "Inform higher layers about a change in data link status. Emits true if link was set up and false when the link is shut down.",
+        "type": "boolean"
+      },
+      "ev_mac_address": {
+        "description": "Inform higher layers about the MAC address of the charging connector",
+        "pattern": "^[A-F0-9]{2}(:[A-F0-9]{2}){5}$",
+        "type": "string"
+      },
+      "state": {
+        "description": "Provides the state enum.",
+        "enum": [
+          "UNMATCHED",
+          "MATCHING",
+          "MATCHED"
+        ],
+        "type": "string"
+      }
+    }
+  },
+  "evse_board_support": {
+    "cmds": {
+      "ac_read_pp_ampacity": {
+        "description": "Read the current carrying capacity of the connected cable in ampere for AC charging with a socket. This function will be used by EvseManager to get the PP value at  a distinct time. You should also publish the var pp_ampacity whenever the PP ampacity reading changes to signal changes e.g. during the charging time. This has no meaning for DC or AC charging with a fixed attached cable, it does not  need to be implemented and the returned value is not used in those cases.",
+        "result": {
+          "$ref": "/board_support_common#/ProximityPilot",
+          "description": "Returns the current carrying capacity of the connected cable",
+          "type": "object"
+        }
+      },
+      "ac_set_overcurrent_limit_A": {
+        "arguments": {
+          "value": {
+            "description": "Ampere current limit value",
+            "type": "number"
+          }
+        },
+        "description": "Many chargers implement a fast over current shutdown directly in the hardware that triggers if the EV draws more current than the PWM allows. If the hardware does not have this functionality, just ignore this command. Do not use it to set the PWM duty cycle. Otherwise this command reports a value that should be used for the overcurrent detection.  A margin needs to be added to avoid false triggers. Do not use the PWM duty cycle to infer the current limit in the BSP, as this will not work with HLC."
+      },
+      "ac_switch_three_phases_while_charging": {
+        "arguments": {
+          "value": {
+            "description": "True: switch to 3ph, False: switch to 1ph",
+            "type": "boolean"
+          }
+        },
+        "description": "Optional, in case of doubt do not implement. Report in hardware_capabilites if this command is supported. This command switches between one and three phase operation during an active charging session. Some cars can be permanently destroyed by that, so the bsp needs to implement a special sequence for the switching. The exact sequence can be defined by the BSP, but one example would be a C2->C1->B1->F->B1->B2->C2 or similar. Use with caution."
+      },
+      "allow_power_on": {
+        "arguments": {
+          "value": {
+            "$ref": "/evse_board_support#/PowerOnOff",
+            "description": "Flag and context",
+            "type": "object"
+          }
+        },
+        "description": "Sets allow_power_on flag. If false, Relais must never be switched on."
+      },
+      "enable": {
+        "arguments": {
+          "value": {
+            "description": "True: enabled, false: disabled.",
+            "type": "boolean"
+          }
+        },
+        "description": "Enables or disables the charging port. Typically disabled results in control pilot state F. It must not accept cars for new charging sessions if disabled."
+      },
+      "evse_replug": {
+        "arguments": {
+          "value": {
+            "description": "Time in ms for the duration of the replug sequence",
+            "type": "integer"
+          }
+        },
+        "description": "Optional, in case of doubt do not implement. Special command initiate a virtual replug sequence without restarting session. Emits a EvseReplugStarted event if supported and started. BSP will take care to not emit other events such as CarPluggedIn/Out during that time. Once finished it will emit a EvseReplugFinished. This is mainly for testing purposes, don't implement for production use."
+      },
+      "get_hw_capabilities": {
+        "description": "Get Hardware capability/limits. For AC these are the limits of the power path (e.g. relais etc).  For DC, these are the limits for the AC input of the ACDC converter stack, i.e. the complete AC input. Note that DC output limits are reported by the DC power supply itself.",
+        "result": {
+          "$ref": "/evse_board_support#/HardwareCapabilities",
+          "description": "Hardware capability/limits",
+          "type": "object"
+        }
+      },
+      "pwm_F": {
+        "description": "Turns PWM off with Error F (constant negative voltage)"
+      },
+      "pwm_off": {
+        "description": "Turns PWM off (constant high voltage)"
+      },
+      "pwm_on": {
+        "arguments": {
+          "value": {
+            "description": "PWM duty cycle (>0, <100)",
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          }
+        },
+        "description": "Turns PWM on with duty cycle (in percent)"
+      },
+      "setup": {
+        "arguments": {
+          "country_code": {
+            "description": "A two-letter country code in ISO 3166-1 alpha-2 format",
+            "type": "string"
+          },
+          "has_ventilation": {
+            "description": "true: Allow mode D charging, false: do not allow mode D charging",
+            "type": "boolean"
+          },
+          "three_phases": {
+            "description": "true: Three phases enabled, false: only single phase",
+            "type": "boolean"
+          }
+        },
+        "description": "Setup config options"
+      }
+    },
+    "description": "This interface defines the board support driver for AC or DC minimal power path: ControlPilot, output contactors.  Other components of the power path such as IMD(DC)/RCD(AC)/Connector Lock etc have their own interfaces.",
+    "errors": [
+      {
+        "reference": "/errors/evse_board_support"
+      }
+    ],
+    "vars": {
+      "ac_nr_of_phases_available": {
+        "description": "Instantaneous phase count available to car",
+        "maximum": 3,
+        "minimum": 1,
+        "type": "integer"
+      },
+      "ac_pp_ampacity": {
+        "$ref": "/board_support_common#/ProximityPilot",
+        "description": "Current carrying capacity of the connected cable in ampere for AC charging with a socket. Publish whenever it changes. This has no meaning for DC or AC charging with a fixed attached cable, it does not  need to be implemented and the returned value is not used in those cases.",
+        "type": "object"
+      },
+      "capabilities": {
+        "$ref": "/evse_board_support#/HardwareCapabilities",
+        "description": "Hardware capabilities/limits. Initially EvseManager will call get_hw_capabilities once to fetch the limits and caches the limits internally. The BSP module does not have to publish this variable at all, then the initially fetched capabilities will be used. The BSP may publish this variable to update limits in case they change during runtime, e.g. if the maximum current changes because the hardware gets too hot.",
+        "type": "object"
+      },
+      "event": {
+        "$ref": "/board_support_common#/BspEvent",
+        "description": "Event from ControlPilot signal/output relais",
+        "type": "object"
+      },
+      "telemetry": {
+        "$ref": "/evse_board_support#/Telemetry",
+        "description": "Other telemetry",
+        "type": "object"
+      }
+    }
+  },
+  "evse_manager": {
+    "cmds": {
+      "authorize_response": {
+        "arguments": {
+          "provided_token": {
+            "$ref": "/authorization#/ProvidedIdToken",
+            "description": "The token for which authorization was requested",
+            "type": "object"
+          },
+          "validation_result": {
+            "$ref": "/authorization#/ValidationResult",
+            "description": "The validation result",
+            "type": "object"
+          }
+        },
+        "description": "Reports the result of an authorization request to the EvseManager.  Contains the provided_token for which authorization was requested and the validation_result"
+      },
+      "cancel_reservation": {
+        "description": "Call to signal that EVSE is not reserved anymore"
+      },
+      "disable": {
+        "arguments": {
+          "connector_id": {
+            "description": "Specifies the ID of the connector. If 0, the whole EVSE should be disabled",
+            "type": "integer"
+          }
+        },
+        "description": "Disables the evse. EVSE is not available for charging after this operation",
+        "result": {
+          "description": "Returns true if evse was disabled (or was disabled before), returns false if it could not be disabled (i.e. due to communication error with hardware)",
+          "type": "boolean"
+        }
+      },
+      "enable": {
+        "arguments": {
+          "connector_id": {
+            "description": "Specifies the ID of the connector to enable. If 0, the whole EVSE should be enabled",
+            "type": "integer"
+          }
+        },
+        "description": "Enables the evse. EVSE is available for charging after this operation",
+        "result": {
+          "description": "Returns true if evse was enabled (or was enabled before), returns false if enable failed e.g. due to permanent fault.",
+          "type": "boolean"
+        }
+      },
+      "external_ready_to_start_charging": {
+        "description": "There are situations where another module needs to do some initialization after evse manager is in principle ready to start charging. This command can be used (optimally in combination with a configuration option) to delay charging ready until the external module is done with its initialization",
+        "result": {
+          "description": "Returns true if the signal was used by the evse manager implementation",
+          "type": "boolean"
+        }
+      },
+      "force_unlock": {
+        "arguments": {
+          "connector_id": {
+            "description": "Specifies the ID of the connector that should be unlocked",
+            "type": "integer"
+          }
+        },
+        "description": "Forces connector to unlock connector now. During normal operation, connector will be locked/unlocked in the correct sequence. Do not use this function except if explicitly requested by e.g. management cloud.",
+        "result": {
+          "description": "Returns true if unlocking sequence was successfully executed",
+          "type": "boolean"
+        }
+      },
+      "get_evse": {
+        "description": "Call to get information about the EVSE including its connectors",
+        "result": {
+          "$ref": "/evse_manager#/Evse",
+          "description": "Object that contains information of the EVSE including its connectors",
+          "type": "object"
+        }
+      },
+      "pause_charging": {
+        "description": "Call to signal EVSE to pause charging",
+        "result": {
+          "description": "Returns true if successfully paused or was already in paused_by_evse mode",
+          "type": "boolean"
+        }
+      },
+      "reserve": {
+        "arguments": {
+          "reservation_id": {
+            "description": "The reservation id (should be added to the TransactionStarted event)",
+            "type": "integer"
+          }
+        },
+        "description": "Call to signal that EVSE is reserved. This can be used to e.g. change the color of the HMI LEDs to indicate reservation.",
+        "result": {
+          "description": "Returns true if the EVSE accepted the reservation, else false.",
+          "type": "boolean"
+        }
+      },
+      "resume_charging": {
+        "description": "Call to signal EVSE to resume charging",
+        "result": {
+          "description": "Returns true if resume was successful, false otherwise (e.g. resuming a car pause won't work)",
+          "type": "boolean"
+        }
+      },
+      "set_external_limits": {
+        "arguments": {
+          "value": {
+            "$ref": "/energy#/ExternalLimits",
+            "description": "UUID of node that this limit applies to",
+            "type": "object"
+          }
+        },
+        "description": "Set additional external energy flow limits at this node."
+      },
+      "set_faulted": {
+        "description": "Sets the evse manager to faulted externally. It may also switch to faulted itself if it detects an internal error."
+      },
+      "set_get_certificate_response": {
+        "arguments": {
+          "certificate_response": {
+            "$ref": "/iso15118_charger#/Response_Exi_Stream_Status",
+            "description": "The response raw exi stream and the status from the CSMS system",
+            "type": "object"
+          }
+        },
+        "description": "CertificateInstallationRes/CertificateUpdateRes - Set the new/updated Contract Certificate (including the certificate chain) and the corresponding encrypted private key. Should be forwared to EVCC. This is an async response to a previously published iso15118_certificate_request"
+      },
+      "stop_transaction": {
+        "arguments": {
+          "request": {
+            "$ref": "/evse_manager#/StopTransactionRequest",
+            "description": "Request to stop the transaction.",
+            "type": "object"
+          }
+        },
+        "description": "Stops transaction and cancels charging externally, charging can only be resumed by replugging car. EVSE will also stop transaction automatically e.g. on disconnect, so this only needs to be called if the transaction should end before.",
+        "result": {
+          "description": "Returns true if successful",
+          "type": "boolean"
+        }
+      },
+      "switch_three_phases_while_charging": {
+        "arguments": {
+          "three_phases": {
+            "description": "True: switch to three phases, false: switch to single phase",
+            "type": "boolean"
+          }
+        },
+        "description": "Switch three phases while charging",
+        "result": {
+          "$ref": "/evse_manager#/SwitchThreePhasesWhileChargingResult",
+          "description": "Returns success or error code",
+          "type": "string"
+        }
+      },
+      "withdraw_authorization": {
+        "description": "Call to signals that EVSE is not further authorized to start a transaction (e.g. on a connection_timeout)"
+      }
+    },
+    "description": "This interface defines the evse manager. An evse manager represents the charging kernel of one physical connector.",
+    "errors": [
+      {
+        "reference": "/errors/evse_manager"
+      }
+    ],
+    "vars": {
+      "car_manufacturer": {
+        "$ref": "/evse_manager#/CarManufacturer",
+        "description": "Car manufacturer (if known)",
+        "type": "string"
+      },
+      "enforced_limits": {
+        "$ref": "/energy#/EnforcedLimits",
+        "description": "Enforced limits for this node (coming from the EnergyManager)",
+        "type": "object"
+      },
+      "ev_info": {
+        "$ref": "/evse_manager#/EVInfo",
+        "description": "More details about the EV if available",
+        "type": "object"
+      },
+      "evse_id": {
+        "description": "EVSE ID including the connector number, e.g. DE*PNX*E123456*1",
+        "type": "string"
+      },
+      "hw_capabilities": {
+        "$ref": "/evse_board_support#/HardwareCapabilities",
+        "description": "Hardware capability/limits",
+        "type": "object"
+      },
+      "iso15118_certificate_request": {
+        "$ref": "/iso15118_charger#/Request_Exi_Stream_Schema",
+        "description": "The vehicle requests the SECC to deliver the certificate that belong  to the currently valid contract of the vehicle. Response will be reported async via  set_get_certificate_response",
+        "type": "object"
+      },
+      "limits": {
+        "$ref": "/evse_manager#/Limits",
+        "description": "Limits of this evse, published on change",
+        "type": "object"
+      },
+      "powermeter": {
+        "$ref": "/powermeter#/Powermeter",
+        "description": "Measured dataset",
+        "type": "object"
+      },
+      "ready": {
+        "description": "Signals that the EVSE Manager is ready to start charging",
+        "type": "boolean"
+      },
+      "selected_protocol": {
+        "description": "Contains the selected protocol used for charging for informative purposes",
+        "type": "string"
+      },
+      "session_event": {
+        "$ref": "/evse_manager#/SessionEvent",
+        "description": "Emits all events related to sessions",
+        "type": "object"
+      },
+      "telemetry": {
+        "$ref": "/evse_board_support#/Telemetry",
+        "description": "Other telemetry",
+        "type": "object"
+      },
+      "waiting_for_external_ready": {
+        "description": "Signals that the EVSE Manager is in principle ready to start charging, but delays sending its ready signal waiting for the external_ready_to_start_charging command.",
+        "type": "boolean"
+      }
+    }
+  },
+  "evse_security": {
+    "cmds": {
+      "delete_certificate": {
+        "arguments": {
+          "certificate_hash_data": {
+            "$ref": "/evse_security#/CertificateHashData",
+            "description": "Indicates the certificate that should be deleted",
+            "type": "object"
+          }
+        },
+        "description": "Command to delete a certificate",
+        "result": {
+          "$ref": "/evse_security#/DeleteCertificateResult",
+          "description": "Result of the attempt to delete a certificate",
+          "type": "string"
+        }
+      },
+      "generate_certificate_signing_request": {
+        "arguments": {
+          "certificate_type": {
+            "$ref": "/evse_security#/LeafCertificateType",
+            "description": "Specifies the leaf certificate type",
+            "type": "string"
+          },
+          "common": {
+            "description": "Specifies the common name (CN) of the certificate",
+            "type": "string"
+          },
+          "country": {
+            "description": "Specifies the country name (C) of the certificate",
+            "type": "string"
+          },
+          "organization": {
+            "description": "Specifies the organization name (O) of the certificate",
+            "type": "string"
+          },
+          "use_tpm": {
+            "description": "Specifies if the CSR should store the private key on the TPM",
+            "type": "boolean"
+          }
+        },
+        "description": "Command to generate a certificate signing request for the given use",
+        "result": {
+          "description": "The certificate signing request in PEM format",
+          "type": "string"
+        }
+      },
+      "get_installed_certificates": {
+        "arguments": {
+          "certificate_types": {
+            "description": "Types of certificates to be retrieved",
+            "items": {
+              "$ref": "/evse_security#/CertificateType",
+              "minimum": 0,
+              "type": "string"
             },
-            required: ["timestamp", "energy_Wh_import"],
-            type: "object",
+            "type": "array"
+          }
+        },
+        "description": "Command to retrieve installed certificates of the EVSE",
+        "result": {
+          "$ref": "/evse_security#/GetInstalledCertificatesResult",
+          "description": "Indicates the result of the command and optional certificate hash data",
+          "type": "object"
+        }
+      },
+      "get_key_pair": {
+        "arguments": {
+          "certificate_type": {
+            "$ref": "/evse_security#/LeafCertificateType",
+            "description": "Specifies the leaf certificate type",
+            "type": "string"
           },
-          session_started: {
-            additionalProperties: false,
-            description: "data for SessionStarted event",
-            properties: {
-              energy_Wh_export: {
-                description: "Session start Wh",
-                type: "number",
-              },
-              energy_Wh_import: {
-                description: "Session start Wh",
-                type: "number",
-              },
-              signed_meter_value: {
-                description: "Signed meter value",
-                type: "string",
-              },
-              timestamp: {
-                description: "Session start timestamp",
-                type: "number",
-              },
+          "encoding": {
+            "$ref": "/evse_security#/EncodingFormat",
+            "description": "Specifies the encoding of the key",
+            "type": "string"
+          }
+        },
+        "description": "Command to get the paths of the certificate and the respective key",
+        "result": {
+          "$ref": "/evse_security#/GetKeyPairResult",
+          "description": "The response to the requested command",
+          "type": "object"
+        }
+      },
+      "get_leaf_expiry_days_count": {
+        "arguments": {
+          "certificate_type": {
+            "$ref": "/evse_security#/LeafCertificateType",
+            "description": "Indicates the type of the certificate",
+            "type": "string"
+          }
+        },
+        "description": "Command to get the days count until the given leaf certificate expires.  If no leaf certificate is installed this command will return 0",
+        "result": {
+          "description": "days count until given leaf certificate expires",
+          "type": "integer"
+        }
+      },
+      "get_mo_ocsp_request_data": {
+        "arguments": {
+          "certificate_chain": {
+            "description": "Certificate chain for which the OCSP data is retrieved",
+            "type": "string"
+          }
+        },
+        "description": "Command to retrieve the OCSP request data of the given MO certificate chain. Contains OCSP data for each certificate that is present in the chain (excluding the root)",
+        "result": {
+          "$ref": "/evse_security#/OCSPRequestDataList",
+          "description": "The OCSP request data of the given certificate chain. Contains OCSP data for each certificate in the given chain. ",
+          "type": "object"
+        }
+      },
+      "get_v2g_ocsp_request_data": {
+        "description": "Command to retrieve the OCSP request data of the V2G certificates. Contains OCSP data for each certificate that is present in the chain (excluding the root). ",
+        "result": {
+          "$ref": "/evse_security#/OCSPRequestDataList",
+          "description": "The OCSP request data of all V2G CA certificates including the Sub CAs (exluding the root)",
+          "type": "object"
+        }
+      },
+      "get_verify_file": {
+        "arguments": {
+          "certificate_type": {
+            "$ref": "/evse_security#/CaCertificateType",
+            "description": "Specifies that CA certificate type",
+            "type": "string"
+          }
+        },
+        "description": "Command to get the file path of a CA bundle that can be used for verification",
+        "result": {
+          "description": "The path of the CA bundle file",
+          "type": "string"
+        }
+      },
+      "install_ca_certificate": {
+        "arguments": {
+          "certificate": {
+            "description": "A PEM encoded X.509 certificate.",
+            "type": "string"
+          },
+          "certificate_type": {
+            "$ref": "/evse_security#/CaCertificateType",
+            "description": "Indicates the type of the certificate",
+            "type": "string"
+          }
+        },
+        "description": "Command to install a new CA certificate",
+        "result": {
+          "$ref": "/evse_security#/InstallCertificateResult",
+          "description": "Result of the attempt to install a CA certificate",
+          "type": "string"
+        }
+      },
+      "is_ca_certificate_installed": {
+        "arguments": {
+          "certificate_type": {
+            "$ref": "/evse_security#/CaCertificateType",
+            "description": "Specifies that CA certificate type",
+            "type": "string"
+          }
+        },
+        "description": "Command that indicates of the given CA certificate type is installed",
+        "result": {
+          "description": "True if CA certificate is installed, else false",
+          "type": "boolean"
+        }
+      },
+      "update_leaf_certificate": {
+        "arguments": {
+          "certificate_chain": {
+            "description": "Leaf certificate or certificate chain that should be installed",
+            "type": "string"
+          },
+          "certificate_type": {
+            "$ref": "/evse_security#/LeafCertificateType",
+            "description": "Indicates the type of the certificate",
+            "type": "string"
+          }
+        },
+        "description": "Command to install or update SECC or CSMS leaf certificate",
+        "result": {
+          "$ref": "/evse_security#/InstallCertificateResult",
+          "description": "Result of the attempt to install or update a leaf certificate",
+          "type": "string"
+        }
+      },
+      "update_ocsp_cache": {
+        "arguments": {
+          "certificate_hash_data": {
+            "$ref": "/evse_security#/CertificateHashData",
+            "description": "Certificate hash data that identifies the certificate for which the cache should be updated",
+            "type": "object"
+          },
+          "ocsp_response": {
+            "description": "OCSPResponse class as defined in IETF RFC 6960. DER and then base64 encoded",
+            "type": "string"
+          }
+        },
+        "description": "Command to update the OCSP cache with the given data"
+      },
+      "verify_certificate": {
+        "arguments": {
+          "certificate_chain": {
+            "description": "Leaf certificate or certificate chain that is to be verified",
+            "type": "string"
+          },
+          "certificate_type": {
+            "$ref": "/evse_security#/LeafCertificateType",
+            "description": "Indicates the type of the certificate",
+            "type": "string"
+          }
+        },
+        "description": "Command to verify the given certificate",
+        "result": {
+          "$ref": "/evse_security#/CertificateValidationResult",
+          "description": "Result of the verification",
+          "type": "string"
+        }
+      },
+      "verify_file_signature": {
+        "arguments": {
+          "file_path": {
+            "description": "Path to the file that should be verified",
+            "type": "string"
+          },
+          "signature": {
+            "description": "Base64 encoded file signature",
+            "type": "string"
+          },
+          "signing_certificate": {
+            "description": "Certificate with which the file was signed. PEM encoded X.509 certificate",
+            "type": "string"
+          }
+        },
+        "description": "Verify the file at the given path using the provided certificate and signature",
+        "result": {
+          "description": "True if verification succeeded, false if not",
+          "type": "boolean"
+        }
+      }
+    },
+    "description": "This interface provides security related functions and access to secure storage that an EVSE needs to provide. This includes the handling of all security related functions specified within OCPP and ISO15118. The modules that implement this interface are responsible for checking the validity period of the leaf certificates and initiate certificate signing request if leaf certificates are about to expire."
+  },
+  "example": {
+    "cmds": {
+      "uses_something": {
+        "arguments": {
+          "key": {
+            "description": "Key to check the existence for",
+            "pattern": "^[A-Za-z0-9_.]+$",
+            "type": "string"
+          }
+        },
+        "description": "This command checks if something is stored under a given key",
+        "result": {
+          "description": "Returns 'True' if something was stored for this key",
+          "type": "boolean"
+        }
+      }
+    },
+    "description": "This interface defines an example interface that uses multiple framework features",
+    "errors": [
+      {
+        "reference": "/errors/example"
+      }
+    ],
+    "vars": {
+      "max_current": {
+        "description": "Provides maximum current of this supply in ampere",
+        "type": "number"
+      }
+    }
+  },
+  "example_user": {
+    "description": "This interface defines an example_user interface that uses the example interface",
+    "errors": [
+      {
+        "reference": "/errors/example#/ExampleErrorA"
+      },
+      {
+        "reference": "/errors/example#/ExampleErrorB"
+      },
+      {
+        "reference": "/errors/example#/ExampleErrorC"
+      },
+      {
+        "reference": "/errors/example#/ExampleErrorD"
+      }
+    ]
+  },
+  "external_energy_limits": {
+    "cmds": {
+      "set_external_limits": {
+        "arguments": {
+          "value": {
+            "$ref": "/energy#/ExternalLimits",
+            "description": "External limits object",
+            "type": "object"
+          }
+        },
+        "description": "Set additional external energy flow limits at this node."
+      }
+    },
+    "description": "This interface allows to limit energy flow at a specific node of the energy tree from the outside (e.g. from ocpp).",
+    "vars": {
+      "enforced_limits": {
+        "$ref": "/energy#/EnforcedLimits",
+        "description": "Enforced limits for this node (coming from the EnergyManager)",
+        "type": "object"
+      }
+    }
+  },
+  "isolation_monitor": {
+    "cmds": {
+      "start": {
+        "description": "Start recurring isolation measurements. The device should monitor the isolation status until stopped and publish the resistance data in regular intervals. The actual interval is device dependent."
+      },
+      "stop": {
+        "description": "Stop recurring measurements. The device should stop to monitor the isolation resistance and stop publishing the data."
+      }
+    },
+    "description": "This interface defines an isolation monitoring device (IMD) according to IEC 61557-8 for DC charging. This is used to verify isolation of the DC lines before starting high voltage charging and during charging.",
+    "vars": {
+      "IsolationMeasurement": {
+        "$ref": "/isolation_monitor#/IsolationMeasurement",
+        "description": "Isolation monitoring measurement results",
+        "type": "object"
+      }
+    }
+  },
+  "kvs": {
+    "cmds": {
+      "delete": {
+        "arguments": {
+          "key": {
+            "description": "Key to delete the value for",
+            "pattern": "^[A-Za-z0-9_.]+$",
+            "type": "string"
+          }
+        },
+        "description": "This command removes the value stored under a given key"
+      },
+      "exists": {
+        "arguments": {
+          "key": {
+            "description": "Key to check the existence for",
+            "pattern": "^[A-Za-z0-9_.]+$",
+            "type": "string"
+          }
+        },
+        "description": "This command checks if something is stored under a given key",
+        "result": {
+          "description": "Returns 'True' if something was stored for this key",
+          "type": "boolean"
+        }
+      },
+      "load": {
+        "arguments": {
+          "key": {
+            "description": "Key to load the value for",
+            "pattern": "^[A-Za-z0-9_.]+$",
+            "type": "string"
+          }
+        },
+        "description": "This command loads the previously stored value for a given key (it will return null if the key does not exist)",
+        "result": {
+          "description": "The previously stored value",
+          "type": [
+            "null",
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "array",
+            "object"
+          ]
+        }
+      },
+      "store": {
+        "arguments": {
+          "key": {
+            "description": "Key to store the value for",
+            "pattern": "^[A-Za-z0-9_.]*$",
+            "type": "string"
+          },
+          "value": {
+            "description": "Value to store",
+            "type": [
+              "null",
+              "string",
+              "number",
+              "integer",
+              "boolean",
+              "array",
+              "object"
+            ]
+          }
+        },
+        "description": "This command stores a value under a given key"
+      }
+    },
+    "description": "This interface defines a simple key-value-store interface"
+  },
+  "ocpp": {
+    "cmds": {
+      "change_availability": {
+        "arguments": {
+          "request": {
+            "$ref": "/ocpp#/ChangeAvailabilityRequest",
+            "description": "The ChangeAvailabilityRequest as specified in OCPP2.0.1. For OCPP 1.6:",
+            "type": "object"
+          }
+        },
+        "description": "Allows to send a ChangeAvailabilityRequest internally (as can be done by the CSMS).",
+        "result": {
+          "$ref": "/ocpp#/ChangeAvailabilityResponse",
+          "description": "Response to ChangeAvailabilityRequest as specified in OCPP 2.0.1",
+          "type": "object"
+        }
+      },
+      "get_variables": {
+        "arguments": {
+          "requests": {
+            "description": "List of GetVariableRequest",
+            "items": {
+              "$ref": "/ocpp#/GetVariableRequest",
+              "minimum": 0,
+              "type": "object"
             },
-            required: ["timestamp", "energy_Wh_import"],
-            type: "object",
-          },
-          uuid: {
-            description: "An EVSE generated UUID for this session, can be used e.g. for database storage.",
-            type: "string",
-          },
+            "type": "array"
+          }
         },
-        required: ["uuid", "event"],
-        type: "object",
+        "description": "Command to get a variable from OCPP. With OCPP1.6: Retrieves a configuration key. With OCPP2.0.1: Retrieves a variable with value from the device model storage",
+        "result": {
+          "description": "List of GetVariableResult containing the result for every requested value. Preserves the order of the input requests.",
+          "items": {
+            "$ref": "/ocpp#/GetVariableResult",
+            "type": "object"
+          },
+          "type": "array"
+        }
       },
-      telemetry: {
-        additionalProperties: false,
-        description: "Other telemetry",
-        properties: {
-          fan_rpm: {
-            description: "RPM of the fan. 0 if off or no fan available.",
-            type: "number",
-          },
-          rcd_current: {
-            description: "Residual current in mA",
-            type: "number",
-          },
-          relais_on: {
-            description: "true if power to the car is currently on, false if off",
-            type: "boolean",
-          },
-          supply_voltage_12V: {
-            description: "Internal 12V supply voltage",
-            type: "number",
-          },
-          supply_voltage_minus_12V: {
-            description: "Internal -12V supply voltage",
-            type: "number",
-          },
-          temperature: {
-            description: "Current temperature of the EVSE in degree celsius",
-            type: "number",
-          },
-        },
-        type: "object",
-      },
-    },
-  },
-  example: {
-    cmds: {
-      uses_something: {
-        arguments: {
-          key: {
-            description: "Key to check the existence for",
-            pattern: "^[A-Za-z0-9_.]+$",
-            type: "string",
-          },
-        },
-        description: "This command checks if something is stored under a given key",
-        result: {
-          description: "Returns 'True' if something was stored for this key",
-          type: "boolean",
-        },
-      },
-    },
-    description: "This interface defines an example interface that uses multiple framework features",
-    vars: {
-      max_current: {
-        description: "Provides maximum current of this supply in ampere",
-        type: "number",
-      },
-    },
-  },
-  example_child: {
-    description:
-      "This interface defines an inherited example interface that uses multiple framework features (all inherited from base interface)",
-    parent: "example",
-  },
-  example_user: {
-    description: "This interface defines an example_user interface that uses the example interface",
-  },
-  iso15118_evcc_emu: {
-    cmds: {
-      start: {
-        arguments: {
-          arg1: {
-            additionalProperties: false,
-            description: "Arg1 desc",
-            properties: {
-              bar: {
-                type: "number",
-              },
-              foo: {
-                type: "string",
-              },
+      "monitor_variables": {
+        "arguments": {
+          "component_variables": {
+            "description": "List of ComponentVariable(s) to monitor",
+            "items": {
+              "$ref": "/ocpp#/ComponentVariable",
+              "type": "object"
             },
-            required: ["foo", "bar"],
-            type: "object",
+            "type": "array"
+          }
+        },
+        "description": "Command to start monitoring the given ComponentVariable(s). Any of the provided configuration keys will be published on change by the CSMS. Consecutive calls of this operation will not override but extend the existing monitors. With OCPP1.6: This command can be used to monitor configuration keys With OCPP2.0.1: This command can be used to monitor any kind of variable in the device model storage"
+      },
+      "restart": {
+        "description": "Connects the websocket and enables OCPP communication after a previous stop call.",
+        "result": {
+          "description": "Returns true if the service could be restarted successfully, else false",
+          "type": "boolean"
+        }
+      },
+      "security_event": {
+        "arguments": {
+          "info": {
+            "description": "Additional information about the occurred security event",
+            "type": "string"
           },
+          "type": {
+            "description": "type of the security event",
+            "type": "string"
+          }
         },
-        description: "Start a charging session",
+        "description": "Triggers a SecurityEventNotification.req at the CSMS. This event is queued with a guaranteed delivery to the CSMS."
       },
-      stop: {
-        description: "Stop current charging session",
-      },
-    },
-    description: "This unit type should emulate an ISO15118 EVCC",
-  },
-  kvs: {
-    cmds: {
-      delete: {
-        arguments: {
-          key: {
-            description: "Key to delete the value for",
-            pattern: "^[A-Za-z0-9_.]+$",
-            type: "string",
-          },
-        },
-        description: "This command removes the value stored under a given key",
-      },
-      exists: {
-        arguments: {
-          key: {
-            description: "Key to check the existence for",
-            pattern: "^[A-Za-z0-9_.]+$",
-            type: "string",
-          },
-        },
-        description: "This command checks if something is stored under a given key",
-        result: {
-          description: "Returns 'True' if something was stored for this key",
-          type: "boolean",
-        },
-      },
-      load: {
-        arguments: {
-          key: {
-            description: "Key to load the value for",
-            pattern: "^[A-Za-z0-9_.]+$",
-            type: "string",
-          },
-        },
-        description:
-          "This command loads the previously stored value for a given key (it will return null if the key does not exist)",
-        result: {
-          description: "The previously stored value",
-          type: ["null", "string", "number", "integer", "boolean", "array", "object"],
-        },
-      },
-      store: {
-        arguments: {
-          key: {
-            description: "Key to store the value for",
-            pattern: "^[A-Za-z0-9_.]*$",
-            type: "string",
-          },
-          value: {
-            description: "Value to store",
-            type: ["null", "string", "number", "integer", "boolean", "array", "object"],
-          },
-        },
-        description: "This command stores a value under a given key",
-      },
-    },
-    description: "This interface defines a simple key-value-store interface",
-  },
-  ocpp_1_6_charge_point: {
-    description: "This interface defines a OCPP 1.6 charge point",
-  },
-  power: {
-    description: "This interface defines the interface of a power supply",
-    vars: {
-      max_current: {
-        description: "This is the maximum current of the power supply",
-        maximum: 60,
-        minimum: 1,
-        type: "number",
-      },
-    },
-  },
-  power_in: {
-    description: "This interface defines the interface of a physical power supply",
-    parent: "power",
-    vars: {
-      phase_count: {
-        description: "This is the phase count of the physical power supply",
-        maximum: 3,
-        minimum: 1,
-        type: "integer",
-      },
-    },
-  },
-  power_result: {
-    description:
-      "This interface defines the interface of an augmented power supply (currently solely conforming to the power_in interface)",
-    parent: "power_in",
-  },
-  powermeter: {
-    cmds: {
-      get_signed_meter_value: {
-        arguments: {
-          auth_token: {
-            description: "Auth token",
-            maxLength: 20,
-            minLength: 1,
-            type: "string",
-          },
-        },
-        description: "Returns a signed meter value with the given auth token",
-        result: {
-          description: "Signed meter value",
-          type: "string",
-        },
-      },
-    },
-    description: "This interface defines a generic powermeter for 5 wire TN networks.",
-    vars: {
-      powermeter: {
-        additionalProperties: false,
-        description: "Measured dataset",
-        properties: {
-          current_A: {
-            additionalProperties: false,
-            description: "Current in ampere",
-            properties: {
-              L1: {
-                description: "L1 value only",
-                type: "number",
-              },
-              L2: {
-                description: "L2 value only",
-                type: "number",
-              },
-              L3: {
-                description: "L3 value only",
-                type: "number",
-              },
-              N: {
-                description: "Neutral value only",
-                type: "number",
-              },
+      "set_variables": {
+        "arguments": {
+          "requests": {
+            "description": "List of SetVariableRequests",
+            "items": {
+              "$ref": "/ocpp#/SetVariableRequest",
+              "minimum": 0,
+              "type": "object"
             },
-            required: ["L1"],
-            type: "object",
+            "type": "array"
+          }
+        },
+        "description": "Command to set a variable at OCPP. With OCPP1.6: This command can be used to set custom configuration keys (others will be rejected) With OCPP2.0.1: This command can be used to set variables in the device model storage",
+        "result": {
+          "description": "List of SetVariableResult containing the result for every requested set operation",
+          "items": {
+            "$ref": "/ocpp#/SetVariableResult",
+            "type": "object"
           },
-          energy_Wh_export: {
-            additionalProperties: false,
-            description: "Exported energy in Wh (to grid)",
-            properties: {
-              L1: {
-                description: "L1 value only",
-                type: "number",
-              },
-              L2: {
-                description: "L2 value only",
-                type: "number",
-              },
-              L3: {
-                description: "L3 value only",
-                type: "number",
-              },
-              total: {
-                description: "Sum value (which is relevant for billing)",
-                type: "number",
-              },
+          "type": "array"
+        }
+      },
+      "stop": {
+        "description": "Disconnects the websocket connection and stops the OCPP communication. No OCPP messages will be stored and sent after a restart.",
+        "result": {
+          "description": "Returns true if the service could be stopped successfully, else false",
+          "type": "boolean"
+        }
+      }
+    },
+    "description": "This interface allows to control an OCPP service and set and get data from the OCPP service. It is designed to be used for both OCPP1.6 and OCPP2.0.1 module implementations. Therefore, the vars, commands and types are based more on the definitions of OCPP2.0.1, as this offers more flexibility and it is easier to transfer to the capabilities of OCPP1.6 than vice versa.",
+    "vars": {
+      "charging_schedules": {
+        "description": "Object that contains OCPP charging schedules of all connectors. The object contains one composite charging schedule for each connector id starting from connector 0. Connector 0 contains a schedule for the whole charging station.",
+        "type": "object"
+      },
+      "event_data": {
+        "$ref": "/ocpp#/EventData",
+        "description": "Published for a component variable combination when a variable with a monitor has been changed For OCPP1.6: The object may only contain the required properties of the EventData type because in OCPP1.6\n  there is not more information available or required.\nFor OCPP2.0.1: The object may contain all available properties",
+        "type": "object"
+      },
+      "is_connected": {
+        "description": "Indicates if chargepoint is connected to CSMS",
+        "type": "boolean"
+      },
+      "ocpp_transaction_event": {
+        "$ref": "/ocpp#/OcppTransactionEvent",
+        "description": "Emits events related to OCPP transactions",
+        "type": "object"
+      },
+      "security_event": {
+        "$ref": "/ocpp#/SecurityEvent",
+        "description": "Published when an internal security event occurred",
+        "type": "object"
+      }
+    }
+  },
+  "ocpp_1_6_charge_point": {
+    "cmds": {
+      "get_configuration_key": {
+        "arguments": {
+          "keys": {
+            "description": "List of keys for which the values are requested. If empty, all keys and values are returned",
+            "items": {
+              "description": "A key",
+              "type": "string"
             },
-            required: ["total"],
-            type: "object",
-          },
-          energy_Wh_import: {
-            additionalProperties: false,
-            description: "Imported energy in Wh (from grid)",
-            properties: {
-              L1: {
-                description: "L1 value only",
-                type: "number",
-              },
-              L2: {
-                description: "L2 value only",
-                type: "number",
-              },
-              L3: {
-                description: "L3 value only",
-                type: "number",
-              },
-              total: {
-                description: "Sum value (which is relevant for billing)",
-                type: "number",
-              },
+            "type": "array"
+          }
+        },
+        "description": "Gets the response to the requested configuration key containing a list of the values of the requested keys  and a list of the keys that are unknown",
+        "result": {
+          "$ref": "/ocpp#/GetConfigurationResponse",
+          "description": "Response to the requested operation",
+          "type": "object"
+        }
+      },
+      "monitor_configuration_keys": {
+        "arguments": {
+          "keys": {
+            "description": "Keys that should be monitored",
+            "items": {
+              "description": "Key that should be montired",
+              "maximum": 50,
+              "type": "string"
             },
-            required: ["total"],
-            type: "object",
-          },
-          frequency_Hz: {
-            additionalProperties: false,
-            description: "Grid frequency in Hertz",
-            properties: {
-              L1: {
-                description: "L1 value",
-                type: "number",
-              },
-              L2: {
-                description: "L2 value",
-                type: "number",
-              },
-              L3: {
-                description: "L3 value",
-                type: "number",
-              },
-            },
-            required: ["L1"],
-            type: "object",
-          },
-          meter_id: {
-            description: "A (user defined) meter if (e.g. id printed on the case)",
-            type: "string",
-          },
-          phase_seq_error: {
-            description: "true for 3 phase rotation error (ccw)",
-            type: "boolean",
-          },
-          power_W: {
-            additionalProperties: false,
-            description: "Instantaneous power in Watt. Negative values are exported, positive values imported Energy.",
-            properties: {
-              L1: {
-                description: "L1 value only",
-                type: "number",
-              },
-              L2: {
-                description: "L2 value only",
-                type: "number",
-              },
-              L3: {
-                description: "L3 value only",
-                type: "number",
-              },
-              total: {
-                description: "Sum value",
-                type: "number",
-              },
-            },
-            required: ["total"],
-            type: "object",
-          },
-          timestamp: {
-            description: "Timestamp of measurement",
-            type: "number",
-          },
-          voltage_V: {
-            additionalProperties: false,
-            description: "Voltage in Volts",
-            properties: {
-              L1: {
-                description: "L1 value only",
-                type: "number",
-              },
-              L2: {
-                description: "L2 value only",
-                type: "number",
-              },
-              L3: {
-                description: "L3 value only",
-                type: "number",
-              },
-            },
-            required: ["L1"],
-            type: "object",
-          },
+            "type": "array"
+          }
         },
-        required: ["timestamp"],
-        type: "object",
+        "description": "Monitors the given configuration key. In case this configuration keys is changed by the CSMS the configuration key the changed configuration key will be published. Consecutive calls of this operation will not override but extend the existing monitors"
       },
+      "restart": {
+        "description": "Connects the websocket and enables OCPP communication after a previous stop call.",
+        "result": {
+          "description": "Returns true if the service could be restarted successfully, else false",
+          "type": "boolean"
+        }
+      },
+      "security_event": {
+        "arguments": {
+          "info": {
+            "description": "Additional information about the occurred security event",
+            "type": "string"
+          },
+          "type": {
+            "description": "type of the security event",
+            "type": "string"
+          }
+        },
+        "description": "Triggers a SecurityEventNotification.req at the CSMS. This event is queued with a guaranteed delivery to the CSMS."
+      },
+      "set_custom_configuration_key": {
+        "arguments": {
+          "key": {
+            "description": "Key that should be set",
+            "maximum": 50,
+            "type": "string"
+          },
+          "value": {
+            "description": "Value that should be set for the given key",
+            "maximum": 500,
+            "type": "string"
+          }
+        },
+        "description": "Command to set a custom configuration key. Its not possible to set standardized configuration keys externally",
+        "result": {
+          "$ref": "/ocpp#/ConfigurationStatus",
+          "description": "Indicates the result of the requested operation",
+          "type": "string"
+        }
+      },
+      "stop": {
+        "description": "Disconnects the websocket connection and stops the OCPP communication. No OCPP messages will be stored and sent after a restart.",
+        "result": {
+          "description": "Returns true if the service could be stopped successfully, else false",
+          "type": "boolean"
+        }
+      }
     },
+    "description": "This interface defines a OCPP 1.6 charge point",
+    "vars": {
+      "charging_schedules": {
+        "description": "Object that contains OCPP charging schedules of all connectors. The object contains one composite charging schedule for each connector id starting from connector 0. Connector 0 contains a schedule for the whole charging station.",
+        "type": "object"
+      },
+      "configuration_key": {
+        "$ref": "/ocpp#/KeyValue",
+        "description": "Published when a configuration key has been changed by the CSMS and a monitor has been registered using the command monitor_configuration_keys",
+        "type": "object"
+      },
+      "is_connected": {
+        "description": "Indicates if chargepoint is connected to CSMS",
+        "type": "boolean"
+      },
+      "security_event": {
+        "$ref": "/ocpp#/SecurityEvent",
+        "description": "Published when an internal security event occured",
+        "type": "object"
+      }
+    }
   },
-  slac: {
-    cmds: {
-      dlink_error: {
-        description: "Terminate the data link and restart the matching process.",
-        result: {
-          description: "True on success.",
-          type: "boolean",
+  "ocpp_data_transfer": {
+    "cmds": {
+      "data_transfer": {
+        "arguments": {
+          "request": {
+            "$ref": "/ocpp#/DataTransferRequest",
+            "description": "Request object containing data transfer request",
+            "type": "object"
+          }
         },
-      },
-      dlink_pause: {
-        description: "Request power saving mode, while staying MATCHED.",
-        result: {
-          description: "True on success.",
-          type: "boolean",
-        },
-      },
-      dlink_terminate: {
-        description: "Terminate the data link and become UNMATCHED.",
-        result: {
-          description: "True on success.",
-          type: "boolean",
-        },
-      },
-      enter_bcd: {
-        description: "Signal pilot state change to B/C/D from A/E/F.",
-        result: {
-          description: "True on success.",
-          type: "boolean",
-        },
-      },
-      error_sequence_reset: {
-        arguments: {
-          successful: {
-            description: "Whether the error sequence could be done and was successful",
-            type: "boolean",
-          },
-        },
-        description: "Signal that the error sequence has finished.",
-        result: {
-          description: "True on success.",
-          type: "boolean",
-        },
-      },
-      leave_bcd: {
-        description: "Signal pilot state change to A/E/F from B/C/D.",
-        result: {
-          description: "True on success.",
-          type: "boolean",
-        },
-      },
-      reset: {
-        description: "Reset SLAC. Not implemented yet.",
-      },
+        "description": "Performs a OCPP data transfer request and returns the response",
+        "result": {
+          "$ref": "/ocpp#/DataTransferResponse",
+          "description": "Result object containing data transfer response",
+          "type": "object"
+        }
+      }
     },
-    description: "ISO15118-3 SLAC interface",
-    vars: {
-      dlink_ready: {
-        description:
-          "Inform higher layers about a change in data link status. Emits true if link was set up and false when the link is shut down.",
-        type: "boolean",
-      },
-      request_error_routine: {
-        description: "Inform the higher layer to execute the error routine for a SLAC connection retry",
-        type: "null",
-      },
-      state: {
-        description: "Provides the state enum.",
-        enum: ["UNMATCHED", "MATCHING", "MATCHED"],
-        type: "string",
-      },
-    },
+    "description": "This interface defines a OCPP data transfer"
   },
-  solar: {
-    description: "This interface defines the interface of a solar module",
-    parent: "power",
+  "power": {
+    "description": "This interface defines the interface of a power supply",
+    "vars": {
+      "max_current": {
+        "description": "This is the maximum current of the power supply",
+        "maximum": 60,
+        "minimum": 1,
+        "type": "number"
+      }
+    }
   },
-  solar_forecast: {
-    description: "This interface defines the interface for an solar energy production forecast",
-    vars: {
-      forecast: {
-        description: "Forecast JSON Object containing a timestamp and the energy forecast in watthours.",
-        type: "object",
+  "power_supply_DC": {
+    "cmds": {
+      "getCapabilities": {
+        "description": "Get capabilities of power supply",
+        "result": {
+          "$ref": "/power_supply_DC#/Capabilities",
+          "description": "Capabilities",
+          "type": "object"
+        }
       },
+      "setExportVoltageCurrent": {
+        "arguments": {
+          "current": {
+            "description": "Output current limit in Ampere",
+            "type": "number"
+          },
+          "voltage": {
+            "description": "Output voltage in Volt",
+            "type": "number"
+          }
+        },
+        "description": "Set output target voltage limit. Must be within reported limits."
+      },
+      "setImportVoltageCurrent": {
+        "arguments": {
+          "current": {
+            "description": "Input current limit in Ampere",
+            "type": "number"
+          },
+          "voltage": {
+            "description": "Current will be drawn if input is above this voltage (in Volt)",
+            "type": "number"
+          }
+        },
+        "description": "Set minimal import voltage and current limit.  Must be within reported limits."
+      },
+      "setMode": {
+        "arguments": {
+          "value": {
+            "$ref": "/power_supply_DC#/Mode",
+            "description": "Operation mode of power supply",
+            "type": "string"
+          }
+        },
+        "description": "Set operation mode of the bidirectional DC power supply"
+      }
     },
+    "description": "Interface for power supplies used for DC charging",
+    "vars": {
+      "fault_code": {
+        "$ref": "/power_supply_DC#/FaultCode",
+        "description": "Fault code. Published when fault happens.",
+        "type": "string"
+      },
+      "mode": {
+        "$ref": "/power_supply_DC#/Mode",
+        "description": "Current mode. Published on change.",
+        "type": "string"
+      },
+      "voltage_current": {
+        "$ref": "/power_supply_DC#/VoltageCurrent",
+        "description": "Voltage/Current at the input/output",
+        "type": "object"
+      }
+    }
   },
-  sunspec_reader: {
-    description:
-      "This interface defines a generic Sunspec reader, which can be used to fetch values from Sunspec devices when an implementation is given.",
-    vars: {
-      measurement: {
-        additionalProperties: true,
-        description: "Measured dataset",
-        properties: {
-          timestamp: {
-            description: "Timestamp of measurement",
-            type: "number",
-          },
-          value: {
-            description: "Measurement value",
-            type: "number",
-          },
+  "powermeter": {
+    "cmds": {
+      "start_transaction": {
+        "arguments": {
+          "value": {
+            "$ref": "/powermeter#/TransactionReq",
+            "description": "All information that should be included in the signed OCMF packet",
+            "type": "object"
+          }
         },
-        required: ["timestamp"],
-        type: "object",
+        "description": "Starts a transaction on the power meter (for signed metering according to German Eichrecht)",
+        "result": {
+          "$ref": "/powermeter#/TransactionStartResponse",
+          "description": "True on success, False if transaction could not be started in the power meter",
+          "type": "object"
+        }
       },
+      "stop_transaction": {
+        "arguments": {
+          "transaction_id": {
+            "description": "Transaction id",
+            "type": "string"
+          }
+        },
+        "description": "Stop the transaction on the power meter and return the signed metering information",
+        "result": {
+          "$ref": "/powermeter#/TransactionStopResponse",
+          "description": "Response to transaction stop request including OCMF string.",
+          "type": "object"
+        }
+      }
     },
+    "description": "This interface defines a generic powermeter for 5 wire TN networks.",
+    "vars": {
+      "powermeter": {
+        "$ref": "/powermeter#/Powermeter",
+        "description": "Measured dataset",
+        "type": "object"
+      }
+    }
   },
-  sunspec_scanner: {
-    cmds: {
-      scan_device: {
-        arguments: {
-          ip_address: {
-            description: "local IP-address of the Sunspec device",
-            pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
-            type: "string",
-          },
+  "reservation": {
+    "cmds": {
+      "cancel_reservation": {
+        "arguments": {
+          "reservation_id": {
+            "description": "Id of the reservation",
+            "type": "integer"
+          }
         },
-        description: "Scans complete device",
-        result: {
-          description: "Returns a json overview of the scan",
-          type: "object",
-        },
+        "description": "Cancels the reservation with the given reservation_id",
+        "result": {
+          "description": "Returns true if reservation was cancelled. Returns false if there was no reservation to cancel.",
+          "type": "boolean"
+        }
       },
-      scan_network: {
-        description: "Scans local network",
-        result: {
-          description: "Returns a json overview of the scan",
-          type: "object",
-        },
-      },
-      scan_port: {
-        arguments: {
-          ip_address: {
-            description: "local IP-address of the Sunspec device",
-            pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
-            type: "string",
+      "reserve_now": {
+        "arguments": {
+          "connector_id": {
+            "description": "The id of the connector to be reserved. A value of 0 means that the reservation is not for a specific connector",
+            "type": "integer"
           },
-          port: {
-            description: "Modbus port",
-            minimum: 0,
-            type: "integer",
-          },
+          "reservation": {
+            "$ref": "/reservation#/Reservation",
+            "description": "The information about the Reservation to be placed",
+            "type": "object"
+          }
         },
-        description: "Scans all units at a device's port",
-        result: {
-          description: "Returns a json overview of the scan",
-          type: "object",
-        },
-      },
-      scan_unit: {
-        arguments: {
-          ip_address: {
-            description: "local IP-address of the Sunspec device",
-            pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
-            type: "string",
-          },
-          port: {
-            description: "Modbus port",
-            minimum: 0,
-            type: "integer",
-          },
-          unit: {
-            description: "Modbus unit id",
-            minimum: 0,
-            type: "integer",
-          },
-        },
-        description: "Scans specific unit at a device's port",
-        result: {
-          description: "Returns a json overview of the scan",
-          type: "object",
-        },
-      },
+        "description": "Reserves this evse.",
+        "result": {
+          "$ref": "/reservation#/ReservationResult",
+          "description": "Returns Accepted if reservation was succesfull or specifies error code.",
+          "type": "string"
+        }
+      }
     },
-    description: "This class defines the global Sunspec scanner",
+    "description": "Interface for reservations",
+    "vars": {}
   },
-  tibber_price_forecast: {
-    description: "This interface defines the interface for an energy price forecast",
-    vars: {
-      forecast: {
-        description: "Forecast JSON Object containing a timestamp and the price forecast",
-        type: "object",
-      },
-    },
-  },
-  yeti_extras: {
-    cmds: {
-      firmware_update: {
-        arguments: {
-          firmware_binary: {
-            description: "Path to firmware binary file that should be sent to Yeti Controller",
-            type: "string",
+  "serial_communication_hub": {
+    "cmds": {
+      "modbus_read_holding_registers": {
+        "arguments": {
+          "first_register_address": {
+            "description": "Start address for read operation (16 bit address)",
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
           },
-        },
-        description: "This command reboots Yeti in firmware upgrade mode",
-      },
-    },
-    description: "This interface defines Yeti extra funtionality not found in the generic interfaces",
-    vars: {
-      hw_revision: {
-        description: "Provides the hw_revision",
-        type: "integer",
-      },
-      hw_type: {
-        description: "Provides the hw_type",
-        type: "integer",
-      },
-      protocol_version_major: {
-        description: "Provides the protocol_version_major",
-        type: "integer",
-      },
-      protocol_version_minor: {
-        description: "Provides the protocol_version_minor",
-        type: "integer",
-      },
-      sw_version_string: {
-        description: "Provides the sw_version_string",
-        type: "string",
-      },
-      time_stamp: {
-        description: "Provides the current time stamp",
-        type: "integer",
-      },
-    },
-  },
-  yeti_simulation_control: {
-    cmds: {
-      enable: {
-        arguments: {
-          value: {
-            description: "true to enable, false to disable",
-            type: "boolean",
+          "num_registers_to_read": {
+            "description": "Number of registers to read (16 bit each)",
+            "minimum": 1,
+            "type": "integer"
           },
+          "target_device_id": {
+            "description": "ID (1 byte) of the device to send the commands to",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          }
         },
-        description: "Enable/disable the simulation",
+        "description": "Send a Modbus RTU 'read holding registers' command via serial interface to the target hardware. (return value: response)",
+        "result": {
+          "$ref": "/serial_comm_hub_requests#/Result",
+          "description": "Result of the transfer",
+          "type": "object"
+        }
       },
-      setSimulationData: {
-        arguments: {
-          value: {
-            additionalProperties: false,
-            description: "simulation data",
-            minProperties: 8,
-            properties: {
-              cp_voltage: {
-                description: "CP Voltage level [V]",
-                type: "number",
-              },
-              currents: {
-                additionalProperties: false,
-                description: "Currents in Ampere",
-                minProperties: 4,
-                properties: {
-                  L1: {
-                    type: "number",
-                  },
-                  L2: {
-                    type: "number",
-                  },
-                  L3: {
-                    type: "number",
-                  },
-                  N: {
-                    type: "number",
-                  },
-                },
-                type: "object",
-              },
-              diode_fail: {
-                description: "Set to true to simulate a diode failure",
-                type: "boolean",
-              },
-              error_e: {
-                description: "Set to true to simulate Error E (CP-PE short)",
-                type: "boolean",
-              },
-              frequencies: {
-                additionalProperties: false,
-                description: "Frequencies in Hertz",
-                minProperties: 3,
-                properties: {
-                  L1: {
-                    type: "number",
-                  },
-                  L2: {
-                    type: "number",
-                  },
-                  L3: {
-                    type: "number",
-                  },
-                },
-                type: "object",
-              },
-              pp_resistor: {
-                description: "PP resistor value [Ohm]",
-                type: "number",
-              },
-              rcd_current: {
-                description: "RCD current in mA",
-                type: "number",
-              },
-              voltages: {
-                additionalProperties: false,
-                description: "Voltages in Volt",
-                minProperties: 3,
-                properties: {
-                  L1: {
-                    type: "number",
-                  },
-                  L2: {
-                    type: "number",
-                  },
-                  L3: {
-                    type: "number",
-                  },
-                },
-                type: "object",
-              },
-            },
-            type: "object",
+      "modbus_read_input_registers": {
+        "arguments": {
+          "first_register_address": {
+            "description": "Start address for read operation (16 bit address)",
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
           },
+          "num_registers_to_read": {
+            "description": "Number of registers to read (16 bit each)",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "target_device_id": {
+            "description": "ID (1 byte) of the device to send the commands to",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          }
         },
-        description: "Sends a new simulation data object",
+        "description": "Send a Modbus RTU 'read input registers' command via serial interface to the target hardware. (return value: response)",
+        "result": {
+          "$ref": "/serial_comm_hub_requests#/Result",
+          "description": "Result of the transfer",
+          "type": "object"
+        }
       },
+      "modbus_write_multiple_registers": {
+        "arguments": {
+          "data_raw": {
+            "$ref": "/serial_comm_hub_requests#/VectorUint16",
+            "description": "Data content to be written to the above selected registers (in 16 bit words)",
+            "type": "object"
+          },
+          "first_register_address": {
+            "description": "Start address for write operation (16 bit address)",
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "target_device_id": {
+            "description": "ID (1 byte) of the device to send the commands to",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "description": "Send a Modbus RTU 'write multiple registers' command via serial interface to the target hardware. (return value: response)",
+        "result": {
+          "$ref": "/serial_comm_hub_requests#/StatusCodeEnum",
+          "description": "Status code of the transfer",
+          "type": "string"
+        }
+      },
+      "modbus_write_single_register": {
+        "arguments": {
+          "data": {
+            "description": "Data content to be written to the above selected register",
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "register_address": {
+            "description": "Address of the register to write to (16 bit address)",
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "target_device_id": {
+            "description": "ID (1 byte) of the device to send the commands to",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "description": "Send a Modbus RTU 'write single register' command via serial interface to the target hardware. (return value: response)",
+        "result": {
+          "$ref": "/serial_comm_hub_requests#/StatusCodeEnum",
+          "description": "Status code of the transfer",
+          "type": "string"
+        }
+      },
+      "nonstd_read": {
+        "arguments": {
+          "first_register_address": {
+            "description": "Start address for write operation (16 bit address)",
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "num_registers_to_read": {
+            "description": "Number of registers to read (16 bit each)",
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "target_device_id": {
+            "description": "ID (1 byte) of the device to send the commands to",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "description": "Non standard mode to read registers in read coils mode, but getting a malformed reply. Used e.g. by GYDCG-UBC1 isolation monitor.",
+        "result": {
+          "$ref": "/serial_comm_hub_requests#/Result",
+          "description": "Result of the transfer",
+          "type": "object"
+        }
+      },
+      "nonstd_write": {
+        "arguments": {
+          "first_register_address": {
+            "description": "Start address for read operation (16 bit address)",
+            "maximum": 65535,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "num_registers_to_read": {
+            "description": "Number of registers to read (16 bit each)",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "target_device_id": {
+            "description": "ID (1 byte) of the device to send the commands to",
+            "maximum": 255,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "description": "Non standard mode to write registers in read discrete input mode without waiting for reply. Used e.g. by GYDCG-UBC1 isolation monitor."
+      }
     },
-    description: "This defines a HIL simulation interface",
-    vars: {
-      enabled: {
-        description: "Indicates whether simulation interface is currently active or not",
-        type: "boolean",
-      },
-      simulation_feedback: {
-        description:
-          "Feedback from simulation (everything that a car can measure on the CP signal plus the indication whether relais are on or off)",
-        type: "object",
-      },
-    },
+    "description": "This interface provides multiplexed access to one serial port (e.g. RS485) for multiple clients."
   },
+  "session_cost": {
+    "description": "This interface publishes the running or finished session costs. This interface provides cost of one session. If we have more than one EVESEID, we need to  instantiate this interface for each EVSE.",
+    "vars": {
+      "session_cost": {
+        "$ref": "/session_cost#/SessionCost",
+        "description": "Session cost object containing the total cost of the session and a list of chunks",
+        "type": "object"
+      }
+    }
+  },
+  "slac": {
+    "cmds": {
+      "dlink_error": {
+        "description": "Terminate the data link and restart the matching process.",
+        "result": {
+          "description": "True on success.",
+          "type": "boolean"
+        }
+      },
+      "dlink_pause": {
+        "description": "Request power saving mode, while staying MATCHED.",
+        "result": {
+          "description": "True on success.",
+          "type": "boolean"
+        }
+      },
+      "dlink_terminate": {
+        "description": "Terminate the data link and become UNMATCHED.",
+        "result": {
+          "description": "True on success.",
+          "type": "boolean"
+        }
+      },
+      "enter_bcd": {
+        "description": "Signal pilot state change to B/C/D from A/E/F.",
+        "result": {
+          "description": "True on success, returns False if transition was unexpected and cannot be handled by SLAC state machine.",
+          "type": "boolean"
+        }
+      },
+      "leave_bcd": {
+        "description": "Signal pilot state change to A/E/F from B/C/D.",
+        "result": {
+          "description": "True on success, returns False if transition was unexpected and cannot be handled by SLAC state machine.",
+          "type": "boolean"
+        }
+      },
+      "reset": {
+        "arguments": {
+          "enable": {
+            "description": "true: start SLAC after reset, false: stop SLAC",
+            "type": "boolean"
+          }
+        },
+        "description": "Reset SLAC"
+      }
+    },
+    "description": "ISO15118-3 SLAC interface for EVSE side",
+    "vars": {
+      "dlink_ready": {
+        "description": "Inform higher layers about a change in data link status. Emits true if link was set up and false when the link is shut down.",
+        "type": "boolean"
+      },
+      "ev_mac_address": {
+        "description": "Inform higher layers about the MAC address of the vehicle (upper case)",
+        "pattern": "^[A-F0-9]{2}(:[A-F0-9]{2}){5}$",
+        "type": "string"
+      },
+      "request_error_routine": {
+        "description": "Inform the higher layer to execute the error routine for a SLAC connection retry",
+        "type": "null"
+      },
+      "state": {
+        "description": "Provides the state enum.",
+        "enum": [
+          "UNMATCHED",
+          "MATCHING",
+          "MATCHED"
+        ],
+        "type": "string"
+      }
+    }
+  },
+  "solar_forecast": {
+    "description": "This interface defines the interface for an solar energy production forecast",
+    "vars": {
+      "forecast": {
+        "description": "Forecast JSON Object containing a timestamp and the energy forecast in watthours.",
+        "type": "object"
+      }
+    }
+  },
+  "sunspec_ac_meter": {
+    "cmds": {
+      "get_sunspec_ac_meter_value": {
+        "arguments": {
+          "auth_token": {
+            "description": "Auth token",
+            "maxLength": 20,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "description": "Returns a sunspec ac meter model",
+        "result": {
+          "$ref": "/sunspec_ac_meter#/Result",
+          "description": "Sunspec ac meter model",
+          "type": "object"
+        }
+      }
+    },
+    "description": "Get sunspec ac meter measurement"
+  },
+  "sunspec_reader": {
+    "description": "This interface defines a generic Sunspec reader, which can be used to fetch values from Sunspec devices when an implementation is given.",
+    "vars": {
+      "measurement": {
+        "additionalProperties": true,
+        "description": "Measured dataset",
+        "properties": {
+          "timestamp": {
+            "description": "Timestamp of measurement",
+            "type": "number"
+          },
+          "value": {
+            "description": "Measurement value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "timestamp"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "sunspec_scanner": {
+    "cmds": {
+      "scan_device": {
+        "arguments": {
+          "ip_address": {
+            "description": "local IP-address of the Sunspec device",
+            "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
+            "type": "string"
+          }
+        },
+        "description": "Scans complete device",
+        "result": {
+          "description": "Returns a json overview of the scan",
+          "type": "object"
+        }
+      },
+      "scan_network": {
+        "description": "Scans local network",
+        "result": {
+          "description": "Returns a json overview of the scan",
+          "type": "object"
+        }
+      },
+      "scan_port": {
+        "arguments": {
+          "ip_address": {
+            "description": "local IP-address of the Sunspec device",
+            "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
+            "type": "string"
+          },
+          "port": {
+            "description": "Modbus port",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "description": "Scans all units at a device's port",
+        "result": {
+          "description": "Returns a json overview of the scan",
+          "type": "object"
+        }
+      },
+      "scan_unit": {
+        "arguments": {
+          "ip_address": {
+            "description": "local IP-address of the Sunspec device",
+            "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
+            "type": "string"
+          },
+          "port": {
+            "description": "Modbus port",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "unit": {
+            "description": "Modbus unit id",
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "description": "Scans specific unit at a device's port",
+        "result": {
+          "description": "Returns a json overview of the scan",
+          "type": "object"
+        }
+      }
+    },
+    "description": "This class defines the global Sunspec scanner"
+  },
+  "system": {
+    "cmds": {
+      "allow_firmware_installation": {
+        "description": "Call to allow a firmware installation to proceed"
+      },
+      "get_boot_reason": {
+        "description": "Call to get the boot reason of the system",
+        "result": {
+          "$ref": "/system#/BootReason",
+          "description": "Returns the boot reason of the system",
+          "type": "string"
+        }
+      },
+      "is_reset_allowed": {
+        "arguments": {
+          "type": {
+            "$ref": "/system#/ResetType",
+            "description": "Type of the reset (Soft or Hard)",
+            "type": "string"
+          }
+        },
+        "description": "Call to determine if a reset of the system is allowed",
+        "result": {
+          "description": "Indicates if the system can be reset",
+          "type": "boolean"
+        }
+      },
+      "reset": {
+        "arguments": {
+          "scheduled": {
+            "description": "Indicates if this reset command was scheduled or immediately executed. A scheduled reset means that the system was waiting for all transactions to finish before this command was executed. This value is only informational.",
+            "type": "boolean"
+          },
+          "type": {
+            "$ref": "/system#/ResetType",
+            "description": "Type of the reset (Soft or Hard)",
+            "type": "string"
+          }
+        },
+        "description": "Call to reset the system immediately"
+      },
+      "set_system_time": {
+        "arguments": {
+          "timestamp": {
+            "description": "The new system time in RFC3339 format",
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "description": "Call to set the system time of EVerest",
+        "result": {
+          "description": "Returns true if the system time could be set successfully, else false",
+          "type": "boolean"
+        }
+      },
+      "update_firmware": {
+        "arguments": {
+          "firmware_update_request": {
+            "$ref": "/system#/FirmwareUpdateRequest",
+            "description": "Meta data containing information about the firmware request",
+            "type": "object"
+          }
+        },
+        "description": "Call to start a firmware update",
+        "result": {
+          "$ref": "/system#/UpdateFirmwareResponse",
+          "description": "Returns the result of the attempt to update the firmware",
+          "type": "string"
+        }
+      },
+      "upload_logs": {
+        "arguments": {
+          "upload_logs_request": {
+            "$ref": "/system#/UploadLogsRequest",
+            "description": "Meta data containing information about the log request request",
+            "type": "object"
+          }
+        },
+        "description": "Call to start a log upload",
+        "result": {
+          "$ref": "/system#/UploadLogsResponse",
+          "description": "Returns the result of the attempt to upload the logs",
+          "type": "object"
+        }
+      }
+    },
+    "description": "Interface for system wide operations of EVerest",
+    "vars": {
+      "firmware_update_status": {
+        "$ref": "/system#/FirmwareUpdateStatus",
+        "description": "Describes the current status of a firmware update of the system",
+        "type": "object"
+      },
+      "log_status": {
+        "$ref": "/system#/LogStatus",
+        "description": "Describes the current status of log upload of the system",
+        "type": "object"
+      }
+    }
+  },
+  "test_control": {
+    "cmds": {
+      "start_charging": {
+        "arguments": {
+          "mode": {
+            "description": "Sets charging mode (e.g. raw, iso15118)",
+            "maxLength": 20,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "description": "Enables the CarSimulator to begin charging",
+        "result": {
+          "description": "Charging state of the CarSimulator",
+          "type": "string"
+        }
+      }
+    },
+    "description": "This interface defines the everest-testing control functions on everest-core",
+    "vars": {
+      "state": {
+        "description": "State of the test control instance",
+        "type": "string"
+      }
+    }
+  },
+  "tibber_price_forecast": {
+    "description": "This interface defines the interface for an energy price forecast",
+    "vars": {
+      "forecast": {
+        "description": "Forecast JSON Object containing a timestamp and the price forecast",
+        "type": "object"
+      }
+    }
+  },
+  "uk_random_delay": {
+    "cmds": {
+      "cancel": {
+        "description": "Cancels a running random delay. The effect is the same as if the time expired just now."
+      },
+      "disable": {
+        "description": "Call to disable the random delay feature"
+      },
+      "enable": {
+        "description": "Call to enable the random delay feature"
+      },
+      "set_duration_s": {
+        "arguments": {
+          "value": {
+            "description": "Maximum duration in seconds",
+            "type": "integer"
+          }
+        },
+        "description": "Set the maximum duration of the random delay. Default is 600 seconds."
+      }
+    },
+    "description": "This interface provides functions for a random delay feature as required by the UK smart charging regulations The logic whether to use a random delay or not is not included in EvseManager, a different module can use this interface to enable/disable the feature during runtime and cancel a running random delay. This always applies to all connectors of this EVSE. By default, on start up, random delays are disabled.",
+    "vars": {
+      "countdown": {
+        "$ref": "/uk_random_delay#/CountDown",
+        "description": "Countdown of the currently running random delay",
+        "type": "object"
+      }
+    }
+  },
+  "yeti_simulation_control": {
+    "cmds": {
+      "enable": {
+        "arguments": {
+          "value": {
+            "description": "true to enable, false to disable",
+            "type": "boolean"
+          }
+        },
+        "description": "Enable/disable the simulation"
+      },
+      "setSimulationData": {
+        "arguments": {
+          "value": {
+            "$ref": "/yeti#/SimulationData",
+            "description": "simulation data",
+            "type": "object"
+          }
+        },
+        "description": "Sends a new simulation data object"
+      }
+    },
+    "description": "This defines a HIL simulation interface",
+    "vars": {
+      "enabled": {
+        "description": "Indicates whether simulation interface is currently active or not",
+        "type": "boolean"
+      },
+      "simulation_feedback": {
+        "description": "Feedback from simulation (everything that a car can measure on the CP signal plus the indication whether relais are on or off)",
+        "type": "object"
+      }
+    }
+  }
 } as EverestInterfaceDefinitionList;
