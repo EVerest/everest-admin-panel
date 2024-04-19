@@ -1,17 +1,22 @@
 <!-- SPDX-License-Identifier: Apache-2.0
      Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest -->
 <template>
-  <v-dialog>
+  <v-dialog v-model="dialogVisible">
     <template v-slot:activator="{ props: activatorProps }">
       <slot name="activator" :activatorProps="activatorProps"></slot>
     </template>
     <template v-slot:default="{ isActive }">
-      <v-card title="Config Preview">
-        <v-card-text>
-          <div class="controls">
-            <v-btn icon="mdi-download" @click="downloadConfig()"></v-btn>
-            <v-btn icon="mdi-content-copy" @click="copyConfig()"></v-btn>
+      <v-card>
+        <v-card-title>
+          <div class="title-content">
+            <div class="controls">
+              <v-btn icon="mdi-download" @click="downloadConfig()"></v-btn>
+              <v-btn icon="mdi-content-copy" @click="copyConfig()"></v-btn>
+            </div>
+            <v-btn class="close-button" icon="mdi-close" variant="plain" density="compact" @click="closeDialog()"></v-btn>
           </div>
+        </v-card-title>
+        <v-card-text>
           <v-tabs v-model="tab">
             <v-tab value="yaml">
               YAML
@@ -35,12 +40,17 @@
 </template>
 
 <style scoped lang="scss">
+  .title-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    .controls {
+      margin-top: 0.5rem;
+    }
+  }
   .controls {
     display: flex;
-    justify-content: flex-end;
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
     gap: 0.5rem;
   }
 </style>
@@ -61,7 +71,11 @@ import {Notyf} from "notyf";
 import yaml from 'js-yaml';
 
 const notyf = inject<Notyf>('notyf')
+const dialogVisible = ref<boolean>(false);
 
+const closeDialog = () => {
+  dialogVisible.value = false;
+}
 
 const props = defineProps<{
   config: EVConfigModel,
