@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-t8wwjsHg.js"(exports, module) {
+  "assets/index-cTMWzZGy.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -48870,9 +48870,9 @@ Reason: ${error2}`);
         return base2 + filePath.slice(1);
       }
     }
-    const _withScopeId = (n) => (pushScopeId("data-v-fcfd6d00"), n = n(), popScopeId(), n);
+    const _withScopeId = (n) => (pushScopeId("data-v-c906de4b"), n = n(), popScopeId(), n);
     const _hoisted_1$4 = { class: "btn-container" };
-    const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
+    const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Upload Config", -1));
     const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
     const _hoisted_4 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Abort", -1));
     const _hoisted_5 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
@@ -49117,7 +49117,7 @@ Reason: ${error2}`);
         };
       }
     });
-    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-fcfd6d00"]]);
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-c906de4b"]]);
     let evbcStore;
     let evbc;
     let notyf;
