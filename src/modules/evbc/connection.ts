@@ -5,7 +5,8 @@ import {RpcIssuer} from "./rpc/abstractRpcIssuer";
 import {LoopbackRpcIssuer} from "@/modules/evbc/rpc/loopbackRpcIssuer";
 import {WebsocketRpcIssuer} from "@/modules/evbc/rpc/websocketRpcIssuer";
 
-export const LOOPBACK_WAIT_MS = 500;
+// set a value greater than 0 to simulate a delay in the loopback mode
+export const LOOPBACK_WAIT_MS = 0;
 
 type ConnectionOpenStatus = {
   type: "OPEN";
