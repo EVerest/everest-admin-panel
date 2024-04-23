@@ -14,13 +14,17 @@ jobs:
   create-shrinkwrap:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Read .nvmrc
+        id: nvmrc
+        shell: bash
+        run: echo version=$(cat .nvmrc) >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node.js ${{ steps.nvmrc.outputs.version }}
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ steps.nvmrc.outputs.version }}
 
       - name: Generate npm-shrinkwrap.json
         run: |

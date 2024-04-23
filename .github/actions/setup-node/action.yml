@@ -1,0 +1,39 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+
+name: Setup Node and pnpm
+description: "Setups node + pnpm"
+
+inputs:
+  pnpm-version:
+    description: "pnpm version to install"
+    default: "8"
+
+outputs:
+  pnpm-version:
+    description: "The pnpm version that was installed"
+    value: ${{ inputs.pnpm-version }}
+
+runs:
+  using: "composite"
+  steps:
+    - uses: pnpm/action-setup@v2
+      with:
+        version: ${{ inputs.pnpm-version }}
+
+    - name: Read .nvmrc
+      id: nvmrc
+      shell: bash
+      run: echo version=$(cat .nvmrc) >> "$GITHUB_OUTPUT"
+
+    - name: Setup Node.js ${{ steps.nvmrc.outputs.version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ steps.nvmrc.outputs.version }}
+        cache: 'pnpm'
+        cache-dependency-path: |
+          pnpm-lock.yaml
+
+    - name: install dependencies
+      shell: bash
+      run: pnpm install
