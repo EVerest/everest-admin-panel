@@ -19,11 +19,10 @@ jobs:
         browser: ['electron', 'firefox']
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        name: Install pnpm
+      - name: Setup node + pnpm install
+        uses: ./.github/actions/setup-node
         with:
-          version: 8
-          run_install: false
+          pnpm-version: 9
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v6
         with:
