@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index--7Mwx-so.js"(exports, module) {
+  "assets/index-ckm3NThY.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -90624,7 +90624,7 @@ Reason: ${error2}`);
         return this.random_wait_resolve();
       }
       async get_rpc_timeout() {
-        return this.random_wait_resolve(100);
+        return this.random_wait_resolve(5e3);
       }
       async issue_rpc() {
         throw new Error("Method not implemented in LoopbackRpcIssuer.");
@@ -90707,7 +90707,7 @@ Reason: ${error2}`);
         }
       }
     }
-    const LOOPBACK_WAIT_MS = 500;
+    const LOOPBACK_WAIT_MS = 0;
     class EVBackendConnection {
       constructor(_url, _listener) {
         __publicField(this, "_socket");
