@@ -3,11 +3,16 @@
 name: Checks
 
 on:
+  pull_request:
+    branches:
+      - main
+      - spr/main/*
   push:
     branches:
-      - '*'
+      - main
     tags:
       - '*'
+  workflow_dispatch: {}
 
 jobs:
   check_license_headers:
