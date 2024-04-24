@@ -51982,12 +51982,17 @@ html.overflow-y-hidden {
 }
 .v-window-y-reverse-transition-leave-to {
   transform: translateY(100%);
-}.controls[data-v-fcb98d9a] {
+}.title-content[data-v-82fa1853] {
   display: flex;
-  justify-content: flex-end;
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.title-content .controls[data-v-82fa1853] {
+  margin-top: 0.5rem;
+}
+.controls[data-v-82fa1853] {
+  display: flex;
   gap: 0.5rem;
 }#konva-stage-container {
   position: relative;
@@ -52037,6 +52042,10 @@ html.overflow-y-hidden {
 }
 .v-sheet--rounded {
   border-radius: 4px;
+}.btn-container[data-v-c906de4b] {
+  display: flex;
+  justify-content: end;
+  width: 100%;
 }
 .v-expansion-panel-text__wrapper {
     padding: 0.5rem !important;

@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-8ufnbF-i.js"(exports, module) {
+  "assets/index-z0etxUO9.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -2075,6 +2075,12 @@ var require_index_001 = __commonJS({
       currentRenderingInstance = instance;
       currentScopeId = instance && instance.type.__scopeId || null;
       return prev;
+    }
+    function pushScopeId(id2) {
+      currentScopeId = id2;
+    }
+    function popScopeId() {
+      currentScopeId = null;
     }
     function withCtx(fn, ctx = currentRenderingInstance, isNonScopedSlot) {
       if (!ctx)
@@ -7414,7 +7420,7 @@ var require_index_001 = __commonJS({
       }
       return container;
     }
-    const _sfc_main$E = {
+    const _sfc_main$F = {
       name: "App"
     };
     const _export_sfc = (sfc, props) => {
@@ -7428,7 +7434,7 @@ var require_index_001 = __commonJS({
       const _component_router_view = resolveComponent("router-view");
       return openBlock(), createBlock(_component_router_view);
     }
-    const App = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$7]]);
+    const App = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$7]]);
     /*!
       * vue-router v4.2.5
       * (c) 2023 Eduardo San Martin Morote
@@ -9233,10 +9239,10 @@ var require_index_001 = __commonJS({
     function useRouter$1() {
       return inject$1(routerKey);
     }
-    let evbc$2;
+    let evbc$1;
     let router$1;
     let notyf$1;
-    const _sfc_main$D = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$E = /* @__PURE__ */ defineComponent$1({
       data: () => ({
         drawer: false,
         evbc_disconnected: false,
@@ -9246,7 +9252,7 @@ var require_index_001 = __commonJS({
       computed: {
         connectionUrl() {
           var _a2;
-          return ((_a2 = evbc$2 == null ? void 0 : evbc$2._cxn) == null ? void 0 : _a2._url) ?? "nothing";
+          return ((_a2 = evbc$1 == null ? void 0 : evbc$1._cxn) == null ? void 0 : _a2._url) ?? "nothing";
         }
       },
       methods: {
@@ -9255,7 +9261,7 @@ var require_index_001 = __commonJS({
           const timeout = setTimeout(() => {
             notification = notyf$1.open({ type: "warning", message: "Disconnecting from EVerest backend ...", ripple: false });
           }, 250);
-          await evbc$2.disconnect();
+          await evbc$1.disconnect();
           clearTimeout(timeout);
           if (notification) {
             notyf$1.dismiss(notification);
@@ -9264,10 +9270,10 @@ var require_index_001 = __commonJS({
         }
       },
       created() {
-        evbc$2 = inject$1("evbc");
+        evbc$1 = inject$1("evbc");
         router$1 = useRouter$1();
         notyf$1 = inject$1("notyf");
-        evbc$2.on("connection_state", (ev) => {
+        evbc$1.on("connection_state", (ev) => {
           this.evbc_status = ev.text;
           if (ev.type === "RECONNECT" || ev.type === "IDLE") {
             this.evbc_disconnected = true;
@@ -19491,7 +19497,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
     /**
       * vee-validate v4.12.6
       * (c) 2024 Abdelrahman Awad
@@ -21531,7 +21537,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       ComponentViews2[ComponentViews2["ADD"] = 2] = "ADD";
       return ComponentViews2;
     })(ComponentViews || {});
-    const _sfc_main$C = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$D = /* @__PURE__ */ defineComponent$1({
       setup() {
         const evbc2 = inject$1("evbc");
         const servers = reactive([
@@ -25082,7 +25088,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }, vTextFieldRef);
       }
     });
-    const _hoisted_1$6 = {
+    const _hoisted_1$7 = {
       key: 0,
       class: "pt-10 text-center font-weight-medium text-h6"
     };
@@ -25344,7 +25350,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                     }, null, 8, ["text", "modelValue"]),
                                     createVNode(Transition, null, {
                                       default: withCtx(() => [
-                                        _ctx.connecting ? (openBlock(), createElementBlock("p", _hoisted_1$6, toDisplayString(_ctx.connectionStatus), 1)) : createCommentVNode("", true)
+                                        _ctx.connecting ? (openBlock(), createElementBlock("p", _hoisted_1$7, toDisplayString(_ctx.connectionStatus), 1)) : createCommentVNode("", true)
                                       ]),
                                       _: 1
                                     }),
@@ -25378,7 +25384,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$5]]);
+    const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$5]]);
     var isVue2 = false;
     /*!
      * pinia v2.1.7
@@ -25724,6 +25730,20 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       useStore.$id = id2;
       return useStore;
     }
+    function storeToRefs(store) {
+      {
+        store = toRaw(store);
+        const refs = {};
+        for (const key in store) {
+          const value = store[key];
+          if (isRef(value) || isReactive(value)) {
+            refs[key] = // ---
+            toRef(store, key);
+          }
+        }
+        return refs;
+      }
+    }
     class ConfigStageContext {
       constructor() {
         __publicField(this, "_event_handlers", []);
@@ -25789,44 +25809,30 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
     }
     const useEvbcStore = defineStore("evbc", () => {
-      const config_opened = ref$1(false);
       const selection = ref$1({ type: "NONE" });
-      const config_model = ref$1(null);
+      const current_config = ref$1(null);
       const config_context = reactive(new ConfigStageContext());
+      const available_configs = ref$1({});
       config_context.add_observer((ev) => {
         if (ev.type === "SELECT") {
           selection.value = ev.selection;
         }
       });
       function setOpenedConfig(model) {
-        if (config_opened.value) {
-          config_opened.value = false;
-        }
-        config_model.value = model;
-        config_opened.value = true;
+        current_config.value = model;
       }
-      function resetOpenedConfig() {
-        config_model.value = null;
-        config_opened.value = false;
-      }
-      function setCurrentSelection(sel) {
-        selection.value = sel;
-      }
+      const get_is_config_opened = () => !!current_config.value;
       const get_config_context = () => config_context;
-      const get_current_config = () => config_opened.value ? config_model.value : null;
-      const get_selected_module_instance = () => config_opened.value && selection.value.type === "MODULE_INSTANCE" ? selection.value.id : null;
-      const get_selected_terminal = () => config_opened.value && selection.value.type === "TERMINAL" ? selection.value.terminal : null;
-      const get_selected_connection = () => config_opened.value && selection.value.type === "CONNECTION" ? selection.value.id : null;
+      const get_selected_module_instance = () => get_is_config_opened() && selection.value.type === "MODULE_INSTANCE" ? selection.value.id : null;
+      const get_selected_terminal = () => get_is_config_opened() && selection.value.type === "TERMINAL" ? selection.value.terminal : null;
+      const get_selected_connection = () => get_is_config_opened() && selection.value.type === "CONNECTION" ? selection.value.id : null;
       return {
-        config_opened,
+        available_configs,
         selection,
-        config_model,
+        current_config,
         config_context,
         setOpenedConfig,
-        resetOpenedConfig,
-        setCurrentSelection,
         get_config_context,
-        get_current_config,
         get_selected_module_instance,
         get_selected_terminal,
         get_selected_connection
@@ -36328,10 +36334,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           ev.normal.forEach((id2) => {
             this._terminal_views[id2].set_appearence("NORMAL");
           });
-          this.group.cache();
+          if (this.group.children.length > 0) {
+            this.group.cache();
+          }
         } else if (ev.type === "MODULE_MODEL_UPDATE") {
           this._title.setText(this._vm.id);
-          this.group.cache();
+          if (this.group.children.length > 0) {
+            this.group.cache();
+          }
         }
       }
       _module_dragmove_handler() {
@@ -36389,7 +36399,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         this._terminal_views[view.terminal_id] = view;
         const end_align = this._vm.terminal_lookup[view.terminal_id].alignment;
         this._recalculate_terminal_position(end_align, this._vm.terminal_dist[end_align]);
-        this.group.cache();
+        if (this.group.children.length > 0) {
+          this.group.cache();
+        }
       }
       _recalculate_terminal_position(alignment, terminal_ids, animate2 = false) {
         const horizontal_align = alignment === "top" || alignment === "bottom";
@@ -41951,13 +41963,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
-    const _hoisted_1$5 = { class: "controls" };
+    const _hoisted_1$6 = { class: "title-content" };
+    const _hoisted_2$5 = { class: "controls" };
     const __default__ = {
       components: {
         highlightjs: o.component
       }
     };
-    const _sfc_main$B = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$C = /* @__PURE__ */ defineComponent$1({
       ...__default__,
       __name: "ConfigPreview",
       props: {
@@ -41965,6 +41978,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       },
       setup(__props) {
         const notyf2 = inject$1("notyf");
+        const dialogVisible = ref$1(false);
+        const closeDialog = () => {
+          dialogVisible.value = false;
+        };
         const props = __props;
         const tab = ref$1("yaml");
         const jsonCode = computed(() => JSON.stringify(props.config.serialize(), null, 2));
@@ -42004,28 +42021,45 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
         return (_ctx, _cache) => {
           const _component_highlightjs = resolveComponent("highlightjs");
-          return openBlock(), createBlock(VDialog, null, {
+          return openBlock(), createBlock(VDialog, {
+            modelValue: dialogVisible.value,
+            "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => dialogVisible.value = $event)
+          }, {
             activator: withCtx(({ props: activatorProps }) => [
               renderSlot(_ctx.$slots, "activator", { activatorProps }, void 0, true)
             ]),
             default: withCtx(({ isActive }) => [
-              createVNode(VCard, { title: "Config Preview" }, {
+              createVNode(VCard, null, {
                 default: withCtx(() => [
+                  createVNode(VCardTitle, null, {
+                    default: withCtx(() => [
+                      createBaseVNode("div", _hoisted_1$6, [
+                        createBaseVNode("div", _hoisted_2$5, [
+                          createVNode(VBtn, {
+                            icon: "mdi-download",
+                            onClick: _cache[0] || (_cache[0] = ($event) => downloadConfig())
+                          }),
+                          createVNode(VBtn, {
+                            icon: "mdi-content-copy",
+                            onClick: _cache[1] || (_cache[1] = ($event) => copyConfig())
+                          })
+                        ]),
+                        createVNode(VBtn, {
+                          class: "close-button",
+                          icon: "mdi-close",
+                          variant: "plain",
+                          density: "compact",
+                          onClick: _cache[2] || (_cache[2] = ($event) => closeDialog())
+                        })
+                      ])
+                    ]),
+                    _: 1
+                  }),
                   createVNode(VCardText, null, {
                     default: withCtx(() => [
-                      createBaseVNode("div", _hoisted_1$5, [
-                        createVNode(VBtn, {
-                          icon: "mdi-download",
-                          onClick: _cache[0] || (_cache[0] = ($event) => downloadConfig())
-                        }),
-                        createVNode(VBtn, {
-                          icon: "mdi-content-copy",
-                          onClick: _cache[1] || (_cache[1] = ($event) => copyConfig())
-                        })
-                      ]),
                       createVNode(VTabs, {
                         modelValue: tab.value,
-                        "onUpdate:modelValue": _cache[2] || (_cache[2] = ($event) => tab.value = $event)
+                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => tab.value = $event)
                       }, {
                         default: withCtx(() => [
                           createVNode(VTab, { value: "yaml" }, {
@@ -42045,7 +42079,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                       }, 8, ["modelValue"]),
                       createVNode(VWindow, {
                         modelValue: tab.value,
-                        "onUpdate:modelValue": _cache[3] || (_cache[3] = ($event) => tab.value = $event)
+                        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => tab.value = $event)
                       }, {
                         default: withCtx(() => [
                           createVNode(VWindowItem, { value: "yaml" }, {
@@ -42077,18 +42111,19 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               })
             ]),
             _: 3
-          });
+          }, 8, ["modelValue"]);
         };
       }
     });
-    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["__scopeId", "data-v-fcb98d9a"]]);
-    const _sfc_main$A = /* @__PURE__ */ defineComponent$1({
+    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["__scopeId", "data-v-82fa1853"]]);
+    const _sfc_main$B = /* @__PURE__ */ defineComponent$1({
       components: { ConfigPreview },
       setup() {
         const evbcStore2 = useEvbcStore();
         const evbc2 = inject$1("evbc");
         const selected_interface = null;
         const notyf2 = inject$1("notyf");
+        const { current_config } = storeToRefs(evbcStore2);
         ref$1(false);
         let stage;
         onMounted(() => {
@@ -42110,7 +42145,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         onBeforeUnmount(() => {
           stage.destroy();
         });
-        const current_config = computed(evbcStore2.get_current_config);
         const reset_view = () => {
           stage.reset_view();
         };
@@ -42187,11 +42221,11 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _hoisted_1$4 = /* @__PURE__ */ createBaseVNode("div", { id: "konva-stage" }, null, -1);
-    const _hoisted_2$3 = { id: "stage-controls" };
-    const _hoisted_3$1 = /* @__PURE__ */ createBaseVNode("span", null, "Show config preview", -1);
-    const _hoisted_4 = /* @__PURE__ */ createBaseVNode("span", null, "Reset View", -1);
-    const _hoisted_5 = /* @__PURE__ */ createBaseVNode("span", null, "Save Config", -1);
+    const _hoisted_1$5 = /* @__PURE__ */ createBaseVNode("div", { id: "konva-stage" }, null, -1);
+    const _hoisted_2$4 = { id: "stage-controls" };
+    const _hoisted_3$2 = /* @__PURE__ */ createBaseVNode("span", null, "Show config preview", -1);
+    const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", null, "Reset View", -1);
+    const _hoisted_5$1 = /* @__PURE__ */ createBaseVNode("span", null, "Save Config", -1);
     function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
       const _component_config_preview = resolveComponent("config-preview");
       return openBlock(), createBlock(VSheet, {
@@ -42201,8 +42235,8 @@ Reason: ${error2}`);
         elevation: "0"
       }, {
         default: withCtx(() => [
-          _hoisted_1$4,
-          createBaseVNode("div", _hoisted_2$3, [
+          _hoisted_1$5,
+          createBaseVNode("div", _hoisted_2$4, [
             _ctx.current_config ? (openBlock(), createBlock(_component_config_preview, {
               key: 0,
               config: _ctx.current_config
@@ -42219,7 +42253,7 @@ Reason: ${error2}`);
                     }), null, 16)
                   ]),
                   default: withCtx(() => [
-                    _hoisted_3$1
+                    _hoisted_3$2
                   ]),
                   _: 2
                 }, 1024)
@@ -42236,7 +42270,7 @@ Reason: ${error2}`);
                 }, props), null, 16, ["onClick"])
               ]),
               default: withCtx(() => [
-                _hoisted_4
+                _hoisted_4$1
               ]),
               _: 1
             }),
@@ -42253,7 +42287,7 @@ Reason: ${error2}`);
                 }, props), null, 16, ["onClick"])
               ]),
               default: withCtx(() => [
-                _hoisted_5
+                _hoisted_5$1
               ]),
               _: 1
             })) : createCommentVNode("", true)
@@ -42262,8 +42296,8 @@ Reason: ${error2}`);
         _: 1
       });
     }
-    const EvConfigCanvas = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$4]]);
-    const _sfc_main$z = /* @__PURE__ */ defineComponent$1({
+    const EvConfigCanvas = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$4]]);
+    const _sfc_main$A = /* @__PURE__ */ defineComponent$1({
       props: {
         show_dialog: {
           type: Boolean,
@@ -42352,516 +42386,8 @@ Reason: ${error2}`);
         _: 1
       }, 8, ["model-value", "onClick:outside"]);
     }
-    const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["render", _sfc_render$3]]);
-    let evbcStore$1;
-    let evbc$1;
-    let notyf;
-    const _sfc_main$y = /* @__PURE__ */ defineComponent$1({
-      data: () => {
-        return {
-          show_dialog: false,
-          config_to_load: null,
-          search: ""
-        };
-      },
-      created() {
-        evbcStore$1 = useEvbcStore();
-        evbc$1 = inject$1("evbc");
-        notyf = inject$1("notyf");
-      },
-      components: { EvDialog },
-      computed: {
-        current_config() {
-          return evbcStore$1.get_current_config();
-        },
-        show_search() {
-          return !evbcStore$1.get_selected_terminal();
-        },
-        filtered_module_list() {
-          const selectedTerminal = evbcStore$1.get_selected_terminal();
-          if (selectedTerminal) {
-            return Object.entries(evbc$1.everest_definitions.modules).filter(([, value]) => {
-              if (selectedTerminal.type === "requirement") {
-                return value.provides && Object.values(value.provides).some((e) => e.interface === selectedTerminal.interface);
-              } else {
-                return value.requires && Object.values(value.requires).some((e) => e.interface === selectedTerminal.interface);
-              }
-            }).map(([key, value]) => ({
-              type: key,
-              description: value.description
-            }));
-          } else {
-            return Object.entries(evbc$1.everest_definitions.modules).filter(([key, value]) => {
-              return !this.search || this.search.trim() === "" || key.toLowerCase().includes(this.search.toLowerCase()) || value.description.toLowerCase().includes(this.search.toLowerCase());
-            }).map(([key, value]) => ({
-              type: key,
-              description: value.description
-            }));
-          }
-        },
-        config_list() {
-          const configs = evbc$1._configs;
-          return Object.entries(configs).map(([key]) => key);
-        }
-      },
-      methods: {
-        add_module_to_config(type2) {
-          let added_module_id;
-          if (evbcStore$1.get_current_config()) {
-            added_module_id = evbcStore$1.get_current_config().add_new_module_instance(type2);
-          } else {
-            const new_config = evbc$1.create_empty_config("test_config");
-            added_module_id = new_config.add_new_module_instance(type2);
-            evbcStore$1.setOpenedConfig(new_config);
-          }
-          if (evbcStore$1.get_selected_terminal()) {
-            const selectedTerminal = evbcStore$1.get_selected_terminal();
-            const addedModuleInstance = evbcStore$1.get_current_config().get_module_instance(added_module_id);
-            const terminals = Object.values(addedModuleInstance.view_config.terminals).flat();
-            let terminalToClick;
-            if (selectedTerminal.type === "requirement") {
-              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "provide");
-            } else {
-              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
-            }
-            evbcStore$1.get_config_context().clicked_terminal(terminalToClick, added_module_id);
-          }
-        },
-        load_config_if_empty(name) {
-          if (!this.current_config) {
-            this.load_config(name);
-            return;
-          }
-          this.config_to_load = name;
-          this.show_dialog = true;
-        },
-        load_config(name) {
-          if (!name)
-            return;
-          this.show_dialog = false;
-          const new_config = evbc$1.load_config(name);
-          evbcStore$1.setOpenedConfig(new_config);
-        },
-        restart_modules() {
-          evbc$1._cxn.rpc_issuer.restart_modules().then(() => {
-            notyf.success("Issued restart modules command");
-          });
-        },
-        close_dialog() {
-          this.show_dialog = false;
-        }
-      }
-    });
-    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
-    const allowedVariants = ["default", "accordion", "inset", "popout"];
-    const makeVExpansionPanelsProps = propsFactory({
-      color: String,
-      flat: Boolean,
-      static: Boolean,
-      tile: Boolean,
-      variant: {
-        type: String,
-        default: "default",
-        validator: (v) => allowedVariants.includes(v)
-      },
-      readonly: Boolean,
-      ...makeComponentProps(),
-      ...makeGroupProps(),
-      ...makeTagProps(),
-      ...makeThemeProps()
-    }, "VExpansionPanels");
-    const VExpansionPanels = genericComponent()({
-      name: "VExpansionPanels",
-      props: makeVExpansionPanelsProps(),
-      emits: {
-        "update:modelValue": (val) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        useGroup(props, VExpansionPanelSymbol);
-        const {
-          themeClasses
-        } = provideTheme(props);
-        const variantClass = computed(() => props.variant && `v-expansion-panels--variant-${props.variant}`);
-        provideDefaults({
-          VExpansionPanel: {
-            color: toRef(props, "color"),
-            readonly: toRef(props, "readonly")
-          },
-          VExpansionPanelTitle: {
-            static: toRef(props, "static")
-          }
-        });
-        useRender(() => createVNode(props.tag, {
-          "class": ["v-expansion-panels", {
-            "v-expansion-panels--flat": props.flat,
-            "v-expansion-panels--tile": props.tile
-          }, themeClasses.value, variantClass.value, props.class],
-          "style": props.style
-        }, slots));
-        return {};
-      }
-    });
-    const makeVExpansionPanelTextProps = propsFactory({
-      ...makeComponentProps(),
-      ...makeLazyProps()
-    }, "VExpansionPanelText");
-    const VExpansionPanelText = genericComponent()({
-      name: "VExpansionPanelText",
-      props: makeVExpansionPanelTextProps(),
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const expansionPanel = inject$1(VExpansionPanelSymbol);
-        if (!expansionPanel)
-          throw new Error("[Vuetify] v-expansion-panel-text needs to be placed inside v-expansion-panel");
-        const {
-          hasContent,
-          onAfterLeave
-        } = useLazy(props, expansionPanel.isSelected);
-        useRender(() => createVNode(VExpandTransition, {
-          "onAfterLeave": onAfterLeave
-        }, {
-          default: () => {
-            var _a2;
-            return [withDirectives(createVNode("div", {
-              "class": ["v-expansion-panel-text", props.class],
-              "style": props.style
-            }, [slots.default && hasContent.value && createVNode("div", {
-              "class": "v-expansion-panel-text__wrapper"
-            }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])]), [[vShow, expansionPanel.isSelected.value]])];
-          }
-        }));
-        return {};
-      }
-    });
-    const makeVExpansionPanelTitleProps = propsFactory({
-      color: String,
-      expandIcon: {
-        type: IconValue,
-        default: "$expand"
-      },
-      collapseIcon: {
-        type: IconValue,
-        default: "$collapse"
-      },
-      hideActions: Boolean,
-      static: Boolean,
-      ripple: {
-        type: [Boolean, Object],
-        default: false
-      },
-      readonly: Boolean,
-      ...makeComponentProps()
-    }, "VExpansionPanelTitle");
-    const VExpansionPanelTitle = genericComponent()({
-      name: "VExpansionPanelTitle",
-      directives: {
-        Ripple
-      },
-      props: makeVExpansionPanelTitleProps(),
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const expansionPanel = inject$1(VExpansionPanelSymbol);
-        if (!expansionPanel)
-          throw new Error("[Vuetify] v-expansion-panel-title needs to be placed inside v-expansion-panel");
-        const {
-          backgroundColorClasses,
-          backgroundColorStyles
-        } = useBackgroundColor(props, "color");
-        const slotProps = computed(() => ({
-          collapseIcon: props.collapseIcon,
-          disabled: expansionPanel.disabled.value,
-          expanded: expansionPanel.isSelected.value,
-          expandIcon: props.expandIcon,
-          readonly: props.readonly
-        }));
-        useRender(() => {
-          var _a2;
-          return withDirectives(createVNode("button", {
-            "class": ["v-expansion-panel-title", {
-              "v-expansion-panel-title--active": expansionPanel.isSelected.value,
-              "v-expansion-panel-title--static": props.static
-            }, backgroundColorClasses.value, props.class],
-            "style": [backgroundColorStyles.value, props.style],
-            "type": "button",
-            "tabindex": expansionPanel.disabled.value ? -1 : void 0,
-            "disabled": expansionPanel.disabled.value,
-            "aria-expanded": expansionPanel.isSelected.value,
-            "onClick": !props.readonly ? expansionPanel.toggle : void 0
-          }, [createVNode("span", {
-            "class": "v-expansion-panel-title__overlay"
-          }, null), (_a2 = slots.default) == null ? void 0 : _a2.call(slots, slotProps.value), !props.hideActions && createVNode("span", {
-            "class": "v-expansion-panel-title__icon"
-          }, [slots.actions ? slots.actions(slotProps.value) : createVNode(VIcon, {
-            "icon": expansionPanel.isSelected.value ? props.collapseIcon : props.expandIcon
-          }, null)])]), [[resolveDirective("ripple"), props.ripple]]);
-        });
-        return {};
-      }
-    });
-    const makeVExpansionPanelProps = propsFactory({
-      title: String,
-      text: String,
-      bgColor: String,
-      ...makeComponentProps(),
-      ...makeElevationProps(),
-      ...makeGroupItemProps(),
-      ...makeLazyProps(),
-      ...makeRoundedProps(),
-      ...makeTagProps(),
-      ...makeVExpansionPanelTitleProps()
-    }, "VExpansionPanel");
-    const VExpansionPanel = genericComponent()({
-      name: "VExpansionPanel",
-      props: makeVExpansionPanelProps(),
-      emits: {
-        "group:selected": (val) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const groupItem = useGroupItem(props, VExpansionPanelSymbol);
-        const {
-          backgroundColorClasses,
-          backgroundColorStyles
-        } = useBackgroundColor(props, "bgColor");
-        const {
-          elevationClasses
-        } = useElevation(props);
-        const {
-          roundedClasses
-        } = useRounded(props);
-        const isDisabled = computed(() => (groupItem == null ? void 0 : groupItem.disabled.value) || props.disabled);
-        const selectedIndices = computed(() => groupItem.group.items.value.reduce((arr, item, index) => {
-          if (groupItem.group.selected.value.includes(item.id))
-            arr.push(index);
-          return arr;
-        }, []));
-        const isBeforeSelected = computed(() => {
-          const index = groupItem.group.items.value.findIndex((item) => item.id === groupItem.id);
-          return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === 1);
-        });
-        const isAfterSelected = computed(() => {
-          const index = groupItem.group.items.value.findIndex((item) => item.id === groupItem.id);
-          return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === -1);
-        });
-        provide(VExpansionPanelSymbol, groupItem);
-        provideDefaults({
-          VExpansionPanelText: {
-            eager: toRef(props, "eager")
-          },
-          VExpansionPanelTitle: {
-            readonly: toRef(props, "readonly")
-          }
-        });
-        useRender(() => {
-          const hasText = !!(slots.text || props.text);
-          const hasTitle = !!(slots.title || props.title);
-          return createVNode(props.tag, {
-            "class": ["v-expansion-panel", {
-              "v-expansion-panel--active": groupItem.isSelected.value,
-              "v-expansion-panel--before-active": isBeforeSelected.value,
-              "v-expansion-panel--after-active": isAfterSelected.value,
-              "v-expansion-panel--disabled": isDisabled.value
-            }, roundedClasses.value, backgroundColorClasses.value, props.class],
-            "style": [backgroundColorStyles.value, props.style]
-          }, {
-            default: () => {
-              var _a2;
-              return [createVNode("div", {
-                "class": ["v-expansion-panel__shadow", ...elevationClasses.value]
-              }, null), hasTitle && createVNode(VExpansionPanelTitle, {
-                "key": "title",
-                "collapseIcon": props.collapseIcon,
-                "color": props.color,
-                "expandIcon": props.expandIcon,
-                "hideActions": props.hideActions,
-                "ripple": props.ripple
-              }, {
-                default: () => [slots.title ? slots.title() : props.title]
-              }), hasText && createVNode(VExpansionPanelText, {
-                "key": "text"
-              }, {
-                default: () => [slots.text ? slots.text() : props.text]
-              }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots)];
-            }
-          });
-        });
-        return {};
-      }
-    });
-    function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
-      const _component_ev_dialog = resolveComponent("ev-dialog");
-      return openBlock(), createBlock(VExpansionPanels, { class: "ma-0" }, {
-        default: withCtx(() => [
-          createVNode(VExpansionPanel, { "data-cy": "modules-expansion-panel" }, {
-            default: withCtx(() => [
-              createVNode(VExpansionPanelTitle, null, {
-                default: withCtx(() => [
-                  createTextVNode(" Available modules")
-                ]),
-                _: 1
-              }),
-              createVNode(VExpansionPanelText, null, {
-                default: withCtx(() => [
-                  _ctx.show_search ? (openBlock(), createBlock(VTextField, {
-                    key: 0,
-                    modelValue: _ctx.search,
-                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.search = $event),
-                    "hide-details": "",
-                    label: "Search",
-                    density: "compact",
-                    variant: "outlined",
-                    "data-cy": "modules-search",
-                    clearable: ""
-                  }, null, 8, ["modelValue"])) : createCommentVNode("", true),
-                  createVNode(VList, { class: "ma-0" }, {
-                    default: withCtx(() => [
-                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.filtered_module_list, (module2) => {
-                        return openBlock(), createBlock(VTooltip, {
-                          location: "right",
-                          key: module2.type,
-                          "open-delay": "500"
-                        }, {
-                          activator: withCtx(({ props }) => [
-                            createVNode(VListItem, mergeProps(props, {
-                              title: module2.type,
-                              onClick: withModifiers(($event) => _ctx.add_module_to_config(module2.type), ["stop"]),
-                              "data-cy": "module-list-item"
-                            }), {
-                              append: withCtx(() => [
-                                createVNode(VIcon, null, {
-                                  default: withCtx(() => [
-                                    createTextVNode("mdi-plus")
-                                  ]),
-                                  _: 1
-                                })
-                              ]),
-                              _: 2
-                            }, 1040, ["title", "onClick"])
-                          ]),
-                          default: withCtx(() => [
-                            createBaseVNode("span", null, toDisplayString(`${module2.type}: ${module2.description}`), 1)
-                          ]),
-                          _: 2
-                        }, 1024);
-                      }), 128))
-                    ]),
-                    _: 1
-                  })
-                ]),
-                _: 1
-              })
-            ]),
-            _: 1
-          }),
-          createVNode(VExpansionPanel, {
-            disabled: _ctx.config_list.length == 0
-          }, {
-            default: withCtx(() => [
-              createVNode(VExpansionPanelTitle, null, {
-                default: withCtx(() => [
-                  createTextVNode(toDisplayString(_ctx.config_list.length == 0 ? "No configs available" : "Available configs"), 1)
-                ]),
-                _: 1
-              }),
-              createVNode(VExpansionPanelText, null, {
-                default: withCtx(() => [
-                  createVNode(VList, { class: "ma-0" }, {
-                    default: withCtx(() => [
-                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.config_list, (config2) => {
-                        return openBlock(), createBlock(VTooltip, {
-                          location: "right",
-                          key: config2,
-                          "open-delay": "500"
-                        }, {
-                          activator: withCtx(({ props }) => [
-                            createVNode(VListItem, mergeProps({ title: config2 }, props, {
-                              onClick: ($event) => _ctx.load_config_if_empty(config2)
-                            }), {
-                              append: withCtx(() => [
-                                createVNode(VIcon, null, {
-                                  default: withCtx(() => [
-                                    createTextVNode("mdi-upload")
-                                  ]),
-                                  _: 1
-                                })
-                              ]),
-                              _: 2
-                            }, 1040, ["title", "onClick"])
-                          ]),
-                          default: withCtx(() => [
-                            createBaseVNode("span", null, toDisplayString(config2), 1)
-                          ]),
-                          _: 2
-                        }, 1024);
-                      }), 128))
-                    ]),
-                    _: 1
-                  })
-                ]),
-                _: 1
-              }),
-              createVNode(_component_ev_dialog, {
-                show_dialog: _ctx.show_dialog,
-                title: "Warning",
-                text: "Do you want to discard the current config and load the new one?",
-                accept_text: "Load config",
-                deny_text: "Don't load config",
-                onAccept: _cache[1] || (_cache[1] = ($event) => _ctx.load_config(_ctx.config_to_load)),
-                onDeny: _cache[2] || (_cache[2] = ($event) => _ctx.close_dialog())
-              }, null, 8, ["show_dialog"])
-            ]),
-            _: 1
-          }, 8, ["disabled"]),
-          createVNode(VExpansionPanel, null, {
-            default: withCtx(() => [
-              createVNode(VExpansionPanelTitle, null, {
-                default: withCtx(() => [
-                  createTextVNode(" Issue commands")
-                ]),
-                _: 1
-              }),
-              createVNode(VExpansionPanelText, null, {
-                default: withCtx(() => [
-                  createVNode(VList, null, {
-                    default: withCtx(() => [
-                      createVNode(VListItem, {
-                        onClick: _cache[3] || (_cache[3] = ($event) => _ctx.restart_modules()),
-                        title: "Restart modules"
-                      }, {
-                        append: withCtx(() => [
-                          createVNode(VIcon, null, {
-                            default: withCtx(() => [
-                              createTextVNode("mdi-run")
-                            ]),
-                            _: 1
-                          })
-                        ]),
-                        _: 1
-                      })
-                    ]),
-                    _: 1
-                  })
-                ]),
-                _: 1
-              })
-            ]),
-            _: 1
-          })
-        ]),
-        _: 1
-      });
-    }
-    const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$2]]);
-    var _2019 = { exports: {} };
+    const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$3]]);
+    var ajv = { exports: {} };
     var core$3 = {};
     var validate = {};
     var boolSchema = {};
@@ -48945,253 +48471,6 @@ Reason: ${error2}`);
       metadata_1.contentVocabulary
     ];
     draft7.default = draft7Vocabularies;
-    var dynamic$1 = {};
-    var dynamicAnchor$1 = {};
-    Object.defineProperty(dynamicAnchor$1, "__esModule", { value: true });
-    dynamicAnchor$1.dynamicAnchor = void 0;
-    const codegen_1$4 = codegen;
-    const names_1$2 = names$2;
-    const compile_1$1 = compile$2;
-    const ref_1$1 = ref;
-    const def$9 = {
-      keyword: "$dynamicAnchor",
-      schemaType: "string",
-      code: (cxt) => dynamicAnchor(cxt, cxt.schema)
-    };
-    function dynamicAnchor(cxt, anchor) {
-      const { gen, it: it2 } = cxt;
-      it2.schemaEnv.root.dynamicAnchors[anchor] = true;
-      const v = (0, codegen_1$4._)`${names_1$2.default.dynamicAnchors}${(0, codegen_1$4.getProperty)(anchor)}`;
-      const validate2 = it2.errSchemaPath === "#" ? it2.validateName : _getValidate(cxt);
-      gen.if((0, codegen_1$4._)`!${v}`, () => gen.assign(v, validate2));
-    }
-    dynamicAnchor$1.dynamicAnchor = dynamicAnchor;
-    function _getValidate(cxt) {
-      const { schemaEnv, schema: schema2, self: self2 } = cxt.it;
-      const { root, baseId, localRefs, meta } = schemaEnv.root;
-      const { schemaId } = self2.opts;
-      const sch = new compile_1$1.SchemaEnv({ schema: schema2, schemaId, root, baseId, localRefs, meta });
-      compile_1$1.compileSchema.call(self2, sch);
-      return (0, ref_1$1.getValidate)(cxt, sch);
-    }
-    dynamicAnchor$1.default = def$9;
-    var dynamicRef$1 = {};
-    Object.defineProperty(dynamicRef$1, "__esModule", { value: true });
-    dynamicRef$1.dynamicRef = void 0;
-    const codegen_1$3 = codegen;
-    const names_1$1 = names$2;
-    const ref_1 = ref;
-    const def$8 = {
-      keyword: "$dynamicRef",
-      schemaType: "string",
-      code: (cxt) => dynamicRef(cxt, cxt.schema)
-    };
-    function dynamicRef(cxt, ref2) {
-      const { gen, keyword: keyword2, it: it2 } = cxt;
-      if (ref2[0] !== "#")
-        throw new Error(`"${keyword2}" only supports hash fragment reference`);
-      const anchor = ref2.slice(1);
-      if (it2.allErrors) {
-        _dynamicRef();
-      } else {
-        const valid = gen.let("valid", false);
-        _dynamicRef(valid);
-        cxt.ok(valid);
-      }
-      function _dynamicRef(valid) {
-        if (it2.schemaEnv.root.dynamicAnchors[anchor]) {
-          const v = gen.let("_v", (0, codegen_1$3._)`${names_1$1.default.dynamicAnchors}${(0, codegen_1$3.getProperty)(anchor)}`);
-          gen.if(v, _callRef(v, valid), _callRef(it2.validateName, valid));
-        } else {
-          _callRef(it2.validateName, valid)();
-        }
-      }
-      function _callRef(validate2, valid) {
-        return valid ? () => gen.block(() => {
-          (0, ref_1.callRef)(cxt, validate2);
-          gen.let(valid, true);
-        }) : () => (0, ref_1.callRef)(cxt, validate2);
-      }
-    }
-    dynamicRef$1.dynamicRef = dynamicRef;
-    dynamicRef$1.default = def$8;
-    var recursiveAnchor = {};
-    Object.defineProperty(recursiveAnchor, "__esModule", { value: true });
-    const dynamicAnchor_1$1 = dynamicAnchor$1;
-    const util_1$4 = util;
-    const def$7 = {
-      keyword: "$recursiveAnchor",
-      schemaType: "boolean",
-      code(cxt) {
-        if (cxt.schema)
-          (0, dynamicAnchor_1$1.dynamicAnchor)(cxt, "");
-        else
-          (0, util_1$4.checkStrictMode)(cxt.it, "$recursiveAnchor: false is ignored");
-      }
-    };
-    recursiveAnchor.default = def$7;
-    var recursiveRef = {};
-    Object.defineProperty(recursiveRef, "__esModule", { value: true });
-    const dynamicRef_1$1 = dynamicRef$1;
-    const def$6 = {
-      keyword: "$recursiveRef",
-      schemaType: "string",
-      code: (cxt) => (0, dynamicRef_1$1.dynamicRef)(cxt, cxt.schema)
-    };
-    recursiveRef.default = def$6;
-    Object.defineProperty(dynamic$1, "__esModule", { value: true });
-    const dynamicAnchor_1 = dynamicAnchor$1;
-    const dynamicRef_1 = dynamicRef$1;
-    const recursiveAnchor_1 = recursiveAnchor;
-    const recursiveRef_1 = recursiveRef;
-    const dynamic = [dynamicAnchor_1.default, dynamicRef_1.default, recursiveAnchor_1.default, recursiveRef_1.default];
-    dynamic$1.default = dynamic;
-    var next$1 = {};
-    var dependentRequired = {};
-    Object.defineProperty(dependentRequired, "__esModule", { value: true });
-    const dependencies_1$1 = dependencies;
-    const def$5 = {
-      keyword: "dependentRequired",
-      type: "object",
-      schemaType: "object",
-      error: dependencies_1$1.error,
-      code: (cxt) => (0, dependencies_1$1.validatePropertyDeps)(cxt)
-    };
-    dependentRequired.default = def$5;
-    var dependentSchemas = {};
-    Object.defineProperty(dependentSchemas, "__esModule", { value: true });
-    const dependencies_1 = dependencies;
-    const def$4 = {
-      keyword: "dependentSchemas",
-      type: "object",
-      schemaType: "object",
-      code: (cxt) => (0, dependencies_1.validateSchemaDeps)(cxt)
-    };
-    dependentSchemas.default = def$4;
-    var limitContains = {};
-    Object.defineProperty(limitContains, "__esModule", { value: true });
-    const util_1$3 = util;
-    const def$3 = {
-      keyword: ["maxContains", "minContains"],
-      type: "array",
-      schemaType: "number",
-      code({ keyword: keyword2, parentSchema, it: it2 }) {
-        if (parentSchema.contains === void 0) {
-          (0, util_1$3.checkStrictMode)(it2, `"${keyword2}" without "contains" is ignored`);
-        }
-      }
-    };
-    limitContains.default = def$3;
-    Object.defineProperty(next$1, "__esModule", { value: true });
-    const dependentRequired_1 = dependentRequired;
-    const dependentSchemas_1 = dependentSchemas;
-    const limitContains_1 = limitContains;
-    const next = [dependentRequired_1.default, dependentSchemas_1.default, limitContains_1.default];
-    next$1.default = next;
-    var unevaluated$1 = {};
-    var unevaluatedProperties = {};
-    Object.defineProperty(unevaluatedProperties, "__esModule", { value: true });
-    const codegen_1$2 = codegen;
-    const util_1$2 = util;
-    const names_1 = names$2;
-    const error$3 = {
-      message: "must NOT have unevaluated properties",
-      params: ({ params }) => (0, codegen_1$2._)`{unevaluatedProperty: ${params.unevaluatedProperty}}`
-    };
-    const def$2 = {
-      keyword: "unevaluatedProperties",
-      type: "object",
-      schemaType: ["boolean", "object"],
-      trackErrors: true,
-      error: error$3,
-      code(cxt) {
-        const { gen, schema: schema2, data, errsCount, it: it2 } = cxt;
-        if (!errsCount)
-          throw new Error("ajv implementation error");
-        const { allErrors, props } = it2;
-        if (props instanceof codegen_1$2.Name) {
-          gen.if((0, codegen_1$2._)`${props} !== true`, () => gen.forIn("key", data, (key) => gen.if(unevaluatedDynamic(props, key), () => unevaluatedPropCode(key))));
-        } else if (props !== true) {
-          gen.forIn("key", data, (key) => props === void 0 ? unevaluatedPropCode(key) : gen.if(unevaluatedStatic(props, key), () => unevaluatedPropCode(key)));
-        }
-        it2.props = true;
-        cxt.ok((0, codegen_1$2._)`${errsCount} === ${names_1.default.errors}`);
-        function unevaluatedPropCode(key) {
-          if (schema2 === false) {
-            cxt.setParams({ unevaluatedProperty: key });
-            cxt.error();
-            if (!allErrors)
-              gen.break();
-            return;
-          }
-          if (!(0, util_1$2.alwaysValidSchema)(it2, schema2)) {
-            const valid = gen.name("valid");
-            cxt.subschema({
-              keyword: "unevaluatedProperties",
-              dataProp: key,
-              dataPropType: util_1$2.Type.Str
-            }, valid);
-            if (!allErrors)
-              gen.if((0, codegen_1$2.not)(valid), () => gen.break());
-          }
-        }
-        function unevaluatedDynamic(evaluatedProps, key) {
-          return (0, codegen_1$2._)`!${evaluatedProps} || !${evaluatedProps}[${key}]`;
-        }
-        function unevaluatedStatic(evaluatedProps, key) {
-          const ps = [];
-          for (const p2 in evaluatedProps) {
-            if (evaluatedProps[p2] === true)
-              ps.push((0, codegen_1$2._)`${key} !== ${p2}`);
-          }
-          return (0, codegen_1$2.and)(...ps);
-        }
-      }
-    };
-    unevaluatedProperties.default = def$2;
-    var unevaluatedItems = {};
-    Object.defineProperty(unevaluatedItems, "__esModule", { value: true });
-    const codegen_1$1 = codegen;
-    const util_1$1 = util;
-    const error$2 = {
-      message: ({ params: { len } }) => (0, codegen_1$1.str)`must NOT have more than ${len} items`,
-      params: ({ params: { len } }) => (0, codegen_1$1._)`{limit: ${len}}`
-    };
-    const def$1 = {
-      keyword: "unevaluatedItems",
-      type: "array",
-      schemaType: ["boolean", "object"],
-      error: error$2,
-      code(cxt) {
-        const { gen, schema: schema2, data, it: it2 } = cxt;
-        const items2 = it2.items || 0;
-        if (items2 === true)
-          return;
-        const len = gen.const("len", (0, codegen_1$1._)`${data}.length`);
-        if (schema2 === false) {
-          cxt.setParams({ len: items2 });
-          cxt.fail((0, codegen_1$1._)`${len} > ${items2}`);
-        } else if (typeof schema2 == "object" && !(0, util_1$1.alwaysValidSchema)(it2, schema2)) {
-          const valid = gen.var("valid", (0, codegen_1$1._)`${len} <= ${items2}`);
-          gen.if((0, codegen_1$1.not)(valid), () => validateItems(valid, items2));
-          cxt.ok(valid);
-        }
-        it2.items = true;
-        function validateItems(valid, from) {
-          gen.forRange("i", from, len, (i2) => {
-            cxt.subschema({ keyword: "unevaluatedItems", dataProp: i2, dataPropType: util_1$1.Type.Num }, valid);
-            if (!it2.allErrors)
-              gen.if((0, codegen_1$1.not)(valid), () => gen.break());
-          });
-        }
-      }
-    };
-    unevaluatedItems.default = def$1;
-    Object.defineProperty(unevaluated$1, "__esModule", { value: true });
-    const unevaluatedProperties_1 = unevaluatedProperties;
-    const unevaluatedItems_1 = unevaluatedItems;
-    const unevaluated = [unevaluatedProperties_1.default, unevaluatedItems_1.default];
-    unevaluated$1.default = unevaluated;
     var discriminator = {};
     var types = {};
     (function(exports2) {
@@ -49203,19 +48482,19 @@ Reason: ${error2}`);
       })(exports2.DiscrError || (exports2.DiscrError = {}));
     })(types);
     Object.defineProperty(discriminator, "__esModule", { value: true });
-    const codegen_1 = codegen;
+    const codegen_1$4 = codegen;
     const types_1 = types;
-    const compile_1 = compile$2;
-    const util_1 = util;
-    const error$1 = {
+    const compile_1$1 = compile$2;
+    const util_1$4 = util;
+    const error$3 = {
       message: ({ params: { discrError, tagName } }) => discrError === types_1.DiscrError.Tag ? `tag "${tagName}" must be string` : `value of tag "${tagName}" must be in oneOf`,
-      params: ({ params: { discrError, tag, tagName } }) => (0, codegen_1._)`{error: ${discrError}, tag: ${tagName}, tagValue: ${tag}}`
+      params: ({ params: { discrError, tag, tagName } }) => (0, codegen_1$4._)`{error: ${discrError}, tag: ${tagName}, tagValue: ${tag}}`
     };
-    const def = {
+    const def$9 = {
       keyword: "discriminator",
       type: "object",
       schemaType: "object",
-      error: error$1,
+      error: error$3,
       code(cxt) {
         const { gen, data, schema: schema2, parentSchema, it: it2 } = cxt;
         const { oneOf: oneOf2 } = parentSchema;
@@ -49230,14 +48509,14 @@ Reason: ${error2}`);
         if (!oneOf2)
           throw new Error("discriminator: requires oneOf keyword");
         const valid = gen.let("valid", false);
-        const tag = gen.const("tag", (0, codegen_1._)`${data}${(0, codegen_1.getProperty)(tagName)}`);
-        gen.if((0, codegen_1._)`typeof ${tag} == "string"`, () => validateMapping(), () => cxt.error(false, { discrError: types_1.DiscrError.Tag, tag, tagName }));
+        const tag = gen.const("tag", (0, codegen_1$4._)`${data}${(0, codegen_1$4.getProperty)(tagName)}`);
+        gen.if((0, codegen_1$4._)`typeof ${tag} == "string"`, () => validateMapping(), () => cxt.error(false, { discrError: types_1.DiscrError.Tag, tag, tagName }));
         cxt.ok(valid);
         function validateMapping() {
           const mapping = getMapping();
           gen.if(false);
           for (const tagValue in mapping) {
-            gen.elseIf((0, codegen_1._)`${tag} === ${tagValue}`);
+            gen.elseIf((0, codegen_1$4._)`${tag} === ${tagValue}`);
             gen.assign(valid, applyTagSchema(mapping[tagValue]));
           }
           gen.else();
@@ -49247,7 +48526,7 @@ Reason: ${error2}`);
         function applyTagSchema(schemaProp) {
           const _valid = gen.name("valid");
           const schCxt = cxt.subschema({ keyword: "oneOf", schemaProp }, _valid);
-          cxt.mergeEvaluated(schCxt, codegen_1.Name);
+          cxt.mergeEvaluated(schCxt, codegen_1$4.Name);
           return _valid;
         }
         function getMapping() {
@@ -49257,9 +48536,9 @@ Reason: ${error2}`);
           let tagRequired = true;
           for (let i2 = 0; i2 < oneOf2.length; i2++) {
             let sch = oneOf2[i2];
-            if ((sch === null || sch === void 0 ? void 0 : sch.$ref) && !(0, util_1.schemaHasRulesButRef)(sch, it2.self.RULES)) {
-              sch = compile_1.resolveRef.call(it2.self, it2.schemaEnv.root, it2.baseId, sch === null || sch === void 0 ? void 0 : sch.$ref);
-              if (sch instanceof compile_1.SchemaEnv)
+            if ((sch === null || sch === void 0 ? void 0 : sch.$ref) && !(0, util_1$4.schemaHasRulesButRef)(sch, it2.self.RULES)) {
+              sch = compile_1$1.resolveRef.call(it2.self, it2.schemaEnv.root, it2.baseId, sch === null || sch === void 0 ? void 0 : sch.$ref);
+              if (sch instanceof compile_1$1.SchemaEnv)
                 sch = sch.schema;
             }
             const propSch = (_a2 = sch === null || sch === void 0 ? void 0 : sch.properties) === null || _a2 === void 0 ? void 0 : _a2[tagName];
@@ -49295,10 +48574,1350 @@ Reason: ${error2}`);
         }
       }
     };
-    discriminator.default = def;
+    discriminator.default = def$9;
+    const $schema$7 = "http://json-schema.org/draft-07/schema#";
+    const $id$7 = "http://json-schema.org/draft-07/schema#";
+    const title$7 = "Core schema meta-schema";
+    const definitions = {
+      schemaArray: {
+        type: "array",
+        minItems: 1,
+        items: {
+          $ref: "#"
+        }
+      },
+      nonNegativeInteger: {
+        type: "integer",
+        minimum: 0
+      },
+      nonNegativeIntegerDefault0: {
+        allOf: [
+          {
+            $ref: "#/definitions/nonNegativeInteger"
+          },
+          {
+            "default": 0
+          }
+        ]
+      },
+      simpleTypes: {
+        "enum": [
+          "array",
+          "boolean",
+          "integer",
+          "null",
+          "number",
+          "object",
+          "string"
+        ]
+      },
+      stringArray: {
+        type: "array",
+        items: {
+          type: "string"
+        },
+        uniqueItems: true,
+        "default": []
+      }
+    };
+    const type$7 = [
+      "object",
+      "boolean"
+    ];
+    const properties$7 = {
+      $id: {
+        type: "string",
+        format: "uri-reference"
+      },
+      $schema: {
+        type: "string",
+        format: "uri"
+      },
+      $ref: {
+        type: "string",
+        format: "uri-reference"
+      },
+      $comment: {
+        type: "string"
+      },
+      title: {
+        type: "string"
+      },
+      description: {
+        type: "string"
+      },
+      "default": true,
+      readOnly: {
+        type: "boolean",
+        "default": false
+      },
+      examples: {
+        type: "array",
+        items: true
+      },
+      multipleOf: {
+        type: "number",
+        exclusiveMinimum: 0
+      },
+      maximum: {
+        type: "number"
+      },
+      exclusiveMaximum: {
+        type: "number"
+      },
+      minimum: {
+        type: "number"
+      },
+      exclusiveMinimum: {
+        type: "number"
+      },
+      maxLength: {
+        $ref: "#/definitions/nonNegativeInteger"
+      },
+      minLength: {
+        $ref: "#/definitions/nonNegativeIntegerDefault0"
+      },
+      pattern: {
+        type: "string",
+        format: "regex"
+      },
+      additionalItems: {
+        $ref: "#"
+      },
+      items: {
+        anyOf: [
+          {
+            $ref: "#"
+          },
+          {
+            $ref: "#/definitions/schemaArray"
+          }
+        ],
+        "default": true
+      },
+      maxItems: {
+        $ref: "#/definitions/nonNegativeInteger"
+      },
+      minItems: {
+        $ref: "#/definitions/nonNegativeIntegerDefault0"
+      },
+      uniqueItems: {
+        type: "boolean",
+        "default": false
+      },
+      contains: {
+        $ref: "#"
+      },
+      maxProperties: {
+        $ref: "#/definitions/nonNegativeInteger"
+      },
+      minProperties: {
+        $ref: "#/definitions/nonNegativeIntegerDefault0"
+      },
+      required: {
+        $ref: "#/definitions/stringArray"
+      },
+      additionalProperties: {
+        $ref: "#"
+      },
+      definitions: {
+        type: "object",
+        additionalProperties: {
+          $ref: "#"
+        },
+        "default": {}
+      },
+      properties: {
+        type: "object",
+        additionalProperties: {
+          $ref: "#"
+        },
+        "default": {}
+      },
+      patternProperties: {
+        type: "object",
+        additionalProperties: {
+          $ref: "#"
+        },
+        propertyNames: {
+          format: "regex"
+        },
+        "default": {}
+      },
+      dependencies: {
+        type: "object",
+        additionalProperties: {
+          anyOf: [
+            {
+              $ref: "#"
+            },
+            {
+              $ref: "#/definitions/stringArray"
+            }
+          ]
+        }
+      },
+      propertyNames: {
+        $ref: "#"
+      },
+      "const": true,
+      "enum": {
+        type: "array",
+        items: true,
+        minItems: 1,
+        uniqueItems: true
+      },
+      type: {
+        anyOf: [
+          {
+            $ref: "#/definitions/simpleTypes"
+          },
+          {
+            type: "array",
+            items: {
+              $ref: "#/definitions/simpleTypes"
+            },
+            minItems: 1,
+            uniqueItems: true
+          }
+        ]
+      },
+      format: {
+        type: "string"
+      },
+      contentMediaType: {
+        type: "string"
+      },
+      contentEncoding: {
+        type: "string"
+      },
+      "if": {
+        $ref: "#"
+      },
+      then: {
+        $ref: "#"
+      },
+      "else": {
+        $ref: "#"
+      },
+      allOf: {
+        $ref: "#/definitions/schemaArray"
+      },
+      anyOf: {
+        $ref: "#/definitions/schemaArray"
+      },
+      oneOf: {
+        $ref: "#/definitions/schemaArray"
+      },
+      not: {
+        $ref: "#"
+      }
+    };
+    const require$$3$1 = {
+      $schema: $schema$7,
+      $id: $id$7,
+      title: title$7,
+      definitions,
+      type: type$7,
+      properties: properties$7,
+      "default": true
+    };
+    (function(module2, exports2) {
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
+      const core_12 = core$3;
+      const draft7_1 = draft7;
+      const discriminator_1 = discriminator;
+      const draft7MetaSchema = require$$3$1;
+      const META_SUPPORT_DATA2 = ["/properties"];
+      const META_SCHEMA_ID = "http://json-schema.org/draft-07/schema";
+      class Ajv2 extends core_12.default {
+        _addVocabularies() {
+          super._addVocabularies();
+          draft7_1.default.forEach((v) => this.addVocabulary(v));
+          if (this.opts.discriminator)
+            this.addKeyword(discriminator_1.default);
+        }
+        _addDefaultMetaSchema() {
+          super._addDefaultMetaSchema();
+          if (!this.opts.meta)
+            return;
+          const metaSchema2 = this.opts.$data ? this.$dataMetaSchema(draft7MetaSchema, META_SUPPORT_DATA2) : draft7MetaSchema;
+          this.addMetaSchema(metaSchema2, META_SCHEMA_ID, false);
+          this.refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
+        }
+        defaultMeta() {
+          return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
+        }
+      }
+      module2.exports = exports2 = Ajv2;
+      Object.defineProperty(exports2, "__esModule", { value: true });
+      exports2.default = Ajv2;
+      var validate_12 = validate;
+      Object.defineProperty(exports2, "KeywordCxt", { enumerable: true, get: function() {
+        return validate_12.KeywordCxt;
+      } });
+      var codegen_12 = codegen;
+      Object.defineProperty(exports2, "_", { enumerable: true, get: function() {
+        return codegen_12._;
+      } });
+      Object.defineProperty(exports2, "str", { enumerable: true, get: function() {
+        return codegen_12.str;
+      } });
+      Object.defineProperty(exports2, "stringify", { enumerable: true, get: function() {
+        return codegen_12.stringify;
+      } });
+      Object.defineProperty(exports2, "nil", { enumerable: true, get: function() {
+        return codegen_12.nil;
+      } });
+      Object.defineProperty(exports2, "Name", { enumerable: true, get: function() {
+        return codegen_12.Name;
+      } });
+      Object.defineProperty(exports2, "CodeGen", { enumerable: true, get: function() {
+        return codegen_12.CodeGen;
+      } });
+      var validation_error_12 = validation_error;
+      Object.defineProperty(exports2, "ValidationError", { enumerable: true, get: function() {
+        return validation_error_12.default;
+      } });
+      var ref_error_12 = ref_error;
+      Object.defineProperty(exports2, "MissingRefError", { enumerable: true, get: function() {
+        return ref_error_12.default;
+      } });
+    })(ajv, ajv.exports);
+    var ajvExports = ajv.exports;
+    const Ajv$2 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
+    function urlToPublicAsset(filePath) {
+      let base2 = "/everest-admin-panel/main";
+      if (!base2.endsWith("/")) {
+        base2 += "/";
+      }
+      if (!filePath.startsWith("/")) {
+        return base2 + filePath;
+      } else {
+        return base2 + filePath.slice(1);
+      }
+    }
+    const _withScopeId = (n) => (pushScopeId("data-v-c906de4b"), n = n(), popScopeId(), n);
+    const _hoisted_1$4 = { class: "btn-container" };
+    const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Upload Config", -1));
+    const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
+    const _hoisted_4 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Abort", -1));
+    const _hoisted_5 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
+    const _sfc_main$z = /* @__PURE__ */ defineComponent$1({
+      __name: "CreateConfig",
+      emits: ["createConfig"],
+      setup(__props, { emit: __emit }) {
+        const evbcStore2 = useEvbcStore();
+        const state = ref$1(
+          0
+          /* DEFAULT */
+        );
+        const configName = ref$1("");
+        const configNameValid = computed(() => validateConfigName() === true);
+        const emit2 = __emit;
+        const { available_configs } = storeToRefs(evbcStore2);
+        const configContent = ref$1(null);
+        const errors2 = ref$1(null);
+        const showErrorDialog = computed(() => !!errors2.value);
+        function onAcceptBtnClick() {
+          if (validateConfigName() === true) {
+            emit2("createConfig", configName.value, configContent.value ?? void 0);
+            resetDialog();
+          }
+        }
+        function resetDialog() {
+          state.value = 0;
+          configName.value = "";
+          configContent.value = null;
+          errors2.value = null;
+        }
+        function uploadConfigPrompt() {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = ".json,.yaml,.yml";
+          input.click();
+          input.onchange = (e) => {
+            var _a2;
+            const file = (_a2 = e.target.files) == null ? void 0 : _a2[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onload = async (e2) => {
+                var _a3;
+                const parseResult = await parseConfig((_a3 = e2.target) == null ? void 0 : _a3.result);
+                if (!parseResult.errors) {
+                  configContent.value = parseResult.config;
+                  configName.value = file.name.replace(/\.[^.]+$/, "");
+                  state.value = 1;
+                } else {
+                  errors2.value = parseResult.errors;
+                }
+              };
+              reader.readAsText(file);
+            }
+          };
+        }
+        function validateConfigName() {
+          if (configName.value.trim().length === 0) {
+            return "Please enter a name";
+          } else if (/.*(\.json|\.ya?ml)$/.test(configName.value)) {
+            return "The name must not contain the file extension";
+          } else if (!/^[a-zA-Z0-9-_]+$/.test(configName.value)) {
+            return "The name must only contain letters, numbers, dashes and underscores";
+          } else if (Object.keys(available_configs.value).includes(configName.value.trim())) {
+            return "The name must be unique";
+          } else {
+            return true;
+          }
+        }
+        async function validateConfigContent(content2) {
+          const ajv2 = new Ajv$2();
+          const schema2 = await getConfigJsonSchema();
+          const validate2 = ajv2.compile(schema2);
+          const valid = validate2(content2);
+          if (valid) {
+            return true;
+          } else {
+            return JSON.stringify(validate2.errors, null, 2);
+          }
+        }
+        async function getConfigJsonSchema() {
+          const response = await fetch(urlToPublicAsset("schemas/config.json"));
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return await response.json();
+        }
+        async function parseConfig(content2) {
+          try {
+            const config2 = jsYaml.load(content2);
+            const validationResult = await validateConfigContent(config2);
+            if (validationResult === true) {
+              return { errors: null, config: config2 };
+            } else {
+              return { errors: validationResult, config: null };
+            }
+          } catch (e) {
+            return { errors: e.toString(), config: null };
+          }
+        }
+        return (_ctx, _cache) => {
+          return openBlock(), createElementBlock(Fragment, null, [
+            createBaseVNode("div", _hoisted_1$4, [
+              state.value == 0 ? (openBlock(), createBlock(VTooltip, {
+                key: 0,
+                location: "right",
+                "open-delay": "500"
+              }, {
+                activator: withCtx(({ props }) => [
+                  createVNode(VBtn, mergeProps({
+                    color: "default",
+                    variant: "flat",
+                    density: "compact",
+                    icon: "mdi-upload",
+                    "data-cy": "upload-config-btn"
+                  }, props, {
+                    onClick: _cache[0] || (_cache[0] = ($event) => uploadConfigPrompt())
+                  }), null, 16)
+                ]),
+                default: withCtx(() => [
+                  _hoisted_2$3
+                ]),
+                _: 1
+              })) : createCommentVNode("", true),
+              state.value == 0 ? (openBlock(), createBlock(VTooltip, {
+                key: 1,
+                location: "right",
+                "open-delay": "500"
+              }, {
+                activator: withCtx(({ props }) => [
+                  createVNode(VBtn, mergeProps({
+                    color: "default",
+                    variant: "flat",
+                    density: "compact",
+                    icon: "mdi-plus",
+                    "data-cy": "plus-create-config-btn"
+                  }, props, {
+                    onClick: _cache[1] || (_cache[1] = ($event) => state.value = 1)
+                  }), null, 16)
+                ]),
+                default: withCtx(() => [
+                  _hoisted_3$1
+                ]),
+                _: 1
+              })) : createCommentVNode("", true),
+              state.value == 1 ? (openBlock(), createBlock(VTooltip, {
+                key: 2,
+                location: "right",
+                "open-delay": "500"
+              }, {
+                activator: withCtx(({ props }) => [
+                  createVNode(VBtn, mergeProps({
+                    color: "default",
+                    variant: "flat",
+                    density: "compact",
+                    "data-cy": "abort-create-config-btn",
+                    icon: "mdi-close"
+                  }, props, {
+                    onClick: _cache[2] || (_cache[2] = ($event) => resetDialog())
+                  }), null, 16)
+                ]),
+                default: withCtx(() => [
+                  _hoisted_4
+                ]),
+                _: 1
+              })) : createCommentVNode("", true),
+              state.value == 1 ? (openBlock(), createBlock(VTooltip, {
+                key: 3,
+                location: "right",
+                "open-delay": "500"
+              }, {
+                activator: withCtx(({ props }) => [
+                  createVNode(VBtn, mergeProps({
+                    color: "default",
+                    variant: "flat",
+                    density: "compact",
+                    icon: "mdi-check",
+                    "data-cy": "accept-create-config-btn"
+                  }, props, {
+                    disabled: !configNameValid.value,
+                    onClick: _cache[3] || (_cache[3] = ($event) => onAcceptBtnClick())
+                  }), null, 16, ["disabled"])
+                ]),
+                default: withCtx(() => [
+                  _hoisted_5
+                ]),
+                _: 1
+              })) : createCommentVNode("", true)
+            ]),
+            state.value === 1 ? (openBlock(), createBlock(VTextField, {
+              key: 0,
+              density: "compact",
+              modelValue: configName.value,
+              "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => configName.value = $event),
+              "data-cy": "config-name-input",
+              placeholder: "config name",
+              rules: [validateConfigName]
+            }, null, 8, ["modelValue", "rules"])) : createCommentVNode("", true),
+            createVNode(VDialog, {
+              modelValue: showErrorDialog.value,
+              "onUpdate:modelValue": _cache[6] || (_cache[6] = ($event) => showErrorDialog.value = $event),
+              "onClick:outside": _cache[7] || (_cache[7] = ($event) => resetDialog())
+            }, {
+              default: withCtx(() => [
+                createVNode(VCard, { color: "danger" }, {
+                  default: withCtx(() => [
+                    createVNode(VCardTitle, null, {
+                      default: withCtx(() => [
+                        createTextVNode("Couldn't load config")
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(VCardText, null, {
+                      default: withCtx(() => [
+                        createBaseVNode("pre", null, [
+                          createBaseVNode("code", null, toDisplayString(errors2.value), 1)
+                        ])
+                      ]),
+                      _: 1
+                    }),
+                    createVNode(VCardActions, null, {
+                      default: withCtx(() => [
+                        createVNode(VBtn, {
+                          color: "primary",
+                          onClick: _cache[5] || (_cache[5] = ($event) => resetDialog())
+                        }, {
+                          default: withCtx(() => [
+                            createTextVNode("OK")
+                          ]),
+                          _: 1
+                        })
+                      ]),
+                      _: 1
+                    })
+                  ]),
+                  _: 1
+                })
+              ]),
+              _: 1
+            }, 8, ["modelValue"])
+          ], 64);
+        };
+      }
+    });
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-c906de4b"]]);
+    let evbcStore;
+    let evbc;
+    let notyf;
+    const _sfc_main$y = /* @__PURE__ */ defineComponent$1({
+      data: () => {
+        return {
+          show_dialog: false,
+          config_to_load: null,
+          search: "",
+          expansionPanelState: ["configs"]
+        };
+      },
+      created() {
+        evbcStore = useEvbcStore();
+        evbc = inject$1("evbc");
+        notyf = inject$1("notyf");
+      },
+      components: { CreateConfig, EvDialog },
+      computed: {
+        current_config() {
+          return evbcStore.current_config;
+        },
+        show_search() {
+          return !evbcStore.get_selected_terminal();
+        },
+        filtered_module_list() {
+          const selectedTerminal = evbcStore.get_selected_terminal();
+          if (selectedTerminal) {
+            return Object.entries(evbc.everest_definitions.modules).filter(([, value]) => {
+              if (selectedTerminal.type === "requirement") {
+                return value.provides && Object.values(value.provides).some((e) => e.interface === selectedTerminal.interface);
+              } else {
+                return value.requires && Object.values(value.requires).some((e) => e.interface === selectedTerminal.interface);
+              }
+            }).map(([key, value]) => ({
+              type: key,
+              description: value.description
+            }));
+          } else {
+            return Object.entries(evbc.everest_definitions.modules).filter(([key, value]) => {
+              return !this.search || this.search.trim() === "" || key.toLowerCase().includes(this.search.toLowerCase()) || value.description.toLowerCase().includes(this.search.toLowerCase());
+            }).map(([key, value]) => ({
+              type: key,
+              description: value.description
+            }));
+          }
+        },
+        config_list() {
+          return Object.entries(evbcStore.available_configs).map(([key]) => key);
+        }
+      },
+      methods: {
+        add_module_to_config(type2) {
+          let added_module_id;
+          if (evbcStore.current_config) {
+            added_module_id = evbcStore.current_config.add_new_module_instance(type2);
+          } else {
+            throw new Error("No config loaded");
+          }
+          if (evbcStore.get_selected_terminal()) {
+            const selectedTerminal = evbcStore.get_selected_terminal();
+            const addedModuleInstance = evbcStore.current_config.get_module_instance(added_module_id);
+            const terminals = Object.values(addedModuleInstance.view_config.terminals).flat();
+            let terminalToClick;
+            if (selectedTerminal.type === "requirement") {
+              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "provide");
+            } else {
+              terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
+            }
+            evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
+          }
+        },
+        create_config(name, content2) {
+          const new_config = evbc.create_config_model(name, content2);
+          evbcStore.setOpenedConfig(new_config);
+          this.expansionPanelState = ["modules"];
+        },
+        load_config_if_empty(name) {
+          if (!this.current_config) {
+            this.load_config(name);
+            return;
+          }
+          this.config_to_load = name;
+          this.show_dialog = true;
+        },
+        load_config(name) {
+          if (!name)
+            return;
+          this.show_dialog = false;
+          const new_config = evbc.load_config(name);
+          evbcStore.setOpenedConfig(new_config);
+          this.expansionPanelState = ["modules"];
+        },
+        restart_modules() {
+          evbc._cxn.rpc_issuer.restart_modules().then(() => {
+            notyf.success("Issued restart modules command");
+          });
+        },
+        close_dialog() {
+          this.show_dialog = false;
+        }
+      }
+    });
+    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
+    const allowedVariants = ["default", "accordion", "inset", "popout"];
+    const makeVExpansionPanelsProps = propsFactory({
+      color: String,
+      flat: Boolean,
+      static: Boolean,
+      tile: Boolean,
+      variant: {
+        type: String,
+        default: "default",
+        validator: (v) => allowedVariants.includes(v)
+      },
+      readonly: Boolean,
+      ...makeComponentProps(),
+      ...makeGroupProps(),
+      ...makeTagProps(),
+      ...makeThemeProps()
+    }, "VExpansionPanels");
+    const VExpansionPanels = genericComponent()({
+      name: "VExpansionPanels",
+      props: makeVExpansionPanelsProps(),
+      emits: {
+        "update:modelValue": (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useGroup(props, VExpansionPanelSymbol);
+        const {
+          themeClasses
+        } = provideTheme(props);
+        const variantClass = computed(() => props.variant && `v-expansion-panels--variant-${props.variant}`);
+        provideDefaults({
+          VExpansionPanel: {
+            color: toRef(props, "color"),
+            readonly: toRef(props, "readonly")
+          },
+          VExpansionPanelTitle: {
+            static: toRef(props, "static")
+          }
+        });
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-expansion-panels", {
+            "v-expansion-panels--flat": props.flat,
+            "v-expansion-panels--tile": props.tile
+          }, themeClasses.value, variantClass.value, props.class],
+          "style": props.style
+        }, slots));
+        return {};
+      }
+    });
+    const makeVExpansionPanelTextProps = propsFactory({
+      ...makeComponentProps(),
+      ...makeLazyProps()
+    }, "VExpansionPanelText");
+    const VExpansionPanelText = genericComponent()({
+      name: "VExpansionPanelText",
+      props: makeVExpansionPanelTextProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const expansionPanel = inject$1(VExpansionPanelSymbol);
+        if (!expansionPanel)
+          throw new Error("[Vuetify] v-expansion-panel-text needs to be placed inside v-expansion-panel");
+        const {
+          hasContent,
+          onAfterLeave
+        } = useLazy(props, expansionPanel.isSelected);
+        useRender(() => createVNode(VExpandTransition, {
+          "onAfterLeave": onAfterLeave
+        }, {
+          default: () => {
+            var _a2;
+            return [withDirectives(createVNode("div", {
+              "class": ["v-expansion-panel-text", props.class],
+              "style": props.style
+            }, [slots.default && hasContent.value && createVNode("div", {
+              "class": "v-expansion-panel-text__wrapper"
+            }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])]), [[vShow, expansionPanel.isSelected.value]])];
+          }
+        }));
+        return {};
+      }
+    });
+    const makeVExpansionPanelTitleProps = propsFactory({
+      color: String,
+      expandIcon: {
+        type: IconValue,
+        default: "$expand"
+      },
+      collapseIcon: {
+        type: IconValue,
+        default: "$collapse"
+      },
+      hideActions: Boolean,
+      static: Boolean,
+      ripple: {
+        type: [Boolean, Object],
+        default: false
+      },
+      readonly: Boolean,
+      ...makeComponentProps()
+    }, "VExpansionPanelTitle");
+    const VExpansionPanelTitle = genericComponent()({
+      name: "VExpansionPanelTitle",
+      directives: {
+        Ripple
+      },
+      props: makeVExpansionPanelTitleProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const expansionPanel = inject$1(VExpansionPanelSymbol);
+        if (!expansionPanel)
+          throw new Error("[Vuetify] v-expansion-panel-title needs to be placed inside v-expansion-panel");
+        const {
+          backgroundColorClasses,
+          backgroundColorStyles
+        } = useBackgroundColor(props, "color");
+        const slotProps = computed(() => ({
+          collapseIcon: props.collapseIcon,
+          disabled: expansionPanel.disabled.value,
+          expanded: expansionPanel.isSelected.value,
+          expandIcon: props.expandIcon,
+          readonly: props.readonly
+        }));
+        useRender(() => {
+          var _a2;
+          return withDirectives(createVNode("button", {
+            "class": ["v-expansion-panel-title", {
+              "v-expansion-panel-title--active": expansionPanel.isSelected.value,
+              "v-expansion-panel-title--static": props.static
+            }, backgroundColorClasses.value, props.class],
+            "style": [backgroundColorStyles.value, props.style],
+            "type": "button",
+            "tabindex": expansionPanel.disabled.value ? -1 : void 0,
+            "disabled": expansionPanel.disabled.value,
+            "aria-expanded": expansionPanel.isSelected.value,
+            "onClick": !props.readonly ? expansionPanel.toggle : void 0
+          }, [createVNode("span", {
+            "class": "v-expansion-panel-title__overlay"
+          }, null), (_a2 = slots.default) == null ? void 0 : _a2.call(slots, slotProps.value), !props.hideActions && createVNode("span", {
+            "class": "v-expansion-panel-title__icon"
+          }, [slots.actions ? slots.actions(slotProps.value) : createVNode(VIcon, {
+            "icon": expansionPanel.isSelected.value ? props.collapseIcon : props.expandIcon
+          }, null)])]), [[resolveDirective("ripple"), props.ripple]]);
+        });
+        return {};
+      }
+    });
+    const makeVExpansionPanelProps = propsFactory({
+      title: String,
+      text: String,
+      bgColor: String,
+      ...makeComponentProps(),
+      ...makeElevationProps(),
+      ...makeGroupItemProps(),
+      ...makeLazyProps(),
+      ...makeRoundedProps(),
+      ...makeTagProps(),
+      ...makeVExpansionPanelTitleProps()
+    }, "VExpansionPanel");
+    const VExpansionPanel = genericComponent()({
+      name: "VExpansionPanel",
+      props: makeVExpansionPanelProps(),
+      emits: {
+        "group:selected": (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const groupItem = useGroupItem(props, VExpansionPanelSymbol);
+        const {
+          backgroundColorClasses,
+          backgroundColorStyles
+        } = useBackgroundColor(props, "bgColor");
+        const {
+          elevationClasses
+        } = useElevation(props);
+        const {
+          roundedClasses
+        } = useRounded(props);
+        const isDisabled = computed(() => (groupItem == null ? void 0 : groupItem.disabled.value) || props.disabled);
+        const selectedIndices = computed(() => groupItem.group.items.value.reduce((arr, item, index) => {
+          if (groupItem.group.selected.value.includes(item.id))
+            arr.push(index);
+          return arr;
+        }, []));
+        const isBeforeSelected = computed(() => {
+          const index = groupItem.group.items.value.findIndex((item) => item.id === groupItem.id);
+          return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === 1);
+        });
+        const isAfterSelected = computed(() => {
+          const index = groupItem.group.items.value.findIndex((item) => item.id === groupItem.id);
+          return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === -1);
+        });
+        provide(VExpansionPanelSymbol, groupItem);
+        provideDefaults({
+          VExpansionPanelText: {
+            eager: toRef(props, "eager")
+          },
+          VExpansionPanelTitle: {
+            readonly: toRef(props, "readonly")
+          }
+        });
+        useRender(() => {
+          const hasText = !!(slots.text || props.text);
+          const hasTitle = !!(slots.title || props.title);
+          return createVNode(props.tag, {
+            "class": ["v-expansion-panel", {
+              "v-expansion-panel--active": groupItem.isSelected.value,
+              "v-expansion-panel--before-active": isBeforeSelected.value,
+              "v-expansion-panel--after-active": isAfterSelected.value,
+              "v-expansion-panel--disabled": isDisabled.value
+            }, roundedClasses.value, backgroundColorClasses.value, props.class],
+            "style": [backgroundColorStyles.value, props.style]
+          }, {
+            default: () => {
+              var _a2;
+              return [createVNode("div", {
+                "class": ["v-expansion-panel__shadow", ...elevationClasses.value]
+              }, null), hasTitle && createVNode(VExpansionPanelTitle, {
+                "key": "title",
+                "collapseIcon": props.collapseIcon,
+                "color": props.color,
+                "expandIcon": props.expandIcon,
+                "hideActions": props.hideActions,
+                "ripple": props.ripple
+              }, {
+                default: () => [slots.title ? slots.title() : props.title]
+              }), hasText && createVNode(VExpansionPanelText, {
+                "key": "text"
+              }, {
+                default: () => [slots.text ? slots.text() : props.text]
+              }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots)];
+            }
+          });
+        });
+        return {};
+      }
+    });
+    function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
+      const _component_create_config = resolveComponent("create-config");
+      const _component_ev_dialog = resolveComponent("ev-dialog");
+      return openBlock(), createBlock(VExpansionPanels, {
+        class: "ma-0",
+        modelValue: _ctx.expansionPanelState,
+        "onUpdate:modelValue": _cache[4] || (_cache[4] = ($event) => _ctx.expansionPanelState = $event)
+      }, {
+        default: withCtx(() => [
+          createVNode(VExpansionPanel, {
+            "data-cy": "modules-expansion-panel",
+            value: "modules",
+            disabled: !_ctx.current_config
+          }, {
+            default: withCtx(() => [
+              createVNode(VExpansionPanelTitle, null, {
+                default: withCtx(() => [
+                  createTextVNode(" Available modules")
+                ]),
+                _: 1
+              }),
+              createVNode(VExpansionPanelText, null, {
+                default: withCtx(() => [
+                  _ctx.show_search ? (openBlock(), createBlock(VTextField, {
+                    key: 0,
+                    modelValue: _ctx.search,
+                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => _ctx.search = $event),
+                    "hide-details": "",
+                    label: "Search",
+                    density: "compact",
+                    variant: "outlined",
+                    "data-cy": "modules-search",
+                    clearable: ""
+                  }, null, 8, ["modelValue"])) : createCommentVNode("", true),
+                  createVNode(VList, { class: "ma-0" }, {
+                    default: withCtx(() => [
+                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.filtered_module_list, (module2) => {
+                        return openBlock(), createBlock(VTooltip, {
+                          location: "right",
+                          key: module2.type,
+                          "open-delay": "500"
+                        }, {
+                          activator: withCtx(({ props }) => [
+                            createVNode(VListItem, mergeProps(props, {
+                              title: module2.type,
+                              onClick: withModifiers(($event) => _ctx.add_module_to_config(module2.type), ["stop"]),
+                              "data-cy": "module-list-item"
+                            }), {
+                              append: withCtx(() => [
+                                createVNode(VIcon, null, {
+                                  default: withCtx(() => [
+                                    createTextVNode("mdi-plus")
+                                  ]),
+                                  _: 1
+                                })
+                              ]),
+                              _: 2
+                            }, 1040, ["title", "onClick"])
+                          ]),
+                          default: withCtx(() => [
+                            createBaseVNode("span", null, toDisplayString(`${module2.type}: ${module2.description}`), 1)
+                          ]),
+                          _: 2
+                        }, 1024);
+                      }), 128))
+                    ]),
+                    _: 1
+                  })
+                ]),
+                _: 1
+              })
+            ]),
+            _: 1
+          }, 8, ["disabled"]),
+          createVNode(VExpansionPanel, { value: "configs" }, {
+            default: withCtx(() => [
+              createVNode(VExpansionPanelTitle, { "data-cy": "configs-expansion-panel" }, {
+                default: withCtx(() => [
+                  createTextVNode(toDisplayString(_ctx.config_list.length == 0 ? "No configs available" : "Available configs"), 1)
+                ]),
+                _: 1
+              }),
+              createVNode(VExpansionPanelText, null, {
+                default: withCtx(() => [
+                  createVNode(_component_create_config, { onCreateConfig: _ctx.create_config }, null, 8, ["onCreateConfig"]),
+                  createVNode(VList, { class: "ma-0" }, {
+                    default: withCtx(() => [
+                      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.config_list, (config2) => {
+                        return openBlock(), createBlock(VTooltip, {
+                          location: "right",
+                          key: config2,
+                          "open-delay": "500"
+                        }, {
+                          activator: withCtx(({ props }) => [
+                            createVNode(VListItem, mergeProps({ title: config2 }, props, {
+                              onClick: ($event) => _ctx.load_config_if_empty(config2),
+                              "data-cy": "config-list-item"
+                            }), {
+                              append: withCtx(() => [
+                                createVNode(VIcon, null, {
+                                  default: withCtx(() => [
+                                    createTextVNode("mdi-file-document-arrow-right")
+                                  ]),
+                                  _: 1
+                                })
+                              ]),
+                              _: 2
+                            }, 1040, ["title", "onClick"])
+                          ]),
+                          default: withCtx(() => [
+                            createBaseVNode("span", null, toDisplayString(config2), 1)
+                          ]),
+                          _: 2
+                        }, 1024);
+                      }), 128))
+                    ]),
+                    _: 1
+                  })
+                ]),
+                _: 1
+              }),
+              createVNode(_component_ev_dialog, {
+                show_dialog: _ctx.show_dialog,
+                title: "Warning",
+                text: "Do you want to discard the current config and load the new one?",
+                accept_text: "Load config",
+                deny_text: "Don't load config",
+                onAccept: _cache[1] || (_cache[1] = ($event) => _ctx.load_config(_ctx.config_to_load)),
+                onDeny: _cache[2] || (_cache[2] = ($event) => _ctx.close_dialog())
+              }, null, 8, ["show_dialog"])
+            ]),
+            _: 1
+          }),
+          createVNode(VExpansionPanel, { value: "commands" }, {
+            default: withCtx(() => [
+              createVNode(VExpansionPanelTitle, null, {
+                default: withCtx(() => [
+                  createTextVNode(" Issue commands")
+                ]),
+                _: 1
+              }),
+              createVNode(VExpansionPanelText, null, {
+                default: withCtx(() => [
+                  createVNode(VList, null, {
+                    default: withCtx(() => [
+                      createVNode(VListItem, {
+                        onClick: _cache[3] || (_cache[3] = ($event) => _ctx.restart_modules()),
+                        title: "Restart modules"
+                      }, {
+                        append: withCtx(() => [
+                          createVNode(VIcon, null, {
+                            default: withCtx(() => [
+                              createTextVNode("mdi-run")
+                            ]),
+                            _: 1
+                          })
+                        ]),
+                        _: 1
+                      })
+                    ]),
+                    _: 1
+                  })
+                ]),
+                _: 1
+              })
+            ]),
+            _: 1
+          })
+        ]),
+        _: 1
+      }, 8, ["modelValue"]);
+    }
+    const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$2]]);
+    var _2019 = { exports: {} };
+    var dynamic$1 = {};
+    var dynamicAnchor$1 = {};
+    Object.defineProperty(dynamicAnchor$1, "__esModule", { value: true });
+    dynamicAnchor$1.dynamicAnchor = void 0;
+    const codegen_1$3 = codegen;
+    const names_1$2 = names$2;
+    const compile_1 = compile$2;
+    const ref_1$1 = ref;
+    const def$8 = {
+      keyword: "$dynamicAnchor",
+      schemaType: "string",
+      code: (cxt) => dynamicAnchor(cxt, cxt.schema)
+    };
+    function dynamicAnchor(cxt, anchor) {
+      const { gen, it: it2 } = cxt;
+      it2.schemaEnv.root.dynamicAnchors[anchor] = true;
+      const v = (0, codegen_1$3._)`${names_1$2.default.dynamicAnchors}${(0, codegen_1$3.getProperty)(anchor)}`;
+      const validate2 = it2.errSchemaPath === "#" ? it2.validateName : _getValidate(cxt);
+      gen.if((0, codegen_1$3._)`!${v}`, () => gen.assign(v, validate2));
+    }
+    dynamicAnchor$1.dynamicAnchor = dynamicAnchor;
+    function _getValidate(cxt) {
+      const { schemaEnv, schema: schema2, self: self2 } = cxt.it;
+      const { root, baseId, localRefs, meta } = schemaEnv.root;
+      const { schemaId } = self2.opts;
+      const sch = new compile_1.SchemaEnv({ schema: schema2, schemaId, root, baseId, localRefs, meta });
+      compile_1.compileSchema.call(self2, sch);
+      return (0, ref_1$1.getValidate)(cxt, sch);
+    }
+    dynamicAnchor$1.default = def$8;
+    var dynamicRef$1 = {};
+    Object.defineProperty(dynamicRef$1, "__esModule", { value: true });
+    dynamicRef$1.dynamicRef = void 0;
+    const codegen_1$2 = codegen;
+    const names_1$1 = names$2;
+    const ref_1 = ref;
+    const def$7 = {
+      keyword: "$dynamicRef",
+      schemaType: "string",
+      code: (cxt) => dynamicRef(cxt, cxt.schema)
+    };
+    function dynamicRef(cxt, ref2) {
+      const { gen, keyword: keyword2, it: it2 } = cxt;
+      if (ref2[0] !== "#")
+        throw new Error(`"${keyword2}" only supports hash fragment reference`);
+      const anchor = ref2.slice(1);
+      if (it2.allErrors) {
+        _dynamicRef();
+      } else {
+        const valid = gen.let("valid", false);
+        _dynamicRef(valid);
+        cxt.ok(valid);
+      }
+      function _dynamicRef(valid) {
+        if (it2.schemaEnv.root.dynamicAnchors[anchor]) {
+          const v = gen.let("_v", (0, codegen_1$2._)`${names_1$1.default.dynamicAnchors}${(0, codegen_1$2.getProperty)(anchor)}`);
+          gen.if(v, _callRef(v, valid), _callRef(it2.validateName, valid));
+        } else {
+          _callRef(it2.validateName, valid)();
+        }
+      }
+      function _callRef(validate2, valid) {
+        return valid ? () => gen.block(() => {
+          (0, ref_1.callRef)(cxt, validate2);
+          gen.let(valid, true);
+        }) : () => (0, ref_1.callRef)(cxt, validate2);
+      }
+    }
+    dynamicRef$1.dynamicRef = dynamicRef;
+    dynamicRef$1.default = def$7;
+    var recursiveAnchor = {};
+    Object.defineProperty(recursiveAnchor, "__esModule", { value: true });
+    const dynamicAnchor_1$1 = dynamicAnchor$1;
+    const util_1$3 = util;
+    const def$6 = {
+      keyword: "$recursiveAnchor",
+      schemaType: "boolean",
+      code(cxt) {
+        if (cxt.schema)
+          (0, dynamicAnchor_1$1.dynamicAnchor)(cxt, "");
+        else
+          (0, util_1$3.checkStrictMode)(cxt.it, "$recursiveAnchor: false is ignored");
+      }
+    };
+    recursiveAnchor.default = def$6;
+    var recursiveRef = {};
+    Object.defineProperty(recursiveRef, "__esModule", { value: true });
+    const dynamicRef_1$1 = dynamicRef$1;
+    const def$5 = {
+      keyword: "$recursiveRef",
+      schemaType: "string",
+      code: (cxt) => (0, dynamicRef_1$1.dynamicRef)(cxt, cxt.schema)
+    };
+    recursiveRef.default = def$5;
+    Object.defineProperty(dynamic$1, "__esModule", { value: true });
+    const dynamicAnchor_1 = dynamicAnchor$1;
+    const dynamicRef_1 = dynamicRef$1;
+    const recursiveAnchor_1 = recursiveAnchor;
+    const recursiveRef_1 = recursiveRef;
+    const dynamic = [dynamicAnchor_1.default, dynamicRef_1.default, recursiveAnchor_1.default, recursiveRef_1.default];
+    dynamic$1.default = dynamic;
+    var next$1 = {};
+    var dependentRequired = {};
+    Object.defineProperty(dependentRequired, "__esModule", { value: true });
+    const dependencies_1$1 = dependencies;
+    const def$4 = {
+      keyword: "dependentRequired",
+      type: "object",
+      schemaType: "object",
+      error: dependencies_1$1.error,
+      code: (cxt) => (0, dependencies_1$1.validatePropertyDeps)(cxt)
+    };
+    dependentRequired.default = def$4;
+    var dependentSchemas = {};
+    Object.defineProperty(dependentSchemas, "__esModule", { value: true });
+    const dependencies_1 = dependencies;
+    const def$3 = {
+      keyword: "dependentSchemas",
+      type: "object",
+      schemaType: "object",
+      code: (cxt) => (0, dependencies_1.validateSchemaDeps)(cxt)
+    };
+    dependentSchemas.default = def$3;
+    var limitContains = {};
+    Object.defineProperty(limitContains, "__esModule", { value: true });
+    const util_1$2 = util;
+    const def$2 = {
+      keyword: ["maxContains", "minContains"],
+      type: "array",
+      schemaType: "number",
+      code({ keyword: keyword2, parentSchema, it: it2 }) {
+        if (parentSchema.contains === void 0) {
+          (0, util_1$2.checkStrictMode)(it2, `"${keyword2}" without "contains" is ignored`);
+        }
+      }
+    };
+    limitContains.default = def$2;
+    Object.defineProperty(next$1, "__esModule", { value: true });
+    const dependentRequired_1 = dependentRequired;
+    const dependentSchemas_1 = dependentSchemas;
+    const limitContains_1 = limitContains;
+    const next = [dependentRequired_1.default, dependentSchemas_1.default, limitContains_1.default];
+    next$1.default = next;
+    var unevaluated$1 = {};
+    var unevaluatedProperties = {};
+    Object.defineProperty(unevaluatedProperties, "__esModule", { value: true });
+    const codegen_1$1 = codegen;
+    const util_1$1 = util;
+    const names_1 = names$2;
+    const error$2 = {
+      message: "must NOT have unevaluated properties",
+      params: ({ params }) => (0, codegen_1$1._)`{unevaluatedProperty: ${params.unevaluatedProperty}}`
+    };
+    const def$1 = {
+      keyword: "unevaluatedProperties",
+      type: "object",
+      schemaType: ["boolean", "object"],
+      trackErrors: true,
+      error: error$2,
+      code(cxt) {
+        const { gen, schema: schema2, data, errsCount, it: it2 } = cxt;
+        if (!errsCount)
+          throw new Error("ajv implementation error");
+        const { allErrors, props } = it2;
+        if (props instanceof codegen_1$1.Name) {
+          gen.if((0, codegen_1$1._)`${props} !== true`, () => gen.forIn("key", data, (key) => gen.if(unevaluatedDynamic(props, key), () => unevaluatedPropCode(key))));
+        } else if (props !== true) {
+          gen.forIn("key", data, (key) => props === void 0 ? unevaluatedPropCode(key) : gen.if(unevaluatedStatic(props, key), () => unevaluatedPropCode(key)));
+        }
+        it2.props = true;
+        cxt.ok((0, codegen_1$1._)`${errsCount} === ${names_1.default.errors}`);
+        function unevaluatedPropCode(key) {
+          if (schema2 === false) {
+            cxt.setParams({ unevaluatedProperty: key });
+            cxt.error();
+            if (!allErrors)
+              gen.break();
+            return;
+          }
+          if (!(0, util_1$1.alwaysValidSchema)(it2, schema2)) {
+            const valid = gen.name("valid");
+            cxt.subschema({
+              keyword: "unevaluatedProperties",
+              dataProp: key,
+              dataPropType: util_1$1.Type.Str
+            }, valid);
+            if (!allErrors)
+              gen.if((0, codegen_1$1.not)(valid), () => gen.break());
+          }
+        }
+        function unevaluatedDynamic(evaluatedProps, key) {
+          return (0, codegen_1$1._)`!${evaluatedProps} || !${evaluatedProps}[${key}]`;
+        }
+        function unevaluatedStatic(evaluatedProps, key) {
+          const ps = [];
+          for (const p2 in evaluatedProps) {
+            if (evaluatedProps[p2] === true)
+              ps.push((0, codegen_1$1._)`${key} !== ${p2}`);
+          }
+          return (0, codegen_1$1.and)(...ps);
+        }
+      }
+    };
+    unevaluatedProperties.default = def$1;
+    var unevaluatedItems = {};
+    Object.defineProperty(unevaluatedItems, "__esModule", { value: true });
+    const codegen_1 = codegen;
+    const util_1 = util;
+    const error$1 = {
+      message: ({ params: { len } }) => (0, codegen_1.str)`must NOT have more than ${len} items`,
+      params: ({ params: { len } }) => (0, codegen_1._)`{limit: ${len}}`
+    };
+    const def = {
+      keyword: "unevaluatedItems",
+      type: "array",
+      schemaType: ["boolean", "object"],
+      error: error$1,
+      code(cxt) {
+        const { gen, schema: schema2, data, it: it2 } = cxt;
+        const items2 = it2.items || 0;
+        if (items2 === true)
+          return;
+        const len = gen.const("len", (0, codegen_1._)`${data}.length`);
+        if (schema2 === false) {
+          cxt.setParams({ len: items2 });
+          cxt.fail((0, codegen_1._)`${len} > ${items2}`);
+        } else if (typeof schema2 == "object" && !(0, util_1.alwaysValidSchema)(it2, schema2)) {
+          const valid = gen.var("valid", (0, codegen_1._)`${len} <= ${items2}`);
+          gen.if((0, codegen_1.not)(valid), () => validateItems(valid, items2));
+          cxt.ok(valid);
+        }
+        it2.items = true;
+        function validateItems(valid, from) {
+          gen.forRange("i", from, len, (i2) => {
+            cxt.subschema({ keyword: "unevaluatedItems", dataProp: i2, dataPropType: util_1.Type.Num }, valid);
+            if (!it2.allErrors)
+              gen.if((0, codegen_1.not)(valid), () => gen.break());
+          });
+        }
+      }
+    };
+    unevaluatedItems.default = def;
+    Object.defineProperty(unevaluated$1, "__esModule", { value: true });
+    const unevaluatedProperties_1 = unevaluatedProperties;
+    const unevaluatedItems_1 = unevaluatedItems;
+    const unevaluated = [unevaluatedProperties_1.default, unevaluatedItems_1.default];
+    unevaluated$1.default = unevaluated;
     var jsonSchema201909 = {};
-    const $schema$7 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$7 = "https://json-schema.org/draft/2019-09/schema";
+    const $schema$6 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$6 = "https://json-schema.org/draft/2019-09/schema";
     const $vocabulary$6 = {
       "https://json-schema.org/draft/2019-09/vocab/core": true,
       "https://json-schema.org/draft/2019-09/vocab/applicator": true,
@@ -49308,7 +49927,7 @@ Reason: ${error2}`);
       "https://json-schema.org/draft/2019-09/vocab/content": true
     };
     const $recursiveAnchor$6 = true;
-    const title$7 = "Core and Validation specifications meta-schema";
+    const title$6 = "Core and Validation specifications meta-schema";
     const allOf = [
       {
         $ref: "meta/core"
@@ -49329,11 +49948,11 @@ Reason: ${error2}`);
         $ref: "meta/content"
       }
     ];
-    const type$7 = [
+    const type$6 = [
       "object",
       "boolean"
     ];
-    const properties$7 = {
+    const properties$6 = {
       definitions: {
         $comment: "While no longer an official keyword as it is replaced by $defs, this keyword is retained in the meta-schema to prevent incompatible extensions as it remains in common use.",
         type: "object",
@@ -49358,27 +49977,27 @@ Reason: ${error2}`);
       }
     };
     const require$$0$1 = {
-      $schema: $schema$7,
-      $id: $id$7,
+      $schema: $schema$6,
+      $id: $id$6,
       $vocabulary: $vocabulary$6,
       $recursiveAnchor: $recursiveAnchor$6,
-      title: title$7,
+      title: title$6,
       allOf,
-      type: type$7,
-      properties: properties$7
+      type: type$6,
+      properties: properties$6
     };
-    const $schema$6 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$6 = "https://json-schema.org/draft/2019-09/meta/applicator";
+    const $schema$5 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$5 = "https://json-schema.org/draft/2019-09/meta/applicator";
     const $vocabulary$5 = {
       "https://json-schema.org/draft/2019-09/vocab/applicator": true
     };
     const $recursiveAnchor$5 = true;
-    const title$6 = "Applicator vocabulary meta-schema";
-    const type$6 = [
+    const title$5 = "Applicator vocabulary meta-schema";
+    const type$5 = [
       "object",
       "boolean"
     ];
-    const properties$6 = {
+    const properties$5 = {
       additionalItems: {
         $recursiveRef: "#"
       },
@@ -49462,27 +50081,27 @@ Reason: ${error2}`);
       }
     };
     const require$$1 = {
-      $schema: $schema$6,
-      $id: $id$6,
+      $schema: $schema$5,
+      $id: $id$5,
       $vocabulary: $vocabulary$5,
       $recursiveAnchor: $recursiveAnchor$5,
-      title: title$6,
-      type: type$6,
-      properties: properties$6,
+      title: title$5,
+      type: type$5,
+      properties: properties$5,
       $defs: $defs$1
     };
-    const $schema$5 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$5 = "https://json-schema.org/draft/2019-09/meta/content";
+    const $schema$4 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$4 = "https://json-schema.org/draft/2019-09/meta/content";
     const $vocabulary$4 = {
       "https://json-schema.org/draft/2019-09/vocab/content": true
     };
     const $recursiveAnchor$4 = true;
-    const title$5 = "Content vocabulary meta-schema";
-    const type$5 = [
+    const title$4 = "Content vocabulary meta-schema";
+    const type$4 = [
       "object",
       "boolean"
     ];
-    const properties$5 = {
+    const properties$4 = {
       contentMediaType: {
         type: "string"
       },
@@ -49494,26 +50113,26 @@ Reason: ${error2}`);
       }
     };
     const require$$2 = {
-      $schema: $schema$5,
-      $id: $id$5,
+      $schema: $schema$4,
+      $id: $id$4,
       $vocabulary: $vocabulary$4,
       $recursiveAnchor: $recursiveAnchor$4,
-      title: title$5,
-      type: type$5,
-      properties: properties$5
+      title: title$4,
+      type: type$4,
+      properties: properties$4
     };
-    const $schema$4 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$4 = "https://json-schema.org/draft/2019-09/meta/core";
+    const $schema$3 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$3 = "https://json-schema.org/draft/2019-09/meta/core";
     const $vocabulary$3 = {
       "https://json-schema.org/draft/2019-09/vocab/core": true
     };
     const $recursiveAnchor$3 = true;
-    const title$4 = "Core vocabulary meta-schema";
-    const type$4 = [
+    const title$3 = "Core vocabulary meta-schema";
+    const type$3 = [
       "object",
       "boolean"
     ];
-    const properties$4 = {
+    const properties$3 = {
       $id: {
         type: "string",
         format: "uri-reference",
@@ -49561,52 +50180,52 @@ Reason: ${error2}`);
         "default": {}
       }
     };
-    const require$$3$1 = {
-      $schema: $schema$4,
-      $id: $id$4,
-      $vocabulary: $vocabulary$3,
-      $recursiveAnchor: $recursiveAnchor$3,
-      title: title$4,
-      type: type$4,
-      properties: properties$4
-    };
-    const $schema$3 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$3 = "https://json-schema.org/draft/2019-09/meta/format";
-    const $vocabulary$2 = {
-      "https://json-schema.org/draft/2019-09/vocab/format": true
-    };
-    const $recursiveAnchor$2 = true;
-    const title$3 = "Format vocabulary meta-schema";
-    const type$3 = [
-      "object",
-      "boolean"
-    ];
-    const properties$3 = {
-      format: {
-        type: "string"
-      }
-    };
-    const require$$4 = {
+    const require$$3 = {
       $schema: $schema$3,
       $id: $id$3,
-      $vocabulary: $vocabulary$2,
-      $recursiveAnchor: $recursiveAnchor$2,
+      $vocabulary: $vocabulary$3,
+      $recursiveAnchor: $recursiveAnchor$3,
       title: title$3,
       type: type$3,
       properties: properties$3
     };
     const $schema$2 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$2 = "https://json-schema.org/draft/2019-09/meta/meta-data";
-    const $vocabulary$1 = {
-      "https://json-schema.org/draft/2019-09/vocab/meta-data": true
+    const $id$2 = "https://json-schema.org/draft/2019-09/meta/format";
+    const $vocabulary$2 = {
+      "https://json-schema.org/draft/2019-09/vocab/format": true
     };
-    const $recursiveAnchor$1 = true;
-    const title$2 = "Meta-data vocabulary meta-schema";
+    const $recursiveAnchor$2 = true;
+    const title$2 = "Format vocabulary meta-schema";
     const type$2 = [
       "object",
       "boolean"
     ];
     const properties$2 = {
+      format: {
+        type: "string"
+      }
+    };
+    const require$$4 = {
+      $schema: $schema$2,
+      $id: $id$2,
+      $vocabulary: $vocabulary$2,
+      $recursiveAnchor: $recursiveAnchor$2,
+      title: title$2,
+      type: type$2,
+      properties: properties$2
+    };
+    const $schema$1 = "https://json-schema.org/draft/2019-09/schema";
+    const $id$1 = "https://json-schema.org/draft/2019-09/meta/meta-data";
+    const $vocabulary$1 = {
+      "https://json-schema.org/draft/2019-09/vocab/meta-data": true
+    };
+    const $recursiveAnchor$1 = true;
+    const title$1 = "Meta-data vocabulary meta-schema";
+    const type$1 = [
+      "object",
+      "boolean"
+    ];
+    const properties$1 = {
       title: {
         type: "string"
       },
@@ -49632,26 +50251,26 @@ Reason: ${error2}`);
       }
     };
     const require$$5 = {
-      $schema: $schema$2,
-      $id: $id$2,
+      $schema: $schema$1,
+      $id: $id$1,
       $vocabulary: $vocabulary$1,
       $recursiveAnchor: $recursiveAnchor$1,
-      title: title$2,
-      type: type$2,
-      properties: properties$2
+      title: title$1,
+      type: type$1,
+      properties: properties$1
     };
-    const $schema$1 = "https://json-schema.org/draft/2019-09/schema";
-    const $id$1 = "https://json-schema.org/draft/2019-09/meta/validation";
+    const $schema = "https://json-schema.org/draft/2019-09/schema";
+    const $id = "https://json-schema.org/draft/2019-09/meta/validation";
     const $vocabulary = {
       "https://json-schema.org/draft/2019-09/vocab/validation": true
     };
     const $recursiveAnchor = true;
-    const title$1 = "Validation vocabulary meta-schema";
-    const type$1 = [
+    const title = "Validation vocabulary meta-schema";
+    const type = [
       "object",
       "boolean"
     ];
-    const properties$1 = {
+    const properties = {
       multipleOf: {
         type: "number",
         exclusiveMinimum: 0
@@ -49761,20 +50380,20 @@ Reason: ${error2}`);
       }
     };
     const require$$6 = {
-      $schema: $schema$1,
-      $id: $id$1,
+      $schema,
+      $id,
       $vocabulary,
       $recursiveAnchor,
-      title: title$1,
-      type: type$1,
-      properties: properties$1,
+      title,
+      type,
+      properties,
       $defs
     };
     Object.defineProperty(jsonSchema201909, "__esModule", { value: true });
     const metaSchema = require$$0$1;
     const applicator = require$$1;
     const content = require$$2;
-    const core = require$$3$1;
+    const core = require$$3;
     const format$1 = require$$4;
     const metadata = require$$5;
     const validation = require$$6;
@@ -50038,318 +50657,6 @@ Reason: ${error2}`);
       }
     })(formats);
     var limit = {};
-    var ajv = { exports: {} };
-    const $schema = "http://json-schema.org/draft-07/schema#";
-    const $id = "http://json-schema.org/draft-07/schema#";
-    const title = "Core schema meta-schema";
-    const definitions = {
-      schemaArray: {
-        type: "array",
-        minItems: 1,
-        items: {
-          $ref: "#"
-        }
-      },
-      nonNegativeInteger: {
-        type: "integer",
-        minimum: 0
-      },
-      nonNegativeIntegerDefault0: {
-        allOf: [
-          {
-            $ref: "#/definitions/nonNegativeInteger"
-          },
-          {
-            "default": 0
-          }
-        ]
-      },
-      simpleTypes: {
-        "enum": [
-          "array",
-          "boolean",
-          "integer",
-          "null",
-          "number",
-          "object",
-          "string"
-        ]
-      },
-      stringArray: {
-        type: "array",
-        items: {
-          type: "string"
-        },
-        uniqueItems: true,
-        "default": []
-      }
-    };
-    const type = [
-      "object",
-      "boolean"
-    ];
-    const properties = {
-      $id: {
-        type: "string",
-        format: "uri-reference"
-      },
-      $schema: {
-        type: "string",
-        format: "uri"
-      },
-      $ref: {
-        type: "string",
-        format: "uri-reference"
-      },
-      $comment: {
-        type: "string"
-      },
-      title: {
-        type: "string"
-      },
-      description: {
-        type: "string"
-      },
-      "default": true,
-      readOnly: {
-        type: "boolean",
-        "default": false
-      },
-      examples: {
-        type: "array",
-        items: true
-      },
-      multipleOf: {
-        type: "number",
-        exclusiveMinimum: 0
-      },
-      maximum: {
-        type: "number"
-      },
-      exclusiveMaximum: {
-        type: "number"
-      },
-      minimum: {
-        type: "number"
-      },
-      exclusiveMinimum: {
-        type: "number"
-      },
-      maxLength: {
-        $ref: "#/definitions/nonNegativeInteger"
-      },
-      minLength: {
-        $ref: "#/definitions/nonNegativeIntegerDefault0"
-      },
-      pattern: {
-        type: "string",
-        format: "regex"
-      },
-      additionalItems: {
-        $ref: "#"
-      },
-      items: {
-        anyOf: [
-          {
-            $ref: "#"
-          },
-          {
-            $ref: "#/definitions/schemaArray"
-          }
-        ],
-        "default": true
-      },
-      maxItems: {
-        $ref: "#/definitions/nonNegativeInteger"
-      },
-      minItems: {
-        $ref: "#/definitions/nonNegativeIntegerDefault0"
-      },
-      uniqueItems: {
-        type: "boolean",
-        "default": false
-      },
-      contains: {
-        $ref: "#"
-      },
-      maxProperties: {
-        $ref: "#/definitions/nonNegativeInteger"
-      },
-      minProperties: {
-        $ref: "#/definitions/nonNegativeIntegerDefault0"
-      },
-      required: {
-        $ref: "#/definitions/stringArray"
-      },
-      additionalProperties: {
-        $ref: "#"
-      },
-      definitions: {
-        type: "object",
-        additionalProperties: {
-          $ref: "#"
-        },
-        "default": {}
-      },
-      properties: {
-        type: "object",
-        additionalProperties: {
-          $ref: "#"
-        },
-        "default": {}
-      },
-      patternProperties: {
-        type: "object",
-        additionalProperties: {
-          $ref: "#"
-        },
-        propertyNames: {
-          format: "regex"
-        },
-        "default": {}
-      },
-      dependencies: {
-        type: "object",
-        additionalProperties: {
-          anyOf: [
-            {
-              $ref: "#"
-            },
-            {
-              $ref: "#/definitions/stringArray"
-            }
-          ]
-        }
-      },
-      propertyNames: {
-        $ref: "#"
-      },
-      "const": true,
-      "enum": {
-        type: "array",
-        items: true,
-        minItems: 1,
-        uniqueItems: true
-      },
-      type: {
-        anyOf: [
-          {
-            $ref: "#/definitions/simpleTypes"
-          },
-          {
-            type: "array",
-            items: {
-              $ref: "#/definitions/simpleTypes"
-            },
-            minItems: 1,
-            uniqueItems: true
-          }
-        ]
-      },
-      format: {
-        type: "string"
-      },
-      contentMediaType: {
-        type: "string"
-      },
-      contentEncoding: {
-        type: "string"
-      },
-      "if": {
-        $ref: "#"
-      },
-      then: {
-        $ref: "#"
-      },
-      "else": {
-        $ref: "#"
-      },
-      allOf: {
-        $ref: "#/definitions/schemaArray"
-      },
-      anyOf: {
-        $ref: "#/definitions/schemaArray"
-      },
-      oneOf: {
-        $ref: "#/definitions/schemaArray"
-      },
-      not: {
-        $ref: "#"
-      }
-    };
-    const require$$3 = {
-      $schema,
-      $id,
-      title,
-      definitions,
-      type,
-      properties,
-      "default": true
-    };
-    (function(module2, exports2) {
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
-      const core_12 = core$3;
-      const draft7_1 = draft7;
-      const discriminator_1 = discriminator;
-      const draft7MetaSchema = require$$3;
-      const META_SUPPORT_DATA2 = ["/properties"];
-      const META_SCHEMA_ID = "http://json-schema.org/draft-07/schema";
-      class Ajv2 extends core_12.default {
-        _addVocabularies() {
-          super._addVocabularies();
-          draft7_1.default.forEach((v) => this.addVocabulary(v));
-          if (this.opts.discriminator)
-            this.addKeyword(discriminator_1.default);
-        }
-        _addDefaultMetaSchema() {
-          super._addDefaultMetaSchema();
-          if (!this.opts.meta)
-            return;
-          const metaSchema2 = this.opts.$data ? this.$dataMetaSchema(draft7MetaSchema, META_SUPPORT_DATA2) : draft7MetaSchema;
-          this.addMetaSchema(metaSchema2, META_SCHEMA_ID, false);
-          this.refs["http://json-schema.org/schema"] = META_SCHEMA_ID;
-        }
-        defaultMeta() {
-          return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
-        }
-      }
-      module2.exports = exports2 = Ajv2;
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.default = Ajv2;
-      var validate_12 = validate;
-      Object.defineProperty(exports2, "KeywordCxt", { enumerable: true, get: function() {
-        return validate_12.KeywordCxt;
-      } });
-      var codegen_12 = codegen;
-      Object.defineProperty(exports2, "_", { enumerable: true, get: function() {
-        return codegen_12._;
-      } });
-      Object.defineProperty(exports2, "str", { enumerable: true, get: function() {
-        return codegen_12.str;
-      } });
-      Object.defineProperty(exports2, "stringify", { enumerable: true, get: function() {
-        return codegen_12.stringify;
-      } });
-      Object.defineProperty(exports2, "nil", { enumerable: true, get: function() {
-        return codegen_12.nil;
-      } });
-      Object.defineProperty(exports2, "Name", { enumerable: true, get: function() {
-        return codegen_12.Name;
-      } });
-      Object.defineProperty(exports2, "CodeGen", { enumerable: true, get: function() {
-        return codegen_12.CodeGen;
-      } });
-      var validation_error_12 = validation_error;
-      Object.defineProperty(exports2, "ValidationError", { enumerable: true, get: function() {
-        return validation_error_12.default;
-      } });
-      var ref_error_12 = ref_error;
-      Object.defineProperty(exports2, "MissingRefError", { enumerable: true, get: function() {
-        return ref_error_12.default;
-      } });
-    })(ajv, ajv.exports);
-    var ajvExports = ajv.exports;
     (function(exports2) {
       Object.defineProperty(exports2, "__esModule", { value: true });
       exports2.formatLimitDefinition = void 0;
@@ -81352,38 +81659,36 @@ Reason: ${error2}`);
       }
     });
     const IconButtonWithTooltip = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-6395d6b5"]]);
-    let evbcStore;
     const _sfc_main$1 = /* @__PURE__ */ defineComponent$1({
-      created() {
-        evbcStore = useEvbcStore();
+      components: {
+        Vjsf: _sfc_main$3,
+        IconButtonWithTooltip
       },
-      computed: {
-        // FIXME (aw): this is not how it works!
-        module_node() {
-          const instance_id = evbcStore.get_selected_module_instance();
+      setup() {
+        const evbcStore2 = useEvbcStore();
+        const { current_config } = storeToRefs(evbcStore2);
+        const module_node = computed(() => {
+          const instance_id = evbcStore2.get_selected_module_instance();
           if (instance_id === null) {
             return null;
           }
-          const instance = this.config_model.get_module_instance(instance_id);
+          const instance = current_config.value.get_module_instance(instance_id);
           return {
             instance_id,
             instance
           };
-        },
-        terminal() {
-          return evbcStore.get_selected_terminal();
-        },
-        config_model: function() {
-          return evbcStore.get_current_config();
-        },
-        connection: function() {
-          const connection_id = evbcStore.get_selected_connection();
+        });
+        const terminal = computed(() => {
+          return evbcStore2.get_selected_terminal();
+        });
+        const connection = computed(() => {
+          const connection_id = evbcStore2.get_selected_connection();
           if (connection_id === null) {
             return null;
           }
-          const cxn = this.config_model.get_connection(connection_id);
-          const requiring_module = this.config_model.get_module_instance(cxn.requiring_instance_id);
-          const implementing_module = this.config_model.get_module_instance(cxn.providing_instance_id);
+          const cxn = current_config.value.get_connection(connection_id);
+          const requiring_module = current_config.value.get_module_instance(cxn.requiring_instance_id);
+          const implementing_module = current_config.value.get_module_instance(cxn.providing_instance_id);
           return {
             from: {
               type: implementing_module.type,
@@ -81397,31 +81702,35 @@ Reason: ${error2}`);
             },
             id: connection_id
           };
-        },
-        context: function() {
-          return evbcStore.config_context;
-        },
-        moduleIDRules: function() {
+        });
+        const context = computed(() => {
+          return evbcStore2.config_context;
+        });
+        const moduleIDRules = computed(() => {
           return [
             (v) => {
-              const instance_id = this.module_node.instance_id;
-              const result = this.config_model.update_module_id(instance_id, v);
+              const instance_id = module_node.value.instance_id;
+              const result = current_config.value.update_module_id(instance_id, v);
               return result || "This module id is not available";
             }
           ];
+        });
+        function delete_connection(id2) {
+          current_config.value.delete_connection(id2);
         }
-      },
-      methods: {
-        delete_connection(id2) {
-          this.config_model.delete_connection(id2);
-        },
-        delete_module_instance(id2) {
-          this.config_model.delete_module_instance(id2);
+        function delete_module_instance(id2) {
+          current_config.value.delete_module_instance(id2);
         }
-      },
-      components: {
-        Vjsf: _sfc_main$3,
-        IconButtonWithTooltip
+        return {
+          module_node,
+          terminal,
+          current_config,
+          connection,
+          context,
+          moduleIDRules,
+          delete_connection,
+          delete_module_instance
+        };
       }
     });
     const _hoisted_1 = { class: "font-weight-bold" };
@@ -82255,11 +82564,8 @@ Reason: ${error2}`);
         return this._instances[id2];
       }
       interfaces_match(provide2, requirement) {
-        if (provide2 === requirement)
-          return true;
-        if (this._interface_parents[provide2].has(requirement))
-          return true;
-        return false;
+        var _a2;
+        return provide2 === requirement || (((_a2 = this._interface_parents[provide2]) == null ? void 0 : _a2.has(requirement)) ?? false);
       }
       serialize() {
         const config2 = { active_modules: {}, "x-module-layout": {} };
@@ -82390,3741 +82696,7869 @@ Reason: ${error2}`);
       }
     }
     const SampleManifestList = {
-      EnergyManager: {
-        description: "This module is the global Energy Manager for all EVSE/Charging stations in this building",
-        enable_external_mqtt: false,
-        metadata: {
-          authors: ["Cornelius Claussen"],
-          license: "https://opensource.org/licenses/Apache-2.0"
-        },
-        provides: {
-          main: {
-            description: "Main interface of the energy manager",
-            interface: "energy_manager"
+      "API": {
+        "config": {
+          "charger_information_file": {
+            "default": "",
+            "description": "Path to a file containing information about the charger like its serial number",
+            "type": "string"
+          },
+          "hw_caps_max_current_export_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for maximum export current in the hardware capabilities",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "hw_caps_max_current_export_round_to": {
+            "default": 0,
+            "description": "Round maximum export current in hardware limits to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "hw_caps_max_current_import_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for maximum import current in the hardware capabilities",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "hw_caps_max_current_import_round_to": {
+            "default": 0,
+            "description": "Round maximum import current in hardware limits to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "hw_caps_max_plug_temperature_C_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for max_plug_temperature_C in the hardware capabilities",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "hw_caps_max_plug_temperature_C_round_to": {
+            "default": 0,
+            "description": "Round max_plug_temperature_C in hardware limits to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "hw_caps_min_current_export_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for minimum export current in the hardware capabilities",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "hw_caps_min_current_export_round_to": {
+            "default": 0,
+            "description": "Round minimum export current in hardware limits to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "hw_caps_min_current_import_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for minimum import current in the hardware capabilities",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "hw_caps_min_current_import_round_to": {
+            "default": 0,
+            "description": "Round minimum import current in hardware limits to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "limits_max_current_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for maximum current in the limits",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "limits_max_current_round_to": {
+            "default": 0,
+            "description": "Round maximum current in limits to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "powermeter_VAR_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for VAR in the power meter",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "powermeter_VAR_round_to": {
+            "default": 0,
+            "description": "Round VAR to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "powermeter_current_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for current in the power meter",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "powermeter_current_round_to": {
+            "default": 0,
+            "description": "Round current to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "powermeter_energy_export_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for export energy in the power meter",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "powermeter_energy_export_round_to": {
+            "default": 0,
+            "description": "Round export energy to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "powermeter_energy_import_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for import energy in the power meter",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "powermeter_energy_import_round_to": {
+            "default": 0,
+            "description": "Round import energy to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "powermeter_frequency_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for frequency in the power meter",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "powermeter_frequency_round_to": {
+            "default": 0,
+            "description": "Round frequency to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "powermeter_power_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for power in the power meter",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "powermeter_power_round_to": {
+            "default": 0,
+            "description": "Round power to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "powermeter_voltage_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for voltage in the power meter",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "powermeter_voltage_round_to": {
+            "default": 0,
+            "description": "Round voltage to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "telemetry_evse_temperature_C_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for evse_temperature_C in telemetry",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "telemetry_evse_temperature_C_round_to": {
+            "default": 0,
+            "description": "Round evse_temperature_C in telemetry to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "telemetry_fan_rpm_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for fan RPM in telemetry",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "telemetry_fan_rpm_round_to": {
+            "default": 0,
+            "description": "Round fan RPM in telemetry to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "telemetry_plug_temperature_C_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for RCD current in telemetry",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "telemetry_plug_temperature_C_round_to": {
+            "default": 0,
+            "description": "Round plug_temperature_C in telemetry to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "telemetry_supply_voltage_12V_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for supply voltage 12V in telemetry",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "telemetry_supply_voltage_12V_round_to": {
+            "default": 0,
+            "description": "Round supply voltage 12V in telemetry to the nearest step. Ignored if value is 0",
+            "type": "number"
+          },
+          "telemetry_supply_voltage_minus_12V_decimal_places": {
+            "default": 2,
+            "description": "Maximum number of decimal places for supply voltage -12V in telemetry",
+            "minimum": 0,
+            "type": "integer"
+          },
+          "telemetry_supply_voltage_minus_12V_round_to": {
+            "default": 0,
+            "description": "Round supply voltage -12V in telemetry to the nearest step. Ignored if value is 0",
+            "type": "number"
           }
         },
-        requires: {
-          energy_trunk: {
-            interface: "energy"
+        "description": "The EVerest API module, exposing some internal functionality on an external MQTT connection.",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Kai-Uwe Hermann"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "EVerest API",
+            "interface": "empty"
+          }
+        },
+        "requires": {
+          "evse_manager": {
+            "interface": "evse_manager",
+            "max_connections": 128,
+            "min_connections": 1
+          },
+          "ocpp": {
+            "interface": "ocpp",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "random_delay": {
+            "interface": "uk_random_delay",
+            "max_connections": 128,
+            "min_connections": 0
           }
         }
       },
-      EnergyNode: {
-        config: {
-          fuse_limit_A: {
-            description: "Fuse limit in ampere for all phases",
-            minimum: 0,
-            type: "number"
+      "Auth": {
+        "config": {
+          "connection_timeout": {
+            "description": "Defines how many seconds an authorization is valid before it is discarded. Defines how many seconds a user can provide authorization after the plug in of a car",
+            "type": "integer"
           },
-          phase_count: {
-            description: "phase count limit. Omit if not limited in this fuse.",
-            maximum: 3,
-            minimum: 0,
-            type: "integer"
+          "ignore_connector_faults": {
+            "default": false,
+            "description": "Boolean value to describe the handling of faults on connectors.\nIf true, faults reported on connectors are ignored, i.e. they can still be authorized. This should be disabled in most use cases, but e.g. in free charging applications it may be useful to allow a charging session in the following case: A connector e.g. has an overtemperature fault that at some point will clear once it is cooled down. A car is plugged in before  the error is cleared. The user would expect that the charging starts once it is cooled down. When this option is set to false,  it will not be authorized on plug in as the connector is in fault state and it will never recover until the car is replugged. If it is set to true, the authorization happens on the faulty connector and charging will start once the fault is cleared.\nIf false, faulty connectors are treated as not available and will not be authorized. This is a good setting for e.g. public chargers.",
+            "type": "boolean"
+          },
+          "master_pass_group_id": {
+            "default": "",
+            "description": "IdTokens that have this id as groupId belong to the Master Pass Group. Meaning they can stop any ongoing transaction, but cannot start transactions. This can, for example, be used by law enforcement personal to stop any ongoing transaction when an EV has to be towed away. If left empty, master_pass_group_id is not used.",
+            "type": "string"
+          },
+          "prioritize_authorization_over_stopping_transaction": {
+            "default": true,
+            "description": "Boolean value to describe the handling of parent id tokens.\nIf true, a new token will be preferably used for authorization of a new connector if a connector is available. It will not be used to finish a transaction using its parent_id_token. parent_id_token will only be used to finish transaction if no connector is available for authorization anymore.\nIf false, a new token will be used to finish a transaction if the parent_id_token of a present transaction matches the parent_id_token of the provided_token. Authorization to available connectors will only be provided if no transaction can be stopped using the given parent_id_token",
+            "type": "boolean"
+          },
+          "selection_algorithm": {
+            "default": "FindFirst",
+            "description": "The algorithm that is used to map an incoming token to a connector",
+            "type": "string"
           }
         },
-        description: "This module is part of the Energy Tree and represents a simple current fuse.",
-        enable_external_mqtt: false,
-        metadata: {
-          authors: ["Cornelius Claussen"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+        "description": "This module implements the authentication handling for the EVerest. It is responsible for providing authorization to the connected evse managers. In addition to that, it handles the reservation management.",
+        "metadata": {
+          "authors": [
+            "Piet Gömpel"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          energy_grid: {
-            description: "This is the chain interface to build the energy supply tree",
-            interface: "energy"
+        "provides": {
+          "main": {
+            "description": "This implements the auth interface for EVerest",
+            "interface": "auth"
+          },
+          "reservation": {
+            "description": "This implements the reservation interface for EVerest.",
+            "interface": "reservation"
           }
         },
-        requires: {
-          energy_consumer: {
-            interface: "energy",
-            max_connections: 128,
-            min_connections: 1
+        "requires": {
+          "evse_manager": {
+            "interface": "evse_manager",
+            "max_connections": 128,
+            "min_connections": 1
           },
-          powermeter: {
-            interface: "powermeter",
-            max_connections: 128,
-            min_connections: 0
+          "token_provider": {
+            "interface": "auth_token_provider",
+            "max_connections": 128,
+            "min_connections": 1
           },
-          price_information: {
-            interface: "energy_price_information",
-            max_connections: 128,
-            min_connections: 0
-          }
-        }
-      },
-      EvseManager: {
-        config: {
-          country_code: {
-            default: "DE",
-            description: "Country Code",
-            type: "string"
-          },
-          has_ventilation: {
-            default: true,
-            description: "Allow ventilated charging or not",
-            type: "boolean"
-          },
-          max_current: {
-            default: 32,
-            description: "User configurable current limit for this EVSE",
-            type: "number"
-          },
-          rcd_enabled: {
-            default: true,
-            description: "Enable or disable RCD",
-            type: "boolean"
-          },
-          three_phases: {
-            default: true,
-            description: "Limit to three phases (true) or one phase (false)",
-            type: "boolean"
-          }
-        },
-        description: "EVSE Manager",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Cornelius Claussen", "Anton Woellert"],
-          license: "https://spdx.org/licenses/Apache-2.0.html"
-        },
-        provides: {
-          energy_grid: {
-            description: "This is the tree leaf interface to build the energy supply tree",
-            interface: "energy"
-          },
-          evse: {
-            description: "This is the main evsemanager interface",
-            interface: "evse_manager"
-          }
-        },
-        requires: {
-          auth: {
-            interface: "auth"
-          },
-          bsp: {
-            interface: "board_support_AC"
-          },
-          powermeter: {
-            interface: "powermeter"
+          "token_validator": {
+            "interface": "auth_token_validator",
+            "max_connections": 128,
+            "min_connections": 1
           }
         }
       },
-      EvseSlac: {
-        description: "Implementation of SLAC data link negotiation according to ISO15118-3.",
-        metadata: {
-          authors: ["aw@pionix.de", "Cornelius Claussen (Pionix GmbH)"],
-          base_license: "https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear",
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "DCSupplySimulator": {
+        "description": "Implementation of a programmable power supply for DC charging",
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen (Pionix GmbH)",
+            "Fabian Hartung (chargebyte GmbH)",
+            "Mohannad Oraby (chargebyte GmbH)"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          main: {
-            config: {
-              device: {
-                default: "eth1",
-                description: "Ethernet device used for PLC.",
-                type: "string"
+        "provides": {
+          "main": {
+            "config": {
+              "bidirectional": {
+                "default": true,
+                "description": "Set to true for bidirectional supply",
+                "type": "boolean"
               },
-              evse_id: {
-                default: "PIONIX_SAYS_HELLO",
-                description: "EVSE id - 17 octets.",
-                type: "string"
+              "max_current": {
+                "default": 200,
+                "description": "Max supported current",
+                "type": "number"
               },
-              nid: {
-                default: "pionix!",
-                description: "NID (Network Identification Key) - 7 octets.",
-                type: "string"
+              "max_power": {
+                "default": 15e4,
+                "description": "Max supported power in watt",
+                "type": "number"
               },
-              number_of_sounds: {
-                default: 10,
-                description: "SLAC number of sounds.",
-                type: "integer"
+              "max_voltage": {
+                "default": 900,
+                "description": "Max supported voltage",
+                "type": "number"
+              },
+              "min_current": {
+                "default": 1,
+                "description": "Min supported current",
+                "type": "number"
+              },
+              "min_voltage": {
+                "default": 200,
+                "description": "Min supported voltage",
+                "type": "number"
               }
             },
-            description: "SLAC interface implementation.",
-            interface: "slac"
+            "description": "Main interface for the power supply",
+            "interface": "power_supply_DC"
           }
         }
       },
-      Example: {
-        description: "Simple example module written in C++",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Kai-Uwe Hermann"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "DPM1000": {
+        "config": {
+          "current_limit_A": {
+            "default": 100,
+            "description": "Maximum Current Limit in Ampere",
+            "maximum": 100,
+            "type": "number"
+          },
+          "debug_print_all_telemetry": {
+            "default": false,
+            "description": "Read and print all telemetry from the power module. Helpful while debugging.",
+            "type": "boolean"
+          },
+          "device": {
+            "default": "can0",
+            "description": "Interface name for can device",
+            "type": "string"
+          },
+          "device_address": {
+            "default": 0,
+            "description": "Device address (as selected on front LED panel)",
+            "type": "integer"
+          },
+          "discharge_gpio_chip": {
+            "default": "",
+            "description": "GPIO chip to use to switch external discharge load on and off. An empty string disables discharging. Note that the hardware load must be designed to allow permanent discharge from the highest voltage (e.g. 1000V)",
+            "type": "string"
+          },
+          "discharge_gpio_line": {
+            "default": 0,
+            "description": "GPIO line to use to switch discharge load",
+            "type": "integer"
+          },
+          "discharge_gpio_polarity": {
+            "default": true,
+            "description": "GPIO polarity, false means active low, true means active high",
+            "type": "boolean"
+          },
+          "power_limit_W": {
+            "default": 3e4,
+            "description": "Maximum Power Limit in Watt",
+            "maximum": 3e4,
+            "type": "number"
+          },
+          "series_parallel_mode": {
+            "default": "Series",
+            "description": "Select series (300-1000V), parallel (50-500) or automatic switching mode (50-1000). This switches the internal configuration of one module and should not be confused with parallel operation of multiple modules.",
+            "enum": [
+              "Series",
+              "Parallel",
+              "Automatic"
+            ],
+            "type": "string"
+          },
+          "voltage_limit_V": {
+            "default": 1e3,
+            "description": "Maximum Voltage Limit in Volt. Will be limited by series parallel setting as well.",
+            "maximum": 1e3,
+            "type": "number"
+          }
         },
-        provides: {
-          example: {
-            config: {
-              current: {
-                description: "The current the physical connector can supply",
-                maximum: 60,
-                minimum: 1,
-                type: "number"
+        "description": "DC Power Supply Driver",
+        "metadata": {
+          "authors": [
+            "aw@pionix.de"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "Power supply driver for DPM 1000-30 from SCU Power. Currently supports only one module.",
+            "interface": "power_supply_DC"
+          }
+        }
+      },
+      "DummyTokenProvider": {
+        "description": "Dummy token provider that listens to AuthRequired event from evse_manager and then publishes one token",
+        "metadata": {
+          "authors": [
+            "Thilo Molitor",
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "config": {
+              "connector_id": {
+                "default": 0,
+                "description": "If >0, the generated token is only valid for this connector_id",
+                "minimum": 0,
+                "type": "integer"
               },
-              enum_test: {
-                description: "A config value that tests the enum type",
-                enum: ["one", "two", "three"],
-                type: "string"
+              "timeout": {
+                "default": 10,
+                "description": "Time our dummy token is valid (in s)",
+                "maximum": 120,
+                "minimum": 0,
+                "type": "number"
               },
-              enum_test2: {
-                description: "Another config value that tests the enum type",
-                enum: [1, 2, 3],
-                type: "integer"
+              "token": {
+                "default": "DEADBEEF",
+                "description": "Dummy token string to return",
+                "maxLength": 20,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": {
+                "default": "RFID",
+                "description": "Type to report for our dummy token",
+                "maxLength": 32,
+                "minLength": 2,
+                "type": "string"
               }
             },
-            description: "This implements an example interface that uses multiple framework features",
-            interface: "example_child"
-          },
-          store: {
-            description: "This implements the kvs interface, mostly for testing multiple interfaces in one manifest",
-            interface: "kvs"
+            "description": "Main implementation of dummy token provider always returning one configured token",
+            "interface": "auth_token_provider"
           }
         },
-        requires: {
-          kvs: {
-            interface: "kvs"
+        "requires": {
+          "evse": {
+            "interface": "evse_manager"
           }
         }
       },
-      ExampleUser: {
-        description: "Simple example module written in C++ and using the other example module",
-        metadata: {
-          authors: ["Kai-Uwe Hermann"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "DummyTokenProviderManual": {
+        "description": "Dummy token provider that manually publishes one token",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Kai-Uwe Hermann",
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          example_user: {
-            description: "This implements the example_user interface",
-            interface: "example_user"
-          }
-        },
-        requires: {
-          example: {
-            interface: "example"
-          }
-        }
-      },
-      JsAuth: {
-        description: "This module implements the authentication API for the everest system.",
-        metadata: {
-          authors: ["Thilo Molitor"],
-          license: "https://opensource.org/licenses/Apache-2.0"
-        },
-        provides: {
-          main: {
-            description: "This implements the authentication interface for the everest system.",
-            interface: "auth"
-          }
-        },
-        requires: {
-          tokenProvider: {
-            interface: "auth_token_provider",
-            max_connections: 128,
-            min_connections: 1
-          },
-          tokenValidator: {
-            interface: "auth_token_validator",
-            max_connections: 128,
-            min_connections: 1
-          }
-        }
-      },
-      JsCarSimulator: {
-        description: "This module implements a Car simulator that can execute charging sessions using the yeti-simulation-control interface",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Cornelius Claussen"],
-          license: "https://opensource.org/licenses/Apache-2.0"
-        },
-        provides: {
-          main: {
-            description: "This implements the car simulator",
-            interface: "car_simulator"
-          }
-        },
-        requires: {
-          simulation_control: {
-            interface: "yeti_simulation_control"
-          }
-        }
-      },
-      JsDummy: {
-        description: "This module is only for testing",
-        metadata: {
-          authors: ["aw"],
-          license: "https://opensource.org/licenses/MIT"
-        },
-        provides: {
-          main: {
-            config: {
-              test: {
-                description: "test parm",
-                type: "boolean"
+        "provides": {
+          "main": {
+            "config": {
+              "timeout": {
+                "default": 10,
+                "description": "Time our dummy token is valid (in s)",
+                "maximum": 120,
+                "minimum": 0,
+                "type": "number"
               },
-              type: {
-                description: "test type",
-                type: "number"
+              "token": {
+                "default": "DEADBEEF",
+                "description": "Dummy token string to return",
+                "maxLength": 20,
+                "minLength": 1,
+                "type": "string"
+              },
+              "type": {
+                "default": "RFID",
+                "description": "Type to report for our dummy token",
+                "maxLength": 32,
+                "minLength": 2,
+                "type": "string"
               }
             },
-            description: "This implements the dummy API for the everest system.",
-            interface: "dummy"
+            "description": "Main implementation of dummy token provider always returning one configured token",
+            "interface": "auth_token_provider"
           }
-        }
-      },
-      JsDummyTokenProvider: {
-        description: "Dummy token provider that listens to AuthRequired event from evse_manager and then publishes one token",
-        metadata: {
-          authors: ["Thilo Molitor", "Cornelius Claussen"],
-          license: "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          main: {
-            config: {
-              timeout: {
-                default: 10,
-                description: "Time our dummy token is valid (in s)",
-                maximum: 120,
-                minimum: 0,
-                type: "number"
+        "requires": {}
+      },
+      "DummyTokenValidator": {
+        "description": "Dummy token validator always returning the same configured token validation result for every token",
+        "metadata": {
+          "authors": [
+            "Thilo Molitor",
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "config": {
+              "sleep": {
+                "default": 0.5,
+                "description": "Time to wait before returning the dumy validation result (in s)",
+                "maximum": 120,
+                "minimum": 0,
+                "type": "number"
               },
-              token: {
-                default: "DEADBEEF",
-                description: "Dummy token string to return",
-                maxLength: 20,
-                minLength: 1,
-                type: "string"
+              "validation_reason": {
+                "default": "Token valid",
+                "description": "Dummy validation reason to return",
+                "minLength": 5,
+                "type": "string"
               },
-              type: {
-                default: "dummy",
-                description: "Type to report for our dummy token",
-                maxLength: 32,
-                minLength: 2,
-                type: "string"
+              "validation_result": {
+                "default": "Accepted",
+                "description": "Dummy validation result to return",
+                "enum": [
+                  "Accepted",
+                  "Blocked",
+                  "Expired",
+                  "Invalid"
+                ],
+                "type": "string"
               }
             },
-            description: "Main implementation of dummy token provider always returning one configured token",
-            interface: "auth_token_provider"
-          }
-        },
-        requires: {
-          evse: {
-            interface: "evse_manager"
+            "description": "Main implementation of dummy token validator always returning the same configured token validation result for every token",
+            "interface": "auth_token_validator"
           }
         }
       },
-      JsDummyTokenValidator: {
-        description: "Dummy token validator always returning the same configured token validation result for every token",
-        metadata: {
-          authors: ["Thilo Molitor"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "DummyV2G": {
+        "description": "This module implements an empty dummy for HLC. It does not actually communicate with the car.",
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          main: {
-            config: {
-              sleep: {
-                default: 0.5,
-                description: "Time to wait before returning the dumy validation result (in s)",
-                maximum: 120,
-                minimum: 0,
-                type: "number"
+        "provides": {
+          "main": {
+            "description": "This module implements the ISO15118-2 implementation of an AC or DC charger",
+            "interface": "ISO15118_charger"
+          }
+        }
+      },
+      "EnergyManager": {
+        "config": {
+          "debug": {
+            "default": false,
+            "description": "Show debug output on command line.",
+            "type": "boolean"
+          },
+          "nominal_ac_voltage": {
+            "default": 230,
+            "description": "Nominal AC voltage to use to convert Ampere to Watt on AC",
+            "type": "number"
+          },
+          "schedule_interval_duration": {
+            "default": 60,
+            "description": "Duration of the schedule interval for forecast [min]",
+            "type": "integer"
+          },
+          "schedule_total_duration": {
+            "default": 1,
+            "description": "Total duration of schedule forcast [h]",
+            "type": "integer"
+          },
+          "slice_ampere": {
+            "default": 0.5,
+            "description": "Ampere slice for trading. Lower values will give more even distribution but increase processing time [A].",
+            "type": "number"
+          },
+          "slice_watt": {
+            "default": 500,
+            "description": "Watt slice for trading. Lower values will give more even distribution but increase processing time [A].",
+            "type": "number"
+          },
+          "update_interval": {
+            "default": 1,
+            "description": "Update interval for energy distribution [s]",
+            "type": "integer"
+          }
+        },
+        "description": "This module is the global Energy Manager for all EVSE/Charging stations in this building",
+        "enable_external_mqtt": false,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen",
+            "Lars Dieckmann"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "Main interface of the energy manager",
+            "interface": "energy_manager"
+          }
+        },
+        "requires": {
+          "energy_trunk": {
+            "interface": "energy",
+            "max_connections": 1,
+            "min_connections": 1
+          }
+        }
+      },
+      "EnergyNode": {
+        "config": {
+          "fuse_limit_A": {
+            "description": "Fuse limit in ampere for all phases",
+            "minimum": 0,
+            "type": "number"
+          },
+          "phase_count": {
+            "description": "phase count limit. Omit if not limited in this fuse.",
+            "maximum": 3,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "description": "This module is part of the Energy Tree and represents a simple current fuse.",
+        "enable_external_mqtt": false,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "energy_grid": {
+            "description": "This is the chain interface to build the energy supply tree",
+            "interface": "energy"
+          },
+          "external_limits": {
+            "description": "Additional external limits can be set via this interface.",
+            "interface": "external_energy_limits"
+          }
+        },
+        "requires": {
+          "energy_consumer": {
+            "interface": "energy",
+            "max_connections": 128,
+            "min_connections": 1
+          },
+          "powermeter": {
+            "interface": "powermeter",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "price_information": {
+            "interface": "energy_price_information",
+            "max_connections": 1,
+            "min_connections": 0
+          }
+        }
+      },
+      "EvSlac": {
+        "description": "Implementation of EV SLAC data link negotiation according to ISO15118-3.",
+        "metadata": {
+          "authors": [
+            "aw@pionix.de"
+          ],
+          "base_license": "https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear",
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "config": {
+              "device": {
+                "default": "eth1",
+                "description": "Ethernet device used for PLC.",
+                "type": "string"
               },
-              validation_reason: {
-                default: "Token valid",
-                description: "Dummy validation reason to return",
-                minLength: 5,
-                type: "string"
+              "ev_id": {
+                "default": "PIONIX_SAYS_HELLO",
+                "description": "EVSE id - 17 octets.",
+                "type": "string"
               },
-              validation_result: {
-                default: "Accepted",
-                description: "Dummy validation result to return",
-                enum: ["Accepted", "Blocked", "Expired", "Invalid"],
-                type: "string"
+              "set_key_timeout_ms": {
+                "default": 500,
+                "description": "Timeout for CM_SET_KEY.REQ. Default works for QCA7000/QCA7005/CG5317.",
+                "type": "integer"
               }
             },
-            description: "Main implementation of dummy token validator always returning the same configured token validation result for every token",
-            interface: "auth_token_validator"
+            "description": "SLAC interface implementation.",
+            "interface": "ev_slac"
           }
         }
       },
-      JsEmulator: {
-        description: "Emulation modul, provides different emulation units",
-        metadata: {
-          authors: ["aw@pionix.de"],
-          license: "https://opensource.org/licenses/MIT"
+      "EvseManager": {
+        "config": {
+          "ac_enforce_hlc": {
+            "default": false,
+            "description": "Combine with 5percent option to really enforce HLC even with EIM. It is not ISO15118-2/-3 compliant as it waits for matching even if EIM is available before SLAC reaches matched state. On cars that do not support ISO15118 on AC this will take a very long time to timeout and fall back to basic nominal PWM charging, but it will eventually.",
+            "type": "boolean"
+          },
+          "ac_hlc_enabled": {
+            "default": false,
+            "description": "Enable or disable HLC (aka ISO15118) for AC mode",
+            "type": "boolean"
+          },
+          "ac_hlc_use_5percent": {
+            "default": false,
+            "description": "Use 5 percent PWM signalling to try to enforce HLC on AC. Note that if EIM arrives before SLAC matching, we will fall back to nominal PWM charging. So most cars will never use HLC in this mode, especially on a free service where EIM is always available, but that is what ISO15118-2/-3 requires to be compliant - it wants to use HLC only for PnC and not for EIM.",
+            "type": "boolean"
+          },
+          "ac_nominal_voltage": {
+            "default": 230,
+            "description": "Nominal AC voltage between phase and neutral in Volt",
+            "type": "number"
+          },
+          "ac_with_soc": {
+            "default": false,
+            "description": "Special mode that switches between AC and DC charging to get SoC percentage with AC charging",
+            "type": "boolean"
+          },
+          "autocharge_use_slac_instead_of_hlc": {
+            "default": false,
+            "description": "Use slac ev mac address for autocharge instead of EVCCID from HLC",
+            "type": "boolean"
+          },
+          "charge_mode": {
+            "default": "AC",
+            "description": "Select charging mode",
+            "enum": [
+              "AC",
+              "DC"
+            ],
+            "type": "string"
+          },
+          "connector_id": {
+            "description": "Connector id of this evse manager",
+            "type": "integer"
+          },
+          "country_code": {
+            "default": "DE",
+            "description": "Country Code",
+            "type": "string"
+          },
+          "dbg_hlc_auth_after_tstep": {
+            "default": false,
+            "description": "Special mode: send HLC auth ok only after t_step_XX is finished (true) or directly when available (false)",
+            "type": "boolean"
+          },
+          "dc_isolation_voltage_V": {
+            "default": 500,
+            "description": "DC voltage used to test isolation in CableCheck. Set to 500V.",
+            "type": "integer"
+          },
+          "disable_authentication": {
+            "default": false,
+            "description": "Do not wait for authorization from Auth module, offer a free service. Start charging immediately after plug in. Do not use with Auth manager or OCPP, this option is only to allow charging with a standalone EvseManager that is not connected to an Auth manager. Use DummyTokenProvider/Validator when testing with Auth module and/or OCPP.",
+            "type": "boolean"
+          },
+          "ev_receipt_required": {
+            "default": false,
+            "description": "Unsupported: request receipt from EV with HLC",
+            "type": "boolean"
+          },
+          "evse_id": {
+            "default": "DE*PNX*E1234567*1",
+            "description": "EVSE ID",
+            "type": "string"
+          },
+          "evse_id_din": {
+            "default": "49A80737A45678",
+            "description": "EVSE ID DIN after DIN SPEC 91286",
+            "type": "string"
+          },
+          "external_ready_to_start_charging": {
+            "default": false,
+            "description": "Enable the external ready to start charging signal that delays charging ready until it has been received",
+            "type": "boolean"
+          },
+          "hack_allow_bpt_with_iso2": {
+            "default": false,
+            "description": "Hack. Allow bidirectional power transfer with DIN spec and ISO-2. Currents communicated on HLC will always be positive but power supply may actually discharge the car.",
+            "type": "boolean"
+          },
+          "hack_fix_hlc_integer_current_requests": {
+            "default": false,
+            "description": "Some cars request only integer ampere values during DC charging. For low power DC charging that  means that they charge a few hundred watts slower then needed. If enabled, this will charge at full power if the difference between EV requested current (integer) and HLC current limit is less then 1.0",
+            "type": "boolean"
+          },
+          "hack_pause_imd_during_precharge": {
+            "default": false,
+            "description": "Disable IMD at the end of CableCheck and re-enable when current is flowing in CurrentDemand. Some DCDC power supplies do not start current flow when insulation measurement is active. Set to true to enable dirty workaround for some IMD hardware.",
+            "type": "boolean"
+          },
+          "hack_present_current_offset": {
+            "default": 0,
+            "description": "Adds an offset [A] to the present current reported to the car on HLC. Set to 0 unless you really know what you are doing.",
+            "type": "integer"
+          },
+          "hack_skoda_enyaq": {
+            "default": false,
+            "description": "Skoda Enyaq requests DC charging voltages below its battery level or even below 0 initially. Set to true to enable dirty workaround.",
+            "type": "boolean"
+          },
+          "hack_sleep_in_cable_check": {
+            "default": 0,
+            "description": "Hack: Sleep for n seconds at the end of cable check.",
+            "type": "integer"
+          },
+          "hack_sleep_in_cable_check_volkswagen": {
+            "default": 0,
+            "description": "Hack: Additional sleep for Volkswagen cars for n seconds at the end of cable check",
+            "type": "integer"
+          },
+          "has_ventilation": {
+            "default": true,
+            "description": "Allow ventilated charging or not",
+            "type": "boolean"
+          },
+          "logfile_suffix": {
+            "default": "session_uuid",
+            "description": "Use the string given for the log folder name. Special string session_uuid will be replaced with session uuid.",
+            "type": "string"
+          },
+          "max_current_export_A": {
+            "default": 32,
+            "description": "User configurable current limit for this EVSE in Ampere",
+            "type": "number"
+          },
+          "max_current_import_A": {
+            "default": 32,
+            "description": "User configurable current limit for this EVSE in Ampere",
+            "type": "number"
+          },
+          "payment_enable_contract": {
+            "default": true,
+            "description": "Set to true to enable contract (aka plug and charge) authorization",
+            "type": "boolean"
+          },
+          "payment_enable_eim": {
+            "default": true,
+            "description": "Set to true to enable EIM (e.g. RFID card or mobile app) authorization",
+            "type": "boolean"
+          },
+          "request_zero_power_in_idle": {
+            "default": false,
+            "description": '"true: In Idle mode (no car connected), request 0A from energy management. In installations with many charging stations this should be set" "to allow the power to be distributed to the chargers that are connected to a car." "false: Request the normal current even if no car is connected. This speeds up the start of charging on AC BASIC charging as" "EvseManager does not need to wait for energy from the energy manager after plug in."',
+            "type": "boolean"
+          },
+          "sae_j2847_2_bpt_enabled": {
+            "default": false,
+            "description": "Enable SAE J2847 2 V2G or V2H mode",
+            "type": "boolean"
+          },
+          "sae_j2847_2_bpt_mode": {
+            "default": "V2G",
+            "description": "SAE J2847 2 BPT mode",
+            "enum": [
+              "V2H",
+              "V2G"
+            ],
+            "type": "string"
+          },
+          "session_logging": {
+            "default": false,
+            "description": "Enable/Disable session log file output",
+            "type": "boolean"
+          },
+          "session_logging_path": {
+            "default": "/tmp",
+            "description": "Output directory for session log files",
+            "type": "string"
+          },
+          "session_logging_xml": {
+            "default": true,
+            "description": "Log full XML messages for HLC",
+            "type": "boolean"
+          },
+          "soft_over_current_measurement_noise_A": {
+            "default": 0.5,
+            "description": "Set current measurement noise. Added to limit as an offset to avoid false triggers.",
+            "type": "number"
+          },
+          "soft_over_current_tolerance_percent": {
+            "default": 10,
+            "description": "Allow for N percent over current in soft over current checking during AC charging.",
+            "type": "number"
+          },
+          "switch_to_minimum_voltage_after_cable_check": {
+            "default": false,
+            "description": "When cable check is completed, switch to minimal voltage of DC output. Normally disabled.",
+            "type": "boolean"
+          },
+          "three_phases": {
+            "default": true,
+            "description": "Limit to three phases (true) or one phase (false)",
+            "type": "boolean"
+          },
+          "uk_smartcharging_random_delay_at_any_change": {
+            "default": true,
+            "description": '"True: use random delays on any current change during charging. False: Only use if current is reduced to zero or increased from zero."',
+            "type": "boolean"
+          },
+          "uk_smartcharging_random_delay_enable": {
+            "default": false,
+            "description": '"true: enable random_delays on start up, false: disable random delays on startup." "They can also be enabled/disabled during runtime on the random_delay implementation."',
+            "type": "boolean"
+          },
+          "uk_smartcharging_random_delay_max_duration": {
+            "default": 600,
+            "description": '"Start up value for the maximum duration of a random delay." "Can be modified during runtime on the random_delay implementation."',
+            "type": "integer"
+          }
         },
-        provides: {
-          iso15118_evcc: {
-            config: {
-              conf1: {
-                description: "conf1 setting",
-                type: "string"
+        "description": "EVSE Manager. Grid side power meter: Will be used for energy management. Will also be used for billing if no car side power meter connected. Car side powermeter: Will be used for billing if present.",
+        "enable_external_mqtt": true,
+        "enable_telemetry": true,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen",
+            "Anton Woellert"
+          ],
+          "license": "https://spdx.org/licenses/Apache-2.0.html"
+        },
+        "provides": {
+          "energy_grid": {
+            "description": "This is the tree leaf interface to build the energy supply tree",
+            "interface": "energy"
+          },
+          "evse": {
+            "description": "This is the main evsemanager interface",
+            "interface": "evse_manager"
+          },
+          "random_delay": {
+            "description": "Provides control over UK smart charging regulation random delay feature",
+            "interface": "uk_random_delay"
+          },
+          "token_provider": {
+            "description": "Provides authtokens for autocharge or plug and charge",
+            "interface": "auth_token_provider"
+          }
+        },
+        "requires": {
+          "ac_rcd": {
+            "interface": "ac_rcd",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "bsp": {
+            "interface": "evse_board_support"
+          },
+          "connector_lock": {
+            "interface": "connector_lock",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "hlc": {
+            "interface": "ISO15118_charger",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "imd": {
+            "interface": "isolation_monitor",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "powermeter_car_side": {
+            "interface": "powermeter",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "powermeter_grid_side": {
+            "interface": "powermeter",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "powersupply_DC": {
+            "interface": "power_supply_DC",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "slac": {
+            "interface": "slac",
+            "max_connections": 1,
+            "min_connections": 0
+          }
+        }
+      },
+      "EvseSecurity": {
+        "config": {
+          "csms_ca_bundle": {
+            "default": "ca/v2g/V2G_ROOT_CA.pem",
+            "description": "Path to csms_ca_bundle file. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
+            "type": "string"
+          },
+          "csms_leaf_cert_directory": {
+            "default": "client/csms",
+            "description": "Directory where CSMS leaf certificates are stored. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
+            "type": "string"
+          },
+          "csms_leaf_key_directory": {
+            "default": "client/csms",
+            "description": "Directory where CSMS private keys are stored. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
+            "type": "string"
+          },
+          "mf_ca_bundle": {
+            "default": "ca/mf/MF_ROOT_CA.pem",
+            "description": "Path to mf_ca_bundle file. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
+            "type": "string"
+          },
+          "mo_ca_bundle": {
+            "default": "ca/mo/MO_ROOT_CA.pem",
+            "description": "Path to mo_ca_bundle file. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
+            "type": "string"
+          },
+          "private_key_password": {
+            "default": "",
+            "description": "Password for encrypted private keys.",
+            "type": "string"
+          },
+          "secc_leaf_cert_directory": {
+            "default": "client/cso",
+            "description": "Directory where SECC leaf certificates are stored. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
+            "type": "string"
+          },
+          "secc_leaf_key_directory": {
+            "default": "client/cso",
+            "description": "Directory where SECC private keys are stored. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
+            "type": "string"
+          },
+          "v2g_ca_bundle": {
+            "default": "ca/v2g/V2G_ROOT_CA.pem",
+            "description": "Path to v2g_ca_bundle file. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
+            "type": "string"
+          }
+        },
+        "description": "This module implements the evse_security interface. It uses the filesystem to store certificates and keys",
+        "enable_external_mqtt": false,
+        "enable_telemetry": false,
+        "metadata": {
+          "authors": [
+            "Piet Gömpel"
+          ],
+          "license": "https://spdx.org/licenses/Apache-2.0.html"
+        },
+        "provides": {
+          "main": {
+            "description": "Implementation of the evse_security interface",
+            "interface": "evse_security"
+          }
+        }
+      },
+      "EvseSlac": {
+        "description": "Implementation of SLAC data link negotiation according to ISO15118-3.",
+        "metadata": {
+          "authors": [
+            "aw@pionix.de",
+            "Cornelius Claussen (Pionix GmbH)"
+          ],
+          "base_license": "https://directory.fsf.org/wiki/License:BSD-3-Clause-Clear",
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "config": {
+              "ac_mode_five_percent": {
+                "default": false,
+                "description": "Use 5% mode in AC (true). Set to false for DC. The only difference is the handling of retries.",
+                "type": "boolean"
+              },
+              "chip_reset_delay_ms": {
+                "default": 100,
+                "description": "Delay between SET_KEY.CNF and RS_DEV.REQ",
+                "type": "integer"
+              },
+              "chip_reset_timeout_ms": {
+                "default": 500,
+                "description": "Timeout for RS_DEV.REQ (waiting for RS_DEV.CNF)",
+                "type": "integer"
+              },
+              "debug_simulate_failed_matching": {
+                "default": false,
+                "description": "Only for debugging. Simulate failed matching by sending a wrong NMK to the EV.",
+                "type": "boolean"
+              },
+              "device": {
+                "default": "eth1",
+                "description": "Ethernet device used for PLC.",
+                "type": "string"
+              },
+              "do_chip_reset": {
+                "default": false,
+                "description": "Perform a chip reset after setting NMK using the RS_DEV.REQ Vendor MME Extension (Only works on Qualcomm chips)",
+                "type": "boolean"
+              },
+              "evse_id": {
+                "default": "PIONIX_SAYS_HELLO",
+                "description": "EVSE id - 17 octets.",
+                "type": "string"
+              },
+              "link_status_detection": {
+                "default": false,
+                "description": "After matching.cnf, wait for link to come up before sending out d_link_ready=connected using LINK_STATUS Vendor MME Extension (Works on Qualcomm and Lumissil chips)",
+                "type": "boolean"
+              },
+              "link_status_retry_ms": {
+                "default": 100,
+                "description": "Delay between retries of LINK_STATUS requests after matching request",
+                "type": "integer"
+              },
+              "link_status_timeout_ms": {
+                "default": 1e4,
+                "description": "Timeout for Link to come up after matching request",
+                "type": "integer"
+              },
+              "nid": {
+                "default": "pionix!",
+                "description": "NID (Network Identification Key) - 7 octets.",
+                "type": "string"
+              },
+              "number_of_sounds": {
+                "default": 10,
+                "description": "SLAC number of sounds.",
+                "type": "integer"
+              },
+              "publish_mac_on_first_parm_req": {
+                "default": false,
+                "description": "Publish the EV MAC address when the first CM_SLAC_PARM.REQ. This should not be used as it is quite error prone: The MAC address might be from another car via cross talk. It is better to wait for the matching to be done.",
+                "type": "boolean"
+              },
+              "publish_mac_on_match_cnf": {
+                "default": true,
+                "description": "Publish the EV MAC address on the token_provider interface when matching is confirmed (CM_SLAC_MATCH.CNF). This can be used for autocharge as an alternative to the EVCCID derived from HLC and published by EvseManager.  This can be used for AC autocharge on cars that do not support actual HLC on AC.",
+                "type": "boolean"
+              },
+              "set_key_timeout_ms": {
+                "default": 500,
+                "description": "Timeout for CM_SET_KEY.REQ. Default works for QCA7000/QCA7005/CG5317.",
+                "type": "integer"
+              },
+              "sounding_attenuation_adjustment": {
+                "default": 0,
+                "description": "Offset in dB that should be added to the calculated sounding attenuation",
+                "type": "integer"
               }
             },
-            description: "Unit for emulating an ISO15118 EVCC",
-            interface: "iso15118_evcc_emu"
+            "description": "SLAC interface implementation.",
+            "interface": "slac"
           }
         }
       },
-      JsForecastDotSolar: {
-        description: "This modules fetches data from the ForecastDotSolar API and publishes it.",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Andreas Heinrich", "Leonardo Oliveira"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "EvseV2G": {
+        "config": {
+          "auth_timeout_eim": {
+            "default": 300,
+            "description": "Defines how many seconds the EVSE should wait for authorization in EIM case, before the charging session is aborted. Write 0 if the EVSE should wait indefinitely for EIM authorization.",
+            "type": "integer"
+          },
+          "auth_timeout_pnc": {
+            "default": 55,
+            "description": "Defines how many seconds the EVSE should wait for authorization in PnC case, before the charging session is aborted. Write 0 if the EVSE should wait indefinitely for PnC authorization.",
+            "type": "integer"
+          },
+          "device": {
+            "default": "eth0",
+            "description": "Ethernet device used for HLC. Any local interface that has an ipv6 link-local and a MAC addr will work",
+            "type": "string"
+          },
+          "supported_DIN70121": {
+            "default": false,
+            "description": "The EVSE supports the DIN SPEC",
+            "type": "boolean"
+          },
+          "supported_ISO15118_2": {
+            "default": true,
+            "description": "The EVSE supports ISO15118-2",
+            "type": "boolean"
+          },
+          "terminate_connection_on_failed_response": {
+            "default": false,
+            "description": "Controls how to handle a failed response code of the EVSE. If true the V2G connection is terminated immediately on a failed response code, otherwise the EV is responsible for closing of the V2G communication session with SessionStop.",
+            "type": "boolean"
+          },
+          "tls_key_logging": {
+            "default": false,
+            "description": "Enable/Disable the export of TLS session keys (pre-master-secret) during a TLS handshake. This log file can be used to decrypt TLS sessions. Note that this option is for testing and simulation purpose only",
+            "type": "boolean"
+          },
+          "tls_key_logging_path": {
+            "default": "/tmp",
+            "description": "Output directory for the TLS key log file",
+            "type": "string"
+          },
+          "tls_security": {
+            "default": "prohibit",
+            "description": "Controls how to handle encrypted communication",
+            "enum": [
+              "prohibit",
+              "allow",
+              "force"
+            ],
+            "type": "string"
+          },
+          "tls_timeout": {
+            "default": 15e3,
+            "description": "Set the TLS timeout in ms when establishing a tls connection ",
+            "type": "integer"
+          },
+          "verify_contract_cert_chain": {
+            "default": false,
+            "description": "Specifies if the EVSE should verify the contract certificate chain locally.",
+            "type": "boolean"
+          }
         },
-        provides: {
-          main: {
-            config: {
-              all_panels_max_power: {
-                description: "Maximum power peak production of ALL combined solar panels",
-                minimum: 0,
-                type: "number"
+        "description": "This module includes a DIN70121 and ISO15118-2 implementation provided by chargebyte GmbH",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Fabian Hartung",
+            "Mohannad Oraby"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "charger": {
+            "description": "This module implements the ISO15118-2 implementation of an AC or DC charger",
+            "interface": "ISO15118_charger"
+          }
+        },
+        "requires": {
+          "security": {
+            "interface": "evse_security"
+          }
+        }
+      },
+      "Example": {
+        "description": "Simple example module written in C++",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Kai-Uwe Hermann",
+            "Andreas Heinrich"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "example": {
+            "config": {
+              "current": {
+                "description": "The current the physical connector can supply",
+                "maximum": 60,
+                "minimum": 1,
+                "type": "number"
               },
-              api_key: {
-                description: "API key for forecast.solar",
-                type: "string"
+              "enum_test": {
+                "description": "A config value that tests the enum type",
+                "enum": [
+                  "one",
+                  "two",
+                  "three"
+                ],
+                "type": "string"
               },
-              azimuth: {
-                description: "Plane azimuth angle",
-                maximum: 360,
-                minimum: 0,
-                type: "number"
-              },
-              latitude: {
-                description: "Location latitude",
-                maximum: 90,
-                minimum: -90,
-                type: "number"
-              },
-              longitude: {
-                description: "Location longitude",
-                maximum: 180,
-                minimum: -180,
-                type: "number"
-              },
-              update_interval: {
-                description: "Update interval in minutes",
-                type: "integer"
+              "enum_test2": {
+                "description": "Another config value that tests the enum type",
+                "enum": [
+                  1,
+                  2,
+                  3
+                ],
+                "type": "integer"
               }
             },
-            description: "This interface is responsible for providing the solar forecast data",
-            interface: "solar_forecast"
+            "description": "This implements an example interface that uses multiple framework features",
+            "interface": "example"
+          },
+          "store": {
+            "description": "This implements the kvs interface, mostly for testing multiple interfaces in one manifest",
+            "interface": "kvs"
+          }
+        },
+        "requires": {
+          "kvs": {
+            "interface": "kvs"
           }
         }
       },
-      JsPN532TokenProvider: {
-        description: "PN532 RFID/NFC token provider returning the token as soon as the tag can be read by the reader",
-        metadata: {
-          authors: ["Thilo Molitor"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "ExampleUser": {
+        "description": "Simple example module written in C++ and using the other example module",
+        "metadata": {
+          "authors": [
+            "Kai-Uwe Hermann",
+            "Andreas Heinrich"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          main: {
-            config: {
-              baud_rate: {
-                default: 115200,
-                description: "Serial baud rate to use when communicating with PN532 hardware",
-                maximum: 230400,
-                minimum: 9600,
-                type: "integer"
+        "provides": {
+          "example_user": {
+            "description": "This implements the example_user interface",
+            "interface": "example_user"
+          }
+        },
+        "requires": {
+          "example": {
+            "interface": "example"
+          }
+        }
+      },
+      "GenericPowermeter": {
+        "description": "Powermeter driver for various powermeter hardware",
+        "metadata": {
+          "authors": [
+            "Lars Dieckmann"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "config": {
+              "modbus_base_address": {
+                "default": 30001,
+                "description": "The base address for register access",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
               },
-              serial_port: {
-                default: "/dev/ttyS0",
-                description: "Serial port the PN532 hardware is connected to",
-                type: "string"
+              "model": {
+                "default": "test_dummy",
+                "description": "Selector for the powermeter configuration file to be used",
+                "type": "string"
               },
-              timeout: {
-                default: 30,
-                description: "Time a new token is valid (in s)",
-                maximum: 120,
-                minimum: 0,
-                type: "number"
+              "powermeter_device_id": {
+                "default": 1,
+                "description": "The powermeter's address on the serial bus",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
               }
             },
-            description: "Implementation of PN532 RFID/NFC token provider",
-            interface: "auth_token_provider"
+            "description": "Implementation of the driver functionality",
+            "interface": "powermeter"
+          }
+        },
+        "requires": {
+          "serial_comm_hub": {
+            "interface": "serial_communication_hub"
           }
         }
       },
-      JsRiseV2G: {
-        description: "This module implements ISO15118 ac and dc charging by proxying everything into a modified RISE-V2G implementation",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Thilo Molitor"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "IMDSimulator": {
+        "description": "SIL Implementation of an Isolation Monitoring Device (IMD) for DC charging",
+        "metadata": {
+          "authors": [
+            "Fabian Hartung (chargebyte GmbH)",
+            "Cornelius Claussen (Pionix GmbH)"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          ac_charger: {
-            description: "This module implements the ISO15118-2 implementation of an AC charger",
-            interface: "ISO15118_ac_charger"
-          },
-          dc_charger: {
-            description: "This module implements the ISO15118-2 implementation of a DC charger",
-            interface: "ISO15118_dc_charger"
-          },
-          main: {
-            config: {
-              mqtt_base_path: {
-                default: "everest_external/iso15118/java",
-                description: "Base path for the mqtt communication used by the java process",
-                type: "string"
+        "provides": {
+          "main": {
+            "config": {
+              "interval": {
+                "default": 1e3,
+                "description": "Measurement update interval in milliseconds",
+                "type": "integer"
+              },
+              "resistance_F_Ohm": {
+                "default": 9e5,
+                "description": "Resistance to return for the simulated measurements in Ohm",
+                "type": "number"
               }
             },
-            description: "This module implements a proxy to the RISE-V2G ISO15118-2 implementation in java",
-            interface: "empty"
-          }
-        },
-        requires: {
-          slac: {
-            interface: "ISO15118_3_SLAC",
-            min_connections: 0
+            "description": "Main interface for the IMD",
+            "interface": "isolation_monitor"
           }
         }
       },
-      JsTibber: {
-        description: "This modules fetches data from the Tibber Price Energy Forecast API and publishes it.",
-        enable_external_mqtt: false,
-        metadata: {
-          authors: ["Andreas Heinrich", "Leonardo Oliveira", "Cornelius Claussen"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "JsCarSimulator": {
+        "config": {
+          "auto_enable": {
+            "default": false,
+            "description": "Enable this simulation directly at start. Set to true for pure SIL configs, set to false for HIL.",
+            "type": "boolean"
+          },
+          "auto_exec": {
+            "default": false,
+            "description": "Enable automatic execution of simulation commands at startup from auto_exec_commands config option.",
+            "type": "boolean"
+          },
+          "auto_exec_commands": {
+            "default": "",
+            "description": "Simulation commands, e.g. sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
+            "type": "string"
+          },
+          "connector_id": {
+            "description": "Connector id of the evse manager to which this simulator is connected to",
+            "type": "integer"
+          },
+          "dc_discharge_max_current_limit": {
+            "default": 300,
+            "description": "Maximum discharge current allowed by the EV",
+            "type": "integer"
+          },
+          "dc_discharge_max_power_limit": {
+            "default": 15e4,
+            "description": "Maximum discharge power allowed by the EV",
+            "type": "integer"
+          },
+          "dc_discharge_target_current": {
+            "default": 5,
+            "description": "Discharge target current requested by the EV",
+            "type": "integer"
+          },
+          "dc_discharge_v2g_minimal_soc": {
+            "default": 20,
+            "description": "Discharge minimal soc at which the evse should shutdown",
+            "type": "integer"
+          },
+          "dc_energy_capacity": {
+            "default": 6e4,
+            "description": "Energy capacity of the EV",
+            "type": "integer"
+          },
+          "dc_max_current_limit": {
+            "default": 300,
+            "description": "Maximum current allowed by the EV",
+            "type": "integer"
+          },
+          "dc_max_power_limit": {
+            "default": 15e4,
+            "description": "Maximum power allowed by the EV",
+            "type": "integer"
+          },
+          "dc_max_voltage_limit": {
+            "default": 900,
+            "description": "Maximum voltage allowed by the EV",
+            "type": "integer"
+          },
+          "dc_target_current": {
+            "default": 5,
+            "description": "Target current requested by the EV",
+            "type": "integer"
+          },
+          "dc_target_voltage": {
+            "default": 200,
+            "description": "Target voltage requested by the EV",
+            "type": "integer"
+          },
+          "support_sae_j2847": {
+            "default": false,
+            "description": "Supporting SAE J2847 ISO 2 bidi version",
+            "type": "boolean"
+          }
         },
-        provides: {
-          main: {
-            config: {
-              additional_cost_per_kwh: {
-                description: "Constant to add to the reported price. Usually 0.",
-                type: "number"
+        "description": "This module implements a Car simulator that can execute charging sessions using the yeti-simulation-control interface",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "This implements the car simulator",
+            "interface": "car_simulator"
+          }
+        },
+        "requires": {
+          "ev": {
+            "interface": "ISO15118_ev",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "simulation_control": {
+            "interface": "yeti_simulation_control"
+          },
+          "slac": {
+            "interface": "slac",
+            "max_connections": 1,
+            "min_connections": 0
+          }
+        }
+      },
+      "JsDCSupplySimulator": {
+        "description": "SIL Implementation of a programmable power supply for DC charging",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen (Pionix GmbH)"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "config": {
+              "bidirectional": {
+                "default": true,
+                "description": "Set to true for bidirectional supply",
+                "type": "boolean"
               },
-              api_key: {
-                description: "API key from Tibber developer account",
-                type: "string"
+              "max_current": {
+                "default": 200,
+                "description": "Max supported current",
+                "type": "number"
               },
-              update_interval: {
-                description: "Update interval in minutes. Typically 60 or so.",
-                type: "integer"
+              "max_power": {
+                "default": 15e4,
+                "description": "Max supported power in watt",
+                "type": "number"
+              },
+              "max_voltage": {
+                "default": 900,
+                "description": "Max supported voltage",
+                "type": "number"
+              },
+              "min_current": {
+                "default": 1,
+                "description": "Min supported current",
+                "type": "number"
+              },
+              "min_voltage": {
+                "default": 200,
+                "description": "Min supported voltage",
+                "type": "number"
               }
             },
-            description: "This interface is responsible for providing the price forecast data from Tibber",
-            interface: "energy_price_information"
+            "description": "Main interface for the power supply",
+            "interface": "power_supply_DC"
+          },
+          "powermeter": {
+            "description": "Power meter interface for simulation",
+            "interface": "powermeter"
           }
         }
       },
-      JsYetiSimulator: {
-        description: "SIL simulator for YETI hardware v1.0",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Cornelius Claussen"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "JsExample": {
+        "description": "Simple example module written in JS",
+        "metadata": {
+          "authors": [
+            "Andreas Heinrich"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          board_support: {
-            description: "provides the board support Interface to low level control control pilot, relais, rcd, motor lock",
-            interface: "board_support_AC"
-          },
-          debug_keepalive: {
-            description: "Provides the keepalive as a json object",
-            interface: "debug_json"
-          },
-          debug_powermeter: {
-            description: "Provides the powermeter as a json object",
-            interface: "debug_json"
-          },
-          debug_state: {
-            description: "Provides the state as a json object",
-            interface: "debug_json"
-          },
-          debug_yeti: {
-            description: "provides the debug information of the charging driver",
-            interface: "debug_json"
-          },
-          powermeter: {
-            description: "provides the Yeti Internal Power Meter",
-            interface: "powermeter"
-          },
-          yeti_extras: {
-            description: "extra functionality special for Yeti",
-            interface: "yeti_extras"
-          },
-          yeti_simulation_control: {
-            description: "Interface for the Yeti HIL simulator",
-            interface: "yeti_simulation_control"
+        "provides": {
+          "example": {
+            "description": "This implements an example_user interface that uses multiple framework features",
+            "interface": "example_user"
           }
         }
       },
-      ModbusMeter: {
-        description: "Module that collects power and energy measurements from a MODBUS device",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Andreas Heinrich", "Leonardo Fernandes"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "JsExampleUser": {
+        "description": "Simple example module written in JS and using the other example module",
+        "metadata": {
+          "authors": [
+            "Andreas Heinrich"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          main: {
-            config: {
-              energy_in_length: {
-                description: "Amount of modbus registers uint16 = 1, uint32 = 2, uint64 = 4",
-                enum: [2],
-                type: "integer"
-              },
-              energy_in_register: {
-                description: "Modbus register for energy in Watthours imported",
-                minimum: 0,
-                type: "integer"
-              },
-              energy_out_length: {
-                description: "Amount of modbus registers uint16 = 1, uint32 = 2, uint64 = 4",
-                enum: [2],
-                type: "integer"
-              },
-              energy_out_register: {
-                description: "Modbus register for energy in Watthours imported",
-                minimum: 0,
-                type: "integer"
-              },
-              energy_unit_id: {
-                description: "Modbus unit_id, mostly 1",
-                maximum: 255,
-                minimum: 1,
-                type: "integer"
-              },
-              modbus_ip_address: {
-                description: "The ip address which should be used to get the modbus values",
-                pattern: "^(?:[0-9]{1,3}.){3}[0-9]{1,3}$",
-                type: "string"
-              },
-              modbus_port: {
-                description: "The port which should be used to get the modbus values",
-                minimum: 0,
-                type: "integer"
-              },
-              power_in_length: {
-                description: "Amount of modbus registers uint16 = 1, uint32 = 2, uint64 = 4",
-                enum: [2],
-                type: "integer"
-              },
-              power_in_register: {
-                description: "Modbus register for power in Watts imported",
-                minimum: 0,
-                type: "integer"
-              },
-              power_out_length: {
-                description: "Amount of modbus registers uint16 = 1, uint32 = 2, uint64 = 4",
-                enum: [2],
-                type: "integer"
-              },
-              power_out_register: {
-                description: "Modbus register for power in Watts exported",
-                minimum: 0,
-                type: "integer"
-              },
-              power_unit_id: {
-                description: "Modbus unit_id, mostly 1",
-                maximum: 255,
-                minimum: 1,
-                type: "integer"
-              },
-              update_interval: {
-                description: "Update interval in milliseconds.",
-                minimum: 0,
-                type: "integer"
+        "provides": {
+          "example_user": {
+            "description": "This implements the example_user interface",
+            "interface": "example_user"
+          }
+        },
+        "requires": {
+          "example": {
+            "interface": "example_user"
+          }
+        }
+      },
+      "JsSlacSimulator": {
+        "description": "SIL Implementation of SLAC data link negotiation according to ISO15118-3.",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen (Pionix GmbH)"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "ev": {
+            "config": {
+              "ev_id": {
+                "default": "PIONIX_SAYS_HELLO",
+                "description": "EV id - 17 octets.",
+                "type": "string"
               }
             },
-            description: "This is the main unit of the module",
-            interface: "powermeter"
-          }
-        }
-      },
-      OCPP: {
-        config: {
-          ChargePointConfigPath: {
-            default: "charge_point_config.json",
-            description: "Path to the configuration file",
-            type: "string"
+            "description": "SLAC interface implementation for EV side",
+            "interface": "slac"
           },
-          DatabasePath: {
-            default: "/tmp/ocpp_1_6_charge_point",
-            description: "Path to the persistent SQLite database folder",
-            type: "string"
-          },
-          SchemasPath: {
-            default: "/tmp/ocpp_1_6_charge_point",
-            description: "Path to the schemas folder in which the OCPP 1.6 schemas reside",
-            type: "string"
-          }
-        },
-        description: "A OCPP charge point / charging station module, currently targeting OCPP-J 1.6",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Kai-Uwe Hermann"],
-          license: "https://opensource.org/licenses/Apache-2.0"
-        },
-        provides: {
-          auth_validator: {
-            description: "Validates the provided auth token with OCPP",
-            interface: "auth_token_validator"
-          },
-          main: {
-            description: "This is a OCPP 1.6 charge point",
-            interface: "ocpp_1_6_charge_point"
-          }
-        },
-        requires: {
-          evse_manager: {
-            interface: "evse_manager",
-            max_connections: 128,
-            min_connections: 1
-          }
-        }
-      },
-      PersistentStore: {
-        config: {
-          sqlite_db_file_path: {
-            default: "everest_persistent_store.db",
-            description: "Path to the SQLite db file.",
-            type: "string"
-          }
-        },
-        description: "Simple implementation of a SQLite backed persistent key-value store",
-        metadata: {
-          authors: ["Kai-Uwe Hermann"],
-          license: "https://opensource.org/licenses/Apache-2.0"
-        },
-        provides: {
-          main: {
-            description: "This implements a persistent key-value store",
-            interface: "kvs"
-          }
-        }
-      },
-      Store: {
-        description: "Simple implementation of a memory-backed key-value store",
-        metadata: {
-          authors: ["Kai-Uwe Hermann", "Thilo Molitor"],
-          license: "https://opensource.org/licenses/Apache-2.0"
-        },
-        provides: {
-          main: {
-            description: "This implements a key-value store",
-            interface: "kvs"
-          }
-        }
-      },
-      SunspecReader: {
-        description: "Module that collects measurements from a Sunspec-conformant device, given a string formatted input query.",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Andreas Heinrich", "Leonardo Fernandes"],
-          license: "https://opensource.org/licenses/Apache-2.0"
-        },
-        provides: {
-          main: {
-            config: {
-              ip_address: {
-                description: "IP address of device to be read.",
-                pattern: "^\\b(?:(?:2(?:[0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9])\\.){3}(?:(?:2([0-4][0-9]|5[0-5])|[0-1]?[0-9]?[0-9]))\\b$",
-                type: "string"
+          "evse": {
+            "config": {
+              "evse_id": {
+                "default": "PIONIX_SAYS_HELLO",
+                "description": "EVSE id - 17 octets.",
+                "type": "string"
               },
-              port: {
-                description: "TCP port number.",
-                minimum: 0,
-                type: "integer"
+              "nid": {
+                "default": "pionix!",
+                "description": "NID (Network Identification Key) - 7 octets.",
+                "type": "string"
               },
-              query: {
-                description: "Query string in the predefined format.",
-                pattern: "^<[0-9]+>::<[a-zA-Z]+>::<[a-zA-Z]+>$",
-                type: "string"
-              },
-              read_interval: {
-                description: "Polling interval for read (in milliseconds).",
-                type: "integer"
-              },
-              unit: {
-                description: "MODBUS unit ID.",
-                minimum: 0,
-                type: "integer"
+              "number_of_sounds": {
+                "default": 10,
+                "description": "SLAC number of sounds.",
+                "type": "integer"
               }
             },
-            description: "This is the main unit of the module",
-            interface: "sunspec_reader"
+            "description": "SLAC interface implementation for EVSE side",
+            "interface": "slac"
           }
         }
       },
-      SunspecScanner: {
-        description: "Module to implement a scan for Sunspec compliant devices",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Andreas Heinrich", "Leonardo Fernandes"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "JsTibber": {
+        "description": "This modules fetches data from the Tibber Price Energy Forecast API and publishes it.",
+        "enable_external_mqtt": false,
+        "metadata": {
+          "authors": [
+            "Andreas Heinrich",
+            "Leonardo Oliveira",
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          main: {
-            description: "This is the main unit of the module",
-            interface: "sunspec_scanner"
+        "provides": {
+          "main": {
+            "config": {
+              "additional_cost_per_kwh": {
+                "description": "Constant to add to the reported price. Usually 0.",
+                "type": "number"
+              },
+              "api_key": {
+                "description": "API key from Tibber developer account",
+                "type": "string"
+              },
+              "update_interval": {
+                "description": "Update interval in minutes. Typically 60 or so.",
+                "type": "integer"
+              }
+            },
+            "description": "This interface is responsible for providing the price forecast data from Tibber",
+            "interface": "energy_price_information"
           }
         }
       },
-      TestUser: {
-        description: "This implements a simple power regulator module publishing the max_current for the charger being the minimum of the incomng max_current values received from power_in and (optionally solar modules)",
-        metadata: {
-          authors: ["Nobody"],
-          license: "https://opensource.org/licenses/Apache-2.0"
-        },
-        provides: {
-          fool: {
-            description: "nothing",
-            interface: "empty"
+      "JsYetiSimulator": {
+        "config": {
+          "connector_id": {
+            "description": "Connector id of the evse manager to which this simulator is connected to",
+            "type": "integer"
           }
         },
-        requires: {
-          test_intf: {
-            interface: "TestIntf"
+        "description": "SIL simulator for YETI hardware v1.0",
+        "enable_external_mqtt": true,
+        "enable_telemetry": true,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "board_support": {
+            "description": "provides the board support Interface to low level control control pilot, relais, rcd, motor lock",
+            "interface": "evse_board_support"
+          },
+          "connector_lock": {
+            "description": "Interface for the simulated Connector lock",
+            "interface": "connector_lock"
+          },
+          "powermeter": {
+            "description": "provides the Yeti Internal Power Meter",
+            "interface": "powermeter"
+          },
+          "rcd": {
+            "description": "Interface for the simulated AC RCD",
+            "interface": "ac_rcd"
+          },
+          "yeti_simulation_control": {
+            "description": "Interface for the Yeti HIL simulator",
+            "interface": "yeti_simulation_control"
           }
         }
       },
-      TestX: {
-        description: "This implements a simple power regulator module publishing the max_current for the charger being the minimum of the incomng max_current values received from power_in and (optionally solar modules)",
-        metadata: {
-          authors: ["Nobody"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+      "LemDCBM400600": {
+        "config": {
+          "ip_address": {
+            "description": "IP Address of the power meter API.",
+            "type": "string"
+          },
+          "meter_tls_certificate": {
+            "default": "",
+            "description": "The DCBM's HTTPS certificate, in PEM format. If provided, HTTPS will be used. If left empty, regular HTTP will be used. Note that this does not affect the default port - specify a port explicitly if you wish to use a port other than 80.",
+            "type": "string"
+          },
+          "ntp_server_1_ip_addr": {
+            "default": "",
+            "description": "The IPv4 address (in 4-octet form W.X.Y.Z) of the first NTP server to use for time sync. If this is left empty, NTP will not be configured on the DCBM - its time will be synced with EVerest's system time instead.",
+            "type": "string"
+          },
+          "ntp_server_1_port": {
+            "default": 123,
+            "description": "The port (1-65535) of the first NTP server.",
+            "type": "integer"
+          },
+          "ntp_server_2_ip_addr": {
+            "default": "",
+            "description": "The IPv4 address (in 4-octet form W.X.Y.Z) of the second NTP server to use for time sync. This is ignored if ntp_server_1_ip_addr is empty.",
+            "type": "string"
+          },
+          "ntp_server_2_port": {
+            "default": 123,
+            "description": "The port (1-65535) fof the second NTP server.",
+            "type": "integer"
+          },
+          "port": {
+            "default": 80,
+            "description": "Port of the power meter API.",
+            "type": "integer"
+          },
+          "resilience_initial_connection_retries": {
+            "default": 25,
+            "description": "For the controller resilience, the number of retries to connect to the powermeter at module initialization.",
+            "type": "integer"
+          },
+          "resilience_initial_connection_retry_delay": {
+            "default": 1e4,
+            "description": "For the controller resilience, the delay in milliseconds before a retry attempt at module initialization..",
+            "type": "integer"
+          },
+          "resilience_transaction_request_retries": {
+            "default": 3,
+            "description": "For the controller resilience, the number of retries to connect to the powermeter at a transaction start or stop request.",
+            "type": "integer"
+          },
+          "resilience_transaction_request_retry_delay": {
+            "default": 250,
+            "description": "For the controller resilience, the delay in milliseconds before a retry attempt  at a transaction start or stop request.",
+            "type": "integer"
+          }
         },
-        provides: {
-          main: {
-            description: "This implements the main logic of the module Power",
-            interface: "TestIntf"
+        "description": "Module implementing the LEM DCBM 400/600 power meter driver adapter via HTTP.",
+        "metadata": {
+          "authors": [
+            "Valentin Dimov, valentin.dimov@pionix.de",
+            "Fabian Klemm, fabian.klemm@pionix.de"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "This is the main unit of the module",
+            "interface": "powermeter"
           }
         }
       },
-      YetiDriver: {
-        config: {
-          baud_rate: {
-            default: 115200,
-            description: "Serial baud rate to use when communicating with Yeti hardware",
-            maximum: 230400,
-            minimum: 9600,
-            type: "integer"
+      "MicroMegaWattBSP": {
+        "config": {
+          "baud_rate": {
+            "default": 115200,
+            "description": "Serial baud rate to use when communicating with Yeti hardware",
+            "maximum": 230400,
+            "minimum": 9600,
+            "type": "integer"
           },
-          control_mode: {
-            default: "low",
-            description: "none, high or low",
-            enum: ["none", "high", "low"],
-            type: "string"
+          "dc_max_voltage": {
+            "default": 1e3,
+            "description": "Maximum voltage to support",
+            "maximum": 1e3,
+            "minimum": 50,
+            "type": "integer"
           },
-          serial_port: {
-            default: "/dev/ttyUSB0",
-            description: "Serial port the Yeti hardware is connected to",
-            type: "string"
+          "reset_gpio": {
+            "default": -1,
+            "description": "Reset GPIO number to use to HW reset uMWC. If set <0 it is disabled.",
+            "maximum": 1e3,
+            "minimum": -1,
+            "type": "integer"
+          },
+          "serial_port": {
+            "default": "/dev/ttyUSB0",
+            "description": "Serial port the Yeti hardware is connected to",
+            "type": "string"
           }
         },
-        description: "Driver module for the YETI hardware v1.0",
-        enable_external_mqtt: true,
-        metadata: {
-          authors: ["Cornelius Claussen", "Kai-Uwe Hermann", "Thilo Molitor", "Anton Woellert"],
-          license: "https://opensource.org/licenses/Apache-2.0"
+        "description": "Driver module for the Micro Mega Watt DC Charging Tester v1.0",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
         },
-        provides: {
-          board_support: {
-            description: "provides the board support Interface to low level control control pilot, relais, rcd, motor lock",
-            interface: "board_support_AC"
+        "provides": {
+          "board_support": {
+            "description": "provides the board support Interface to low level control control pilot, relais, rcd, motor lock",
+            "interface": "evse_board_support"
           },
-          debug_keepalive: {
-            description: "Provides the keepalive as a json object",
-            interface: "debug_json"
+          "dc_supply": {
+            "description": "Interface for the DC/DC output supply",
+            "interface": "power_supply_DC"
           },
-          debug_powermeter: {
-            description: "Provides the powermeter as a json object",
-            interface: "debug_json"
+          "powermeter": {
+            "description": "provides the Yeti Internal Power Meter",
+            "interface": "powermeter"
+          }
+        }
+      },
+      "OCPP": {
+        "config": {
+          "ChargePointConfigPath": {
+            "default": "ocpp-config.json",
+            "description": "Path to the configuration file",
+            "type": "string"
           },
-          debug_state: {
-            description: "Provides the state as a json object",
-            interface: "debug_json"
+          "DatabasePath": {
+            "default": "/tmp/ocpp_1_6_charge_point",
+            "description": "Path to the persistent SQLite database folder",
+            "type": "string"
           },
-          debug_yeti: {
-            description: "provides the debug information of the charging driver",
-            interface: "debug_json"
+          "EnableExternalWebsocketControl": {
+            "default": false,
+            "description": "If true websocket can be disconnected and connected externally",
+            "type": "boolean"
           },
-          powermeter: {
-            description: "provides the Yeti Internal Power Meter",
-            interface: "powermeter"
+          "MessageLogPath": {
+            "default": "/tmp/everest_ocpp_logs",
+            "description": "Path to folder where logs of all OCPP messages get written to",
+            "type": "string"
           },
-          yeti_extras: {
-            description: "extra functionality special for Yeti",
-            interface: "yeti_extras"
+          "MessageQueueResumeDelay": {
+            "default": 0,
+            "description": "Time (seconds) to delay resuming the message queue after reconnecting",
+            "type": "integer"
           },
-          yeti_simulation_control: {
-            description: "Interface for the Yeti HIL simulator",
-            interface: "yeti_simulation_control"
+          "PublishChargingScheduleDurationS": {
+            "default": 600,
+            "description": "Duration in seconds that defines the duration of the requested charging schedules starting from now",
+            "type": "integer"
+          },
+          "PublishChargingScheduleIntervalS": {
+            "default": 30,
+            "description": "Interval in seconds in which charging schedules received from OCPP are be published over MQTT and signalled to connected modules. If the value is set to 0, charging schedules are only published when changed by CSMS",
+            "type": "integer"
+          },
+          "UserConfigPath": {
+            "default": "user_config.json",
+            "description": "Path to the file of the OCPP user config",
+            "type": "string"
+          }
+        },
+        "description": "A OCPP charge point / charging station module, currently targeting OCPP-J 1.6",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Kai-Uwe Hermann",
+            "Piet Gömpel"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "auth_provider": {
+            "description": "Provides auth tokens from OCPP",
+            "interface": "auth_token_provider"
+          },
+          "auth_validator": {
+            "description": "Validates the provided auth token with OCPP",
+            "interface": "auth_token_validator"
+          },
+          "data_transfer": {
+            "description": "OCPP data transfer towards the CSMS",
+            "interface": "ocpp_data_transfer"
+          },
+          "main": {
+            "description": "This is a OCPP 1.6 charge point",
+            "interface": "ocpp_1_6_charge_point"
+          },
+          "ocpp_generic": {
+            "description": "Generic OCPP interface.",
+            "interface": "ocpp"
+          }
+        },
+        "requires": {
+          "auth": {
+            "interface": "auth",
+            "max_connections": 1,
+            "min_connections": 1
+          },
+          "connector_zero_sink": {
+            "interface": "external_energy_limits",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "data_transfer": {
+            "interface": "ocpp_data_transfer",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "evse_manager": {
+            "interface": "evse_manager",
+            "max_connections": 128,
+            "min_connections": 1
+          },
+          "reservation": {
+            "interface": "reservation",
+            "max_connections": 1,
+            "min_connections": 1
+          },
+          "security": {
+            "interface": "evse_security",
+            "max_connections": 1,
+            "min_connections": 1
+          },
+          "system": {
+            "interface": "system",
+            "max_connections": 1,
+            "min_connections": 1
+          }
+        }
+      },
+      "OCPP201": {
+        "config": {
+          "CoreDatabasePath": {
+            "default": "/tmp/ocpp201",
+            "description": "Path to the persistent SQLite database folder",
+            "type": "string"
+          },
+          "DeviceModelDatabasePath": {
+            "default": "device_model_storage.db",
+            "description": "Path to the SQLite database for the device model",
+            "type": "string"
+          },
+          "EnableExternalWebsocketControl": {
+            "default": false,
+            "description": "If true websocket can be disconnected and connected externally",
+            "type": "boolean"
+          },
+          "MessageLogPath": {
+            "default": "/tmp/everest_ocpp_logs",
+            "description": "Path to folder where logs of all OCPP messages get written to",
+            "type": "string"
+          },
+          "MessageQueueResumeDelay": {
+            "default": 0,
+            "description": "Time (seconds) to delay resuming the message queue after reconnecting",
+            "type": "integer"
+          }
+        },
+        "description": "A OCPP charge point / charging station module for OCPP 2.0.1",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Piet Gömpel",
+            "Kai-Uwe Hermann"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "auth_provider": {
+            "description": "Provides authorization requests by CSMS",
+            "interface": "auth_token_provider"
+          },
+          "auth_validator": {
+            "description": "Validates the provided token using CSMS, AuthorizationList or AuthorizationCache",
+            "interface": "auth_token_validator"
+          },
+          "data_transfer": {
+            "description": "OCPP data transfer towards the CSMS",
+            "interface": "ocpp_data_transfer"
+          },
+          "main": {
+            "description": "This is a OCPP 2.0.1 charge point",
+            "interface": "empty"
+          },
+          "ocpp_generic": {
+            "description": "Generic OCPP interface.",
+            "interface": "ocpp"
+          }
+        },
+        "requires": {
+          "auth": {
+            "interface": "auth",
+            "max_connections": 1,
+            "min_connections": 1
+          },
+          "data_transfer": {
+            "interface": "ocpp_data_transfer",
+            "max_connections": 1,
+            "min_connections": 0
+          },
+          "evse_manager": {
+            "interface": "evse_manager",
+            "max_connections": 128,
+            "min_connections": 1
+          },
+          "security": {
+            "interface": "evse_security",
+            "max_connections": 1,
+            "min_connections": 1
+          },
+          "system": {
+            "interface": "system",
+            "max_connections": 1,
+            "min_connections": 1
+          }
+        }
+      },
+      "OCPPExtensionExample": {
+        "config": {
+          "keys_to_monitor": {
+            "default": "HeartbeatInterval,SecurityProfile,ExampleConfigurationKey",
+            "description": "Commad seperated list of keys that should be monitored",
+            "type": "string"
+          }
+        },
+        "description": "This is an example module that shows how the OCPP module of EVerest could be extended using the DataTransfer functionality and custom configuration keys",
+        "metadata": {
+          "authors": [
+            "Piet Gömpel"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "data_transfer": {
+            "description": "OCPP data transfer",
+            "interface": "ocpp_data_transfer"
+          }
+        },
+        "requires": {
+          "data_transfer": {
+            "interface": "ocpp_data_transfer",
+            "max_connections": 1,
+            "min_connections": 1
+          },
+          "ocpp": {
+            "interface": "ocpp",
+            "max_connections": 1,
+            "min_connections": 1
+          }
+        }
+      },
+      "PN532TokenProvider": {
+        "description": "PN532 RFID/NFC token provider returning the token as soon as the tag can be read by the reader",
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen",
+            "Kai-Uwe Hermann",
+            "Thilo Molitor",
+            "Anton Wöllert"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "config": {
+              "baud_rate": {
+                "default": 115200,
+                "description": "Serial baud rate to use when communicating with PN532 hardware",
+                "maximum": 230400,
+                "minimum": 9600,
+                "type": "integer"
+              },
+              "debug": {
+                "default": false,
+                "description": "Show debug output on command line.",
+                "type": "boolean"
+              },
+              "read_timeout": {
+                "default": 5,
+                "description": "Time between subsequent card reads (in s)",
+                "maximum": 120,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "serial_port": {
+                "default": "/dev/ttyS0",
+                "description": "Serial port the PN532 hardware is connected to",
+                "type": "string"
+              },
+              "timeout": {
+                "default": 30,
+                "description": "Time a new token is valid (in s)",
+                "maximum": 120,
+                "minimum": 0,
+                "type": "number"
+              }
+            },
+            "description": "Implementation of PN532 RFID/NFC token provider",
+            "interface": "auth_token_provider"
+          }
+        }
+      },
+      "PacketSniffer": {
+        "config": {
+          "device": {
+            "default": "eth1",
+            "description": "The ethernet device on which the messages are to be captured",
+            "type": "string"
+          },
+          "session_logging_path": {
+            "default": "/tmp",
+            "description": "Output directory for session capture dump files",
+            "type": "string"
+          }
+        },
+        "description": 'Using the "PacketSniffer" EVerest module it is possible to capture and store the different packets on the PLC interface.',
+        "metadata": {
+          "authors": [
+            "Sebastian Lukas"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "EVerest API",
+            "interface": "empty"
+          }
+        },
+        "requires": {
+          "evse_manager": {
+            "interface": "evse_manager"
+          }
+        }
+      },
+      "PersistentStore": {
+        "config": {
+          "sqlite_db_file_path": {
+            "default": "everest_persistent_store.db",
+            "description": "Path to the SQLite db file.",
+            "type": "string"
+          }
+        },
+        "description": "Simple implementation of a SQLite backed persistent key-value store",
+        "metadata": {
+          "authors": [
+            "Kai-Uwe Hermann"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "This implements a persistent key-value store",
+            "interface": "kvs"
+          }
+        }
+      },
+      "PowermeterBSM": {
+        "config": {
+          "baud": {
+            "default": 19200,
+            "description": "Baud rate on RS-485, allowed value range: 2400 115200 (19200 is default)",
+            "maximum": 115200,
+            "minimum": 2400,
+            "type": "integer"
+          },
+          "meter_id": {
+            "default": "no_meter_id",
+            "description": "Arbitrary string id, used as power_meter_id in interface powermeter.",
+            "type": "string"
+          },
+          "power_unit_id": {
+            "description": "Modbus unit_id, mostly 1",
+            "maximum": 255,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "serial_device": {
+            "default": "/dev/ttyUSB0",
+            "description": "Serial port the BSM hardware is connected to",
+            "type": "string"
+          },
+          "sunspec_base_address": {
+            "default": 4e4,
+            "description": "sunspec base address of device ( 0, 40000 or 50000 )",
+            "type": "integer"
+          },
+          "update_interval": {
+            "description": "Update interval in seconds.",
+            "minimum": 1,
+            "type": "integer"
+          },
+          "use_serial_comm_hub": {
+            "default": true,
+            "description": "When enabled, use a serial serial_communication_hub, otherwise use the configured serial device.",
+            "type": "boolean"
+          },
+          "watchdog_wakeup_interval": {
+            "default": 60,
+            "description": "wakup interval of watchdog in seconds (default 60 seconds).",
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "description": "Module that collects power and energy measurements from a MODBUS RTU device",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Christoph Kliemt"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "ac_meter": {
+            "description": "sunspec ac meter",
+            "interface": "sunspec_ac_meter"
+          },
+          "main": {
+            "description": "This is the main unit of the module",
+            "interface": "powermeter"
+          }
+        },
+        "requires": {
+          "serial_com_0_connection": {
+            "interface": "serial_communication_hub",
+            "max_connections": 1,
+            "min_connections": 0
+          }
+        }
+      },
+      "PyEvJosev": {
+        "config": {
+          "device": {
+            "default": "eth0",
+            "description": "Ethernet device used for HLC. Any local interface that has an ipv6 link-local and a MAC addr will work.",
+            "type": "string"
+          },
+          "enforce_tls": {
+            "default": false,
+            "description": "The EVCC will enforce a TLS connection",
+            "type": "boolean"
+          },
+          "is_cert_install_needed": {
+            "default": false,
+            "description": "If true, the contract certificate will be installed via the evse. And any existing contract certificate will also be overwritten.",
+            "type": "boolean"
+          },
+          "supported_DIN70121": {
+            "default": false,
+            "description": "The EVSE supports the DIN SPEC",
+            "type": "boolean"
+          },
+          "supported_ISO15118_2": {
+            "default": false,
+            "description": "The EVSE supports ISO15118-2",
+            "type": "boolean"
+          },
+          "supported_ISO15118_20_AC": {
+            "default": false,
+            "description": "The EVSE supports ISO15118-20 AC",
+            "type": "boolean"
+          },
+          "supported_ISO15118_20_DC": {
+            "default": false,
+            "description": "The EVSE supports ISO15118-20 DC",
+            "type": "boolean"
+          },
+          "tls_active": {
+            "default": false,
+            "description": "If true, EVCC connects to SECC as TLS client",
+            "type": "boolean"
+          }
+        },
+        "description": "This module implements an DIN70121, ISO15118-2 and ISO15118-20 EV using the Josev project.",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Sebastian Lukas"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "ev": {
+            "description": "This module implements the ISO15118-2 implementation of an EV",
+            "interface": "ISO15118_ev"
+          }
+        }
+      },
+      "PyExample": {
+        "description": "Simple example module written in Python",
+        "metadata": {
+          "authors": [
+            "Andreas Heinrich"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "example": {
+            "description": "This implements an example_user interface that uses multiple framework features",
+            "interface": "example_user"
+          }
+        }
+      },
+      "PyExampleUser": {
+        "description": "Simple example module written in Python and using the other example module",
+        "metadata": {
+          "authors": [
+            "Andreas Heinrich"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "example_user": {
+            "description": "This implements the example_user interface",
+            "interface": "example_user"
+          }
+        },
+        "requires": {
+          "example": {
+            "interface": "example_user"
+          }
+        }
+      },
+      "SerialCommHub": {
+        "description": "Hub to communicate with attached serial devices",
+        "metadata": {
+          "authors": [
+            "Lars Dieckmann",
+            "Cornelius Claussen"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "config": {
+              "baudrate": {
+                "default": 9600,
+                "description": "Baudrate",
+                "maximum": 230400,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "ignore_echo": {
+                "default": false,
+                "description": "On some hardware every message that is sent is read back, this setting filters the sent message in the reply.",
+                "type": "boolean"
+              },
+              "initial_timeout_ms": {
+                "default": 500,
+                "description": "Timeout in ms for the first packet.",
+                "type": "integer"
+              },
+              "max_packet_size": {
+                "default": 256,
+                "description": "Maximum size of a packet to read/write in bytes. Payload exceeding the size will be chunked. The APU size according to [wikipedia](https://en.wikipedia.org/wiki/Modbus) is 256 bytes, which is used as default here.",
+                "maximum": 65536,
+                "minimum": 7,
+                "type": "integer"
+              },
+              "parity": {
+                "default": 0,
+                "description": "Parity bit: 0: None, 1: Odd, 2: Even",
+                "maximum": 2,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "rxtx_gpio_chip": {
+                "default": "",
+                "description": "GPIO chip to use to switch between RX/TX. An empty string disables GPIO usage.",
+                "type": "string"
+              },
+              "rxtx_gpio_line": {
+                "default": 0,
+                "description": "GPIO line to use to switch between RX/TX",
+                "type": "integer"
+              },
+              "rxtx_gpio_tx_high": {
+                "default": false,
+                "description": "GPIO direction, false means low for TX, true means high for TX",
+                "type": "boolean"
+              },
+              "serial_port": {
+                "default": "/dev/ttyUSB0",
+                "description": "Serial port the hardware is connected to",
+                "type": "string"
+              },
+              "within_message_timeout_ms": {
+                "default": 100,
+                "description": "Timeout in ms for subsequent packets.",
+                "type": "integer"
+              }
+            },
+            "description": "Implementation of serial communication hub",
+            "interface": "serial_communication_hub"
+          }
+        }
+      },
+      "Setup": {
+        "config": {
+          "ap_interface": {
+            "default": "wlan0",
+            "description": "Wifi interface for AP mode",
+            "type": "string"
+          },
+          "ap_ipv4": {
+            "default": "192.168.1.1/24",
+            "description": "IPv4 address of the AP",
+            "type": "string"
+          },
+          "initialized_by_default": {
+            "default": true,
+            "description": "Always report as if the charger was initialized",
+            "type": "boolean"
+          },
+          "localization": {
+            "default": false,
+            "description": "Enable localization support",
+            "type": "boolean"
+          },
+          "online_check_host": {
+            "default": "lfenergy.org",
+            "description": "Hostname or IP to use to check for internet connectivity",
+            "type": "string"
+          },
+          "release_metadata_file": {
+            "default": "release.json",
+            "description": "Location of the release metadata file relative to the EVerest prefix",
+            "type": "string"
+          },
+          "setup_simulation": {
+            "default": false,
+            "description": "Allow simulation setup",
+            "type": "boolean"
+          },
+          "setup_wifi": {
+            "default": false,
+            "description": "Allow wifi setup",
+            "type": "boolean"
+          }
+        },
+        "description": "The EVerest Setup module for setting up a LAN or WIFI network connection. This module needs privileged access and should not run during normal operations",
+        "enable_external_mqtt": true,
+        "metadata": {
+          "authors": [
+            "Kai-Uwe Hermann"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "EVerest Setup",
+            "interface": "empty"
+          }
+        },
+        "requires": {
+          "store": {
+            "interface": "kvs"
+          }
+        }
+      },
+      "Store": {
+        "description": "Simple implementation of a memory-backed key-value store",
+        "metadata": {
+          "authors": [
+            "Kai-Uwe Hermann",
+            "Thilo Molitor"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "This implements a key-value store",
+            "interface": "kvs"
+          }
+        }
+      },
+      "System": {
+        "config": {
+          "DefaultRetries": {
+            "default": 1,
+            "description": "Specifies how many times Charge Point tries to upload or download files on previous failure.",
+            "type": "number"
+          },
+          "DefaultRetryInterval": {
+            "default": 1,
+            "description": "Specifies in seconds after which time a retry of an upload or download on previous failure may be attempted.",
+            "type": "number"
+          }
+        },
+        "description": "This module implements system wide operations",
+        "enable_external_mqtt": false,
+        "metadata": {
+          "authors": [
+            "Piet Gömpel"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "main": {
+            "description": "Implements the system interface",
+            "interface": "system"
+          }
+        },
+        "requires": {}
+      },
+      "YetiDriver": {
+        "config": {
+          "baud_rate": {
+            "default": 115200,
+            "description": "Serial baud rate to use when communicating with Yeti hardware",
+            "maximum": 230400,
+            "minimum": 9600,
+            "type": "integer"
+          },
+          "caps_min_current_A": {
+            "default": -1,
+            "description": "Minimal current on AC side. For AC this is typically 6, but for HLC this can be less. -1 means use limit reported by HW.",
+            "type": "integer"
+          },
+          "reset_gpio": {
+            "default": 27,
+            "description": "GPIO line to use to reset Yeti",
+            "type": "integer"
+          },
+          "reset_gpio_chip": {
+            "default": "gpiochip0",
+            "description": "Reset GPIO chip to use to HW reset Yeti. If set to empty string, it is disabled.",
+            "type": "string"
+          },
+          "serial_port": {
+            "default": "/dev/ttyUSB0",
+            "description": "Serial port the Yeti hardware is connected to",
+            "type": "string"
+          }
+        },
+        "description": "Driver module for the YETI hardware v1.0",
+        "enable_telemetry": true,
+        "metadata": {
+          "authors": [
+            "Cornelius Claussen",
+            "Kai-Uwe Hermann",
+            "Thilo Molitor",
+            "Anton Wöllert"
+          ],
+          "license": "https://opensource.org/licenses/Apache-2.0"
+        },
+        "provides": {
+          "board_support": {
+            "description": "provides the board support Interface to low level control control pilot, relais, motor lock",
+            "interface": "evse_board_support"
+          },
+          "connector_lock": {
+            "description": "Interface for the motor lock",
+            "interface": "connector_lock"
+          },
+          "powermeter": {
+            "description": "provides the Yeti Internal Power Meter",
+            "interface": "powermeter"
+          },
+          "rcd": {
+            "description": "RCD interface of the onboard RCD",
+            "interface": "ac_rcd"
           }
         }
       }
     };
     const SampleInterfaceList = {
-      ISO15118_ac_charger: {
-        cmds: {
-          set_max_current: {
-            arguments: {
-              max_current: {
-                description: "EVSE maximum current in ampere",
-                maximum: 4e3,
-                minimum: 0,
-                type: "number"
+      "ISO15118_charger": {
+        "cmds": {
+          "ac_contactor_closed": {
+            "arguments": {
+              "status": {
+                "description": "Set to true when contactor is closed, false when contactor is open",
+                "type": "boolean"
               }
             },
-            description: "Sets the maximum current of EVSE"
+            "description": "This message is an async response to a previously published AC_Close_Contactor or AC_Open_Contactor."
           },
-          set_nominal_voltage: {
-            arguments: {
-              voltage: {
-                description: "Nominal voltage in volt",
-                maximum: 1e4,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Sets nominal voltage of the EVSE"
-          },
-          set_rcd: {
-            arguments: {
-              rcd_err: {
-                description: "True if the RCD has detected an error.",
-                type: "boolean"
-              }
-            },
-            description: "Sets the status of the Residual Current Device (RCD). If rcd_err is equal to true, the RCD has detected an error."
-          }
-        },
-        description: "This interface defines an ISO15118 AC Charger",
-        parent: "ISO15118_charger",
-        vars: {
-          e_amount: {
-            description: "Amount of energy (unit: Wh) reflecting the EV's estimate how much energy is needed to fulfill the user configured charging goal for the current charging session. This might include energy for other purposes than solely charging the HV battery of an EV.",
-            maximum: 2e5,
-            minimum: 0,
-            type: "number"
-          },
-          ev_max_current: {
-            description: "Maximum current (unit: A) supported by the EV per phase.",
-            maximum: 4e3,
-            minimum: 0,
-            type: "number"
-          },
-          ev_max_voltage: {
-            description: "The RMS of the maximal nominal voltage (unit: V) the vehicle can accept, measured between one phase and neutral.",
-            maximum: 1e4,
-            minimum: 0,
-            type: "number"
-          },
-          ev_min_current: {
-            description: "EVMinCurrent (unit: A) is used to indicate to the SECC that charging below this minimum is not energy/cost efficient for the EV. It is recommended that the SECC considers this value during the target setting process (e.g. sale tariff table should account for this value).",
-            maximum: 4e3,
-            minimum: 0,
-            type: "number"
-          }
-        }
-      },
-      ISO15118_charger: {
-        cmds: {
-          set_evse_notification: {
-            arguments: {
-              max_delay: {
-                description: "Indicates the time in seconds until it expects the EVCC to react on the action request indicated in the coresponding EVSENotification",
-                type: "integer"
+          "authorization_response": {
+            "arguments": {
+              "authorization_status": {
+                "$ref": "/authorization#/AuthorizationStatus",
+                "description": "Authorization status of the ID Token",
+                "type": "string"
               },
-              notification: {
-                description: "EVSE notification",
-                enum: ["None", "StopCharging", "ReNegotiation"],
-                type: "string"
+              "certificate_status": {
+                "$ref": "/authorization#/CertificateStatus",
+                "description": "Certificate status information",
+                "type": "string"
               }
             },
-            description: "Sets a notification value used by the SECC to influence the behaviour of the EVCC. The EVSENotification contains an action that the SECC wants the EVCC to perform"
+            "description": "This message is an async response to a previously published Require_Auth_EIM or Require_Auth_PnC. The SECC informs the EVCC whether the authorization is accecpted or not."
           },
-          set_evseid: {
-            arguments: {
-              id: {
-                description: "EVSE ID",
-                pattern: "^[A-Z]{2}\\*[A-Z0-9]{3}\\*E[A-Z0-9][A-Z0-9\\*]{30}$",
-                type: "string"
+          "cable_check_finished": {
+            "arguments": {
+              "status": {
+                "description": "Set to true when cable check is okay",
+                "type": "boolean"
               }
             },
-            description: "Sets the ID that uniquely identifies the EVSE. The EVSEID shall match the following structure: <EVSEID> = <Country Code> <S> <EVSE Operator ID> <S> <ID Type> <Power Outlet ID>"
+            "description": "Cable check is finished, voltage is under 20V and insulation resistor on the cable is alright"
           },
-          set_meter_reading: {
-            arguments: {
-              id: {
-                description: "Meter ID",
-                pattern: "/^[A-Za-z0-9]{1,32}$/",
-                type: "string"
-              },
-              timestamp: {
-                description: "Timestamp (unix epoch time)",
-                type: "integer"
-              },
-              value: {
-                description: "Current meter reading",
-                type: "number"
+          "certificate_response": {
+            "arguments": {
+              "exi_stream_status": {
+                "$ref": "/iso15118_charger#/Response_Exi_Stream_Status",
+                "description": "The response raw EXI stream and the status from the CSMS",
+                "type": "object"
               }
             },
-            description: "Sets the current meter reading in Watthours from the EVSE."
+            "description": "This message is an async response to a previously published Certificate_Request. The new/updated Contract Certificate (including the certificate chain) and the corresponding encrypted private key are sent via the SECC to the EVCC."
           },
-          set_receipt_required: {
-            arguments: {
-              receipt_required: {
-                description: "Receipt required",
-                type: "boolean"
+          "dlink_ready": {
+            "arguments": {
+              "value": {
+                "description": "Set to true when link becomes ready, false when the link is terminated",
+                "type": "boolean"
               }
             },
-            description: "Optional: Indicate that the EVCC is required to send a MeteringReceiptReq message for the purpose of signing the meter info record. If ReceiptRequired is equal to True, the EVCC is required to send a MeteringReceiptReq message including the signature."
-          }
-        },
-        description: "This base interface defines an abstract ISO15118 Charger",
-        vars: {
-          MISSING_charge_progress: {
-            description: "This message element is used to request the EVSE to fulfill all conditions that the energy transfer can start as soon as the EV onboard system begins to retrieve energy. If ChargeProgress is equal to ‘Start’ the EVSE is requested to prepare the energy flow for an immediate start, if ChargeProgress is equal to ‘Stop’ the EVSE is requested to stop the energy flow, if ChargeProgress is equal to ‘Renegotiate’ the energy flow is neither stopped nor started, instead the renegotiation mechanisms defined in this standard apply.",
-            enum: ["Start", "Stop", "Renegotiate"],
-            type: "string"
+            "description": "Signals dlink_ready from SLAC layer according to ISO15118-3"
           },
-          MISSING_emaid: {
-            description: "The e-Mobility Account Identifier (EMAID) identifies the charging contract.",
-            pattern: "^[A-Za-z]{2}\\*[A-Za-z0-9]{3}\\*[A-Za-z0-9]{9}\\*[A-Za-z0-9]{0,1}$",
-            type: "string"
-          },
-          MISSING_evccid: {
-            description: "Contains the MAC adress of the EVCC in a human readable format (six hexadecimal encoded bytes)",
-            pattern: "^[A-Fa-f0-9]{2}(:[A-Fa-f0-9]{2}){5}$",
-            type: "string"
-          },
-          MISSING_selected_service: {
-            description: "Used for indicating a service selected by the EVCC",
-            type: "object"
-          },
-          departure_time: {
-            description: "Optional: Is used to indicate when the vehicle intends to finish the charging process. Format: hh:mm:ss",
-            type: "integer"
-          },
-          requested_energy_tranfer_mode: {
-            description: "Energy transfer mode requested by the EVCC.",
-            enum: ["AC_single_phase_core", "AC_three_phase_core", "DC_core", "DC_extended", "DC_combo_core", "DC_unique"],
-            type: "string"
-          },
-          selected_payment_option: {
-            description: "Used for indicating the selected payment type for services invoked by the EVCC",
-            enum: ["Contract", "ExternalPayment"],
-            type: "string"
-          }
-        }
-      },
-      ISO15118_dc_charger: {
-        cmds: {
-          MISSING_set_evse_current_regulation_tolerance: {
-            arguments: {
-              current: {
-                description: "Current in Ampere",
-                maximum: 400,
-                minimum: 0,
-                type: "number"
+          "receipt_is_required": {
+            "arguments": {
+              "receipt_required": {
+                "description": "Set to true when receipt is required, set to false when not",
+                "type": "boolean"
               }
             },
-            description: "Optional: Sets the absolute magnitude of the current regulation tolerance of the EVSE"
+            "description": "This element is used by the SECC to indicate that the EVCC is required to send a MeteringReceiptReq message for the purpose of signing the meter info record."
           },
-          MISSING_set_evse_energy_to_be_delivered: {
-            arguments: {
-              energy: {
-                description: "Energy in Watthours",
-                maximum: 2e5,
-                minimum: 0,
-                type: "number"
+          "reset_error": {
+            "description": "Reset all errors"
+          },
+          "send_error": {
+            "arguments": {
+              "error": {
+                "$ref": "/iso15118_charger#/EvseError",
+                "description": "The EVSE error enum",
+                "type": "string"
               }
             },
-            description: "Optional: Amount of energy to be delivered by the EVSE."
+            "description": "An error has happend. Send this error to inform the EV."
           },
-          set_evse_current_limit_achieved: {
-            arguments: {
-              current_limit_achieved: {
-                description: "True, if the EVSE has reached its current limit, false otherwise",
-                type: "boolean"
-              }
-            },
-            description: "Sets the EVSECurrentLimitAchieved flag that indicates whether the EVSE has reached its current limit."
-          },
-          set_evse_maximum_current_limit: {
-            arguments: {
-              max_current: {
-                description: "Maximum current in Ampere",
-                maximum: 400,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Optional: Sets the maximum current the EVSE can deliver."
-          },
-          set_evse_maximum_power_limit: {
-            arguments: {
-              max_power: {
-                description: "Maximum power in Watt",
-                maximum: 2e5,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Optional: Sets the maximum power the EVSE can deliver."
-          },
-          set_evse_maximum_voltage_limit: {
-            arguments: {
-              max_voltage: {
-                description: "Maximum voltage in Volt",
-                maximum: 1e3,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Optional: Sets the maximum voltage the EVSE can deliver."
-          },
-          set_evse_minimum_current_limit: {
-            arguments: {
-              min_current: {
-                description: "Minimum current in Ampere",
-                maximum: 400,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Sets the minimum current the EVSE can deliver with the expected accuracy."
-          },
-          set_evse_minimum_voltage_limit: {
-            arguments: {
-              min_voltage: {
-                description: "Minimum voltage in Volt",
-                maximum: 1e3,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Sets the minimum voltage the EVSE can deliver with the expected accuracy"
-          },
-          set_evse_peak_current_ripple: {
-            arguments: {
-              current: {
-                description: "Current in Ampere",
-                maximum: 400,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Peak-to-peak magnitude of the current ripple of the EVSE"
-          },
-          set_evse_power_limit_achieved: {
-            arguments: {
-              power_limit_achieved: {
-                description: "True, if the EVSE has reached its power limit, false otherwise",
-                type: "boolean"
-              }
-            },
-            description: "Sets the EVSEPowerLimitAchieved flag that indicates whether the EVSE has reached its power limit."
-          },
-          set_evse_present_current: {
-            arguments: {
-              current: {
-                description: "Output current in Ampere",
-                maximum: 400,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Sets the output current of the EVSE"
-          },
-          set_evse_present_voltage: {
-            arguments: {
-              voltage: {
-                description: "Output voltage in Volt",
-                maximum: 1e3,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Sets the output voltage of the EVSE."
-          },
-          set_evse_voltage_limit_achieved: {
-            arguments: {
-              voltage_limit_achieved: {
-                description: "True, if the EVSE has reached its voltage limit, false otherwise",
-                type: "boolean"
-              }
-            },
-            description: "Sets the EVSEVoltageLimitAchieved flag that indicates whether the EVSE has reached its voltage limit."
-          }
-        },
-        description: "This interface defines an ISO15118 DC Charger",
-        parent: "ISO15118_charger",
-        vars: {
-          MISSING_bulk_charging_complete: {
-            description: "If set to true, the EV indicates that bulk charge (approx. 80% SOC) is complete.",
-            type: "boolean"
-          },
-          MISSING_charging_complete: {
-            description: "If set to true, the EV indicates that full charge (100% SOC)is complete.",
-            type: "boolean"
-          },
-          MISSING_ev_dc_error_code: {
-            description: "Indicates the EV internal status.",
-            enum: [
-              "NO_ERROR",
-              "FAILED_RESSTemperatureInhibit",
-              "FAILED_EV_ShiftPosition",
-              "FAILED_ChargerConnerctorLockFault",
-              "FAILED_EVRESSMalfunction",
-              "FAILED_ChargingCurrentdifferential",
-              "FAILED_ChargingVoltageOutOfRange",
-              "Reserved A-C",
-              "FAILED_ChargingSystemIncompatibility",
-              "NoData"
-            ],
-            type: "string"
-          },
-          MISSING_ev_ready_for_charging: {
-            description: "If set to TRUE, the EV is ready to charge.",
-            type: "boolean"
-          },
-          MISSING_ev_soc: {
-            description: "State of charge (soc) of the EV's battery.",
-            maximum: 100,
-            minimum: 0,
-            type: "integer"
-          },
-          dc_evse_status: {
-            description: "Current status of the EVSE",
-            type: "object"
-          },
-          ev_energy_capacity: {
-            description: "Optional: Energy capacity (unit: Wh) of the EV",
-            maximum: 2e5,
-            minimum: 0,
-            type: "number"
-          },
-          ev_energy_request: {
-            description: "Optional: Amount of energy (unit: Wh) the EV requests from the EVSE",
-            maximum: 2e5,
-            minimum: 0,
-            type: "number"
-          },
-          ev_maximum_current_limit: {
-            description: "Maximum EV current (unit: A) limit",
-            maximum: 400,
-            minimum: 0,
-            type: "number"
-          },
-          ev_maximum_power_limit: {
-            description: "Maximum EV power (unit: W) limit",
-            maximum: 2e5,
-            minimum: 0,
-            type: "number"
-          },
-          ev_maximum_voltage_limit: {
-            description: "Maximum EV voltage (unit: V) limit",
-            maximum: 1e3,
-            minimum: 0,
-            type: "number"
-          },
-          ev_target_current: {
-            description: "Instantaneous current (unit: A) requested by the EV",
-            maximum: 400,
-            minimum: 0,
-            type: "number"
-          },
-          ev_target_voltage: {
-            description: "Target voltage (unit: V) requested by the EV",
-            maximum: 1e3,
-            minimum: 0,
-            type: "number"
-          },
-          remaining_time_to_bulk_soc: {
-            description: "Optional: Estimated or calculated time (unit: s) until bulk charge (80% SOC) is complete.",
-            maximum: 172800,
-            minimum: 0,
-            type: "integer"
-          },
-          remaining_time_to_full_soc: {
-            description: "Optional: Estimated or calculated time (unit: s) until full charge (100% SOC) is complete.",
-            maximum: 172800,
-            minimum: 0,
-            type: "integer"
-          }
-        }
-      },
-      auth: {
-        cmds: {
-          get_authorization: {
-            description: "This returns a validated auth token or null if none could be validated. If a validated token is returned, ownership is transferred to the caller and it is removed from this module.",
-            result: {
-              description: "The auth token that can be used for signing etc. This will return null if no token could be validated.",
-              maxLength: 20,
-              minLength: 1,
-              type: ["null", "string"]
-            }
-          }
-        },
-        description: "Interface of authentication framework",
-        vars: {
-          authorization_available: {
-            description: "True: Validated auth token available, use get_authorization to consume it. False: no token available.",
-            type: "boolean"
-          }
-        }
-      },
-      auth_token_provider: {
-        description: "Provide some authentication token",
-        vars: {
-          token: {
-            additionalProperties: false,
-            description: "Arbitrary auth token string and type of token provider (string provided in UI)",
-            properties: {
-              timeout: {
-                description: "Time (in s) the token can be considered valid by the auth framework",
-                maximum: 120,
-                minimum: 1,
-                type: "number"
-              },
-              token: {
-                description: "Arbitrary token string: this has to be printable case insensitive ascii: !!!FIXME!!! write a regex to allow only printable ascii",
-                maxLength: 20,
-                minLength: 1,
-                type: "string"
-              },
-              type: {
-                description: "Type of token provider",
-                maxLength: 32,
-                minLength: 2,
-                type: "string"
-              }
-            },
-            required: ["token", "type"],
-            type: "object"
-          }
-        }
-      },
-      auth_token_validator: {
-        cmds: {
-          validate_token: {
-            arguments: {
-              token: {
-                description: "Arbitrary token string: this has to be printable case insensitive ascii: !!!FIXME!!! write a regex to allow only printable ascii",
-                maxLength: 20,
-                minLength: 1,
-                type: "string"
-              }
-            },
-            description: "Validate auth token and return result (with optional reason string)",
-            result: {
-              additionalProperties: false,
-              description: "Result object containing validation result enum value (key: result) and optional reason string (key: reason)",
-              properties: {
-                reason: {
-                  minLength: 5,
-                  type: "string"
+          "session_setup": {
+            "arguments": {
+              "payment_options": {
+                "description": "Providing a list of payment options to the EVCC",
+                "items": {
+                  "$ref": "/iso15118_charger#/PaymentOption",
+                  "description": "These are the payment options a SECC offers to the EVCC",
+                  "type": "string"
                 },
-                result: {
-                  enum: ["Accepted", "Blocked", "Expired", "Invalid"],
-                  type: "string"
+                "maxItems": 2,
+                "minItems": 1,
+                "type": "array"
+              },
+              "supported_certificate_service": {
+                "description": "The charger supports the certificate installation/update service and has a connection to an SA for this purpose",
+                "type": "boolean"
+              }
+            },
+            "description": "At each session start this info should be sent to the module."
+          },
+          "setup": {
+            "arguments": {
+              "debug_mode": {
+                "description": "Enable/Disable debug mode",
+                "type": "boolean"
+              },
+              "evse_id": {
+                "$ref": "/iso15118_charger#/EVSEID",
+                "description": "Set an ID that uniquely identifies the EVSE and the power outlet the vehicle is connected to ",
+                "type": "object"
+              },
+              "physical_values": {
+                "$ref": "/iso15118_charger#/SetupPhysicalValues",
+                "description": "Set up initial physical values for a AC or DC charging session",
+                "type": "object"
+              },
+              "sae_j2847_mode": {
+                "$ref": "/iso15118_charger#/SAE_J2847_Bidi_Mode",
+                "description": "Charger is supporting SAE J2847 V2G/V2H version",
+                "type": "string"
+              },
+              "supported_energy_transfer_modes": {
+                "description": "Available energy transfer modes supported by the EVSE",
+                "items": {
+                  "$ref": "/iso15118_charger#/EnergyTransferMode",
+                  "description": "The different energy modes supported by the SECC",
+                  "type": "string"
+                },
+                "maxItems": 6,
+                "minItems": 1,
+                "type": "array"
+              }
+            },
+            "description": "At startup all necessary info should be sent to the module once."
+          },
+          "stop_charging": {
+            "arguments": {
+              "stop": {
+                "description": "Set to true when to stop, set to false when to continue",
+                "type": "boolean"
+              }
+            },
+            "description": "Stops the charging process"
+          },
+          "update_ac_max_current": {
+            "arguments": {
+              "max_current": {
+                "description": "Max current in A",
+                "maximum": 400,
+                "minimum": 0,
+                "type": "number"
+              }
+            },
+            "description": "Update the maximum allowed line current restriction per phase"
+          },
+          "update_dc_maximum_limits": {
+            "arguments": {
+              "maximum_limits": {
+                "$ref": "/iso15118_charger#/DC_EVSEMaximumLimits",
+                "description": "Maximum values (current, power and voltage) the EVSE can deliver",
+                "type": "object"
+              }
+            },
+            "description": "Update the maximum limits"
+          },
+          "update_dc_minimum_limits": {
+            "arguments": {
+              "minimum_limits": {
+                "$ref": "/iso15118_charger#/DC_EVSEMinimumLimits",
+                "description": "Minimum values (current and voltage) the EVSE can deliver",
+                "type": "object"
+              }
+            },
+            "description": "Update the minimum limits"
+          },
+          "update_dc_present_values": {
+            "arguments": {
+              "present_voltage_current": {
+                "$ref": "/iso15118_charger#/DC_EVSEPresentVoltage_Current",
+                "description": "Present voltage and current",
+                "type": "object"
+              }
+            },
+            "description": "Update the present values from the DC powersupply"
+          },
+          "update_isolation_status": {
+            "arguments": {
+              "isolation_status": {
+                "$ref": "/iso15118_charger#/IsolationStatus",
+                "description": "Result of the isolation monitoring",
+                "type": "string"
+              }
+            },
+            "description": "Update the isolation condition"
+          },
+          "update_meter_info": {
+            "arguments": {
+              "powermeter": {
+                "$ref": "/powermeter#/Powermeter",
+                "description": "Includes the meterInfo record containing the latest meter reading and other meter relevant data",
+                "type": "object"
+              }
+            },
+            "description": "Update meter info"
+          }
+        },
+        "description": "This interface defines a ISO15118 charger.",
+        "vars": {
+          "AC_Close_Contactor": {
+            "description": "The contactor should be closed",
+            "type": "null"
+          },
+          "AC_EAmount": {
+            "description": "[Wh] Amount of energy reflecting the EV's estimate how much energy is needed to fulfill the user configured charging goal for the current charging session",
+            "maximum": 2e5,
+            "minimum": 0,
+            "type": "number"
+          },
+          "AC_EVMaxCurrent": {
+            "description": "[A] Maximum current supported by the EV per phase",
+            "maximum": 400,
+            "minimum": 0,
+            "type": "number"
+          },
+          "AC_EVMaxVoltage": {
+            "description": "[V] The RMS of the maximal nominal voltage the vehicle can accept, measured between one phase and neutral",
+            "maximum": 1e3,
+            "minimum": 0,
+            "type": "number"
+          },
+          "AC_EVMinCurrent": {
+            "description": "[A] EVMinCurrent is used to indicate to the SECC that charging below this minimum is not energy/cost efficient for the EV",
+            "maximum": 400,
+            "minimum": 0,
+            "type": "number"
+          },
+          "AC_Open_Contactor": {
+            "description": "The contactor should be opened",
+            "type": "null"
+          },
+          "Certificate_Request": {
+            "$ref": "/iso15118_charger#/Request_Exi_Stream_Schema",
+            "description": "The vehicle requests the SECC to deliver the certificate that belong  to the currently valid contract of the vehicle. Response will be reported async via  set_Get_Certificate_Response",
+            "type": "object"
+          },
+          "DC_BulkChargingComplete": {
+            "description": "Optional: If set to TRUE, the EV indicates that bulk charge (approx. 80% SOC) is complete",
+            "type": "boolean"
+          },
+          "DC_BulkSOC": {
+            "description": "Optional: [%] SOC at which the EV considers a fast charge process to end",
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          "DC_ChargingComplete": {
+            "description": "Optional: If set to TRUE, the EV indicates that full charge (100% SOC) is complete",
+            "type": "boolean"
+          },
+          "DC_EVEnergyCapacity": {
+            "description": "Optional: [Wh] Energy capacity of the EV",
+            "maximum": 2e5,
+            "minimum": 0,
+            "type": "number"
+          },
+          "DC_EVEnergyRequest": {
+            "description": "Optional: [Wh] Amount of energy the EV requests from the EVSE",
+            "maximum": 2e5,
+            "minimum": 0,
+            "type": "number"
+          },
+          "DC_EVMaximumLimits": {
+            "$ref": "/iso15118_charger#/DC_EVMaximumLimits",
+            "description": "Maximum Values (current, power and voltage) supported and allowed by the EV",
+            "type": "object"
+          },
+          "DC_EVRemainingTime": {
+            "$ref": "/iso15118_charger#/DC_EVRemainingTime",
+            "description": "Estimated or calculated time until bulk and full charge is complete",
+            "type": "object"
+          },
+          "DC_EVStatus": {
+            "$ref": "/iso15118_charger#/DC_EVStatusType",
+            "description": "Current status of the EV",
+            "type": "object"
+          },
+          "DC_EVTargetVoltageCurrent": {
+            "$ref": "/iso15118_charger#/DC_EVTargetValues",
+            "description": "Target voltage and current requested by the EV",
+            "type": "object"
+          },
+          "DC_FullSOC": {
+            "description": "Optional: [%] SOC at which the EV considers the battery to be fully charged",
+            "maximum": 100,
+            "minimum": 0,
+            "type": "number"
+          },
+          "DC_Open_Contactor": {
+            "description": "The contactor should be opened",
+            "type": "null"
+          },
+          "DepartureTime": {
+            "description": "Optional: [RFC3339 UTC] This element is used to indicate when the vehicle intends to finish the charging process",
+            "format": "date-time",
+            "type": "string"
+          },
+          "EVCCIDD": {
+            "description": "Specifies the EVs identification in a readable format. It contains the MAC address of the EVCC in uppercase",
+            "pattern": "^[A-F0-9]{2}(:[A-F0-9]{2}){5}$",
+            "type": "string"
+          },
+          "EV_AppProtocol": {
+            "description": "Debug_Lite - This request message provides a list of charging protocols supported by the EVCC",
+            "items": {
+              "additionalProperties": false,
+              "description": "This message element is used by the EVCC for transmitting the list of supported protocols",
+              "properties": {
+                "Priority": {
+                  "description": "This message element is used by the EVCC for indicating the protocol priority of a specific protocol allowing the SECC to select a protocol based on priorities",
+                  "maximum": 20,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "ProtocolNamespace": {
+                  "description": "This message element is used by the EVCC to uniquely identify the Namespace URI of a specific protocol supported by the EVCC",
+                  "maxLength": 100,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "SchemaID": {
+                  "description": "This message element is used by the EVCC to indicate the SchemaID assigned by the EVCC to the protocol",
+                  "maximum": 255,
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "VersionNumberMajor": {
+                  "description": "This message element is used by the EVCC to indicate the major version number of the protocol",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "VersionNumberMinor": {
+                  "description": "This message element is used by the EVCC to indicate the minor version number of the protocol",
+                  "minimum": 0,
+                  "type": "integer"
                 }
               },
-              required: ["result"],
-              type: "object"
-            }
-          }
-        },
-        description: "Checks provided tokens for validity"
-      },
-      board_support_AC: {
-        cmds: {
-          allow_power_on: {
-            arguments: {
-              value: {
-                description: "True: allow power on, false: do not allow power on.",
-                type: "boolean"
-              }
+              "type": "object"
             },
-            description: "Sets allow_power_on flag. If false, Relais must never be switched on."
+            "maxItems": 20,
+            "minItems": 1,
+            "type": "array"
           },
-          enable: {
-            arguments: {
-              value: {
-                description: "True: enabled, false: disabled.",
-                type: "boolean"
-              }
-            },
-            description: "Enables or disables the EVSE. Typically disabled results in control pilot state F. It must not accept cars for new charging sessions if disabled."
+          "RequestedEnergyTransferMode": {
+            "$ref": "/iso15118_charger#/EnergyTransferMode",
+            "description": "Selected energy transfer mode for charging that is requested by the EVCC.",
+            "type": "string"
           },
-          force_unlock: {
-            description: "Force unlock motor lock",
-            result: {
-              description: "Returns true if unlocking sequence was successfully executed",
-              type: "boolean"
-            }
+          "Require_Auth_EIM": {
+            "description": "An EIM authorization is requiered",
+            "type": "null"
           },
-          get_hw_capabilities: {
-            description: "Get Hardware capability/limits",
-            result: {
-              description: "Hardware capability/limits",
-              max_current_A: {
-                description: "Maximum current (ampere) the hardware can handle",
-                type: "number"
-              },
-              max_phase_count: {
-                description: "Max nr of phases the hardware can use",
-                maximum: 3,
-                minimum: 1,
-                type: "integer"
-              },
-              min_current_A: {
-                description: "Minimum current (ampere) the hardware can use to charge. Values below may be set but may result in pause instead.",
-                type: "number"
-              },
-              min_phase_count: {
-                description: "Minimum nr of phases the hardware can use",
-                maximum: 3,
-                minimum: 1,
-                type: "integer"
-              },
-              supports_changing_phases_during_charging: {
-                description: "Indicates whether changing number of phases is supported during charging (true) or not (false)",
-                type: "boolean"
-              },
-              type: "object"
-            }
+          "Require_Auth_PnC": {
+            "$ref": "/authorization#/ProvidedIdToken",
+            "description": "The EVCC provides the payment details for a PnC authorization by sending the signature certificate chain and eMAID.",
+            "type": "object"
           },
-          pwm_F: {
-            description: "Turns PWM off with Error F (constant negative voltage)"
+          "SelectedPaymentOption": {
+            "$ref": "/iso15118_charger#/PaymentOption",
+            "description": "This element is used for indicating the payment type",
+            "type": "string"
           },
-          pwm_off: {
-            description: "Turns PWM off (constant high voltage)"
+          "Selected_Protocol": {
+            "description": "Debug - Contains the selected protocol",
+            "type": "string"
           },
-          pwm_on: {
-            arguments: {
-              value: {
-                description: "PWM duty cycle (>0, <1)",
-                maximum: 1,
-                minimum: 0,
-                type: "number"
-              }
-            },
-            description: "Turns PWM on with duty cycle"
+          "Start_CableCheck": {
+            "description": "The charger should now start a cable check",
+            "type": "null"
           },
-          setup: {
-            arguments: {
-              country_code: {
-                description: "A two-letter country code in ISO 3166-1 alpha-2 format",
-                type: "string"
-              },
-              has_ventilation: {
-                description: "true: Allow mode D charging, false: do not allow mode D charging",
-                type: "boolean"
-              },
-              rcd_enabled: {
-                description: "true: enable RCD, false: disable RCD",
-                type: "boolean"
-              },
-              three_phases: {
-                description: "true: Three phases enabled, false: only single phase",
-                type: "boolean"
-              }
-            },
-            description: "Setup config options"
+          "V2G_Messages": {
+            "$ref": "/iso15118_charger#/V2G_Messages",
+            "description": "Debug - This element contains all V2G elements and should be used for debug purposes only",
+            "type": "object"
           },
-          switch_three_phases_while_charging: {
-            arguments: {
-              value: {
-                description: "True: switch to 3ph, False: switch to 1ph",
-                type: "boolean"
-              }
-            },
-            description: "Special command to force switching between one and three phases while charging is active. HW must go through some special sequence to ensure safe operation."
-          }
-        },
-        description: "This interface defines the board support driver for AC power path: ControlPilot, Relais, RCD and motor lock",
-        vars: {
-          event: {
-            description: "Event from ControlPilot signal/Relais/RCD",
-            enum: [
-              "CarPluggedIn",
-              "CarRequestedPower",
-              "PowerOn",
-              "PowerOff",
-              "CarRequestedStopPower",
-              "CarUnplugged",
-              "ErrorE",
-              "ErrorDF",
-              "ErrorRelais",
-              "ErrorRCD",
-              "ErrorVentilationNotAvailable",
-              "ErrorOverCurrent",
-              "RestartMatching",
-              "PermanentFault"
-            ],
-            type: "string"
+          "V2G_Setup_Finished": {
+            "description": "V2G_Setup_Finished from ISO15118-3. Trigger when EV sends a PowerDeliveryReq message with ChargeProgess equals Start or Stop",
+            "type": "null"
           },
-          nr_of_phases_available: {
-            description: "Instantaneous phase count available to car",
-            maximum: 3,
-            minimum: 1,
-            type: "integer"
+          "currentDemand_Finished": {
+            "description": "The charging process was finished",
+            "type": "null"
           },
-          telemetry: {
-            additionalProperties: false,
-            description: "Other telemetry",
-            properties: {
-              fan_rpm: {
-                description: "RPM of the fan. 0 if off or no fan available.",
-                type: "number"
-              },
-              rcd_current: {
-                description: "Residual current in mA",
-                type: "number"
-              },
-              relais_on: {
-                description: "true if power to the car is currently on, false if off",
-                type: "boolean"
-              },
-              supply_voltage_12V: {
-                description: "Internal 12V supply voltage",
-                type: "number"
-              },
-              supply_voltage_minus_12V: {
-                description: "Internal -12V supply voltage",
-                type: "number"
-              },
-              temperature: {
-                description: "Current temperature of the EVSE in degree celsius",
-                type: "number"
-              }
-            },
-            type: "object"
+          "currentDemand_Started": {
+            "description": "The charging process has started and the EV wants to be charged",
+            "type": "null"
+          },
+          "dlink_error": {
+            "description": "Terminate the data link and restart the matching process.",
+            "type": "null"
+          },
+          "dlink_pause": {
+            "description": "Request power saving mode, while staying MATCHED.",
+            "type": "null"
+          },
+          "dlink_terminate": {
+            "description": "Terminate the data link and become UNMATCHED.",
+            "type": "null"
+          },
+          "sae_bidi_mode_active": {
+            "description": "The SAE J2847 bidi mode is active",
+            "type": "null"
           }
         }
       },
-      board_support_AC_debug: {
-        description: "This interface defines the board support debug information that is not used for actual control",
-        vars: {
-          cp_hi_voltage: {
-            description: "Voltage of high part of PWM",
-            type: "number"
+      "ISO15118_ev": {
+        "cmds": {
+          "enable_sae_j2847_v2g_v2h": {
+            "description": "Enable the SAE J2847 2 V2H V2G"
           },
-          cp_lo_voltage: {
-            description: "Voltage of low part of PWM",
-            type: "number"
+          "pause_charging": {
+            "description": "Pause the ev charging communication process"
           },
-          has_ventilation: {
-            description: "True if ventilated charging is allowed",
-            type: "boolean"
-          },
-          is_power_on: {
-            description: "True if Relais are currently closed (power on)",
-            type: "boolean"
-          },
-          pwm_running: {
-            description: "True if ventilated charging is allowed",
-            type: "boolean"
-          },
-          rcd_current: {
-            description: "Residual current measurement",
-            type: "number"
-          },
-          rcd_reclosing_allowed: {
-            description: "True if RCD may reclose after fault according to local regulations",
-            type: "boolean"
-          },
-          simplified_mode: {
-            description: "True if car uses simplified mode of IEC61851",
-            type: "boolean"
-          },
-          supply_12V_voltage: {
-            description: "Voltage of +12V supply",
-            type: "number"
-          },
-          supply_N12V_voltage: {
-            description: "Voltage of -12V supply",
-            type: "number"
-          },
-          three_phases: {
-            description: "config option for three phase/single phase operation",
-            type: "boolean"
-          },
-          three_phases_active: {
-            description: "True if three phases is enabled for current charging session",
-            type: "boolean"
-          }
-        }
-      },
-      car_simulator: {
-        cmds: {
-          enable: {
-            arguments: {
-              value: {
-                description: "Enable/Disable simulation mode",
-                type: "boolean"
+          "set_bpt_dc_params": {
+            "arguments": {
+              "EV_BPT_Parameters": {
+                "$ref": "/iso15118_ev#/DC_EV_BPT_Parameters",
+                "description": "BPT parameters for dc charging",
+                "type": "object"
               }
             },
-            description: "Sets the ID that uniquely identifies the EVSE. The EVSEID shall match the following structure: <EVSEID> = <Country Code> <S> <EVSE Operator ID> <S> <ID Type> <Power Outlet ID>"
+            "description": "Set the bpt parameters for dc charging"
           },
-          executeChargingSession: {
-            arguments: {
-              value: {
-                description: "Charging simulation string",
-                type: "string"
+          "set_dc_params": {
+            "arguments": {
+              "EV_Parameters": {
+                "$ref": "/iso15118_ev#/DC_EVParameters",
+                "description": "Target parameters for dc charging",
+                "type": "object"
               }
             },
-            description: "Executes a charging simulation string"
-          }
-        },
-        description: "This defines a car simulator that can execute a full charging session, from plugging in to plugging out. It uses HIL or SIL simulation controllers from e.g. the Yeti HIL simulator.",
-        vars: {
-          enabled: {
-            description: "Indicates whether simulation is currently enabled or not",
-            type: "boolean"
-          }
-        }
-      },
-      debug_json: {
-        description: "This interface defines a generic JSON object debug variable publisher for use in any module. Can be used to display debug variables e.g. in web interface.",
-        vars: {
-          debug_json: {
-            description: "Provides the debug object as a json object",
-            type: "object"
+            "description": "Set the target parameters for a dc charging process"
           },
-          title: {
-            description: "Title of the Debug object",
-            type: "string"
-          }
-        }
-      },
-      dummy: {
-        description: "Dummy interface for testing",
-        vars: {
-          token: {
-            additionalProperties: false,
-            description: "Arbitrary auth token string and type of token provider (string provided in UI)",
-            properties: {
-              heart: {
-                description: "Type of token provider",
-                maxLength: 32,
-                minLength: 2,
-                type: "string"
-              },
-              token: {
-                description: "Arbitrary token string: this has to be printable case insensitive ascii: !!!FIXME!!! write a regex to allow only printable ascii",
-                maxLength: 20,
-                minLength: 1,
-                type: "string"
-              }
-            },
-            required: ["token", "heart"],
-            type: "object"
-          }
-        }
-      },
-      empty: {
-        description: "This interface is empty and can be used for a config-only (main) implementation"
-      },
-      energy: {
-        cmds: {
-          enforce_limits: {
-            arguments: {
-              limits_export: {
-                additionalProperties: false,
-                description: "Enforced limits that must be respected.",
-                properties: {
-                  limit: {
-                    ac_current_A: {
-                      additionalProperties: false,
-                      description: "AC current limit object",
-                      properties: {
-                        current_A: {
-                          description: "AC current limit per phase in Ampere",
-                          maximum: 0,
-                          type: "number"
-                        },
-                        phase_count: {
-                          description: "Limit to number of phases. Omit if number of phases are not limited.",
-                          maximum: 3,
-                          minimum: 1,
-                          type: "integer"
-                        }
-                      },
-                      required: ["current_A"],
-                      type: "object"
-                    },
-                    description: "Enforced limits",
-                    total_power_W: {
-                      description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                      maximum: 0,
-                      type: "number"
-                    },
-                    type: "object"
-                  },
-                  valid_until: {
-                    description: "Limits are valid until this timepoint in RFC3339 UTC. If no new update is received, power consumption must be stopped afer that timepoint.",
-                    format: "date-time",
-                    type: "string"
-                  }
-                },
-                type: "object"
-              },
-              limits_import: {
-                additionalProperties: false,
-                description: "Enforced limits that must be respected.",
-                properties: {
-                  limit: {
-                    ac_current_A: {
-                      additionalProperties: false,
-                      description: "AC current limit object",
-                      properties: {
-                        current_A: {
-                          description: "AC current limit per phase in Ampere",
-                          minimum: 0,
-                          type: "number"
-                        },
-                        phase_count: {
-                          description: "Limit to number of phases. Omit if number of phases are not limited.",
-                          maximum: 3,
-                          minimum: 1,
-                          type: "integer"
-                        }
-                      },
-                      required: ["current_A"],
-                      type: "object"
-                    },
-                    description: "Enforced limits",
-                    total_power_W: {
-                      description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                      minimum: 0,
-                      type: "number"
-                    },
-                    type: "object"
-                  },
-                  valid_until: {
-                    description: "Limits are valid until this timepoint in RFC3339 UTC. If no new update is received, power consumption must be stopped afer that timepoint.",
-                    format: "date-time",
-                    type: "string"
-                  }
-                },
-                type: "object"
-              },
-              schedule_export: {
-                description: "Informative only. Do not use for actual limiting. Energy export/limits time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-                items: {
-                  additionalProperties: false,
-                  description: "One entry for the time series",
-                  properties: {
-                    limit: {
-                      ac_current_A: {
-                        additionalProperties: false,
-                        description: "AC current limit object",
-                        properties: {
-                          current_A: {
-                            description: "AC current limit per phase in Ampere",
-                            maximum: 0,
-                            type: "number"
-                          },
-                          phase_count: {
-                            description: "Limit to number of phases. Omit if number of phases are not limited.",
-                            maximum: 3,
-                            minimum: 1,
-                            type: "integer"
-                          }
-                        },
-                        required: ["current_A"],
-                        type: "object"
-                      },
-                      description: "Limit for this timestamp",
-                      required: ["limit_type"],
-                      total_power_W: {
-                        description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                        maximum: 0,
-                        type: "number"
-                      },
-                      type: "object"
-                    },
-                    timestamp: {
-                      description: "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                      format: "date-time",
-                      type: "string"
-                    }
-                  },
-                  required: ["timestamp", "limit"],
-                  type: "object"
-                },
-                type: "array"
-              },
-              schedule_import: {
-                description: "Informative only. Do not use for actual limiting. Energy import/limits time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-                items: {
-                  additionalProperties: false,
-                  description: "One entry for the time series",
-                  properties: {
-                    limit: {
-                      ac_current_A: {
-                        additionalProperties: false,
-                        description: "AC current limit object",
-                        properties: {
-                          current_A: {
-                            description: "AC current limit per phase in Ampere",
-                            minimum: 0,
-                            type: "number"
-                          },
-                          phase_count: {
-                            description: "Limit to number of phases. Omit if number of phases are not limited.",
-                            maximum: 3,
-                            minimum: 1,
-                            type: "integer"
-                          }
-                        },
-                        required: ["current_A"],
-                        type: "object"
-                      },
-                      description: "Limit for this timestamp",
-                      required: ["limit_type"],
-                      total_power_W: {
-                        description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                        minimum: 0,
-                        type: "number"
-                      },
-                      type: "object"
-                    },
-                    timestamp: {
-                      description: "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                      format: "date-time",
-                      type: "string"
-                    }
-                  },
-                  required: ["timestamp", "limit"],
-                  type: "object"
-                },
-                type: "array"
-              },
-              uuid: {
-                description: "UUID of node that this limit applies to",
-                type: "string"
-              }
-            },
-            description: "The EnergyManager enforces a limit using this command."
-          }
-        },
-        description: "This interface defines a forecast schedule of energy import/export capability/limits, pricing and current energy usage.",
-        vars: {
-          energy: {
-            description: "Energy object to supply/limit energy import (direction from grid to car) and/or consume/limit energy export (car to grid).",
-            properties: {
-              children: {
-                description: "Array of child nodes (in the direction to consumer/car",
-                type: "array"
-              },
-              energy_usage: {
-                description: "Energy usage of this node (powermeter struct)",
-                type: "object"
-              },
-              node_type: {
-                description: "Type of energy source/sink. Use Limit if this purely enforces limits but is not a physical energy source/sink.",
-                enum: ["Grid", "GridConnection", "Solar", "Battery", "Fuse", "Evse"],
-                type: "string"
-              },
-              optimizer_target: {
-                additionalProperties: false,
-                description: "User defined optimizer targets for this evse",
-                properties: {
-                  car_battery_soc: {
-                    description: "Car battery State Of Charge in percent",
-                    type: "number"
-                  },
-                  charge_to_max_percent: {
-                    description: "Charge car battery to max NN percent",
-                    type: "number"
-                  },
-                  energy_amount_needed: {
-                    description: "Amount of kwh the car needs to fulfill its charging target",
-                    type: "number"
-                  },
-                  full_autonomy: {
-                    description: "Only charge from locally generated energy. Do not draw power from grid for charging.",
-                    type: "boolean"
-                  },
-                  leave_time: {
-                    description: "RFC3339 UTC format time when the car needs to drive away with charging targets fullfilled. Will charge cheapest within this timeframe.",
-                    type: "string"
-                  },
-                  price_limit: {
-                    description: "Always charge if price below this limit. This includes solar charging and price for solar energy if price levels set correctly.",
-                    type: "number"
-                  }
-                },
-                type: "object"
-              },
-              schedule_export: {
-                description: "Energy export/limits time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-                items: {
-                  additionalProperties: false,
-                  description: "One entry for the time series",
-                  properties: {
-                    limit: {
-                      ac_current_A: {
-                        additionalProperties: false,
-                        description: "AC current limit object",
-                        properties: {
-                          max_current_A: {
-                            description: "Max AC current limit per phase in Ampere",
-                            minimum: 0,
-                            type: "number"
-                          },
-                          max_phase_count: {
-                            description: "Max Limit of number of phases. Omit if number of phases are not limited.",
-                            maximum: 3,
-                            minimum: 1,
-                            type: "integer"
-                          },
-                          min_current_A: {
-                            description: "Minimal AC current limit per phase in Ampere to be able to discharge",
-                            minimum: 0,
-                            type: "number"
-                          },
-                          min_phase_count: {
-                            description: "Minimum number of phases that can be used for proper operation.",
-                            maximum: 3,
-                            minimum: 1,
-                            type: "integer"
-                          },
-                          supports_changing_phases_during_charging: {
-                            description: "Indicate whether phase switching is allowed during charging or not",
-                            type: "boolean"
-                          }
-                        },
-                        required: ["max_current_A"],
-                        type: "object"
-                      },
-                      description: "Limit for this timestamp",
-                      limit_type: {
-                        description: "Hard limits need to be enforced by EnergyManager, Soft limits may be ignored.",
-                        enum: ["Hard", "Soft"],
-                        type: "string"
-                      },
-                      required: ["limit_type"],
-                      total_power_W: {
-                        description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                        maximum: 0,
-                        type: "number"
-                      },
-                      type: "object"
-                    },
-                    price_per_kwh: {
-                      additionalProperties: false,
-                      description: "Price information for this timepoint",
-                      properties: {
-                        currency: {
-                          description: "Currency in 3 digit ISO 4217",
-                          maxLength: 3,
-                          minLength: 3,
-                          type: "string"
-                        },
-                        value: {
-                          description: "Price per kWh (earning)",
-                          type: "number"
-                        }
-                      },
-                      required: ["value", "currency"],
-                      type: "object"
-                    },
-                    timestamp: {
-                      description: "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                      format: "date-time",
-                      type: "string"
-                    }
-                  },
-                  required: ["timestamp", "limit"],
-                  type: "object"
-                },
-                type: "array"
-              },
-              schedule_import: {
-                description: "Energy import/limits time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-                items: {
-                  additionalProperties: false,
-                  description: "One entry for the time series",
-                  properties: {
-                    capabilities: {
-                      ac_current_A: {
-                        additionalProperties: false,
-                        description: "AC current limit object",
-                        properties: {
-                          max_current_A: {
-                            description: "Max AC current limit per phase in Ampere",
-                            minimum: 0,
-                            type: "number"
-                          },
-                          max_phase_count: {
-                            description: "Max Limit of number of phases. Omit if number of phases are not limited.",
-                            maximum: 3,
-                            minimum: 1,
-                            type: "integer"
-                          },
-                          min_current_A: {
-                            description: "Minimal AC current limit per phase in Ampere to be able to charge",
-                            minimum: 0,
-                            type: "number"
-                          },
-                          min_phase_count: {
-                            description: "Minimum number of phases that can be used for proper operation.",
-                            maximum: 3,
-                            minimum: 1,
-                            type: "integer"
-                          },
-                          supports_changing_phases_during_charging: {
-                            description: "Indicate whether phase switching is allowed during charging or not",
-                            type: "boolean"
-                          }
-                        },
-                        required: ["max_current_A"],
-                        type: "object"
-                      },
-                      description: "Limit for this timestamp",
-                      limit_type: {
-                        description: "Hard limits need to be enforced by EnergyManager, Soft limits may be ignored.",
-                        enum: ["Hard", "Soft"],
-                        type: "string"
-                      },
-                      required: ["limit_type"],
-                      total_power_W: {
-                        description: "Total power limit in Watt. Can be used for DC or as additional limit for AC.",
-                        minimum: 0,
-                        type: "number"
-                      },
-                      type: "object"
-                    },
-                    price_per_kwh: {
-                      additionalProperties: false,
-                      description: "Price information for this timepoint",
-                      properties: {
-                        currency: {
-                          description: "Currency in 3 digit ISO 4217",
-                          maxLength: 3,
-                          minLength: 3,
-                          type: "string"
-                        },
-                        value: {
-                          description: "Price per kWh (cost)",
-                          type: "number"
-                        }
-                      },
-                      required: ["value", "currency"],
-                      type: "object"
-                    },
-                    timestamp: {
-                      description: "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                      format: "date-time",
-                      type: "string"
-                    }
-                  },
-                  required: ["timestamp", "capabilities"],
-                  type: "object"
-                },
-                type: "array"
-              },
-              uuid: {
-                description: "UUID for this node. This UUID will be used again when enforce_limits() command propagates through the tree.",
-                type: "string"
-              }
-            },
-            required: ["node_type", "uuid"],
-            type: "object"
-          }
-        }
-      },
-      energy_manager: {
-        description: "This interface defines the global EnergyManager",
-        vars: {}
-      },
-      energy_price_information: {
-        description: "This interface defines the interface for an energy price forecast",
-        vars: {
-          energy_price_schedule: {
-            additionalProperties: false,
-            description: "Forecast JSON Object containing timestamps and the price forecast for both import and export.",
-            properties: {
-              schedule_export: {
-                description: "Pricing time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-                items: {
-                  additionalProperties: false,
-                  description: "One entry for the time series",
-                  properties: {
-                    price_per_kwh: {
-                      additionalProperties: false,
-                      description: "Price information for this timepoint",
-                      properties: {
-                        currency: {
-                          description: "Currency in 3 digit ISO 4217",
-                          maxLength: 3,
-                          minLength: 3,
-                          type: "string"
-                        },
-                        value: {
-                          description: "Price per kWh (earning)",
-                          type: "number"
-                        }
-                      },
-                      required: ["value", "currency"],
-                      type: "object"
-                    },
-                    timestamp: {
-                      description: "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                      format: "date-time",
-                      type: "string"
-                    }
-                  },
-                  required: ["timestamp", "price_per_kwh"],
-                  type: "object"
-                },
-                type: "array"
-              },
-              schedule_import: {
-                description: "Pricing time series. The first entry is special as it will be active already now even if the timestamp is in the future, so it is good practice to set the first entry to current time. The time series can have arbitrary time difference between entries and all timestamps are absolute UTC time.",
-                items: {
-                  additionalProperties: false,
-                  description: "One entry for the time series",
-                  properties: {
-                    price_per_kwh: {
-                      additionalProperties: false,
-                      description: "Price information for this timepoint",
-                      properties: {
-                        currency: {
-                          description: "Currency in 3 digit ISO 4217",
-                          maxLength: 3,
-                          minLength: 3,
-                          type: "string"
-                        },
-                        value: {
-                          description: "Price per kWh (cost)",
-                          type: "number"
-                        }
-                      },
-                      required: ["value", "currency"],
-                      type: "object"
-                    },
-                    timestamp: {
-                      description: "Absolute timestamp for this sample in RFC3339 UTC format https://datatracker.ietf.org/doc/html/rfc3339#section-5.6",
-                      format: "date-time",
-                      type: "string"
-                    }
-                  },
-                  required: ["timestamp", "price_per_kwh"],
-                  type: "object"
-                },
-                type: "array"
-              }
-            },
-            type: "object"
-          }
-        }
-      },
-      evse_manager: {
-        cmds: {
-          accept_new_session: {
-            description: "Call when cleanup is done and new cars are allowed to plugin. Do not use multiple cleanup handlers, call from only one module!",
-            result: {
-              description: "Returns true if successful",
-              type: "boolean"
-            }
+          "set_fault": {
+            "description": "TODO_SL: Set the different ev faults to communicate these errors to the charging station"
           },
-          cancel_charging: {
-            description: "Cancels charging, can only be resumed by replugging car",
-            result: {
-              description: "Returns true if successful",
-              type: "boolean"
-            }
-          },
-          cancel_reservation: {
-            description: "Cancels current reservation",
-            result: {
-              description: "Indicates if cancelling reservation was successful or not",
-              type: "boolean"
-            }
-          },
-          disable: {
-            description: "Disables the evse",
-            result: {
-              description: "Returns true if evse was disabled (or was disabled before), returns false if it could not be disabled (i.e. due to communication error with hardware)",
-              type: "boolean"
-            }
-          },
-          enable: {
-            description: "Enables the evse",
-            result: {
-              description: "Returns true if evse was enabled (or was enabled before), returns false if enable failed e.g. due to permanent fault.",
-              type: "boolean"
-            }
-          },
-          force_unlock: {
-            description: "Force unlock connector now. During normal operation, connector will be locked/unlocked in the correct sequence. Do not use this function except if explicitly requested by e.g. management cloud.",
-            result: {
-              description: "Returns true if unlocking sequence was successfully executed",
-              type: "boolean"
-            }
-          },
-          get_signed_meter_value: {
-            description: "Returns a signed meter value. Includes current auth token if session is running.",
-            result: {
-              description: "Signed meter value",
-              type: "string"
-            }
-          },
-          pause_charging: {
-            description: "Pauses charging",
-            result: {
-              description: "Returns true if successfully paused or was already in paused_by_evse mode",
-              type: "boolean"
-            }
-          },
-          reserve_now: {
-            arguments: {
-              auth_token: {
-                description: "The authentication token that this evse is reserved for",
-                type: "string"
-              },
-              timeout: {
-                description: "timeout [s] until this reservation expires",
-                type: "number"
-              }
-            },
-            description: "Reserves this evse for a given auth token",
-            result: {
-              description: "Indicates if reservation was successful or not",
-              type: "boolean"
-            }
-          },
-          resume_charging: {
-            description: "Resumes charging",
-            result: {
-              description: "Returns true if resume was successful, false otherwise (e.g. resuming a car pause won't work)",
-              type: "boolean"
-            }
-          },
-          set_local_max_current: {
-            arguments: {
-              max_current: {
-                description: "maximum current",
-                type: "number"
-              }
-            },
-            description: "Sets the local maximum current limit for any phase.",
-            result: {
-              description: "Returns success or error code",
-              enum: ["Success", "Error_OutOfRange", "Error_Hardware"],
-              type: "string"
-            }
-          },
-          switch_three_phases_while_charging: {
-            arguments: {
-              three_phases: {
-                description: "True if switching three phases whilst charging, false if not",
-                type: "boolean"
-              }
-            },
-            description: "Switch three phases while charging",
-            result: {
-              description: "Returns success or error code",
-              enum: ["Success", "Error_NotSupported", "Error_NotCharging", "Error_Hardware"],
-              type: "string"
-            }
-          }
-        },
-        description: "This interface defines the main evse manager",
-        vars: {
-          limits: {
-            additionalProperties: false,
-            description: "Limits of this evse, published on change",
-            properties: {
-              max_current: {
-                description: "Instantaneous maximum current available to car",
-                type: "number"
-              },
-              nr_of_phases_available: {
-                description: "Instantaneous phase count available to car",
-                maximum: 3,
-                minimum: 1,
-                type: "integer"
-              }
-            },
-            required: ["max_current", "nr_of_phases_available"],
-            type: "object"
-          },
-          powermeter: {
-            description: "FIXME: use powermeter type here",
-            type: "object"
-          },
-          reservation: {
-            additionalProperties: false,
-            description: "Current reservation status, published on change",
-            properties: {
-              auth_token: {
-                description: "token for which evse is reserved for",
-                maxLength: 20,
-                minLength: 1,
-                type: "string"
-              },
-              reserved: {
-                description: "true if currently reserved",
-                type: "boolean"
-              },
-              valid_until: {
-                description: "timestamp (abs time) when reservation expires",
-                type: "number"
-              }
-            },
-            required: ["reserved", "auth_token", "valid_until"],
-            type: "object"
-          },
-          session_events: {
-            additionalProperties: false,
-            description: "Emits all events related to sessions",
-            properties: {
-              error: {
-                description: "Details on error type",
-                enum: ["Car", "CarDiodeFault", "Relais", "RCD", "VentilationNotAvailable", "OverCurrent"],
-                type: "string"
-              },
-              event: {
-                description: "Event enum. For some events an additional object is set, see below.",
-                enum: [
-                  "Enabled",
-                  "Disabled",
-                  "SessionStarted",
-                  "AuthRequired",
-                  "ChargingStarted",
-                  "ChargingPausedEV",
-                  "ChargingPausedEVSE",
-                  "ChargingResumed",
-                  "SessionFinished",
-                  "Error",
-                  "PermanentFault"
+          "start_charging": {
+            "arguments": {
+              "EnergyTransferMode": {
+                "description": "Selected energy transfer mode for charging that is requested by the EVCC",
+                "enum": [
+                  "AC_single_phase_core",
+                  "AC_three_phase_core",
+                  "DC_core",
+                  "DC_extended",
+                  "DC_combo_core",
+                  "DC_unique"
                 ],
-                type: "string"
+                "type": "string"
               },
-              session_finished: {
-                additionalProperties: false,
-                description: "data for SessionFinished event",
-                properties: {
-                  energy_Wh_export: {
-                    description: "Session end Wh",
-                    type: "number"
-                  },
-                  energy_Wh_import: {
-                    description: "Session end Wh",
-                    type: "number"
-                  },
-                  signed_meter_value: {
-                    description: "Signed meter value",
-                    type: "string"
-                  },
-                  timestamp: {
-                    description: "Session end timestamp",
-                    type: "number"
-                  }
-                },
-                required: ["timestamp", "energy_Wh_import"],
-                type: "object"
-              },
-              session_started: {
-                additionalProperties: false,
-                description: "data for SessionStarted event",
-                properties: {
-                  energy_Wh_export: {
-                    description: "Session start Wh",
-                    type: "number"
-                  },
-                  energy_Wh_import: {
-                    description: "Session start Wh",
-                    type: "number"
-                  },
-                  signed_meter_value: {
-                    description: "Signed meter value",
-                    type: "string"
-                  },
-                  timestamp: {
-                    description: "Session start timestamp",
-                    type: "number"
-                  }
-                },
-                required: ["timestamp", "energy_Wh_import"],
-                type: "object"
-              },
-              uuid: {
-                description: "An EVSE generated UUID for this session, can be used e.g. for database storage.",
-                type: "string"
+              "PaymentOption": {
+                "description": "This element is used for indicating the payment type",
+                "enum": [
+                  "Contract",
+                  "ExternalPayment"
+                ],
+                "type": "string"
               }
             },
-            required: ["uuid", "event"],
-            type: "object"
+            "description": "Start the ev charging process",
+            "result": {
+              "description": "Returns true if the evcc simulation started",
+              "type": "boolean"
+            }
           },
-          telemetry: {
-            additionalProperties: false,
-            description: "Other telemetry",
-            properties: {
-              fan_rpm: {
-                description: "RPM of the fan. 0 if off or no fan available.",
-                type: "number"
-              },
-              rcd_current: {
-                description: "Residual current in mA",
-                type: "number"
-              },
-              relais_on: {
-                description: "true if power to the car is currently on, false if off",
-                type: "boolean"
-              },
-              supply_voltage_12V: {
-                description: "Internal 12V supply voltage",
-                type: "number"
-              },
-              supply_voltage_minus_12V: {
-                description: "Internal -12V supply voltage",
-                type: "number"
-              },
-              temperature: {
-                description: "Current temperature of the EVSE in degree celsius",
-                type: "number"
-              }
-            },
-            type: "object"
+          "stop_charging": {
+            "description": "Stop the ev charging communication process"
+          }
+        },
+        "description": "This interface defines a simple ISO15118 ev.",
+        "vars": {
+          "AC_EVPowerReady": {
+            "description": "The car is ready for power (HLC)",
+            "type": "boolean"
+          },
+          "AC_EVSEMaxCurrent": {
+            "description": "EVSE max current per phase",
+            "maximum": 400,
+            "minimum": 0,
+            "type": "number"
+          },
+          "AC_StopFromCharger": {
+            "description": "The charger wants to stop the charging process",
+            "type": "null"
+          },
+          "DC_PowerOn": {
+            "description": "The ev wants to close the dc contactors",
+            "type": "null"
+          },
+          "V2G_Session_Finished": {
+            "description": "The v2g session between the charger and the car is finished",
+            "type": "null"
           }
         }
       },
-      example: {
-        cmds: {
-          uses_something: {
-            arguments: {
-              key: {
-                description: "Key to check the existence for",
-                pattern: "^[A-Za-z0-9_.]+$",
-                type: "string"
+      "ac_rcd": {
+        "cmds": {
+          "reset": {
+            "description": "Resets the RCD after a trigger. May not be supported by actual hardware.",
+            "result": {
+              "description": "True: Reset successfull, False: Reset failed.",
+              "type": "boolean"
+            }
+          },
+          "self_test": {
+            "description": "Executes a self test of the RCD. If it fails, an error of type Selftest should be raised."
+          }
+        },
+        "description": "This interface provides an AC Residual Current Monitor (RCD). Actual emergency switch off is done in HW directly, but this interface allows some control and telemetry.",
+        "errors": [
+          {
+            "reference": "/errors/ac_rcd"
+          }
+        ],
+        "vars": {
+          "rcd_current_mA": {
+            "description": "Residual current in mA. Note that this does not trigger anything, it is merely for reporting.",
+            "type": "number"
+          }
+        }
+      },
+      "auth": {
+        "cmds": {
+          "set_connection_timeout": {
+            "arguments": {
+              "connection_timeout": {
+                "description": "Connection timeout in seconds",
+                "maximum": 300,
+                "minimum": 10,
+                "type": "integer"
               }
             },
-            description: "This command checks if something is stored under a given key",
-            result: {
-              description: "Returns 'True' if something was stored for this key",
-              type: "boolean"
+            "description": "Sets the connection timeout"
+          },
+          "set_master_pass_group_id": {
+            "arguments": {
+              "master_pass_group_id": {
+                "description": "The master pass group id",
+                "maxLength": 36,
+                "type": "string"
+              }
+            },
+            "description": "Sets the master pass group id. IdTokens that have this id as parent_id_token belong to the Master Pass Group.  This means they can stop any ongoing transaction, but cannot start transactions. This can, for example, be used by law enforcement personal to stop any ongoing transaction when an EV has to be towed away. If master_pass_group_id  is an empty string, it is not used."
+          }
+        },
+        "description": "Interface of authentication framework",
+        "vars": {
+          "token_validation_status": {
+            "$ref": "/authorization#/TokenValidationStatusMessage",
+            "description": "Emits all events related to current token validation",
+            "type": "object"
+          }
+        }
+      },
+      "auth_token_provider": {
+        "description": "Interface to provide a token",
+        "vars": {
+          "provided_token": {
+            "$ref": "/authorization#/ProvidedIdToken",
+            "description": "The provided token",
+            "type": "object"
+          }
+        }
+      },
+      "auth_token_validator": {
+        "cmds": {
+          "validate_token": {
+            "arguments": {
+              "provided_token": {
+                "$ref": "/authorization#/ProvidedIdToken",
+                "description": "Contains information about the authorization request",
+                "type": "object"
+              }
+            },
+            "description": "Validate auth token and return result (with optional reason string)",
+            "result": {
+              "$ref": "/authorization#/ValidationResult",
+              "description": "Result object containing validation result",
+              "type": "object"
             }
           }
         },
-        description: "This interface defines an example interface that uses multiple framework features",
-        vars: {
-          max_current: {
-            description: "Provides maximum current of this supply in ampere",
-            type: "number"
-          }
-        }
+        "description": "Checks provided tokens for validity"
       },
-      example_child: {
-        description: "This interface defines an inherited example interface that uses multiple framework features (all inherited from base interface)",
-        parent: "example"
-      },
-      example_user: {
-        description: "This interface defines an example_user interface that uses the example interface"
-      },
-      iso15118_evcc_emu: {
-        cmds: {
-          start: {
-            arguments: {
-              arg1: {
-                additionalProperties: false,
-                description: "Arg1 desc",
-                properties: {
-                  bar: {
-                    type: "number"
-                  },
-                  foo: {
-                    type: "string"
-                  }
-                },
-                required: ["foo", "bar"],
-                type: "object"
-              }
-            },
-            description: "Start a charging session"
-          },
-          stop: {
-            description: "Stop current charging session"
-          }
-        },
-        description: "This unit type should emulate an ISO15118 EVCC"
-      },
-      kvs: {
-        cmds: {
-          delete: {
-            arguments: {
-              key: {
-                description: "Key to delete the value for",
-                pattern: "^[A-Za-z0-9_.]+$",
-                type: "string"
-              }
-            },
-            description: "This command removes the value stored under a given key"
-          },
-          exists: {
-            arguments: {
-              key: {
-                description: "Key to check the existence for",
-                pattern: "^[A-Za-z0-9_.]+$",
-                type: "string"
-              }
-            },
-            description: "This command checks if something is stored under a given key",
-            result: {
-              description: "Returns 'True' if something was stored for this key",
-              type: "boolean"
-            }
-          },
-          load: {
-            arguments: {
-              key: {
-                description: "Key to load the value for",
-                pattern: "^[A-Za-z0-9_.]+$",
-                type: "string"
-              }
-            },
-            description: "This command loads the previously stored value for a given key (it will return null if the key does not exist)",
-            result: {
-              description: "The previously stored value",
-              type: ["null", "string", "number", "integer", "boolean", "array", "object"]
-            }
-          },
-          store: {
-            arguments: {
-              key: {
-                description: "Key to store the value for",
-                pattern: "^[A-Za-z0-9_.]*$",
-                type: "string"
-              },
-              value: {
-                description: "Value to store",
-                type: ["null", "string", "number", "integer", "boolean", "array", "object"]
-              }
-            },
-            description: "This command stores a value under a given key"
-          }
-        },
-        description: "This interface defines a simple key-value-store interface"
-      },
-      ocpp_1_6_charge_point: {
-        description: "This interface defines a OCPP 1.6 charge point"
-      },
-      power: {
-        description: "This interface defines the interface of a power supply",
-        vars: {
-          max_current: {
-            description: "This is the maximum current of the power supply",
-            maximum: 60,
-            minimum: 1,
-            type: "number"
-          }
-        }
-      },
-      power_in: {
-        description: "This interface defines the interface of a physical power supply",
-        parent: "power",
-        vars: {
-          phase_count: {
-            description: "This is the phase count of the physical power supply",
-            maximum: 3,
-            minimum: 1,
-            type: "integer"
-          }
-        }
-      },
-      power_result: {
-        description: "This interface defines the interface of an augmented power supply (currently solely conforming to the power_in interface)",
-        parent: "power_in"
-      },
-      powermeter: {
-        cmds: {
-          get_signed_meter_value: {
-            arguments: {
-              auth_token: {
-                description: "Auth token",
-                maxLength: 20,
-                minLength: 1,
-                type: "string"
-              }
-            },
-            description: "Returns a signed meter value with the given auth token",
-            result: {
-              description: "Signed meter value",
-              type: "string"
+      "bank_session_token_provider": {
+        "cmds": {
+          "get_bank_session_token": {
+            "description": "Returns the token.",
+            "result": {
+              "$ref": "/bank_transaction#/BankSessionToken",
+              "description": "token",
+              "type": "object"
             }
           }
         },
-        description: "This interface defines a generic powermeter for 5 wire TN networks.",
-        vars: {
-          powermeter: {
-            additionalProperties: false,
-            description: "Measured dataset",
-            properties: {
-              current_A: {
-                additionalProperties: false,
-                description: "Current in ampere",
-                properties: {
-                  L1: {
-                    description: "L1 value only",
-                    type: "number"
-                  },
-                  L2: {
-                    description: "L2 value only",
-                    type: "number"
-                  },
-                  L3: {
-                    description: "L3 value only",
-                    type: "number"
-                  },
-                  N: {
-                    description: "Neutral value only",
-                    type: "number"
-                  }
-                },
-                required: ["L1"],
-                type: "object"
-              },
-              energy_Wh_export: {
-                additionalProperties: false,
-                description: "Exported energy in Wh (to grid)",
-                properties: {
-                  L1: {
-                    description: "L1 value only",
-                    type: "number"
-                  },
-                  L2: {
-                    description: "L2 value only",
-                    type: "number"
-                  },
-                  L3: {
-                    description: "L3 value only",
-                    type: "number"
-                  },
-                  total: {
-                    description: "Sum value (which is relevant for billing)",
-                    type: "number"
-                  }
-                },
-                required: ["total"],
-                type: "object"
-              },
-              energy_Wh_import: {
-                additionalProperties: false,
-                description: "Imported energy in Wh (from grid)",
-                properties: {
-                  L1: {
-                    description: "L1 value only",
-                    type: "number"
-                  },
-                  L2: {
-                    description: "L2 value only",
-                    type: "number"
-                  },
-                  L3: {
-                    description: "L3 value only",
-                    type: "number"
-                  },
-                  total: {
-                    description: "Sum value (which is relevant for billing)",
-                    type: "number"
-                  }
-                },
-                required: ["total"],
-                type: "object"
-              },
-              frequency_Hz: {
-                additionalProperties: false,
-                description: "Grid frequency in Hertz",
-                properties: {
-                  L1: {
-                    description: "L1 value",
-                    type: "number"
-                  },
-                  L2: {
-                    description: "L2 value",
-                    type: "number"
-                  },
-                  L3: {
-                    description: "L3 value",
-                    type: "number"
-                  }
-                },
-                required: ["L1"],
-                type: "object"
-              },
-              meter_id: {
-                description: "A (user defined) meter if (e.g. id printed on the case)",
-                type: "string"
-              },
-              phase_seq_error: {
-                description: "true for 3 phase rotation error (ccw)",
-                type: "boolean"
-              },
-              power_W: {
-                additionalProperties: false,
-                description: "Instantaneous power in Watt. Negative values are exported, positive values imported Energy.",
-                properties: {
-                  L1: {
-                    description: "L1 value only",
-                    type: "number"
-                  },
-                  L2: {
-                    description: "L2 value only",
-                    type: "number"
-                  },
-                  L3: {
-                    description: "L3 value only",
-                    type: "number"
-                  },
-                  total: {
-                    description: "Sum value",
-                    type: "number"
-                  }
-                },
-                required: ["total"],
-                type: "object"
-              },
-              timestamp: {
-                description: "Timestamp of measurement",
-                type: "number"
-              },
-              voltage_V: {
-                additionalProperties: false,
-                description: "Voltage in Volts",
-                properties: {
-                  L1: {
-                    description: "L1 value only",
-                    type: "number"
-                  },
-                  L2: {
-                    description: "L2 value only",
-                    type: "number"
-                  },
-                  L3: {
-                    description: "L3 value only",
-                    type: "number"
-                  }
-                },
-                required: ["L1"],
-                type: "object"
-              }
-            },
-            required: ["timestamp"],
-            type: "object"
+        "description": "Provides the token that can be used to uniquely identify the session in the bank statement."
+      },
+      "bank_transaction_summary_provider": {
+        "description": "Provides information of the session that was committed to the bank. This data may be needed for accounting purposes.",
+        "vars": {
+          "bank_transaction_summary": {
+            "$ref": "/bank_transaction#/BankTransactionSummary",
+            "description": "Summary of a bank transaction. Depends on bank and the backend. Therefore it's mostly opaque data at the moment.",
+            "type": "object"
           }
         }
       },
-      slac: {
-        cmds: {
-          dlink_error: {
-            description: "Terminate the data link and restart the matching process.",
-            result: {
-              description: "True on success.",
-              type: "boolean"
-            }
-          },
-          dlink_pause: {
-            description: "Request power saving mode, while staying MATCHED.",
-            result: {
-              description: "True on success.",
-              type: "boolean"
-            }
-          },
-          dlink_terminate: {
-            description: "Terminate the data link and become UNMATCHED.",
-            result: {
-              description: "True on success.",
-              type: "boolean"
-            }
-          },
-          enter_bcd: {
-            description: "Signal pilot state change to B/C/D from A/E/F.",
-            result: {
-              description: "True on success.",
-              type: "boolean"
-            }
-          },
-          error_sequence_reset: {
-            arguments: {
-              successful: {
-                description: "Whether the error sequence could be done and was successful",
-                type: "boolean"
+      "car_simulator": {
+        "cmds": {
+          "enable": {
+            "arguments": {
+              "value": {
+                "description": "Enable/Disable simulation mode",
+                "type": "boolean"
               }
             },
-            description: "Signal that the error sequence has finished.",
-            result: {
-              description: "True on success.",
-              type: "boolean"
-            }
+            "description": "Sets the ID that uniquely identifies the EVSE. The EVSEID shall match the following structure: <EVSEID> = <Country Code> <S> <EVSE Operator ID> <S> <ID Type> <Power Outlet ID>"
           },
-          leave_bcd: {
-            description: "Signal pilot state change to A/E/F from B/C/D.",
-            result: {
-              description: "True on success.",
-              type: "boolean"
-            }
-          },
-          reset: {
-            description: "Reset SLAC. Not implemented yet."
+          "executeChargingSession": {
+            "arguments": {
+              "value": {
+                "description": "Charging simulation string",
+                "type": "string"
+              }
+            },
+            "description": "Executes a charging simulation string"
           }
         },
-        description: "ISO15118-3 SLAC interface",
-        vars: {
-          dlink_ready: {
-            description: "Inform higher layers about a change in data link status. Emits true if link was set up and false when the link is shut down.",
-            type: "boolean"
-          },
-          request_error_routine: {
-            description: "Inform the higher layer to execute the error routine for a SLAC connection retry",
-            type: "null"
-          },
-          state: {
-            description: "Provides the state enum.",
-            enum: ["UNMATCHED", "MATCHING", "MATCHED"],
-            type: "string"
+        "description": "This defines a car simulator that can execute a full charging session, from plugging in to plugging out. It uses HIL or SIL simulation controllers from e.g. the Yeti HIL simulator.",
+        "vars": {
+          "enabled": {
+            "description": "Indicates whether simulation is currently enabled or not",
+            "type": "boolean"
           }
         }
       },
-      solar: {
-        description: "This interface defines the interface of a solar module",
-        parent: "power"
+      "connector_lock": {
+        "cmds": {
+          "lock": {
+            "description": "Lock connector lock"
+          },
+          "unlock": {
+            "description": "Unlock connector lock (e.g. normal unlock or enforced by OCPP)"
+          }
+        },
+        "description": "This interface defines one connector locking motor (e.g. for AC sockets with no fixed attached cable)",
+        "errors": [
+          {
+            "reference": "/errors/connector_lock"
+          }
+        ]
       },
-      solar_forecast: {
-        description: "This interface defines the interface for an solar energy production forecast",
-        vars: {
-          forecast: {
-            description: "Forecast JSON Object containing a timestamp and the energy forecast in watthours.",
-            type: "object"
+      "debug_json": {
+        "description": "This interface defines a generic JSON object debug variable publisher for use in any module. Can be used to display debug variables e.g. in web interface.",
+        "vars": {
+          "debug_json": {
+            "description": "Provides the debug object as a json object",
+            "type": "object"
+          },
+          "title": {
+            "description": "Title of the Debug object",
+            "type": "string"
           }
         }
       },
-      sunspec_reader: {
-        description: "This interface defines a generic Sunspec reader, which can be used to fetch values from Sunspec devices when an implementation is given.",
-        vars: {
-          measurement: {
-            additionalProperties: true,
-            description: "Measured dataset",
-            properties: {
-              timestamp: {
-                description: "Timestamp of measurement",
-                type: "number"
-              },
-              value: {
-                description: "Measurement value",
-                type: "number"
+      "empty": {
+        "description": "This interface is empty and can be used for a config-only (main) implementation"
+      },
+      "energy": {
+        "cmds": {
+          "enforce_limits": {
+            "arguments": {
+              "value": {
+                "$ref": "/energy#/EnforcedLimits",
+                "description": "Limit object that will be routed through the tree.",
+                "type": "object"
               }
             },
-            required: ["timestamp"],
-            type: "object"
+            "description": "The EnergyManager enforces a limit using this command."
+          }
+        },
+        "description": "This interface is the internal energy management inteface between nodes.",
+        "vars": {
+          "energy_flow_request": {
+            "$ref": "/energy#/EnergyFlowRequest",
+            "description": "Request energy flow to supply/limit energy import (direction from grid to car) and/or consume/limit energy export (car to grid).",
+            "type": "object"
           }
         }
       },
-      sunspec_scanner: {
-        cmds: {
-          scan_device: {
-            arguments: {
-              ip_address: {
-                description: "local IP-address of the Sunspec device",
-                pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
-                type: "string"
-              }
-            },
-            description: "Scans complete device",
-            result: {
-              description: "Returns a json overview of the scan",
-              type: "object"
-            }
+      "energy_manager": {
+        "description": "This interface defines the global EnergyManager",
+        "vars": {}
+      },
+      "energy_price_information": {
+        "description": "This interface defines the interface for an energy price forecast",
+        "vars": {
+          "energy_pricing": {
+            "$ref": "/energy_price_information#/EnergyPriceSchedule",
+            "description": "Forecast JSON Object containing timestamps and the price forecast for both import and export.",
+            "type": "object"
+          }
+        }
+      },
+      "ev_slac": {
+        "cmds": {
+          "reset": {
+            "description": "Reset SLAC"
           },
-          scan_network: {
-            description: "Scans local network",
-            result: {
-              description: "Returns a json overview of the scan",
-              type: "object"
-            }
-          },
-          scan_port: {
-            arguments: {
-              ip_address: {
-                description: "local IP-address of the Sunspec device",
-                pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
-                type: "string"
-              },
-              port: {
-                description: "Modbus port",
-                minimum: 0,
-                type: "integer"
-              }
-            },
-            description: "Scans all units at a device's port",
-            result: {
-              description: "Returns a json overview of the scan",
-              type: "object"
-            }
-          },
-          scan_unit: {
-            arguments: {
-              ip_address: {
-                description: "local IP-address of the Sunspec device",
-                pattern: "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
-                type: "string"
-              },
-              port: {
-                description: "Modbus port",
-                minimum: 0,
-                type: "integer"
-              },
-              unit: {
-                description: "Modbus unit id",
-                minimum: 0,
-                type: "integer"
-              }
-            },
-            description: "Scans specific unit at a device's port",
-            result: {
-              description: "Returns a json overview of the scan",
-              type: "object"
+          "trigger_matching": {
+            "description": "Trigger start of matching process",
+            "result": {
+              "description": "True on success, returns False if transition was unexpected and cannot be handled by SLAC state machine.",
+              "type": "boolean"
             }
           }
         },
-        description: "This class defines the global Sunspec scanner"
-      },
-      tibber_price_forecast: {
-        description: "This interface defines the interface for an energy price forecast",
-        vars: {
-          forecast: {
-            description: "Forecast JSON Object containing a timestamp and the price forecast",
-            type: "object"
+        "description": "ISO15118-3 SLAC interface for EV side",
+        "vars": {
+          "dlink_ready": {
+            "description": "Inform higher layers about a change in data link status. Emits true if link was set up and false when the link is shut down.",
+            "type": "boolean"
+          },
+          "ev_mac_address": {
+            "description": "Inform higher layers about the MAC address of the charging connector",
+            "pattern": "^[A-F0-9]{2}(:[A-F0-9]{2}){5}$",
+            "type": "string"
+          },
+          "state": {
+            "description": "Provides the state enum.",
+            "enum": [
+              "UNMATCHED",
+              "MATCHING",
+              "MATCHED"
+            ],
+            "type": "string"
           }
         }
       },
-      yeti_extras: {
-        cmds: {
-          firmware_update: {
-            arguments: {
-              firmware_binary: {
-                description: "Path to firmware binary file that should be sent to Yeti Controller",
-                type: "string"
+      "evse_board_support": {
+        "cmds": {
+          "ac_read_pp_ampacity": {
+            "description": "Read the current carrying capacity of the connected cable in ampere for AC charging with a socket. This function will be used by EvseManager to get the PP value at  a distinct time. You should also publish the var pp_ampacity whenever the PP ampacity reading changes to signal changes e.g. during the charging time. This has no meaning for DC or AC charging with a fixed attached cable, it does not  need to be implemented and the returned value is not used in those cases.",
+            "result": {
+              "$ref": "/board_support_common#/ProximityPilot",
+              "description": "Returns the current carrying capacity of the connected cable",
+              "type": "object"
+            }
+          },
+          "ac_set_overcurrent_limit_A": {
+            "arguments": {
+              "value": {
+                "description": "Ampere current limit value",
+                "type": "number"
               }
             },
-            description: "This command reboots Yeti in firmware upgrade mode"
+            "description": "Many chargers implement a fast over current shutdown directly in the hardware that triggers if the EV draws more current than the PWM allows. If the hardware does not have this functionality, just ignore this command. Do not use it to set the PWM duty cycle. Otherwise this command reports a value that should be used for the overcurrent detection.  A margin needs to be added to avoid false triggers. Do not use the PWM duty cycle to infer the current limit in the BSP, as this will not work with HLC."
+          },
+          "ac_switch_three_phases_while_charging": {
+            "arguments": {
+              "value": {
+                "description": "True: switch to 3ph, False: switch to 1ph",
+                "type": "boolean"
+              }
+            },
+            "description": "Optional, in case of doubt do not implement. Report in hardware_capabilites if this command is supported. This command switches between one and three phase operation during an active charging session. Some cars can be permanently destroyed by that, so the bsp needs to implement a special sequence for the switching. The exact sequence can be defined by the BSP, but one example would be a C2->C1->B1->F->B1->B2->C2 or similar. Use with caution."
+          },
+          "allow_power_on": {
+            "arguments": {
+              "value": {
+                "$ref": "/evse_board_support#/PowerOnOff",
+                "description": "Flag and context",
+                "type": "object"
+              }
+            },
+            "description": "Sets allow_power_on flag. If false, Relais must never be switched on."
+          },
+          "enable": {
+            "arguments": {
+              "value": {
+                "description": "True: enabled, false: disabled.",
+                "type": "boolean"
+              }
+            },
+            "description": "Enables or disables the charging port. Typically disabled results in control pilot state F. It must not accept cars for new charging sessions if disabled."
+          },
+          "evse_replug": {
+            "arguments": {
+              "value": {
+                "description": "Time in ms for the duration of the replug sequence",
+                "type": "integer"
+              }
+            },
+            "description": "Optional, in case of doubt do not implement. Special command initiate a virtual replug sequence without restarting session. Emits a EvseReplugStarted event if supported and started. BSP will take care to not emit other events such as CarPluggedIn/Out during that time. Once finished it will emit a EvseReplugFinished. This is mainly for testing purposes, don't implement for production use."
+          },
+          "get_hw_capabilities": {
+            "description": "Get Hardware capability/limits. For AC these are the limits of the power path (e.g. relais etc).  For DC, these are the limits for the AC input of the ACDC converter stack, i.e. the complete AC input. Note that DC output limits are reported by the DC power supply itself.",
+            "result": {
+              "$ref": "/evse_board_support#/HardwareCapabilities",
+              "description": "Hardware capability/limits",
+              "type": "object"
+            }
+          },
+          "pwm_F": {
+            "description": "Turns PWM off with Error F (constant negative voltage)"
+          },
+          "pwm_off": {
+            "description": "Turns PWM off (constant high voltage)"
+          },
+          "pwm_on": {
+            "arguments": {
+              "value": {
+                "description": "PWM duty cycle (>0, <100)",
+                "maximum": 100,
+                "minimum": 0,
+                "type": "number"
+              }
+            },
+            "description": "Turns PWM on with duty cycle (in percent)"
+          },
+          "setup": {
+            "arguments": {
+              "country_code": {
+                "description": "A two-letter country code in ISO 3166-1 alpha-2 format",
+                "type": "string"
+              },
+              "has_ventilation": {
+                "description": "true: Allow mode D charging, false: do not allow mode D charging",
+                "type": "boolean"
+              },
+              "three_phases": {
+                "description": "true: Three phases enabled, false: only single phase",
+                "type": "boolean"
+              }
+            },
+            "description": "Setup config options"
           }
         },
-        description: "This interface defines Yeti extra funtionality not found in the generic interfaces",
-        vars: {
-          hw_revision: {
-            description: "Provides the hw_revision",
-            type: "integer"
+        "description": "This interface defines the board support driver for AC or DC minimal power path: ControlPilot, output contactors.  Other components of the power path such as IMD(DC)/RCD(AC)/Connector Lock etc have their own interfaces.",
+        "errors": [
+          {
+            "reference": "/errors/evse_board_support"
+          }
+        ],
+        "vars": {
+          "ac_nr_of_phases_available": {
+            "description": "Instantaneous phase count available to car",
+            "maximum": 3,
+            "minimum": 1,
+            "type": "integer"
           },
-          hw_type: {
-            description: "Provides the hw_type",
-            type: "integer"
+          "ac_pp_ampacity": {
+            "$ref": "/board_support_common#/ProximityPilot",
+            "description": "Current carrying capacity of the connected cable in ampere for AC charging with a socket. Publish whenever it changes. This has no meaning for DC or AC charging with a fixed attached cable, it does not  need to be implemented and the returned value is not used in those cases.",
+            "type": "object"
           },
-          protocol_version_major: {
-            description: "Provides the protocol_version_major",
-            type: "integer"
+          "capabilities": {
+            "$ref": "/evse_board_support#/HardwareCapabilities",
+            "description": "Hardware capabilities/limits. Initially EvseManager will call get_hw_capabilities once to fetch the limits and caches the limits internally. The BSP module does not have to publish this variable at all, then the initially fetched capabilities will be used. The BSP may publish this variable to update limits in case they change during runtime, e.g. if the maximum current changes because the hardware gets too hot.",
+            "type": "object"
           },
-          protocol_version_minor: {
-            description: "Provides the protocol_version_minor",
-            type: "integer"
+          "event": {
+            "$ref": "/board_support_common#/BspEvent",
+            "description": "Event from ControlPilot signal/output relais",
+            "type": "object"
           },
-          sw_version_string: {
-            description: "Provides the sw_version_string",
-            type: "string"
-          },
-          time_stamp: {
-            description: "Provides the current time stamp",
-            type: "integer"
+          "telemetry": {
+            "$ref": "/evse_board_support#/Telemetry",
+            "description": "Other telemetry",
+            "type": "object"
           }
         }
       },
-      yeti_simulation_control: {
-        cmds: {
-          enable: {
-            arguments: {
-              value: {
-                description: "true to enable, false to disable",
-                type: "boolean"
+      "evse_manager": {
+        "cmds": {
+          "authorize_response": {
+            "arguments": {
+              "provided_token": {
+                "$ref": "/authorization#/ProvidedIdToken",
+                "description": "The token for which authorization was requested",
+                "type": "object"
+              },
+              "validation_result": {
+                "$ref": "/authorization#/ValidationResult",
+                "description": "The validation result",
+                "type": "object"
               }
             },
-            description: "Enable/disable the simulation"
+            "description": "Reports the result of an authorization request to the EvseManager.  Contains the provided_token for which authorization was requested and the validation_result"
           },
-          setSimulationData: {
-            arguments: {
-              value: {
-                additionalProperties: false,
-                description: "simulation data",
-                minProperties: 8,
-                properties: {
-                  cp_voltage: {
-                    description: "CP Voltage level [V]",
-                    type: "number"
-                  },
-                  currents: {
-                    additionalProperties: false,
-                    description: "Currents in Ampere",
-                    minProperties: 4,
-                    properties: {
-                      L1: {
-                        type: "number"
-                      },
-                      L2: {
-                        type: "number"
-                      },
-                      L3: {
-                        type: "number"
-                      },
-                      N: {
-                        type: "number"
-                      }
-                    },
-                    type: "object"
-                  },
-                  diode_fail: {
-                    description: "Set to true to simulate a diode failure",
-                    type: "boolean"
-                  },
-                  error_e: {
-                    description: "Set to true to simulate Error E (CP-PE short)",
-                    type: "boolean"
-                  },
-                  frequencies: {
-                    additionalProperties: false,
-                    description: "Frequencies in Hertz",
-                    minProperties: 3,
-                    properties: {
-                      L1: {
-                        type: "number"
-                      },
-                      L2: {
-                        type: "number"
-                      },
-                      L3: {
-                        type: "number"
-                      }
-                    },
-                    type: "object"
-                  },
-                  pp_resistor: {
-                    description: "PP resistor value [Ohm]",
-                    type: "number"
-                  },
-                  rcd_current: {
-                    description: "RCD current in mA",
-                    type: "number"
-                  },
-                  voltages: {
-                    additionalProperties: false,
-                    description: "Voltages in Volt",
-                    minProperties: 3,
-                    properties: {
-                      L1: {
-                        type: "number"
-                      },
-                      L2: {
-                        type: "number"
-                      },
-                      L3: {
-                        type: "number"
-                      }
-                    },
-                    type: "object"
-                  }
+          "cancel_reservation": {
+            "description": "Call to signal that EVSE is not reserved anymore"
+          },
+          "disable": {
+            "arguments": {
+              "connector_id": {
+                "description": "Specifies the ID of the connector. If 0, the whole EVSE should be disabled",
+                "type": "integer"
+              }
+            },
+            "description": "Disables the evse. EVSE is not available for charging after this operation",
+            "result": {
+              "description": "Returns true if evse was disabled (or was disabled before), returns false if it could not be disabled (i.e. due to communication error with hardware)",
+              "type": "boolean"
+            }
+          },
+          "enable": {
+            "arguments": {
+              "connector_id": {
+                "description": "Specifies the ID of the connector to enable. If 0, the whole EVSE should be enabled",
+                "type": "integer"
+              }
+            },
+            "description": "Enables the evse. EVSE is available for charging after this operation",
+            "result": {
+              "description": "Returns true if evse was enabled (or was enabled before), returns false if enable failed e.g. due to permanent fault.",
+              "type": "boolean"
+            }
+          },
+          "external_ready_to_start_charging": {
+            "description": "There are situations where another module needs to do some initialization after evse manager is in principle ready to start charging. This command can be used (optimally in combination with a configuration option) to delay charging ready until the external module is done with its initialization",
+            "result": {
+              "description": "Returns true if the signal was used by the evse manager implementation",
+              "type": "boolean"
+            }
+          },
+          "force_unlock": {
+            "arguments": {
+              "connector_id": {
+                "description": "Specifies the ID of the connector that should be unlocked",
+                "type": "integer"
+              }
+            },
+            "description": "Forces connector to unlock connector now. During normal operation, connector will be locked/unlocked in the correct sequence. Do not use this function except if explicitly requested by e.g. management cloud.",
+            "result": {
+              "description": "Returns true if unlocking sequence was successfully executed",
+              "type": "boolean"
+            }
+          },
+          "get_evse": {
+            "description": "Call to get information about the EVSE including its connectors",
+            "result": {
+              "$ref": "/evse_manager#/Evse",
+              "description": "Object that contains information of the EVSE including its connectors",
+              "type": "object"
+            }
+          },
+          "pause_charging": {
+            "description": "Call to signal EVSE to pause charging",
+            "result": {
+              "description": "Returns true if successfully paused or was already in paused_by_evse mode",
+              "type": "boolean"
+            }
+          },
+          "reserve": {
+            "arguments": {
+              "reservation_id": {
+                "description": "The reservation id (should be added to the TransactionStarted event)",
+                "type": "integer"
+              }
+            },
+            "description": "Call to signal that EVSE is reserved. This can be used to e.g. change the color of the HMI LEDs to indicate reservation.",
+            "result": {
+              "description": "Returns true if the EVSE accepted the reservation, else false.",
+              "type": "boolean"
+            }
+          },
+          "resume_charging": {
+            "description": "Call to signal EVSE to resume charging",
+            "result": {
+              "description": "Returns true if resume was successful, false otherwise (e.g. resuming a car pause won't work)",
+              "type": "boolean"
+            }
+          },
+          "set_external_limits": {
+            "arguments": {
+              "value": {
+                "$ref": "/energy#/ExternalLimits",
+                "description": "UUID of node that this limit applies to",
+                "type": "object"
+              }
+            },
+            "description": "Set additional external energy flow limits at this node."
+          },
+          "set_faulted": {
+            "description": "Sets the evse manager to faulted externally. It may also switch to faulted itself if it detects an internal error."
+          },
+          "set_get_certificate_response": {
+            "arguments": {
+              "certificate_response": {
+                "$ref": "/iso15118_charger#/Response_Exi_Stream_Status",
+                "description": "The response raw exi stream and the status from the CSMS system",
+                "type": "object"
+              }
+            },
+            "description": "CertificateInstallationRes/CertificateUpdateRes - Set the new/updated Contract Certificate (including the certificate chain) and the corresponding encrypted private key. Should be forwared to EVCC. This is an async response to a previously published iso15118_certificate_request"
+          },
+          "stop_transaction": {
+            "arguments": {
+              "request": {
+                "$ref": "/evse_manager#/StopTransactionRequest",
+                "description": "Request to stop the transaction.",
+                "type": "object"
+              }
+            },
+            "description": "Stops transaction and cancels charging externally, charging can only be resumed by replugging car. EVSE will also stop transaction automatically e.g. on disconnect, so this only needs to be called if the transaction should end before.",
+            "result": {
+              "description": "Returns true if successful",
+              "type": "boolean"
+            }
+          },
+          "switch_three_phases_while_charging": {
+            "arguments": {
+              "three_phases": {
+                "description": "True: switch to three phases, false: switch to single phase",
+                "type": "boolean"
+              }
+            },
+            "description": "Switch three phases while charging",
+            "result": {
+              "$ref": "/evse_manager#/SwitchThreePhasesWhileChargingResult",
+              "description": "Returns success or error code",
+              "type": "string"
+            }
+          },
+          "withdraw_authorization": {
+            "description": "Call to signals that EVSE is not further authorized to start a transaction (e.g. on a connection_timeout)"
+          }
+        },
+        "description": "This interface defines the evse manager. An evse manager represents the charging kernel of one physical connector.",
+        "errors": [
+          {
+            "reference": "/errors/evse_manager"
+          }
+        ],
+        "vars": {
+          "car_manufacturer": {
+            "$ref": "/evse_manager#/CarManufacturer",
+            "description": "Car manufacturer (if known)",
+            "type": "string"
+          },
+          "enforced_limits": {
+            "$ref": "/energy#/EnforcedLimits",
+            "description": "Enforced limits for this node (coming from the EnergyManager)",
+            "type": "object"
+          },
+          "ev_info": {
+            "$ref": "/evse_manager#/EVInfo",
+            "description": "More details about the EV if available",
+            "type": "object"
+          },
+          "evse_id": {
+            "description": "EVSE ID including the connector number, e.g. DE*PNX*E123456*1",
+            "type": "string"
+          },
+          "hw_capabilities": {
+            "$ref": "/evse_board_support#/HardwareCapabilities",
+            "description": "Hardware capability/limits",
+            "type": "object"
+          },
+          "iso15118_certificate_request": {
+            "$ref": "/iso15118_charger#/Request_Exi_Stream_Schema",
+            "description": "The vehicle requests the SECC to deliver the certificate that belong  to the currently valid contract of the vehicle. Response will be reported async via  set_get_certificate_response",
+            "type": "object"
+          },
+          "limits": {
+            "$ref": "/evse_manager#/Limits",
+            "description": "Limits of this evse, published on change",
+            "type": "object"
+          },
+          "powermeter": {
+            "$ref": "/powermeter#/Powermeter",
+            "description": "Measured dataset",
+            "type": "object"
+          },
+          "ready": {
+            "description": "Signals that the EVSE Manager is ready to start charging",
+            "type": "boolean"
+          },
+          "selected_protocol": {
+            "description": "Contains the selected protocol used for charging for informative purposes",
+            "type": "string"
+          },
+          "session_event": {
+            "$ref": "/evse_manager#/SessionEvent",
+            "description": "Emits all events related to sessions",
+            "type": "object"
+          },
+          "telemetry": {
+            "$ref": "/evse_board_support#/Telemetry",
+            "description": "Other telemetry",
+            "type": "object"
+          },
+          "waiting_for_external_ready": {
+            "description": "Signals that the EVSE Manager is in principle ready to start charging, but delays sending its ready signal waiting for the external_ready_to_start_charging command.",
+            "type": "boolean"
+          }
+        }
+      },
+      "evse_security": {
+        "cmds": {
+          "delete_certificate": {
+            "arguments": {
+              "certificate_hash_data": {
+                "$ref": "/evse_security#/CertificateHashData",
+                "description": "Indicates the certificate that should be deleted",
+                "type": "object"
+              }
+            },
+            "description": "Command to delete a certificate",
+            "result": {
+              "$ref": "/evse_security#/DeleteCertificateResult",
+              "description": "Result of the attempt to delete a certificate",
+              "type": "string"
+            }
+          },
+          "generate_certificate_signing_request": {
+            "arguments": {
+              "certificate_type": {
+                "$ref": "/evse_security#/LeafCertificateType",
+                "description": "Specifies the leaf certificate type",
+                "type": "string"
+              },
+              "common": {
+                "description": "Specifies the common name (CN) of the certificate",
+                "type": "string"
+              },
+              "country": {
+                "description": "Specifies the country name (C) of the certificate",
+                "type": "string"
+              },
+              "organization": {
+                "description": "Specifies the organization name (O) of the certificate",
+                "type": "string"
+              },
+              "use_tpm": {
+                "description": "Specifies if the CSR should store the private key on the TPM",
+                "type": "boolean"
+              }
+            },
+            "description": "Command to generate a certificate signing request for the given use",
+            "result": {
+              "description": "The certificate signing request in PEM format",
+              "type": "string"
+            }
+          },
+          "get_installed_certificates": {
+            "arguments": {
+              "certificate_types": {
+                "description": "Types of certificates to be retrieved",
+                "items": {
+                  "$ref": "/evse_security#/CertificateType",
+                  "minimum": 0,
+                  "type": "string"
                 },
-                type: "object"
+                "type": "array"
               }
             },
-            description: "Sends a new simulation data object"
+            "description": "Command to retrieve installed certificates of the EVSE",
+            "result": {
+              "$ref": "/evse_security#/GetInstalledCertificatesResult",
+              "description": "Indicates the result of the command and optional certificate hash data",
+              "type": "object"
+            }
+          },
+          "get_key_pair": {
+            "arguments": {
+              "certificate_type": {
+                "$ref": "/evse_security#/LeafCertificateType",
+                "description": "Specifies the leaf certificate type",
+                "type": "string"
+              },
+              "encoding": {
+                "$ref": "/evse_security#/EncodingFormat",
+                "description": "Specifies the encoding of the key",
+                "type": "string"
+              }
+            },
+            "description": "Command to get the paths of the certificate and the respective key",
+            "result": {
+              "$ref": "/evse_security#/GetKeyPairResult",
+              "description": "The response to the requested command",
+              "type": "object"
+            }
+          },
+          "get_leaf_expiry_days_count": {
+            "arguments": {
+              "certificate_type": {
+                "$ref": "/evse_security#/LeafCertificateType",
+                "description": "Indicates the type of the certificate",
+                "type": "string"
+              }
+            },
+            "description": "Command to get the days count until the given leaf certificate expires.  If no leaf certificate is installed this command will return 0",
+            "result": {
+              "description": "days count until given leaf certificate expires",
+              "type": "integer"
+            }
+          },
+          "get_mo_ocsp_request_data": {
+            "arguments": {
+              "certificate_chain": {
+                "description": "Certificate chain for which the OCSP data is retrieved",
+                "type": "string"
+              }
+            },
+            "description": "Command to retrieve the OCSP request data of the given MO certificate chain. Contains OCSP data for each certificate that is present in the chain (excluding the root)",
+            "result": {
+              "$ref": "/evse_security#/OCSPRequestDataList",
+              "description": "The OCSP request data of the given certificate chain. Contains OCSP data for each certificate in the given chain. ",
+              "type": "object"
+            }
+          },
+          "get_v2g_ocsp_request_data": {
+            "description": "Command to retrieve the OCSP request data of the V2G certificates. Contains OCSP data for each certificate that is present in the chain (excluding the root). ",
+            "result": {
+              "$ref": "/evse_security#/OCSPRequestDataList",
+              "description": "The OCSP request data of all V2G CA certificates including the Sub CAs (exluding the root)",
+              "type": "object"
+            }
+          },
+          "get_verify_file": {
+            "arguments": {
+              "certificate_type": {
+                "$ref": "/evse_security#/CaCertificateType",
+                "description": "Specifies that CA certificate type",
+                "type": "string"
+              }
+            },
+            "description": "Command to get the file path of a CA bundle that can be used for verification",
+            "result": {
+              "description": "The path of the CA bundle file",
+              "type": "string"
+            }
+          },
+          "install_ca_certificate": {
+            "arguments": {
+              "certificate": {
+                "description": "A PEM encoded X.509 certificate.",
+                "type": "string"
+              },
+              "certificate_type": {
+                "$ref": "/evse_security#/CaCertificateType",
+                "description": "Indicates the type of the certificate",
+                "type": "string"
+              }
+            },
+            "description": "Command to install a new CA certificate",
+            "result": {
+              "$ref": "/evse_security#/InstallCertificateResult",
+              "description": "Result of the attempt to install a CA certificate",
+              "type": "string"
+            }
+          },
+          "is_ca_certificate_installed": {
+            "arguments": {
+              "certificate_type": {
+                "$ref": "/evse_security#/CaCertificateType",
+                "description": "Specifies that CA certificate type",
+                "type": "string"
+              }
+            },
+            "description": "Command that indicates of the given CA certificate type is installed",
+            "result": {
+              "description": "True if CA certificate is installed, else false",
+              "type": "boolean"
+            }
+          },
+          "update_leaf_certificate": {
+            "arguments": {
+              "certificate_chain": {
+                "description": "Leaf certificate or certificate chain that should be installed",
+                "type": "string"
+              },
+              "certificate_type": {
+                "$ref": "/evse_security#/LeafCertificateType",
+                "description": "Indicates the type of the certificate",
+                "type": "string"
+              }
+            },
+            "description": "Command to install or update SECC or CSMS leaf certificate",
+            "result": {
+              "$ref": "/evse_security#/InstallCertificateResult",
+              "description": "Result of the attempt to install or update a leaf certificate",
+              "type": "string"
+            }
+          },
+          "update_ocsp_cache": {
+            "arguments": {
+              "certificate_hash_data": {
+                "$ref": "/evse_security#/CertificateHashData",
+                "description": "Certificate hash data that identifies the certificate for which the cache should be updated",
+                "type": "object"
+              },
+              "ocsp_response": {
+                "description": "OCSPResponse class as defined in IETF RFC 6960. DER and then base64 encoded",
+                "type": "string"
+              }
+            },
+            "description": "Command to update the OCSP cache with the given data"
+          },
+          "verify_certificate": {
+            "arguments": {
+              "certificate_chain": {
+                "description": "Leaf certificate or certificate chain that is to be verified",
+                "type": "string"
+              },
+              "certificate_type": {
+                "$ref": "/evse_security#/LeafCertificateType",
+                "description": "Indicates the type of the certificate",
+                "type": "string"
+              }
+            },
+            "description": "Command to verify the given certificate",
+            "result": {
+              "$ref": "/evse_security#/CertificateValidationResult",
+              "description": "Result of the verification",
+              "type": "string"
+            }
+          },
+          "verify_file_signature": {
+            "arguments": {
+              "file_path": {
+                "description": "Path to the file that should be verified",
+                "type": "string"
+              },
+              "signature": {
+                "description": "Base64 encoded file signature",
+                "type": "string"
+              },
+              "signing_certificate": {
+                "description": "Certificate with which the file was signed. PEM encoded X.509 certificate",
+                "type": "string"
+              }
+            },
+            "description": "Verify the file at the given path using the provided certificate and signature",
+            "result": {
+              "description": "True if verification succeeded, false if not",
+              "type": "boolean"
+            }
           }
         },
-        description: "This defines a HIL simulation interface",
-        vars: {
-          enabled: {
-            description: "Indicates whether simulation interface is currently active or not",
-            type: "boolean"
+        "description": "This interface provides security related functions and access to secure storage that an EVSE needs to provide. This includes the handling of all security related functions specified within OCPP and ISO15118. The modules that implement this interface are responsible for checking the validity period of the leaf certificates and initiate certificate signing request if leaf certificates are about to expire."
+      },
+      "example": {
+        "cmds": {
+          "uses_something": {
+            "arguments": {
+              "key": {
+                "description": "Key to check the existence for",
+                "pattern": "^[A-Za-z0-9_.]+$",
+                "type": "string"
+              }
+            },
+            "description": "This command checks if something is stored under a given key",
+            "result": {
+              "description": "Returns 'True' if something was stored for this key",
+              "type": "boolean"
+            }
+          }
+        },
+        "description": "This interface defines an example interface that uses multiple framework features",
+        "errors": [
+          {
+            "reference": "/errors/example"
+          }
+        ],
+        "vars": {
+          "max_current": {
+            "description": "Provides maximum current of this supply in ampere",
+            "type": "number"
+          }
+        }
+      },
+      "example_user": {
+        "description": "This interface defines an example_user interface that uses the example interface",
+        "errors": [
+          {
+            "reference": "/errors/example#/ExampleErrorA"
           },
-          simulation_feedback: {
-            description: "Feedback from simulation (everything that a car can measure on the CP signal plus the indication whether relais are on or off)",
-            type: "object"
+          {
+            "reference": "/errors/example#/ExampleErrorB"
+          },
+          {
+            "reference": "/errors/example#/ExampleErrorC"
+          },
+          {
+            "reference": "/errors/example#/ExampleErrorD"
+          }
+        ]
+      },
+      "external_energy_limits": {
+        "cmds": {
+          "set_external_limits": {
+            "arguments": {
+              "value": {
+                "$ref": "/energy#/ExternalLimits",
+                "description": "External limits object",
+                "type": "object"
+              }
+            },
+            "description": "Set additional external energy flow limits at this node."
+          }
+        },
+        "description": "This interface allows to limit energy flow at a specific node of the energy tree from the outside (e.g. from ocpp).",
+        "vars": {
+          "enforced_limits": {
+            "$ref": "/energy#/EnforcedLimits",
+            "description": "Enforced limits for this node (coming from the EnergyManager)",
+            "type": "object"
+          }
+        }
+      },
+      "isolation_monitor": {
+        "cmds": {
+          "start": {
+            "description": "Start recurring isolation measurements. The device should monitor the isolation status until stopped and publish the resistance data in regular intervals. The actual interval is device dependent."
+          },
+          "stop": {
+            "description": "Stop recurring measurements. The device should stop to monitor the isolation resistance and stop publishing the data."
+          }
+        },
+        "description": "This interface defines an isolation monitoring device (IMD) according to IEC 61557-8 for DC charging. This is used to verify isolation of the DC lines before starting high voltage charging and during charging.",
+        "vars": {
+          "IsolationMeasurement": {
+            "$ref": "/isolation_monitor#/IsolationMeasurement",
+            "description": "Isolation monitoring measurement results",
+            "type": "object"
+          }
+        }
+      },
+      "kvs": {
+        "cmds": {
+          "delete": {
+            "arguments": {
+              "key": {
+                "description": "Key to delete the value for",
+                "pattern": "^[A-Za-z0-9_.]+$",
+                "type": "string"
+              }
+            },
+            "description": "This command removes the value stored under a given key"
+          },
+          "exists": {
+            "arguments": {
+              "key": {
+                "description": "Key to check the existence for",
+                "pattern": "^[A-Za-z0-9_.]+$",
+                "type": "string"
+              }
+            },
+            "description": "This command checks if something is stored under a given key",
+            "result": {
+              "description": "Returns 'True' if something was stored for this key",
+              "type": "boolean"
+            }
+          },
+          "load": {
+            "arguments": {
+              "key": {
+                "description": "Key to load the value for",
+                "pattern": "^[A-Za-z0-9_.]+$",
+                "type": "string"
+              }
+            },
+            "description": "This command loads the previously stored value for a given key (it will return null if the key does not exist)",
+            "result": {
+              "description": "The previously stored value",
+              "type": [
+                "null",
+                "string",
+                "number",
+                "integer",
+                "boolean",
+                "array",
+                "object"
+              ]
+            }
+          },
+          "store": {
+            "arguments": {
+              "key": {
+                "description": "Key to store the value for",
+                "pattern": "^[A-Za-z0-9_.]*$",
+                "type": "string"
+              },
+              "value": {
+                "description": "Value to store",
+                "type": [
+                  "null",
+                  "string",
+                  "number",
+                  "integer",
+                  "boolean",
+                  "array",
+                  "object"
+                ]
+              }
+            },
+            "description": "This command stores a value under a given key"
+          }
+        },
+        "description": "This interface defines a simple key-value-store interface"
+      },
+      "ocpp": {
+        "cmds": {
+          "change_availability": {
+            "arguments": {
+              "request": {
+                "$ref": "/ocpp#/ChangeAvailabilityRequest",
+                "description": "The ChangeAvailabilityRequest as specified in OCPP2.0.1. For OCPP 1.6:",
+                "type": "object"
+              }
+            },
+            "description": "Allows to send a ChangeAvailabilityRequest internally (as can be done by the CSMS).",
+            "result": {
+              "$ref": "/ocpp#/ChangeAvailabilityResponse",
+              "description": "Response to ChangeAvailabilityRequest as specified in OCPP 2.0.1",
+              "type": "object"
+            }
+          },
+          "get_variables": {
+            "arguments": {
+              "requests": {
+                "description": "List of GetVariableRequest",
+                "items": {
+                  "$ref": "/ocpp#/GetVariableRequest",
+                  "minimum": 0,
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "description": "Command to get a variable from OCPP. With OCPP1.6: Retrieves a configuration key. With OCPP2.0.1: Retrieves a variable with value from the device model storage",
+            "result": {
+              "description": "List of GetVariableResult containing the result for every requested value. Preserves the order of the input requests.",
+              "items": {
+                "$ref": "/ocpp#/GetVariableResult",
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "monitor_variables": {
+            "arguments": {
+              "component_variables": {
+                "description": "List of ComponentVariable(s) to monitor",
+                "items": {
+                  "$ref": "/ocpp#/ComponentVariable",
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "description": "Command to start monitoring the given ComponentVariable(s). Any of the provided configuration keys will be published on change by the CSMS. Consecutive calls of this operation will not override but extend the existing monitors. With OCPP1.6: This command can be used to monitor configuration keys With OCPP2.0.1: This command can be used to monitor any kind of variable in the device model storage"
+          },
+          "restart": {
+            "description": "Connects the websocket and enables OCPP communication after a previous stop call.",
+            "result": {
+              "description": "Returns true if the service could be restarted successfully, else false",
+              "type": "boolean"
+            }
+          },
+          "security_event": {
+            "arguments": {
+              "info": {
+                "description": "Additional information about the occurred security event",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the security event",
+                "type": "string"
+              }
+            },
+            "description": "Triggers a SecurityEventNotification.req at the CSMS. This event is queued with a guaranteed delivery to the CSMS."
+          },
+          "set_variables": {
+            "arguments": {
+              "requests": {
+                "description": "List of SetVariableRequests",
+                "items": {
+                  "$ref": "/ocpp#/SetVariableRequest",
+                  "minimum": 0,
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "description": "Command to set a variable at OCPP. With OCPP1.6: This command can be used to set custom configuration keys (others will be rejected) With OCPP2.0.1: This command can be used to set variables in the device model storage",
+            "result": {
+              "description": "List of SetVariableResult containing the result for every requested set operation",
+              "items": {
+                "$ref": "/ocpp#/SetVariableResult",
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "stop": {
+            "description": "Disconnects the websocket connection and stops the OCPP communication. No OCPP messages will be stored and sent after a restart.",
+            "result": {
+              "description": "Returns true if the service could be stopped successfully, else false",
+              "type": "boolean"
+            }
+          }
+        },
+        "description": "This interface allows to control an OCPP service and set and get data from the OCPP service. It is designed to be used for both OCPP1.6 and OCPP2.0.1 module implementations. Therefore, the vars, commands and types are based more on the definitions of OCPP2.0.1, as this offers more flexibility and it is easier to transfer to the capabilities of OCPP1.6 than vice versa.",
+        "vars": {
+          "charging_schedules": {
+            "description": "Object that contains OCPP charging schedules of all connectors. The object contains one composite charging schedule for each connector id starting from connector 0. Connector 0 contains a schedule for the whole charging station.",
+            "type": "object"
+          },
+          "event_data": {
+            "$ref": "/ocpp#/EventData",
+            "description": "Published for a component variable combination when a variable with a monitor has been changed For OCPP1.6: The object may only contain the required properties of the EventData type because in OCPP1.6\n  there is not more information available or required.\nFor OCPP2.0.1: The object may contain all available properties",
+            "type": "object"
+          },
+          "is_connected": {
+            "description": "Indicates if chargepoint is connected to CSMS",
+            "type": "boolean"
+          },
+          "ocpp_transaction_event": {
+            "$ref": "/ocpp#/OcppTransactionEvent",
+            "description": "Emits events related to OCPP transactions",
+            "type": "object"
+          },
+          "security_event": {
+            "$ref": "/ocpp#/SecurityEvent",
+            "description": "Published when an internal security event occurred",
+            "type": "object"
+          }
+        }
+      },
+      "ocpp_1_6_charge_point": {
+        "cmds": {
+          "get_configuration_key": {
+            "arguments": {
+              "keys": {
+                "description": "List of keys for which the values are requested. If empty, all keys and values are returned",
+                "items": {
+                  "description": "A key",
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "description": "Gets the response to the requested configuration key containing a list of the values of the requested keys  and a list of the keys that are unknown",
+            "result": {
+              "$ref": "/ocpp#/GetConfigurationResponse",
+              "description": "Response to the requested operation",
+              "type": "object"
+            }
+          },
+          "monitor_configuration_keys": {
+            "arguments": {
+              "keys": {
+                "description": "Keys that should be monitored",
+                "items": {
+                  "description": "Key that should be montired",
+                  "maximum": 50,
+                  "type": "string"
+                },
+                "type": "array"
+              }
+            },
+            "description": "Monitors the given configuration key. In case this configuration keys is changed by the CSMS the configuration key the changed configuration key will be published. Consecutive calls of this operation will not override but extend the existing monitors"
+          },
+          "restart": {
+            "description": "Connects the websocket and enables OCPP communication after a previous stop call.",
+            "result": {
+              "description": "Returns true if the service could be restarted successfully, else false",
+              "type": "boolean"
+            }
+          },
+          "security_event": {
+            "arguments": {
+              "info": {
+                "description": "Additional information about the occurred security event",
+                "type": "string"
+              },
+              "type": {
+                "description": "type of the security event",
+                "type": "string"
+              }
+            },
+            "description": "Triggers a SecurityEventNotification.req at the CSMS. This event is queued with a guaranteed delivery to the CSMS."
+          },
+          "set_custom_configuration_key": {
+            "arguments": {
+              "key": {
+                "description": "Key that should be set",
+                "maximum": 50,
+                "type": "string"
+              },
+              "value": {
+                "description": "Value that should be set for the given key",
+                "maximum": 500,
+                "type": "string"
+              }
+            },
+            "description": "Command to set a custom configuration key. Its not possible to set standardized configuration keys externally",
+            "result": {
+              "$ref": "/ocpp#/ConfigurationStatus",
+              "description": "Indicates the result of the requested operation",
+              "type": "string"
+            }
+          },
+          "stop": {
+            "description": "Disconnects the websocket connection and stops the OCPP communication. No OCPP messages will be stored and sent after a restart.",
+            "result": {
+              "description": "Returns true if the service could be stopped successfully, else false",
+              "type": "boolean"
+            }
+          }
+        },
+        "description": "This interface defines a OCPP 1.6 charge point",
+        "vars": {
+          "charging_schedules": {
+            "description": "Object that contains OCPP charging schedules of all connectors. The object contains one composite charging schedule for each connector id starting from connector 0. Connector 0 contains a schedule for the whole charging station.",
+            "type": "object"
+          },
+          "configuration_key": {
+            "$ref": "/ocpp#/KeyValue",
+            "description": "Published when a configuration key has been changed by the CSMS and a monitor has been registered using the command monitor_configuration_keys",
+            "type": "object"
+          },
+          "is_connected": {
+            "description": "Indicates if chargepoint is connected to CSMS",
+            "type": "boolean"
+          },
+          "security_event": {
+            "$ref": "/ocpp#/SecurityEvent",
+            "description": "Published when an internal security event occured",
+            "type": "object"
+          }
+        }
+      },
+      "ocpp_data_transfer": {
+        "cmds": {
+          "data_transfer": {
+            "arguments": {
+              "request": {
+                "$ref": "/ocpp#/DataTransferRequest",
+                "description": "Request object containing data transfer request",
+                "type": "object"
+              }
+            },
+            "description": "Performs a OCPP data transfer request and returns the response",
+            "result": {
+              "$ref": "/ocpp#/DataTransferResponse",
+              "description": "Result object containing data transfer response",
+              "type": "object"
+            }
+          }
+        },
+        "description": "This interface defines a OCPP data transfer"
+      },
+      "power": {
+        "description": "This interface defines the interface of a power supply",
+        "vars": {
+          "max_current": {
+            "description": "This is the maximum current of the power supply",
+            "maximum": 60,
+            "minimum": 1,
+            "type": "number"
+          }
+        }
+      },
+      "power_supply_DC": {
+        "cmds": {
+          "getCapabilities": {
+            "description": "Get capabilities of power supply",
+            "result": {
+              "$ref": "/power_supply_DC#/Capabilities",
+              "description": "Capabilities",
+              "type": "object"
+            }
+          },
+          "setExportVoltageCurrent": {
+            "arguments": {
+              "current": {
+                "description": "Output current limit in Ampere",
+                "type": "number"
+              },
+              "voltage": {
+                "description": "Output voltage in Volt",
+                "type": "number"
+              }
+            },
+            "description": "Set output target voltage limit. Must be within reported limits."
+          },
+          "setImportVoltageCurrent": {
+            "arguments": {
+              "current": {
+                "description": "Input current limit in Ampere",
+                "type": "number"
+              },
+              "voltage": {
+                "description": "Current will be drawn if input is above this voltage (in Volt)",
+                "type": "number"
+              }
+            },
+            "description": "Set minimal import voltage and current limit.  Must be within reported limits."
+          },
+          "setMode": {
+            "arguments": {
+              "value": {
+                "$ref": "/power_supply_DC#/Mode",
+                "description": "Operation mode of power supply",
+                "type": "string"
+              }
+            },
+            "description": "Set operation mode of the bidirectional DC power supply"
+          }
+        },
+        "description": "Interface for power supplies used for DC charging",
+        "vars": {
+          "fault_code": {
+            "$ref": "/power_supply_DC#/FaultCode",
+            "description": "Fault code. Published when fault happens.",
+            "type": "string"
+          },
+          "mode": {
+            "$ref": "/power_supply_DC#/Mode",
+            "description": "Current mode. Published on change.",
+            "type": "string"
+          },
+          "voltage_current": {
+            "$ref": "/power_supply_DC#/VoltageCurrent",
+            "description": "Voltage/Current at the input/output",
+            "type": "object"
+          }
+        }
+      },
+      "powermeter": {
+        "cmds": {
+          "start_transaction": {
+            "arguments": {
+              "value": {
+                "$ref": "/powermeter#/TransactionReq",
+                "description": "All information that should be included in the signed OCMF packet",
+                "type": "object"
+              }
+            },
+            "description": "Starts a transaction on the power meter (for signed metering according to German Eichrecht)",
+            "result": {
+              "$ref": "/powermeter#/TransactionStartResponse",
+              "description": "True on success, False if transaction could not be started in the power meter",
+              "type": "object"
+            }
+          },
+          "stop_transaction": {
+            "arguments": {
+              "transaction_id": {
+                "description": "Transaction id",
+                "type": "string"
+              }
+            },
+            "description": "Stop the transaction on the power meter and return the signed metering information",
+            "result": {
+              "$ref": "/powermeter#/TransactionStopResponse",
+              "description": "Response to transaction stop request including OCMF string.",
+              "type": "object"
+            }
+          }
+        },
+        "description": "This interface defines a generic powermeter for 5 wire TN networks.",
+        "vars": {
+          "powermeter": {
+            "$ref": "/powermeter#/Powermeter",
+            "description": "Measured dataset",
+            "type": "object"
+          }
+        }
+      },
+      "reservation": {
+        "cmds": {
+          "cancel_reservation": {
+            "arguments": {
+              "reservation_id": {
+                "description": "Id of the reservation",
+                "type": "integer"
+              }
+            },
+            "description": "Cancels the reservation with the given reservation_id",
+            "result": {
+              "description": "Returns true if reservation was cancelled. Returns false if there was no reservation to cancel.",
+              "type": "boolean"
+            }
+          },
+          "reserve_now": {
+            "arguments": {
+              "connector_id": {
+                "description": "The id of the connector to be reserved. A value of 0 means that the reservation is not for a specific connector",
+                "type": "integer"
+              },
+              "reservation": {
+                "$ref": "/reservation#/Reservation",
+                "description": "The information about the Reservation to be placed",
+                "type": "object"
+              }
+            },
+            "description": "Reserves this evse.",
+            "result": {
+              "$ref": "/reservation#/ReservationResult",
+              "description": "Returns Accepted if reservation was succesfull or specifies error code.",
+              "type": "string"
+            }
+          }
+        },
+        "description": "Interface for reservations",
+        "vars": {}
+      },
+      "serial_communication_hub": {
+        "cmds": {
+          "modbus_read_holding_registers": {
+            "arguments": {
+              "first_register_address": {
+                "description": "Start address for read operation (16 bit address)",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "num_registers_to_read": {
+                "description": "Number of registers to read (16 bit each)",
+                "minimum": 1,
+                "type": "integer"
+              },
+              "target_device_id": {
+                "description": "ID (1 byte) of the device to send the commands to",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "description": "Send a Modbus RTU 'read holding registers' command via serial interface to the target hardware. (return value: response)",
+            "result": {
+              "$ref": "/serial_comm_hub_requests#/Result",
+              "description": "Result of the transfer",
+              "type": "object"
+            }
+          },
+          "modbus_read_input_registers": {
+            "arguments": {
+              "first_register_address": {
+                "description": "Start address for read operation (16 bit address)",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "num_registers_to_read": {
+                "description": "Number of registers to read (16 bit each)",
+                "minimum": 1,
+                "type": "integer"
+              },
+              "target_device_id": {
+                "description": "ID (1 byte) of the device to send the commands to",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "description": "Send a Modbus RTU 'read input registers' command via serial interface to the target hardware. (return value: response)",
+            "result": {
+              "$ref": "/serial_comm_hub_requests#/Result",
+              "description": "Result of the transfer",
+              "type": "object"
+            }
+          },
+          "modbus_write_multiple_registers": {
+            "arguments": {
+              "data_raw": {
+                "$ref": "/serial_comm_hub_requests#/VectorUint16",
+                "description": "Data content to be written to the above selected registers (in 16 bit words)",
+                "type": "object"
+              },
+              "first_register_address": {
+                "description": "Start address for write operation (16 bit address)",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "target_device_id": {
+                "description": "ID (1 byte) of the device to send the commands to",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "description": "Send a Modbus RTU 'write multiple registers' command via serial interface to the target hardware. (return value: response)",
+            "result": {
+              "$ref": "/serial_comm_hub_requests#/StatusCodeEnum",
+              "description": "Status code of the transfer",
+              "type": "string"
+            }
+          },
+          "modbus_write_single_register": {
+            "arguments": {
+              "data": {
+                "description": "Data content to be written to the above selected register",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "register_address": {
+                "description": "Address of the register to write to (16 bit address)",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "target_device_id": {
+                "description": "ID (1 byte) of the device to send the commands to",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "description": "Send a Modbus RTU 'write single register' command via serial interface to the target hardware. (return value: response)",
+            "result": {
+              "$ref": "/serial_comm_hub_requests#/StatusCodeEnum",
+              "description": "Status code of the transfer",
+              "type": "string"
+            }
+          },
+          "nonstd_read": {
+            "arguments": {
+              "first_register_address": {
+                "description": "Start address for write operation (16 bit address)",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "num_registers_to_read": {
+                "description": "Number of registers to read (16 bit each)",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "target_device_id": {
+                "description": "ID (1 byte) of the device to send the commands to",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "description": "Non standard mode to read registers in read coils mode, but getting a malformed reply. Used e.g. by GYDCG-UBC1 isolation monitor.",
+            "result": {
+              "$ref": "/serial_comm_hub_requests#/Result",
+              "description": "Result of the transfer",
+              "type": "object"
+            }
+          },
+          "nonstd_write": {
+            "arguments": {
+              "first_register_address": {
+                "description": "Start address for read operation (16 bit address)",
+                "maximum": 65535,
+                "minimum": 0,
+                "type": "integer"
+              },
+              "num_registers_to_read": {
+                "description": "Number of registers to read (16 bit each)",
+                "minimum": 1,
+                "type": "integer"
+              },
+              "target_device_id": {
+                "description": "ID (1 byte) of the device to send the commands to",
+                "maximum": 255,
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "description": "Non standard mode to write registers in read discrete input mode without waiting for reply. Used e.g. by GYDCG-UBC1 isolation monitor."
+          }
+        },
+        "description": "This interface provides multiplexed access to one serial port (e.g. RS485) for multiple clients."
+      },
+      "session_cost": {
+        "description": "This interface publishes the running or finished session costs. This interface provides cost of one session. If we have more than one EVESEID, we need to  instantiate this interface for each EVSE.",
+        "vars": {
+          "session_cost": {
+            "$ref": "/session_cost#/SessionCost",
+            "description": "Session cost object containing the total cost of the session and a list of chunks",
+            "type": "object"
+          }
+        }
+      },
+      "slac": {
+        "cmds": {
+          "dlink_error": {
+            "description": "Terminate the data link and restart the matching process.",
+            "result": {
+              "description": "True on success.",
+              "type": "boolean"
+            }
+          },
+          "dlink_pause": {
+            "description": "Request power saving mode, while staying MATCHED.",
+            "result": {
+              "description": "True on success.",
+              "type": "boolean"
+            }
+          },
+          "dlink_terminate": {
+            "description": "Terminate the data link and become UNMATCHED.",
+            "result": {
+              "description": "True on success.",
+              "type": "boolean"
+            }
+          },
+          "enter_bcd": {
+            "description": "Signal pilot state change to B/C/D from A/E/F.",
+            "result": {
+              "description": "True on success, returns False if transition was unexpected and cannot be handled by SLAC state machine.",
+              "type": "boolean"
+            }
+          },
+          "leave_bcd": {
+            "description": "Signal pilot state change to A/E/F from B/C/D.",
+            "result": {
+              "description": "True on success, returns False if transition was unexpected and cannot be handled by SLAC state machine.",
+              "type": "boolean"
+            }
+          },
+          "reset": {
+            "arguments": {
+              "enable": {
+                "description": "true: start SLAC after reset, false: stop SLAC",
+                "type": "boolean"
+              }
+            },
+            "description": "Reset SLAC"
+          }
+        },
+        "description": "ISO15118-3 SLAC interface for EVSE side",
+        "vars": {
+          "dlink_ready": {
+            "description": "Inform higher layers about a change in data link status. Emits true if link was set up and false when the link is shut down.",
+            "type": "boolean"
+          },
+          "ev_mac_address": {
+            "description": "Inform higher layers about the MAC address of the vehicle (upper case)",
+            "pattern": "^[A-F0-9]{2}(:[A-F0-9]{2}){5}$",
+            "type": "string"
+          },
+          "request_error_routine": {
+            "description": "Inform the higher layer to execute the error routine for a SLAC connection retry",
+            "type": "null"
+          },
+          "state": {
+            "description": "Provides the state enum.",
+            "enum": [
+              "UNMATCHED",
+              "MATCHING",
+              "MATCHED"
+            ],
+            "type": "string"
+          }
+        }
+      },
+      "solar_forecast": {
+        "description": "This interface defines the interface for an solar energy production forecast",
+        "vars": {
+          "forecast": {
+            "description": "Forecast JSON Object containing a timestamp and the energy forecast in watthours.",
+            "type": "object"
+          }
+        }
+      },
+      "sunspec_ac_meter": {
+        "cmds": {
+          "get_sunspec_ac_meter_value": {
+            "arguments": {
+              "auth_token": {
+                "description": "Auth token",
+                "maxLength": 20,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "description": "Returns a sunspec ac meter model",
+            "result": {
+              "$ref": "/sunspec_ac_meter#/Result",
+              "description": "Sunspec ac meter model",
+              "type": "object"
+            }
+          }
+        },
+        "description": "Get sunspec ac meter measurement"
+      },
+      "sunspec_reader": {
+        "description": "This interface defines a generic Sunspec reader, which can be used to fetch values from Sunspec devices when an implementation is given.",
+        "vars": {
+          "measurement": {
+            "additionalProperties": true,
+            "description": "Measured dataset",
+            "properties": {
+              "timestamp": {
+                "description": "Timestamp of measurement",
+                "type": "number"
+              },
+              "value": {
+                "description": "Measurement value",
+                "type": "number"
+              }
+            },
+            "required": [
+              "timestamp"
+            ],
+            "type": "object"
+          }
+        }
+      },
+      "sunspec_scanner": {
+        "cmds": {
+          "scan_device": {
+            "arguments": {
+              "ip_address": {
+                "description": "local IP-address of the Sunspec device",
+                "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
+                "type": "string"
+              }
+            },
+            "description": "Scans complete device",
+            "result": {
+              "description": "Returns a json overview of the scan",
+              "type": "object"
+            }
+          },
+          "scan_network": {
+            "description": "Scans local network",
+            "result": {
+              "description": "Returns a json overview of the scan",
+              "type": "object"
+            }
+          },
+          "scan_port": {
+            "arguments": {
+              "ip_address": {
+                "description": "local IP-address of the Sunspec device",
+                "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
+                "type": "string"
+              },
+              "port": {
+                "description": "Modbus port",
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "description": "Scans all units at a device's port",
+            "result": {
+              "description": "Returns a json overview of the scan",
+              "type": "object"
+            }
+          },
+          "scan_unit": {
+            "arguments": {
+              "ip_address": {
+                "description": "local IP-address of the Sunspec device",
+                "pattern": "^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$",
+                "type": "string"
+              },
+              "port": {
+                "description": "Modbus port",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "unit": {
+                "description": "Modbus unit id",
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "description": "Scans specific unit at a device's port",
+            "result": {
+              "description": "Returns a json overview of the scan",
+              "type": "object"
+            }
+          }
+        },
+        "description": "This class defines the global Sunspec scanner"
+      },
+      "system": {
+        "cmds": {
+          "allow_firmware_installation": {
+            "description": "Call to allow a firmware installation to proceed"
+          },
+          "get_boot_reason": {
+            "description": "Call to get the boot reason of the system",
+            "result": {
+              "$ref": "/system#/BootReason",
+              "description": "Returns the boot reason of the system",
+              "type": "string"
+            }
+          },
+          "is_reset_allowed": {
+            "arguments": {
+              "type": {
+                "$ref": "/system#/ResetType",
+                "description": "Type of the reset (Soft or Hard)",
+                "type": "string"
+              }
+            },
+            "description": "Call to determine if a reset of the system is allowed",
+            "result": {
+              "description": "Indicates if the system can be reset",
+              "type": "boolean"
+            }
+          },
+          "reset": {
+            "arguments": {
+              "scheduled": {
+                "description": "Indicates if this reset command was scheduled or immediately executed. A scheduled reset means that the system was waiting for all transactions to finish before this command was executed. This value is only informational.",
+                "type": "boolean"
+              },
+              "type": {
+                "$ref": "/system#/ResetType",
+                "description": "Type of the reset (Soft or Hard)",
+                "type": "string"
+              }
+            },
+            "description": "Call to reset the system immediately"
+          },
+          "set_system_time": {
+            "arguments": {
+              "timestamp": {
+                "description": "The new system time in RFC3339 format",
+                "format": "date-time",
+                "type": "string"
+              }
+            },
+            "description": "Call to set the system time of EVerest",
+            "result": {
+              "description": "Returns true if the system time could be set successfully, else false",
+              "type": "boolean"
+            }
+          },
+          "update_firmware": {
+            "arguments": {
+              "firmware_update_request": {
+                "$ref": "/system#/FirmwareUpdateRequest",
+                "description": "Meta data containing information about the firmware request",
+                "type": "object"
+              }
+            },
+            "description": "Call to start a firmware update",
+            "result": {
+              "$ref": "/system#/UpdateFirmwareResponse",
+              "description": "Returns the result of the attempt to update the firmware",
+              "type": "string"
+            }
+          },
+          "upload_logs": {
+            "arguments": {
+              "upload_logs_request": {
+                "$ref": "/system#/UploadLogsRequest",
+                "description": "Meta data containing information about the log request request",
+                "type": "object"
+              }
+            },
+            "description": "Call to start a log upload",
+            "result": {
+              "$ref": "/system#/UploadLogsResponse",
+              "description": "Returns the result of the attempt to upload the logs",
+              "type": "object"
+            }
+          }
+        },
+        "description": "Interface for system wide operations of EVerest",
+        "vars": {
+          "firmware_update_status": {
+            "$ref": "/system#/FirmwareUpdateStatus",
+            "description": "Describes the current status of a firmware update of the system",
+            "type": "object"
+          },
+          "log_status": {
+            "$ref": "/system#/LogStatus",
+            "description": "Describes the current status of log upload of the system",
+            "type": "object"
+          }
+        }
+      },
+      "test_control": {
+        "cmds": {
+          "start_charging": {
+            "arguments": {
+              "mode": {
+                "description": "Sets charging mode (e.g. raw, iso15118)",
+                "maxLength": 20,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "description": "Enables the CarSimulator to begin charging",
+            "result": {
+              "description": "Charging state of the CarSimulator",
+              "type": "string"
+            }
+          }
+        },
+        "description": "This interface defines the everest-testing control functions on everest-core",
+        "vars": {
+          "state": {
+            "description": "State of the test control instance",
+            "type": "string"
+          }
+        }
+      },
+      "tibber_price_forecast": {
+        "description": "This interface defines the interface for an energy price forecast",
+        "vars": {
+          "forecast": {
+            "description": "Forecast JSON Object containing a timestamp and the price forecast",
+            "type": "object"
+          }
+        }
+      },
+      "uk_random_delay": {
+        "cmds": {
+          "cancel": {
+            "description": "Cancels a running random delay. The effect is the same as if the time expired just now."
+          },
+          "disable": {
+            "description": "Call to disable the random delay feature"
+          },
+          "enable": {
+            "description": "Call to enable the random delay feature"
+          },
+          "set_duration_s": {
+            "arguments": {
+              "value": {
+                "description": "Maximum duration in seconds",
+                "type": "integer"
+              }
+            },
+            "description": "Set the maximum duration of the random delay. Default is 600 seconds."
+          }
+        },
+        "description": "This interface provides functions for a random delay feature as required by the UK smart charging regulations The logic whether to use a random delay or not is not included in EvseManager, a different module can use this interface to enable/disable the feature during runtime and cancel a running random delay. This always applies to all connectors of this EVSE. By default, on start up, random delays are disabled.",
+        "vars": {
+          "countdown": {
+            "$ref": "/uk_random_delay#/CountDown",
+            "description": "Countdown of the currently running random delay",
+            "type": "object"
+          }
+        }
+      },
+      "yeti_simulation_control": {
+        "cmds": {
+          "enable": {
+            "arguments": {
+              "value": {
+                "description": "true to enable, false to disable",
+                "type": "boolean"
+              }
+            },
+            "description": "Enable/disable the simulation"
+          },
+          "setSimulationData": {
+            "arguments": {
+              "value": {
+                "$ref": "/yeti#/SimulationData",
+                "description": "simulation data",
+                "type": "object"
+              }
+            },
+            "description": "Sends a new simulation data object"
+          }
+        },
+        "description": "This defines a HIL simulation interface",
+        "vars": {
+          "enabled": {
+            "description": "Indicates whether simulation interface is currently active or not",
+            "type": "boolean"
+          },
+          "simulation_feedback": {
+            "description": "Feedback from simulation (everything that a car can measure on the CP signal plus the indication whether relais are on or off)",
+            "type": "object"
           }
         }
       }
     };
     const SampleConfigList = {
-      "sample-config-sil": {
-        active_modules: {
-          auth: {
-            connections: {
-              tokenProvider: [
+      "config-sil-dc": {
+        "active_modules": {
+          "api": {
+            "module": "API",
+            "connections": {
+              "evse_manager": [
                 {
-                  implementation_id: "main",
-                  module_id: "token_provider_1"
+                  "module_id": "evse_manager",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_module": {
+              "charger_information_file": "",
+              "hw_caps_max_current_export_decimal_places": 2,
+              "hw_caps_max_current_export_round_to": 0,
+              "hw_caps_max_current_import_decimal_places": 2,
+              "hw_caps_max_current_import_round_to": 0,
+              "hw_caps_max_plug_temperature_C_decimal_places": 2,
+              "hw_caps_max_plug_temperature_C_round_to": 0,
+              "hw_caps_min_current_export_decimal_places": 2,
+              "hw_caps_min_current_export_round_to": 0,
+              "hw_caps_min_current_import_decimal_places": 2,
+              "hw_caps_min_current_import_round_to": 0,
+              "limits_max_current_decimal_places": 2,
+              "limits_max_current_round_to": 0,
+              "powermeter_VAR_decimal_places": 2,
+              "powermeter_VAR_round_to": 0,
+              "powermeter_current_decimal_places": 2,
+              "powermeter_current_round_to": 0,
+              "powermeter_energy_export_decimal_places": 2,
+              "powermeter_energy_export_round_to": 0,
+              "powermeter_energy_import_decimal_places": 2,
+              "powermeter_energy_import_round_to": 0,
+              "powermeter_frequency_decimal_places": 2,
+              "powermeter_frequency_round_to": 0,
+              "powermeter_power_decimal_places": 2,
+              "powermeter_power_round_to": 0,
+              "powermeter_voltage_decimal_places": 2,
+              "powermeter_voltage_round_to": 0,
+              "telemetry_evse_temperature_C_decimal_places": 2,
+              "telemetry_evse_temperature_C_round_to": 0,
+              "telemetry_fan_rpm_decimal_places": 2,
+              "telemetry_fan_rpm_round_to": 0,
+              "telemetry_plug_temperature_C_decimal_places": 2,
+              "telemetry_plug_temperature_C_round_to": 0,
+              "telemetry_supply_voltage_12V_decimal_places": 2,
+              "telemetry_supply_voltage_12V_round_to": 0,
+              "telemetry_supply_voltage_minus_12V_decimal_places": 2,
+              "telemetry_supply_voltage_minus_12V_round_to": 0
+            }
+          },
+          "auth": {
+            "module": "Auth",
+            "connections": {
+              "evse_manager": [
+                {
+                  "module_id": "evse_manager",
+                  "implementation_id": "evse"
                 }
               ],
-              tokenValidator: [
+              "token_provider": [
                 {
-                  implementation_id: "main",
-                  module_id: "token_validator"
-                }
-              ]
-            },
-            module: "JsAuth",
-            "x-view-model": {
-              position: {
-                x: 6,
-                y: 1
-              },
-              terminals: {
-                bottom: [
-                  {
-                    id: "tokenProvider",
-                    interface: "auth_token_provider",
-                    type: "requirement"
-                  }
-                ],
-                left: [
-                  {
-                    id: "main",
-                    interface: "auth",
-                    type: "provide"
-                  }
-                ],
-                right: [
-                  {
-                    id: "tokenValidator",
-                    interface: "auth_token_validator",
-                    type: "requirement"
-                  }
-                ],
-                top: []
-              }
-            }
-          },
-          car_simulator: {
-            connections: {
-              simulation_control: [
-                {
-                  implementation_id: "yeti_simulation_control",
-                  module_id: "yeti_driver"
-                }
-              ]
-            },
-            module: "JsCarSimulator",
-            "x-view-model": {
-              position: {
-                x: -28,
-                y: 35
-              },
-              terminals: {
-                bottom: [],
-                left: [],
-                right: [
-                  {
-                    id: "main",
-                    interface: "car_simulator",
-                    type: "provide"
-                  }
-                ],
-                top: [
-                  {
-                    id: "simulation_control",
-                    interface: "yeti_simulation_control",
-                    type: "requirement"
-                  }
-                ]
-              }
-            }
-          },
-          energy_manager: {
-            connections: {
-              energy_trunk: [
-                {
-                  implementation_id: "energy_grid",
-                  module_id: "grid_connection_point"
-                }
-              ]
-            },
-            module: "EnergyManager",
-            "x-view-model": {
-              position: {
-                x: 2,
-                y: 38
-              },
-              terminals: {
-                bottom: [],
-                left: [],
-                right: [
-                  {
-                    id: "main",
-                    interface: "energy_manager",
-                    type: "provide"
-                  }
-                ],
-                top: [
-                  {
-                    id: "energy_trunk",
-                    interface: "energy",
-                    type: "requirement"
-                  }
-                ]
-              }
-            }
-          },
-          evse_manager: {
-            connections: {
-              auth: [
-                {
-                  implementation_id: "main",
-                  module_id: "auth"
+                  "module_id": "token_provider",
+                  "implementation_id": "main"
                 }
               ],
-              bsp: [
+              "token_validator": [
                 {
-                  implementation_id: "board_support",
-                  module_id: "yeti_driver"
+                  "module_id": "token_validator",
+                  "implementation_id": "main"
+                }
+              ]
+            },
+            "config_module": {
+              "connection_timeout": 10,
+              "ignore_connector_faults": false,
+              "master_pass_group_id": "",
+              "prioritize_authorization_over_stopping_transaction": true,
+              "selection_algorithm": "FindFirst"
+            }
+          },
+          "car_simulator": {
+            "module": "JsCarSimulator",
+            "connections": {
+              "ev": [
+                {
+                  "module_id": "iso15118_car",
+                  "implementation_id": "ev"
                 }
               ],
-              powermeter: [
+              "simulation_control": [
                 {
-                  implementation_id: "powermeter",
-                  module_id: "yeti_driver"
-                }
-              ]
-            },
-            module: "EvseManager",
-            "x-view-model": {
-              position: {
-                x: -11,
-                y: 13
-              },
-              terminals: {
-                bottom: [
-                  {
-                    id: "energy_grid",
-                    interface: "energy",
-                    type: "provide"
-                  }
-                ],
-                left: [
-                  {
-                    id: "bsp",
-                    interface: "board_support_AC",
-                    type: "requirement"
-                  },
-                  {
-                    id: "powermeter",
-                    interface: "powermeter",
-                    type: "requirement"
-                  }
-                ],
-                right: [
-                  {
-                    id: "evse",
-                    interface: "evse_manager",
-                    type: "provide"
-                  }
-                ],
-                top: [
-                  {
-                    id: "auth",
-                    interface: "auth",
-                    type: "requirement"
-                  }
-                ]
-              }
-            }
-          },
-          grid_connection_point: {
-            connections: {
-              energy_consumer: [
-                {
-                  implementation_id: "energy_grid",
-                  module_id: "evse_manager"
+                  "module_id": "yeti_driver",
+                  "implementation_id": "yeti_simulation_control"
                 }
               ],
-              powermeter: [
+              "slac": [
                 {
-                  implementation_id: "powermeter",
-                  module_id: "yeti_driver"
+                  "module_id": "slac",
+                  "implementation_id": "ev"
                 }
               ]
             },
-            module: "EnergyNode",
-            "x-view-model": {
-              position: {
-                x: 2,
-                y: 26
-              },
-              terminals: {
-                bottom: [
-                  {
-                    id: "energy_grid",
-                    interface: "energy",
-                    type: "provide"
-                  }
-                ],
-                left: [
-                  {
-                    id: "energy_consumer",
-                    interface: "energy",
-                    type: "requirement"
-                  },
-                  {
-                    id: "powermeter",
-                    interface: "powermeter",
-                    type: "requirement"
-                  },
-                  {
-                    id: "price_information",
-                    interface: "energy_price_information",
-                    type: "requirement"
-                  }
-                ],
-                right: [],
-                top: []
-              }
+            "config_module": {
+              "auto_enable": true,
+              "auto_exec": false,
+              "auto_exec_commands": "sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
+              "connector_id": 1,
+              "dc_discharge_max_current_limit": 300,
+              "dc_discharge_max_power_limit": 15e4,
+              "dc_discharge_target_current": 5,
+              "dc_discharge_v2g_minimal_soc": 20,
+              "dc_energy_capacity": 6e4,
+              "dc_max_current_limit": 300,
+              "dc_max_power_limit": 15e4,
+              "dc_max_voltage_limit": 900,
+              "dc_target_current": 20,
+              "dc_target_voltage": 400,
+              "support_sae_j2847": false
             }
           },
-          iso15118_charger: {
-            connections: {},
-            module: "JsRiseV2G",
-            "x-view-model": {
-              position: {
-                x: -29,
-                y: 4
-              },
-              terminals: {
-                bottom: [],
-                left: [
-                  {
-                    id: "slac",
-                    interface: "ISO15118_3_SLAC",
-                    type: "requirement"
-                  }
-                ],
-                right: [
-                  {
-                    id: "ac_charger",
-                    interface: "ISO15118_ac_charger",
-                    type: "provide"
-                  },
-                  {
-                    id: "dc_charger",
-                    interface: "ISO15118_dc_charger",
-                    type: "provide"
-                  },
-                  {
-                    id: "main",
-                    interface: "empty",
-                    type: "provide"
-                  }
-                ],
-                top: []
-              }
-            }
-          },
-          token_provider_1: {
-            connections: {
-              evse: [
+          "energy_manager": {
+            "module": "EnergyManager",
+            "connections": {
+              "energy_trunk": [
                 {
-                  implementation_id: "evse",
-                  module_id: "evse_manager"
+                  "module_id": "grid_connection_point",
+                  "implementation_id": "energy_grid"
                 }
               ]
             },
-            module: "JsDummyTokenProvider",
-            "x-view-model": {
-              position: {
-                x: 6,
-                y: 13
-              },
-              terminals: {
-                bottom: [],
-                left: [
-                  {
-                    id: "evse",
-                    interface: "evse_manager",
-                    type: "requirement"
-                  }
-                ],
-                right: [],
-                top: [
-                  {
-                    id: "main",
-                    interface: "auth_token_provider",
-                    type: "provide"
-                  }
-                ]
+            "config_module": {
+              "debug": false,
+              "nominal_ac_voltage": 230,
+              "schedule_interval_duration": 60,
+              "schedule_total_duration": 1,
+              "slice_ampere": 0.5,
+              "slice_watt": 500,
+              "update_interval": 1
+            }
+          },
+          "evse_manager": {
+            "module": "EvseManager",
+            "connections": {
+              "bsp": [
+                {
+                  "module_id": "yeti_driver",
+                  "implementation_id": "board_support"
+                }
+              ],
+              "hlc": [
+                {
+                  "module_id": "iso15118_charger",
+                  "implementation_id": "charger"
+                }
+              ],
+              "imd": [
+                {
+                  "module_id": "imd",
+                  "implementation_id": "main"
+                }
+              ],
+              "powermeter_car_side": [
+                {
+                  "module_id": "powersupply_dc",
+                  "implementation_id": "powermeter"
+                }
+              ],
+              "powersupply_DC": [
+                {
+                  "module_id": "powersupply_dc",
+                  "implementation_id": "main"
+                }
+              ],
+              "slac": [
+                {
+                  "module_id": "slac",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_module": {
+              "ac_enforce_hlc": false,
+              "ac_hlc_enabled": false,
+              "ac_hlc_use_5percent": false,
+              "ac_nominal_voltage": 230,
+              "ac_with_soc": false,
+              "autocharge_use_slac_instead_of_hlc": false,
+              "charge_mode": "DC",
+              "connector_id": 1,
+              "country_code": "DE",
+              "dbg_hlc_auth_after_tstep": false,
+              "dc_isolation_voltage_V": 500,
+              "disable_authentication": false,
+              "ev_receipt_required": false,
+              "evse_id": "DE*PNX*E12345*1",
+              "evse_id_din": "49A80737A45678",
+              "external_ready_to_start_charging": false,
+              "hack_allow_bpt_with_iso2": true,
+              "hack_fix_hlc_integer_current_requests": false,
+              "hack_pause_imd_during_precharge": false,
+              "hack_present_current_offset": 0,
+              "hack_skoda_enyaq": false,
+              "hack_sleep_in_cable_check": 0,
+              "hack_sleep_in_cable_check_volkswagen": 0,
+              "has_ventilation": true,
+              "logfile_suffix": "session_uuid",
+              "max_current_export_A": 32,
+              "max_current_import_A": 32,
+              "payment_enable_contract": true,
+              "payment_enable_eim": true,
+              "request_zero_power_in_idle": false,
+              "sae_j2847_2_bpt_enabled": false,
+              "sae_j2847_2_bpt_mode": "V2G",
+              "session_logging": true,
+              "session_logging_path": "/tmp/everest-logs",
+              "session_logging_xml": false,
+              "soft_over_current_measurement_noise_A": 0.5,
+              "soft_over_current_tolerance_percent": 10,
+              "switch_to_minimum_voltage_after_cable_check": false,
+              "three_phases": true,
+              "uk_smartcharging_random_delay_at_any_change": true,
+              "uk_smartcharging_random_delay_enable": false,
+              "uk_smartcharging_random_delay_max_duration": 600
+            }
+          },
+          "evse_security": {
+            "module": "EvseSecurity",
+            "connections": {},
+            "config_module": {
+              "csms_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem",
+              "csms_leaf_cert_directory": "client/csms",
+              "csms_leaf_key_directory": "client/csms",
+              "mf_ca_bundle": "ca/mf/MF_ROOT_CA.pem",
+              "mo_ca_bundle": "ca/mo/MO_ROOT_CA.pem",
+              "private_key_password": "123456",
+              "secc_leaf_cert_directory": "client/cso",
+              "secc_leaf_key_directory": "client/cso",
+              "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem"
+            }
+          },
+          "grid_connection_point": {
+            "module": "EnergyNode",
+            "connections": {
+              "energy_consumer": [
+                {
+                  "module_id": "evse_manager",
+                  "implementation_id": "energy_grid"
+                }
+              ],
+              "powermeter": [
+                {
+                  "module_id": "yeti_driver",
+                  "implementation_id": "powermeter"
+                }
+              ]
+            },
+            "config_module": {
+              "fuse_limit_A": 40,
+              "phase_count": 3
+            }
+          },
+          "imd": {
+            "module": "IMDSimulator",
+            "connections": {},
+            "config_implementation": {
+              "main": {
+                "interval": 1e3,
+                "resistance_F_Ohm": 9e5
               }
             }
           },
-          token_validator: {
-            connections: {},
-            module: "JsDummyTokenValidator",
-            "x-view-model": {
-              position: {
-                x: 22,
-                y: 1
-              },
-              terminals: {
-                bottom: [],
-                left: [
-                  {
-                    id: "main",
-                    interface: "auth_token_validator",
-                    type: "provide"
-                  }
-                ],
-                right: [],
-                top: []
+          "iso15118_car": {
+            "module": "PyEvJosev",
+            "connections": {},
+            "config_module": {
+              "device": "auto",
+              "enforce_tls": false,
+              "is_cert_install_needed": false,
+              "supported_DIN70121": true,
+              "supported_ISO15118_2": true,
+              "supported_ISO15118_20_AC": false,
+              "supported_ISO15118_20_DC": false,
+              "tls_active": false
+            }
+          },
+          "iso15118_charger": {
+            "module": "EvseV2G",
+            "connections": {
+              "security": [
+                {
+                  "module_id": "evse_security",
+                  "implementation_id": "main"
+                }
+              ]
+            },
+            "config_module": {
+              "auth_timeout_eim": 300,
+              "auth_timeout_pnc": 55,
+              "device": "auto",
+              "supported_DIN70121": false,
+              "supported_ISO15118_2": true,
+              "terminate_connection_on_failed_response": false,
+              "tls_key_logging": false,
+              "tls_key_logging_path": "/tmp",
+              "tls_security": "allow",
+              "tls_timeout": 15e3,
+              "verify_contract_cert_chain": false
+            }
+          },
+          "powersupply_dc": {
+            "module": "JsDCSupplySimulator",
+            "connections": {},
+            "config_implementation": {
+              "main": {
+                "bidirectional": true,
+                "max_current": 200,
+                "max_power": 15e4,
+                "max_voltage": 900,
+                "min_current": 1,
+                "min_voltage": 200
               }
             }
           },
-          yeti_driver: {
-            connections: {},
-            module: "JsYetiSimulator",
-            "x-view-model": {
-              position: {
-                x: -28,
-                y: 24
+          "slac": {
+            "module": "JsSlacSimulator",
+            "connections": {},
+            "config_implementation": {
+              "ev": {
+                "ev_id": "PIONIX_SAYS_HELLO"
               },
-              terminals: {
-                bottom: [
-                  {
-                    id: "yeti_simulation_control",
-                    interface: "yeti_simulation_control",
-                    type: "provide"
-                  }
-                ],
-                left: [
-                  {
-                    id: "yeti_extras",
-                    interface: "yeti_extras",
-                    type: "provide"
-                  },
-                  {
-                    id: "debug_state",
-                    interface: "debug_json",
-                    type: "provide"
-                  },
-                  {
-                    id: "debug_yeti",
-                    interface: "debug_json",
-                    type: "provide"
-                  }
-                ],
-                right: [
-                  {
-                    id: "debug_keepalive",
-                    interface: "debug_json",
-                    type: "provide"
-                  },
-                  {
-                    id: "debug_powermeter",
-                    interface: "debug_json",
-                    type: "provide"
-                  },
-                  {
-                    id: "powermeter",
-                    interface: "powermeter",
-                    type: "provide"
-                  }
-                ],
-                top: [
-                  {
-                    id: "board_support",
-                    interface: "board_support_AC",
-                    type: "provide"
-                  }
-                ]
+              "evse": {
+                "evse_id": "PIONIX_SAYS_HELLO",
+                "nid": "pionix!",
+                "number_of_sounds": 10
+              }
+            }
+          },
+          "token_provider": {
+            "module": "DummyTokenProvider",
+            "connections": {
+              "evse": [
+                {
+                  "module_id": "evse_manager",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_implementation": {
+              "main": {
+                "connector_id": 0,
+                "timeout": 10,
+                "token": "TOKEN1",
+                "type": "RFID"
+              }
+            }
+          },
+          "token_validator": {
+            "module": "DummyTokenValidator",
+            "connections": {},
+            "config_implementation": {
+              "main": {
+                "sleep": 0.25,
+                "validation_reason": "Token seems valid",
+                "validation_result": "Accepted"
+              }
+            }
+          },
+          "yeti_driver": {
+            "module": "JsYetiSimulator",
+            "connections": {},
+            "config_module": {
+              "connector_id": 1
+            }
+          }
+        },
+        "x-module-layout": {
+          "api": {
+            "position": {
+              "x": 37,
+              "y": 41
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "empty",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "evse_manager",
+                  "interface": "evse_manager",
+                  "type": "requirement"
+                },
+                {
+                  "id": "ocpp",
+                  "interface": "ocpp",
+                  "type": "requirement"
+                },
+                {
+                  "id": "random_delay",
+                  "interface": "uk_random_delay",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "auth": {
+            "position": {
+              "x": 37,
+              "y": 22
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "auth",
+                  "type": "provide"
+                },
+                {
+                  "id": "token_validator",
+                  "interface": "auth_token_validator",
+                  "type": "requirement"
+                },
+                {
+                  "id": "reservation",
+                  "interface": "reservation",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [
+                {
+                  "id": "token_provider",
+                  "interface": "auth_token_provider",
+                  "type": "requirement"
+                }
+              ],
+              "left": [
+                {
+                  "id": "evse_manager",
+                  "interface": "evse_manager",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "car_simulator": {
+            "position": {
+              "x": 18,
+              "y": 5
+            },
+            "terminals": {
+              "top": [
+                {
+                  "id": "ev",
+                  "interface": "ISO15118_ev",
+                  "type": "requirement"
+                }
+              ],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "car_simulator",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "slac",
+                  "interface": "slac",
+                  "type": "requirement"
+                },
+                {
+                  "id": "simulation_control",
+                  "interface": "yeti_simulation_control",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "energy_manager": {
+            "position": {
+              "x": 50,
+              "y": 10
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "energy_manager",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "energy_trunk",
+                  "interface": "energy",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "evse_manager": {
+            "position": {
+              "x": 18,
+              "y": 25
+            },
+            "terminals": {
+              "top": [
+                {
+                  "id": "energy_grid",
+                  "interface": "energy",
+                  "type": "provide"
+                }
+              ],
+              "right": [
+                {
+                  "id": "evse",
+                  "interface": "evse_manager",
+                  "type": "provide"
+                },
+                {
+                  "id": "random_delay",
+                  "interface": "uk_random_delay",
+                  "type": "provide"
+                },
+                {
+                  "id": "token_provider",
+                  "interface": "auth_token_provider",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [
+                {
+                  "id": "hlc",
+                  "interface": "ISO15118_charger",
+                  "type": "requirement"
+                }
+              ],
+              "left": [
+                {
+                  "id": "slac",
+                  "interface": "slac",
+                  "type": "requirement"
+                },
+                {
+                  "id": "ac_rcd",
+                  "interface": "ac_rcd",
+                  "type": "requirement"
+                },
+                {
+                  "id": "bsp",
+                  "interface": "evse_board_support",
+                  "type": "requirement"
+                },
+                {
+                  "id": "connector_lock",
+                  "interface": "connector_lock",
+                  "type": "requirement"
+                },
+                {
+                  "id": "imd",
+                  "interface": "isolation_monitor",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter_car_side",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter_grid_side",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powersupply_DC",
+                  "interface": "power_supply_DC",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "evse_security": {
+            "position": {
+              "x": 2,
+              "y": 37
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "evse_security",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": []
+            }
+          },
+          "grid_connection_point": {
+            "position": {
+              "x": 18,
+              "y": 16
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "energy_grid",
+                  "interface": "energy",
+                  "type": "provide"
+                },
+                {
+                  "id": "external_limits",
+                  "interface": "external_energy_limits",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [
+                {
+                  "id": "energy_consumer",
+                  "interface": "energy",
+                  "type": "requirement"
+                }
+              ],
+              "left": [
+                {
+                  "id": "price_information",
+                  "interface": "energy_price_information",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "imd": {
+            "position": {
+              "x": -12,
+              "y": 23
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "isolation_monitor",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": []
+            }
+          },
+          "iso15118_car": {
+            "position": {
+              "x": 18,
+              "y": -4
+            },
+            "terminals": {
+              "top": [],
+              "right": [],
+              "bottom": [
+                {
+                  "id": "ev",
+                  "interface": "ISO15118_ev",
+                  "type": "provide"
+                }
+              ],
+              "left": []
+            }
+          },
+          "iso15118_charger": {
+            "position": {
+              "x": 18,
+              "y": 37
+            },
+            "terminals": {
+              "top": [
+                {
+                  "id": "charger",
+                  "interface": "ISO15118_charger",
+                  "type": "provide"
+                }
+              ],
+              "right": [],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "security",
+                  "interface": "evse_security",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "powersupply_dc": {
+            "position": {
+              "x": -12,
+              "y": 30
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "powermeter",
+                  "interface": "powermeter",
+                  "type": "provide"
+                },
+                {
+                  "id": "main",
+                  "interface": "power_supply_DC",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": []
+            }
+          },
+          "slac": {
+            "position": {
+              "x": -12,
+              "y": 9
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "ev",
+                  "interface": "slac",
+                  "type": "provide"
+                },
+                {
+                  "id": "evse",
+                  "interface": "slac",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": []
+            }
+          },
+          "token_provider": {
+            "position": {
+              "x": 37,
+              "y": 32
+            },
+            "terminals": {
+              "top": [
+                {
+                  "id": "main",
+                  "interface": "auth_token_provider",
+                  "type": "provide"
+                }
+              ],
+              "right": [],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "evse",
+                  "interface": "evse_manager",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "token_validator": {
+            "position": {
+              "x": 52,
+              "y": 22
+            },
+            "terminals": {
+              "top": [],
+              "right": [],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "main",
+                  "interface": "auth_token_validator",
+                  "type": "provide"
+                }
+              ]
+            }
+          },
+          "yeti_driver": {
+            "position": {
+              "x": -12,
+              "y": 16
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "yeti_simulation_control",
+                  "interface": "yeti_simulation_control",
+                  "type": "provide"
+                },
+                {
+                  "id": "connector_lock",
+                  "interface": "connector_lock",
+                  "type": "provide"
+                },
+                {
+                  "id": "powermeter",
+                  "interface": "powermeter",
+                  "type": "provide"
+                },
+                {
+                  "id": "rcd",
+                  "interface": "ac_rcd",
+                  "type": "provide"
+                },
+                {
+                  "id": "board_support",
+                  "interface": "evse_board_support",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": []
+            }
+          }
+        }
+      },
+      "config-sil-ocpp201": {
+        "active_modules": {
+          "api": {
+            "module": "API",
+            "connections": {
+              "evse_manager": [
+                {
+                  "module_id": "evse_manager_1",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_module": {
+              "charger_information_file": "",
+              "hw_caps_max_current_export_decimal_places": 2,
+              "hw_caps_max_current_export_round_to": 0,
+              "hw_caps_max_current_import_decimal_places": 2,
+              "hw_caps_max_current_import_round_to": 0,
+              "hw_caps_max_plug_temperature_C_decimal_places": 2,
+              "hw_caps_max_plug_temperature_C_round_to": 0,
+              "hw_caps_min_current_export_decimal_places": 2,
+              "hw_caps_min_current_export_round_to": 0,
+              "hw_caps_min_current_import_decimal_places": 2,
+              "hw_caps_min_current_import_round_to": 0,
+              "limits_max_current_decimal_places": 2,
+              "limits_max_current_round_to": 0,
+              "powermeter_VAR_decimal_places": 2,
+              "powermeter_VAR_round_to": 0,
+              "powermeter_current_decimal_places": 2,
+              "powermeter_current_round_to": 0,
+              "powermeter_energy_export_decimal_places": 2,
+              "powermeter_energy_export_round_to": 0,
+              "powermeter_energy_import_decimal_places": 2,
+              "powermeter_energy_import_round_to": 0,
+              "powermeter_frequency_decimal_places": 2,
+              "powermeter_frequency_round_to": 0,
+              "powermeter_power_decimal_places": 2,
+              "powermeter_power_round_to": 0,
+              "powermeter_voltage_decimal_places": 2,
+              "powermeter_voltage_round_to": 0,
+              "telemetry_evse_temperature_C_decimal_places": 2,
+              "telemetry_evse_temperature_C_round_to": 0,
+              "telemetry_fan_rpm_decimal_places": 2,
+              "telemetry_fan_rpm_round_to": 0,
+              "telemetry_plug_temperature_C_decimal_places": 2,
+              "telemetry_plug_temperature_C_round_to": 0,
+              "telemetry_supply_voltage_12V_decimal_places": 2,
+              "telemetry_supply_voltage_12V_round_to": 0,
+              "telemetry_supply_voltage_minus_12V_decimal_places": 2,
+              "telemetry_supply_voltage_minus_12V_round_to": 0
+            }
+          },
+          "auth": {
+            "module": "Auth",
+            "connections": {
+              "evse_manager": [
+                {
+                  "module_id": "evse_manager_1",
+                  "implementation_id": "evse"
+                },
+                {
+                  "module_id": "evse_manager_2",
+                  "implementation_id": "evse"
+                }
+              ],
+              "token_provider": [
+                {
+                  "module_id": "token_provider_1",
+                  "implementation_id": "main"
+                },
+                {
+                  "module_id": "ocpp",
+                  "implementation_id": "auth_provider"
+                }
+              ],
+              "token_validator": [
+                {
+                  "module_id": "ocpp",
+                  "implementation_id": "auth_validator"
+                }
+              ]
+            },
+            "config_module": {
+              "connection_timeout": 60,
+              "ignore_connector_faults": false,
+              "master_pass_group_id": "",
+              "prioritize_authorization_over_stopping_transaction": true,
+              "selection_algorithm": "FindFirst"
+            }
+          },
+          "car_simulator_1": {
+            "module": "JsCarSimulator",
+            "connections": {
+              "ev": [
+                {
+                  "module_id": "iso15118_car",
+                  "implementation_id": "ev"
+                }
+              ],
+              "simulation_control": [
+                {
+                  "module_id": "yeti_driver_1",
+                  "implementation_id": "yeti_simulation_control"
+                }
+              ],
+              "slac": [
+                {
+                  "module_id": "slac",
+                  "implementation_id": "ev"
+                }
+              ]
+            },
+            "config_module": {
+              "auto_enable": true,
+              "auto_exec": false,
+              "auto_exec_commands": "sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
+              "connector_id": 1,
+              "dc_discharge_max_current_limit": 300,
+              "dc_discharge_max_power_limit": 15e4,
+              "dc_discharge_target_current": 5,
+              "dc_discharge_v2g_minimal_soc": 20,
+              "dc_energy_capacity": 6e4,
+              "dc_max_current_limit": 300,
+              "dc_max_power_limit": 15e4,
+              "dc_max_voltage_limit": 900,
+              "dc_target_current": 5,
+              "dc_target_voltage": 200,
+              "support_sae_j2847": false
+            }
+          },
+          "car_simulator_2": {
+            "module": "JsCarSimulator",
+            "connections": {
+              "ev": [
+                {
+                  "module_id": "iso15118_car",
+                  "implementation_id": "ev"
+                }
+              ],
+              "simulation_control": [
+                {
+                  "module_id": "yeti_driver_2",
+                  "implementation_id": "yeti_simulation_control"
+                }
+              ],
+              "slac": [
+                {
+                  "module_id": "slac",
+                  "implementation_id": "ev"
+                }
+              ]
+            },
+            "config_module": {
+              "auto_enable": true,
+              "auto_exec": false,
+              "auto_exec_commands": "",
+              "connector_id": 2,
+              "dc_discharge_max_current_limit": 300,
+              "dc_discharge_max_power_limit": 15e4,
+              "dc_discharge_target_current": 5,
+              "dc_discharge_v2g_minimal_soc": 20,
+              "dc_energy_capacity": 6e4,
+              "dc_max_current_limit": 300,
+              "dc_max_power_limit": 15e4,
+              "dc_max_voltage_limit": 900,
+              "dc_target_current": 5,
+              "dc_target_voltage": 200,
+              "support_sae_j2847": false
+            }
+          },
+          "energy_manager": {
+            "module": "EnergyManager",
+            "connections": {
+              "energy_trunk": [
+                {
+                  "module_id": "grid_connection_point",
+                  "implementation_id": "energy_grid"
+                }
+              ]
+            },
+            "config_module": {
+              "debug": false,
+              "nominal_ac_voltage": 230,
+              "schedule_interval_duration": 60,
+              "schedule_total_duration": 1,
+              "slice_ampere": 0.5,
+              "slice_watt": 500,
+              "update_interval": 1
+            }
+          },
+          "evse_manager_1": {
+            "module": "EvseManager",
+            "connections": {
+              "bsp": [
+                {
+                  "module_id": "yeti_driver_1",
+                  "implementation_id": "board_support"
+                }
+              ],
+              "hlc": [
+                {
+                  "module_id": "iso15118_charger",
+                  "implementation_id": "charger"
+                }
+              ],
+              "powermeter_grid_side": [
+                {
+                  "module_id": "yeti_driver_1",
+                  "implementation_id": "powermeter"
+                }
+              ],
+              "slac": [
+                {
+                  "module_id": "slac",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_module": {
+              "ac_enforce_hlc": false,
+              "ac_hlc_enabled": false,
+              "ac_hlc_use_5percent": false,
+              "ac_nominal_voltage": 230,
+              "ac_with_soc": false,
+              "autocharge_use_slac_instead_of_hlc": false,
+              "charge_mode": "AC",
+              "connector_id": 1,
+              "country_code": "DE",
+              "dbg_hlc_auth_after_tstep": false,
+              "dc_isolation_voltage_V": 500,
+              "disable_authentication": false,
+              "ev_receipt_required": false,
+              "evse_id": "1",
+              "evse_id_din": "49A80737A45678",
+              "external_ready_to_start_charging": false,
+              "hack_allow_bpt_with_iso2": false,
+              "hack_fix_hlc_integer_current_requests": false,
+              "hack_pause_imd_during_precharge": false,
+              "hack_present_current_offset": 0,
+              "hack_skoda_enyaq": false,
+              "hack_sleep_in_cable_check": 0,
+              "hack_sleep_in_cable_check_volkswagen": 0,
+              "has_ventilation": true,
+              "logfile_suffix": "session_uuid",
+              "max_current_export_A": 32,
+              "max_current_import_A": 32,
+              "payment_enable_contract": true,
+              "payment_enable_eim": true,
+              "request_zero_power_in_idle": false,
+              "sae_j2847_2_bpt_enabled": false,
+              "sae_j2847_2_bpt_mode": "V2G",
+              "session_logging": true,
+              "session_logging_path": "/tmp",
+              "session_logging_xml": false,
+              "soft_over_current_measurement_noise_A": 0.5,
+              "soft_over_current_tolerance_percent": 10,
+              "switch_to_minimum_voltage_after_cable_check": false,
+              "three_phases": true,
+              "uk_smartcharging_random_delay_at_any_change": true,
+              "uk_smartcharging_random_delay_enable": false,
+              "uk_smartcharging_random_delay_max_duration": 600
+            }
+          },
+          "evse_manager_2": {
+            "module": "EvseManager",
+            "connections": {
+              "bsp": [
+                {
+                  "module_id": "yeti_driver_2",
+                  "implementation_id": "board_support"
+                }
+              ],
+              "hlc": [
+                {
+                  "module_id": "iso15118_charger",
+                  "implementation_id": "charger"
+                }
+              ],
+              "powermeter_grid_side": [
+                {
+                  "module_id": "yeti_driver_2",
+                  "implementation_id": "powermeter"
+                }
+              ],
+              "slac": [
+                {
+                  "module_id": "slac",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_module": {
+              "ac_enforce_hlc": false,
+              "ac_hlc_enabled": false,
+              "ac_hlc_use_5percent": false,
+              "ac_nominal_voltage": 230,
+              "ac_with_soc": false,
+              "autocharge_use_slac_instead_of_hlc": false,
+              "charge_mode": "AC",
+              "connector_id": 2,
+              "country_code": "DE",
+              "dbg_hlc_auth_after_tstep": false,
+              "dc_isolation_voltage_V": 500,
+              "disable_authentication": false,
+              "ev_receipt_required": false,
+              "evse_id": "2",
+              "evse_id_din": "49A80737A45678",
+              "external_ready_to_start_charging": false,
+              "hack_allow_bpt_with_iso2": false,
+              "hack_fix_hlc_integer_current_requests": false,
+              "hack_pause_imd_during_precharge": false,
+              "hack_present_current_offset": 0,
+              "hack_skoda_enyaq": false,
+              "hack_sleep_in_cable_check": 0,
+              "hack_sleep_in_cable_check_volkswagen": 0,
+              "has_ventilation": true,
+              "logfile_suffix": "session_uuid",
+              "max_current_export_A": 32,
+              "max_current_import_A": 32,
+              "payment_enable_contract": true,
+              "payment_enable_eim": true,
+              "request_zero_power_in_idle": false,
+              "sae_j2847_2_bpt_enabled": false,
+              "sae_j2847_2_bpt_mode": "V2G",
+              "session_logging": true,
+              "session_logging_path": "/tmp",
+              "session_logging_xml": false,
+              "soft_over_current_measurement_noise_A": 0.5,
+              "soft_over_current_tolerance_percent": 10,
+              "switch_to_minimum_voltage_after_cable_check": false,
+              "three_phases": true,
+              "uk_smartcharging_random_delay_at_any_change": true,
+              "uk_smartcharging_random_delay_enable": false,
+              "uk_smartcharging_random_delay_max_duration": 600
+            }
+          },
+          "evse_security": {
+            "module": "EvseSecurity",
+            "connections": {},
+            "config_module": {
+              "csms_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem",
+              "csms_leaf_cert_directory": "client/csms",
+              "csms_leaf_key_directory": "client/csms",
+              "mf_ca_bundle": "ca/mf/MF_ROOT_CA.pem",
+              "mo_ca_bundle": "ca/mo/MO_ROOT_CA.pem",
+              "private_key_password": "123456",
+              "secc_leaf_cert_directory": "client/cso",
+              "secc_leaf_key_directory": "client/cso",
+              "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem"
+            }
+          },
+          "grid_connection_point": {
+            "module": "EnergyNode",
+            "connections": {
+              "energy_consumer": [
+                {
+                  "module_id": "evse_manager_1",
+                  "implementation_id": "energy_grid"
+                },
+                {
+                  "module_id": "evse_manager_2",
+                  "implementation_id": "energy_grid"
+                }
+              ],
+              "powermeter": [
+                {
+                  "module_id": "yeti_driver_1",
+                  "implementation_id": "powermeter"
+                }
+              ]
+            },
+            "config_module": {
+              "fuse_limit_A": 40,
+              "phase_count": 3
+            }
+          },
+          "iso15118_car": {
+            "module": "PyEvJosev",
+            "connections": {},
+            "config_module": {
+              "device": "auto",
+              "enforce_tls": false,
+              "is_cert_install_needed": false,
+              "supported_DIN70121": false,
+              "supported_ISO15118_2": true,
+              "supported_ISO15118_20_AC": false,
+              "supported_ISO15118_20_DC": false,
+              "tls_active": false
+            }
+          },
+          "iso15118_charger": {
+            "module": "EvseV2G",
+            "connections": {
+              "security": [
+                {
+                  "module_id": "evse_security",
+                  "implementation_id": "main"
+                }
+              ]
+            },
+            "config_module": {
+              "auth_timeout_eim": 300,
+              "auth_timeout_pnc": 55,
+              "device": "auto",
+              "supported_DIN70121": false,
+              "supported_ISO15118_2": true,
+              "terminate_connection_on_failed_response": false,
+              "tls_key_logging": false,
+              "tls_key_logging_path": "/tmp",
+              "tls_security": "allow",
+              "tls_timeout": 15e3,
+              "verify_contract_cert_chain": false
+            }
+          },
+          "ocpp": {
+            "module": "OCPP201",
+            "connections": {
+              "auth": [
+                {
+                  "module_id": "auth",
+                  "implementation_id": "main"
+                }
+              ],
+              "evse_manager": [
+                {
+                  "module_id": "evse_manager_1",
+                  "implementation_id": "evse"
+                },
+                {
+                  "module_id": "evse_manager_2",
+                  "implementation_id": "evse"
+                }
+              ],
+              "security": [
+                {
+                  "module_id": "evse_security",
+                  "implementation_id": "main"
+                }
+              ],
+              "system": [
+                {
+                  "module_id": "system",
+                  "implementation_id": "main"
+                }
+              ]
+            },
+            "config_module": {
+              "CoreDatabasePath": "/tmp/ocpp201",
+              "DeviceModelDatabasePath": "device_model_storage.db",
+              "EnableExternalWebsocketControl": false,
+              "MessageLogPath": "/tmp/everest_ocpp_logs",
+              "MessageQueueResumeDelay": 0
+            }
+          },
+          "slac": {
+            "module": "JsSlacSimulator",
+            "connections": {},
+            "config_implementation": {
+              "ev": {
+                "ev_id": "PIONIX_SAYS_HELLO"
+              },
+              "evse": {
+                "evse_id": "PIONIX_SAYS_HELLO",
+                "nid": "pionix!",
+                "number_of_sounds": 10
+              }
+            }
+          },
+          "system": {
+            "module": "System",
+            "connections": {},
+            "config_module": {
+              "DefaultRetries": 1,
+              "DefaultRetryInterval": 1
+            }
+          },
+          "token_provider_1": {
+            "module": "DummyTokenProviderManual",
+            "connections": {},
+            "config_implementation": {
+              "main": {
+                "timeout": 10,
+                "token": "DEADBEEF",
+                "type": "RFID"
+              }
+            }
+          },
+          "yeti_driver_1": {
+            "module": "JsYetiSimulator",
+            "connections": {},
+            "config_module": {
+              "connector_id": 1
+            }
+          },
+          "yeti_driver_2": {
+            "module": "JsYetiSimulator",
+            "connections": {},
+            "config_module": {
+              "connector_id": 2
+            }
+          }
+        },
+        "x-module-layout": {
+          "api": {
+            "position": {
+              "x": 41,
+              "y": 4
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "empty",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "evse_manager",
+                  "interface": "evse_manager",
+                  "type": "requirement"
+                },
+                {
+                  "id": "ocpp",
+                  "interface": "ocpp",
+                  "type": "requirement"
+                },
+                {
+                  "id": "random_delay",
+                  "interface": "uk_random_delay",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "auth": {
+            "position": {
+              "x": 39,
+              "y": -17
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "reservation",
+                  "interface": "reservation",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [
+                {
+                  "id": "main",
+                  "interface": "auth",
+                  "type": "provide"
+                }
+              ],
+              "left": [
+                {
+                  "id": "token_provider",
+                  "interface": "auth_token_provider",
+                  "type": "requirement"
+                },
+                {
+                  "id": "token_validator",
+                  "interface": "auth_token_validator",
+                  "type": "requirement"
+                },
+                {
+                  "id": "evse_manager",
+                  "interface": "evse_manager",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "car_simulator_1": {
+            "position": {
+              "x": -60,
+              "y": 17
+            },
+            "terminals": {
+              "top": [
+                {
+                  "id": "ev",
+                  "interface": "ISO15118_ev",
+                  "type": "requirement"
+                }
+              ],
+              "right": [
+                {
+                  "id": "simulation_control",
+                  "interface": "yeti_simulation_control",
+                  "type": "requirement"
+                },
+                {
+                  "id": "main",
+                  "interface": "car_simulator",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [
+                {
+                  "id": "slac",
+                  "interface": "slac",
+                  "type": "requirement"
+                }
+              ],
+              "left": []
+            }
+          },
+          "car_simulator_2": {
+            "position": {
+              "x": -60,
+              "y": 42
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "ev",
+                  "interface": "ISO15118_ev",
+                  "type": "requirement"
+                },
+                {
+                  "id": "simulation_control",
+                  "interface": "yeti_simulation_control",
+                  "type": "requirement"
+                },
+                {
+                  "id": "slac",
+                  "interface": "slac",
+                  "type": "requirement"
+                }
+              ],
+              "bottom": [
+                {
+                  "id": "main",
+                  "interface": "car_simulator",
+                  "type": "provide"
+                }
+              ],
+              "left": []
+            }
+          },
+          "energy_manager": {
+            "position": {
+              "x": 50,
+              "y": 21
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "energy_manager",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "energy_trunk",
+                  "interface": "energy",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "evse_manager_1": {
+            "position": {
+              "x": 2,
+              "y": -1
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "energy_grid",
+                  "interface": "energy",
+                  "type": "provide"
+                },
+                {
+                  "id": "random_delay",
+                  "interface": "uk_random_delay",
+                  "type": "provide"
+                },
+                {
+                  "id": "token_provider",
+                  "interface": "auth_token_provider",
+                  "type": "provide"
+                },
+                {
+                  "id": "evse",
+                  "interface": "evse_manager",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "ac_rcd",
+                  "interface": "ac_rcd",
+                  "type": "requirement"
+                },
+                {
+                  "id": "bsp",
+                  "interface": "evse_board_support",
+                  "type": "requirement"
+                },
+                {
+                  "id": "connector_lock",
+                  "interface": "connector_lock",
+                  "type": "requirement"
+                },
+                {
+                  "id": "hlc",
+                  "interface": "ISO15118_charger",
+                  "type": "requirement"
+                },
+                {
+                  "id": "imd",
+                  "interface": "isolation_monitor",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter_car_side",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter_grid_side",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powersupply_DC",
+                  "interface": "power_supply_DC",
+                  "type": "requirement"
+                },
+                {
+                  "id": "slac",
+                  "interface": "slac",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "evse_manager_2": {
+            "position": {
+              "x": 13,
+              "y": 16
+            },
+            "terminals": {
+              "top": [
+                {
+                  "id": "evse",
+                  "interface": "evse_manager",
+                  "type": "provide"
+                }
+              ],
+              "right": [
+                {
+                  "id": "energy_grid",
+                  "interface": "energy",
+                  "type": "provide"
+                },
+                {
+                  "id": "random_delay",
+                  "interface": "uk_random_delay",
+                  "type": "provide"
+                },
+                {
+                  "id": "token_provider",
+                  "interface": "auth_token_provider",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "hlc",
+                  "interface": "ISO15118_charger",
+                  "type": "requirement"
+                },
+                {
+                  "id": "ac_rcd",
+                  "interface": "ac_rcd",
+                  "type": "requirement"
+                },
+                {
+                  "id": "bsp",
+                  "interface": "evse_board_support",
+                  "type": "requirement"
+                },
+                {
+                  "id": "connector_lock",
+                  "interface": "connector_lock",
+                  "type": "requirement"
+                },
+                {
+                  "id": "imd",
+                  "interface": "isolation_monitor",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter_car_side",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter_grid_side",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powersupply_DC",
+                  "interface": "power_supply_DC",
+                  "type": "requirement"
+                },
+                {
+                  "id": "slac",
+                  "interface": "slac",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "evse_security": {
+            "position": {
+              "x": -40,
+              "y": 3
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "evse_security",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": []
+            }
+          },
+          "grid_connection_point": {
+            "position": {
+              "x": 32,
+              "y": 23
+            },
+            "terminals": {
+              "top": [
+                {
+                  "id": "energy_consumer",
+                  "interface": "energy",
+                  "type": "requirement"
+                }
+              ],
+              "right": [
+                {
+                  "id": "energy_grid",
+                  "interface": "energy",
+                  "type": "provide"
+                },
+                {
+                  "id": "external_limits",
+                  "interface": "external_energy_limits",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "powermeter",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                },
+                {
+                  "id": "price_information",
+                  "interface": "energy_price_information",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "iso15118_car": {
+            "position": {
+              "x": -40,
+              "y": 10
+            },
+            "terminals": {
+              "top": [],
+              "right": [],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "ev",
+                  "interface": "ISO15118_ev",
+                  "type": "provide"
+                }
+              ]
+            }
+          },
+          "iso15118_charger": {
+            "position": {
+              "x": -21,
+              "y": -10
+            },
+            "terminals": {
+              "top": [],
+              "right": [],
+              "bottom": [
+                {
+                  "id": "charger",
+                  "interface": "ISO15118_charger",
+                  "type": "provide"
+                }
+              ],
+              "left": [
+                {
+                  "id": "security",
+                  "interface": "evse_security",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "ocpp": {
+            "position": {
+              "x": 24,
+              "y": 7
+            },
+            "terminals": {
+              "top": [
+                {
+                  "id": "auth_provider",
+                  "interface": "auth_token_provider",
+                  "type": "provide"
+                },
+                {
+                  "id": "auth_validator",
+                  "interface": "auth_token_validator",
+                  "type": "provide"
+                },
+                {
+                  "id": "auth",
+                  "interface": "auth",
+                  "type": "requirement"
+                }
+              ],
+              "right": [
+                {
+                  "id": "data_transfer",
+                  "interface": "ocpp_data_transfer",
+                  "type": "provide"
+                },
+                {
+                  "id": "main",
+                  "interface": "empty",
+                  "type": "provide"
+                },
+                {
+                  "id": "ocpp_generic",
+                  "interface": "ocpp",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "data_transfer",
+                  "interface": "ocpp_data_transfer",
+                  "type": "requirement"
+                },
+                {
+                  "id": "evse_manager",
+                  "interface": "evse_manager",
+                  "type": "requirement"
+                },
+                {
+                  "id": "security",
+                  "interface": "evse_security",
+                  "type": "requirement"
+                },
+                {
+                  "id": "system",
+                  "interface": "system",
+                  "type": "requirement"
+                }
+              ]
+            }
+          },
+          "slac": {
+            "position": {
+              "x": -40,
+              "y": 38
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "evse",
+                  "interface": "slac",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "ev",
+                  "interface": "slac",
+                  "type": "provide"
+                }
+              ]
+            }
+          },
+          "system": {
+            "position": {
+              "x": -40,
+              "y": 31
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "system",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": []
+            }
+          },
+          "token_provider_1": {
+            "position": {
+              "x": 12,
+              "y": -21
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "auth_token_provider",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": []
+            }
+          },
+          "yeti_driver_1": {
+            "position": {
+              "x": -40,
+              "y": 17
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "board_support",
+                  "interface": "evse_board_support",
+                  "type": "provide"
+                },
+                {
+                  "id": "connector_lock",
+                  "interface": "connector_lock",
+                  "type": "provide"
+                },
+                {
+                  "id": "powermeter",
+                  "interface": "powermeter",
+                  "type": "provide"
+                },
+                {
+                  "id": "rcd",
+                  "interface": "ac_rcd",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "yeti_simulation_control",
+                  "interface": "yeti_simulation_control",
+                  "type": "provide"
+                }
+              ]
+            }
+          },
+          "yeti_driver_2": {
+            "position": {
+              "x": -40,
+              "y": 24
+            },
+            "terminals": {
+              "top": [],
+              "right": [
+                {
+                  "id": "board_support",
+                  "interface": "evse_board_support",
+                  "type": "provide"
+                },
+                {
+                  "id": "connector_lock",
+                  "interface": "connector_lock",
+                  "type": "provide"
+                },
+                {
+                  "id": "powermeter",
+                  "interface": "powermeter",
+                  "type": "provide"
+                },
+                {
+                  "id": "rcd",
+                  "interface": "ac_rcd",
+                  "type": "provide"
+                }
+              ],
+              "bottom": [],
+              "left": [
+                {
+                  "id": "yeti_simulation_control",
+                  "interface": "yeti_simulation_control",
+                  "type": "provide"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "config-sil": {
+        "active_modules": {
+          "MyEvseManager": {
+            "module": "EvseManager",
+            "connections": {
+              "ac_rcd": [
+                {
+                  "module_id": "connector_1_powerpath",
+                  "implementation_id": "rcd"
+                }
+              ],
+              "bsp": [
+                {
+                  "module_id": "connector_1_powerpath",
+                  "implementation_id": "board_support"
+                }
+              ],
+              "connector_lock": [
+                {
+                  "module_id": "connector_1_powerpath",
+                  "implementation_id": "connector_lock"
+                }
+              ],
+              "hlc": [
+                {
+                  "module_id": "iso15118_charger",
+                  "implementation_id": "charger"
+                }
+              ],
+              "powermeter_grid_side": [
+                {
+                  "module_id": "connector_1_powerpath",
+                  "implementation_id": "powermeter"
+                }
+              ],
+              "slac": [
+                {
+                  "module_id": "slac",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_module": {
+              "ac_enforce_hlc": false,
+              "ac_hlc_enabled": true,
+              "ac_hlc_use_5percent": false,
+              "ac_nominal_voltage": 230,
+              "ac_with_soc": false,
+              "autocharge_use_slac_instead_of_hlc": false,
+              "charge_mode": "AC",
+              "connector_id": 1,
+              "country_code": "DE",
+              "dbg_hlc_auth_after_tstep": false,
+              "dc_isolation_voltage_V": 500,
+              "disable_authentication": false,
+              "ev_receipt_required": false,
+              "evse_id": "DE*PNX*E12345*1",
+              "evse_id_din": "49A80737A45678",
+              "external_ready_to_start_charging": false,
+              "hack_allow_bpt_with_iso2": false,
+              "hack_fix_hlc_integer_current_requests": false,
+              "hack_pause_imd_during_precharge": false,
+              "hack_present_current_offset": 0,
+              "hack_skoda_enyaq": false,
+              "hack_sleep_in_cable_check": 0,
+              "hack_sleep_in_cable_check_volkswagen": 0,
+              "has_ventilation": true,
+              "logfile_suffix": "session_uuid",
+              "max_current_export_A": 32,
+              "max_current_import_A": 32,
+              "payment_enable_contract": true,
+              "payment_enable_eim": true,
+              "request_zero_power_in_idle": false,
+              "sae_j2847_2_bpt_enabled": false,
+              "sae_j2847_2_bpt_mode": "V2G",
+              "session_logging": true,
+              "session_logging_path": "/tmp/everest-logs",
+              "session_logging_xml": false,
+              "soft_over_current_measurement_noise_A": 0.5,
+              "soft_over_current_tolerance_percent": 10,
+              "switch_to_minimum_voltage_after_cable_check": false,
+              "three_phases": true
+            }
+          },
+          "api": {
+            "module": "API",
+            "connections": {
+              "evse_manager": [
+                {
+                  "module_id": "MyEvseManager",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_module": {
+              "charger_information_file": "",
+              "hw_caps_max_current_export_decimal_places": 2,
+              "hw_caps_max_current_export_round_to": 0,
+              "hw_caps_max_current_import_decimal_places": 2,
+              "hw_caps_max_current_import_round_to": 0,
+              "hw_caps_max_plug_temperature_C_decimal_places": 2,
+              "hw_caps_max_plug_temperature_C_round_to": 0,
+              "hw_caps_min_current_export_decimal_places": 2,
+              "hw_caps_min_current_export_round_to": 0,
+              "hw_caps_min_current_import_decimal_places": 2,
+              "hw_caps_min_current_import_round_to": 0,
+              "limits_max_current_decimal_places": 2,
+              "limits_max_current_round_to": 0,
+              "powermeter_VAR_decimal_places": 2,
+              "powermeter_VAR_round_to": 0,
+              "powermeter_current_decimal_places": 2,
+              "powermeter_current_round_to": 0,
+              "powermeter_energy_export_decimal_places": 2,
+              "powermeter_energy_export_round_to": 0,
+              "powermeter_energy_import_decimal_places": 2,
+              "powermeter_energy_import_round_to": 0,
+              "powermeter_frequency_decimal_places": 2,
+              "powermeter_frequency_round_to": 0,
+              "powermeter_power_decimal_places": 2,
+              "powermeter_power_round_to": 0,
+              "powermeter_voltage_decimal_places": 2,
+              "powermeter_voltage_round_to": 0,
+              "telemetry_evse_temperature_C_decimal_places": 2,
+              "telemetry_evse_temperature_C_round_to": 0,
+              "telemetry_fan_rpm_decimal_places": 2,
+              "telemetry_fan_rpm_round_to": 0,
+              "telemetry_plug_temperature_C_decimal_places": 2,
+              "telemetry_plug_temperature_C_round_to": 0,
+              "telemetry_supply_voltage_12V_decimal_places": 2,
+              "telemetry_supply_voltage_12V_round_to": 0,
+              "telemetry_supply_voltage_minus_12V_decimal_places": 2,
+              "telemetry_supply_voltage_minus_12V_round_to": 0
+            }
+          },
+          "auth": {
+            "module": "Auth",
+            "connections": {
+              "evse_manager": [
+                {
+                  "module_id": "MyEvseManager",
+                  "implementation_id": "evse"
+                }
+              ],
+              "token_provider": [
+                {
+                  "module_id": "token_provider",
+                  "implementation_id": "main"
+                }
+              ],
+              "token_validator": [
+                {
+                  "module_id": "token_validator",
+                  "implementation_id": "main"
+                }
+              ]
+            },
+            "config_module": {
+              "connection_timeout": 10,
+              "ignore_connector_faults": true,
+              "master_pass_group_id": "",
+              "prioritize_authorization_over_stopping_transaction": true,
+              "selection_algorithm": "FindFirst"
+            }
+          },
+          "car_simulator": {
+            "module": "JsCarSimulator",
+            "connections": {
+              "ev": [
+                {
+                  "module_id": "iso15118_car",
+                  "implementation_id": "ev"
+                }
+              ],
+              "simulation_control": [
+                {
+                  "module_id": "connector_1_powerpath",
+                  "implementation_id": "yeti_simulation_control"
+                }
+              ],
+              "slac": [
+                {
+                  "module_id": "slac",
+                  "implementation_id": "ev"
+                }
+              ]
+            },
+            "config_module": {
+              "auto_enable": true,
+              "auto_exec": false,
+              "auto_exec_commands": "sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
+              "connector_id": 1,
+              "dc_discharge_max_current_limit": 300,
+              "dc_discharge_max_power_limit": 15e4,
+              "dc_discharge_target_current": 5,
+              "dc_discharge_v2g_minimal_soc": 20,
+              "dc_energy_capacity": 6e4,
+              "dc_max_current_limit": 300,
+              "dc_max_power_limit": 15e4,
+              "dc_max_voltage_limit": 900,
+              "dc_target_current": 5,
+              "dc_target_voltage": 200,
+              "support_sae_j2847": false
+            }
+          },
+          "connector_1_powerpath": {
+            "module": "JsYetiSimulator",
+            "connections": {},
+            "config_module": {
+              "connector_id": 1
+            }
+          },
+          "energy_manager": {
+            "module": "EnergyManager",
+            "connections": {
+              "energy_trunk": [
+                {
+                  "module_id": "grid_connection_point",
+                  "implementation_id": "energy_grid"
+                }
+              ]
+            },
+            "config_module": {
+              "debug": false,
+              "nominal_ac_voltage": 230,
+              "schedule_interval_duration": 60,
+              "schedule_total_duration": 1,
+              "slice_ampere": 0.5,
+              "slice_watt": 500,
+              "update_interval": 1
+            }
+          },
+          "evse_security": {
+            "module": "EvseSecurity",
+            "connections": {},
+            "config_module": {
+              "csms_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem",
+              "csms_leaf_cert_directory": "client/csms",
+              "csms_leaf_key_directory": "client/csms",
+              "mf_ca_bundle": "ca/mf/MF_ROOT_CA.pem",
+              "mo_ca_bundle": "ca/mo/MO_ROOT_CA.pem",
+              "private_key_password": 123456,
+              "secc_leaf_cert_directory": "client/cso",
+              "secc_leaf_key_directory": "client/cso",
+              "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem"
+            }
+          },
+          "grid_connection_point": {
+            "module": "EnergyNode",
+            "connections": {
+              "energy_consumer": [
+                {
+                  "module_id": "MyEvseManager",
+                  "implementation_id": "energy_grid"
+                }
+              ]
+            },
+            "config_module": {
+              "fuse_limit_A": 40,
+              "phase_count": 3
+            }
+          },
+          "iso15118_car": {
+            "module": "PyEvJosev",
+            "connections": {},
+            "config_module": {
+              "device": "auto",
+              "enforce_tls": false,
+              "is_cert_install_needed": false,
+              "supported_DIN70121": false,
+              "supported_ISO15118_2": true,
+              "supported_ISO15118_20_AC": false,
+              "supported_ISO15118_20_DC": false,
+              "tls_active": false
+            }
+          },
+          "iso15118_charger": {
+            "module": "EvseV2G",
+            "connections": {
+              "security": [
+                {
+                  "module_id": "evse_security",
+                  "implementation_id": "main"
+                }
+              ]
+            },
+            "config_module": {
+              "auth_timeout_eim": 300,
+              "auth_timeout_pnc": 55,
+              "device": "auto",
+              "supported_DIN70121": false,
+              "supported_ISO15118_2": true,
+              "terminate_connection_on_failed_response": false,
+              "tls_key_logging": false,
+              "tls_key_logging_path": "/tmp",
+              "tls_security": "allow",
+              "tls_timeout": 15e3,
+              "verify_contract_cert_chain": false
+            }
+          },
+          "persistent_store": {
+            "module": "PersistentStore",
+            "connections": {},
+            "config_module": {
+              "sqlite_db_file_path": "everest_persistent_store.db"
+            }
+          },
+          "setup": {
+            "module": "Setup",
+            "connections": {
+              "store": [
+                {
+                  "module_id": "persistent_store",
+                  "implementation_id": "main"
+                }
+              ]
+            },
+            "config_module": {
+              "ap_interface": "wlan0",
+              "ap_ipv4": "192.168.1.1/24",
+              "initialized_by_default": true,
+              "localization": true,
+              "online_check_host": "lfenergy.org",
+              "release_metadata_file": "release.json",
+              "setup_simulation": true,
+              "setup_wifi": false
+            }
+          },
+          "slac": {
+            "module": "JsSlacSimulator",
+            "connections": {},
+            "config_implementation": {
+              "ev": {
+                "ev_id": "PIONIX_SAYS_HELLO"
+              },
+              "evse": {
+                "evse_id": "PIONIX_SAYS_HELLO",
+                "nid": "pionix!",
+                "number_of_sounds": 10
+              }
+            }
+          },
+          "token_provider": {
+            "module": "DummyTokenProvider",
+            "connections": {
+              "evse": [
+                {
+                  "module_id": "MyEvseManager",
+                  "implementation_id": "evse"
+                }
+              ]
+            },
+            "config_implementation": {
+              "main": {
+                "timeout": 10,
+                "token": "DEADBEEF",
+                "type": "RFID"
+              }
+            }
+          },
+          "token_validator": {
+            "module": "DummyTokenValidator",
+            "connections": {},
+            "config_implementation": {
+              "main": {
+                "sleep": 0.25,
+                "validation_reason": "Token seems valid",
+                "validation_result": "Accepted"
               }
             }
           }
         },
         "x-module-layout": {
-          auth: {
-            position: {
-              x: 6,
-              y: 1
+          "MyEvseManager": {
+            "position": {
+              "x": 13,
+              "y": 23
             },
-            terminals: {
-              bottom: [
+            "terminals": {
+              "bottom": [
                 {
-                  id: "tokenProvider",
-                  interface: "auth_token_provider",
-                  type: "requirement"
+                  "id": "powersupply_DC",
+                  "interface": "power_supply_DC",
+                  "type": "requirement"
+                },
+                {
+                  "id": "imd",
+                  "interface": "isolation_monitor",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter_car_side",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                },
+                {
+                  "id": "token_provider",
+                  "interface": "auth_token_provider",
+                  "type": "provide"
+                },
+                {
+                  "id": "slac",
+                  "interface": "slac",
+                  "type": "requirement"
                 }
               ],
-              left: [
+              "left": [
                 {
-                  id: "main",
-                  interface: "auth",
-                  type: "provide"
+                  "id": "hlc",
+                  "interface": "ISO15118_charger",
+                  "type": "requirement"
                 }
               ],
-              right: [
+              "right": [
                 {
-                  id: "tokenValidator",
-                  interface: "auth_token_validator",
-                  type: "requirement"
+                  "id": "bsp",
+                  "interface": "board_support_AC",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter_grid_side",
+                  "interface": "powermeter",
+                  "type": "requirement"
                 }
               ],
-              top: []
-            }
-          },
-          car_simulator: {
-            position: {
-              x: -28,
-              y: 35
-            },
-            terminals: {
-              bottom: [],
-              left: [],
-              right: [
+              "top": [
                 {
-                  id: "main",
-                  interface: "car_simulator",
-                  type: "provide"
-                }
-              ],
-              top: [
+                  "id": "energy_grid",
+                  "interface": "energy",
+                  "type": "provide"
+                },
                 {
-                  id: "simulation_control",
-                  interface: "yeti_simulation_control",
-                  type: "requirement"
+                  "id": "evse",
+                  "interface": "evse_manager",
+                  "type": "provide"
                 }
               ]
             }
           },
-          energy_manager: {
-            position: {
-              x: 2,
-              y: 38
+          "api": {
+            "position": {
+              "x": 33,
+              "y": 13
             },
-            terminals: {
-              bottom: [],
-              left: [],
-              right: [
+            "terminals": {
+              "bottom": [],
+              "left": [
                 {
-                  id: "main",
-                  interface: "energy_manager",
-                  type: "provide"
+                  "id": "evse_manager",
+                  "interface": "evse_manager",
+                  "type": "requirement"
                 }
               ],
-              top: [
+              "right": [
                 {
-                  id: "energy_trunk",
-                  interface: "energy",
-                  type: "requirement"
+                  "id": "main",
+                  "interface": "empty",
+                  "type": "provide"
+                }
+              ],
+              "top": []
+            }
+          },
+          "auth": {
+            "position": {
+              "x": 33,
+              "y": 2
+            },
+            "terminals": {
+              "bottom": [
+                {
+                  "id": "main",
+                  "interface": "auth",
+                  "type": "provide"
+                },
+                {
+                  "id": "reservation",
+                  "interface": "reservation",
+                  "type": "provide"
+                }
+              ],
+              "left": [
+                {
+                  "id": "evse_manager",
+                  "interface": "evse_manager",
+                  "type": "requirement"
+                }
+              ],
+              "right": [
+                {
+                  "id": "token_validator",
+                  "interface": "auth_token_validator",
+                  "type": "requirement"
+                }
+              ],
+              "top": [
+                {
+                  "id": "token_provider",
+                  "interface": "auth_token_provider",
+                  "type": "requirement"
                 }
               ]
             }
           },
-          evse_manager: {
-            position: {
-              x: -11,
-              y: 13
+          "car_simulator": {
+            "position": {
+              "x": 53,
+              "y": 33
             },
-            terminals: {
-              bottom: [
+            "terminals": {
+              "bottom": [],
+              "left": [
                 {
-                  id: "energy_grid",
-                  interface: "energy",
-                  type: "provide"
-                }
-              ],
-              left: [
-                {
-                  id: "bsp",
-                  interface: "board_support_AC",
-                  type: "requirement"
+                  "id": "simulation_control",
+                  "interface": "yeti_simulation_control",
+                  "type": "requirement"
                 },
                 {
-                  id: "powermeter",
-                  interface: "powermeter",
-                  type: "requirement"
+                  "id": "slac",
+                  "interface": "slac",
+                  "type": "requirement"
                 }
               ],
-              right: [
+              "right": [
                 {
-                  id: "evse",
-                  interface: "evse_manager",
-                  type: "provide"
+                  "id": "main",
+                  "interface": "car_simulator",
+                  "type": "provide"
                 }
               ],
-              top: [
+              "top": [
                 {
-                  id: "auth",
-                  interface: "auth",
-                  type: "requirement"
+                  "id": "ev",
+                  "interface": "ISO15118_ev",
+                  "type": "requirement"
                 }
               ]
             }
           },
-          grid_connection_point: {
-            position: {
-              x: 2,
-              y: 26
+          "connector_1_powerpath": {
+            "position": {
+              "x": 33,
+              "y": 23
             },
-            terminals: {
-              bottom: [
+            "terminals": {
+              "bottom": [
                 {
-                  id: "energy_grid",
-                  interface: "energy",
-                  type: "provide"
-                }
-              ],
-              left: [
-                {
-                  id: "energy_consumer",
-                  interface: "energy",
-                  type: "requirement"
+                  "id": "debug_keepalive",
+                  "interface": "debug_json",
+                  "type": "provide"
                 },
                 {
-                  id: "powermeter",
-                  interface: "powermeter",
-                  type: "requirement"
+                  "id": "debug_powermeter",
+                  "interface": "debug_json",
+                  "type": "provide"
                 },
                 {
-                  id: "price_information",
-                  interface: "energy_price_information",
-                  type: "requirement"
+                  "id": "debug_yeti",
+                  "interface": "debug_json",
+                  "type": "provide"
+                },
+                {
+                  "id": "yeti_extras",
+                  "interface": "yeti_extras",
+                  "type": "provide"
+                },
+                {
+                  "id": "debug_state",
+                  "interface": "debug_json",
+                  "type": "provide"
                 }
               ],
-              right: [],
-              top: []
+              "left": [
+                {
+                  "id": "board_support",
+                  "interface": "board_support_AC",
+                  "type": "provide"
+                },
+                {
+                  "id": "powermeter",
+                  "interface": "powermeter",
+                  "type": "provide"
+                }
+              ],
+              "right": [
+                {
+                  "id": "yeti_simulation_control",
+                  "interface": "yeti_simulation_control",
+                  "type": "provide"
+                }
+              ],
+              "top": []
             }
           },
-          iso15118_charger: {
-            position: {
-              x: -29,
-              y: 4
+          "energy_manager": {
+            "position": {
+              "x": -5,
+              "y": 2
             },
-            terminals: {
-              bottom: [],
-              left: [
+            "terminals": {
+              "bottom": [
                 {
-                  id: "slac",
-                  interface: "ISO15118_3_SLAC",
-                  type: "requirement"
+                  "id": "energy_trunk",
+                  "interface": "energy",
+                  "type": "requirement"
                 }
               ],
-              right: [
+              "left": [],
+              "right": [
                 {
-                  id: "ac_charger",
-                  interface: "ISO15118_ac_charger",
-                  type: "provide"
-                },
-                {
-                  id: "dc_charger",
-                  interface: "ISO15118_dc_charger",
-                  type: "provide"
-                },
-                {
-                  id: "main",
-                  interface: "empty",
-                  type: "provide"
+                  "id": "main",
+                  "interface": "energy_manager",
+                  "type": "provide"
                 }
               ],
-              top: []
+              "top": []
             }
           },
-          token_provider_1: {
-            position: {
-              x: 6,
-              y: 13
+          "evse_security": {
+            "position": {
+              "x": 9,
+              "y": 2
             },
-            terminals: {
-              bottom: [],
-              left: [
+            "terminals": {
+              "bottom": [],
+              "left": [],
+              "right": [
                 {
-                  id: "evse",
-                  interface: "evse_manager",
-                  type: "requirement"
+                  "id": "main",
+                  "interface": "evse_security",
+                  "type": "provide"
                 }
               ],
-              right: [],
-              top: [
+              "top": []
+            }
+          },
+          "grid_connection_point": {
+            "position": {
+              "x": -5,
+              "y": 13
+            },
+            "terminals": {
+              "bottom": [],
+              "left": [
                 {
-                  id: "main",
-                  interface: "auth_token_provider",
-                  type: "provide"
+                  "id": "price_information",
+                  "interface": "energy_price_information",
+                  "type": "requirement"
+                },
+                {
+                  "id": "powermeter",
+                  "interface": "powermeter",
+                  "type": "requirement"
+                }
+              ],
+              "right": [
+                {
+                  "id": "external_limits",
+                  "interface": "external_energy_limits",
+                  "type": "provide"
+                },
+                {
+                  "id": "energy_consumer",
+                  "interface": "energy",
+                  "type": "requirement"
+                }
+              ],
+              "top": [
+                {
+                  "id": "energy_grid",
+                  "interface": "energy",
+                  "type": "provide"
                 }
               ]
             }
           },
-          token_validator: {
-            position: {
-              x: 22,
-              y: 1
+          "iso15118_car": {
+            "position": {
+              "x": 53,
+              "y": 23
             },
-            terminals: {
-              bottom: [],
-              left: [
+            "terminals": {
+              "bottom": [
                 {
-                  id: "main",
-                  interface: "auth_token_validator",
-                  type: "provide"
+                  "id": "ev",
+                  "interface": "ISO15118_ev",
+                  "type": "provide"
                 }
               ],
-              right: [],
-              top: []
+              "left": [],
+              "right": [
+                {
+                  "id": "main",
+                  "interface": "empty",
+                  "type": "provide"
+                }
+              ],
+              "top": []
             }
           },
-          yeti_driver: {
-            position: {
-              x: -28,
-              y: 24
+          "iso15118_charger": {
+            "position": {
+              "x": -5,
+              "y": 23
             },
-            terminals: {
-              bottom: [
+            "terminals": {
+              "bottom": [],
+              "left": [],
+              "right": [
                 {
-                  id: "yeti_simulation_control",
-                  interface: "yeti_simulation_control",
-                  type: "provide"
+                  "id": "charger",
+                  "interface": "ISO15118_charger",
+                  "type": "provide"
                 }
               ],
-              left: [
+              "top": []
+            }
+          },
+          "persistent_store": {
+            "position": {
+              "x": -5,
+              "y": 40
+            },
+            "terminals": {
+              "bottom": [],
+              "left": [],
+              "right": [
                 {
-                  id: "yeti_extras",
-                  interface: "yeti_extras",
-                  type: "provide"
-                },
-                {
-                  id: "debug_state",
-                  interface: "debug_json",
-                  type: "provide"
-                },
-                {
-                  id: "debug_yeti",
-                  interface: "debug_json",
-                  type: "provide"
+                  "id": "main",
+                  "interface": "kvs",
+                  "type": "provide"
                 }
               ],
-              right: [
+              "top": []
+            }
+          },
+          "setup": {
+            "position": {
+              "x": 13,
+              "y": 40
+            },
+            "terminals": {
+              "bottom": [],
+              "left": [
                 {
-                  id: "debug_keepalive",
-                  interface: "debug_json",
-                  type: "provide"
-                },
-                {
-                  id: "debug_powermeter",
-                  interface: "debug_json",
-                  type: "provide"
-                },
-                {
-                  id: "powermeter",
-                  interface: "powermeter",
-                  type: "provide"
+                  "id": "store",
+                  "interface": "kvs",
+                  "type": "requirement"
                 }
               ],
-              top: [
+              "right": [
                 {
-                  id: "board_support",
-                  interface: "board_support_AC",
-                  type: "provide"
+                  "id": "main",
+                  "interface": "empty",
+                  "type": "provide"
                 }
-              ]
+              ],
+              "top": []
+            }
+          },
+          "slac": {
+            "position": {
+              "x": 33,
+              "y": 33
+            },
+            "terminals": {
+              "bottom": [],
+              "left": [
+                {
+                  "id": "evse",
+                  "interface": "slac",
+                  "type": "provide"
+                }
+              ],
+              "right": [
+                {
+                  "id": "ev",
+                  "interface": "slac",
+                  "type": "provide"
+                }
+              ],
+              "top": []
+            }
+          },
+          "token_provider": {
+            "position": {
+              "x": 33,
+              "y": -9
+            },
+            "terminals": {
+              "bottom": [
+                {
+                  "id": "main",
+                  "interface": "auth_token_provider",
+                  "type": "provide"
+                }
+              ],
+              "left": [
+                {
+                  "id": "evse",
+                  "interface": "evse_manager",
+                  "type": "requirement"
+                }
+              ],
+              "right": [],
+              "top": []
+            }
+          },
+          "token_validator": {
+            "position": {
+              "x": 51,
+              "y": 2
+            },
+            "terminals": {
+              "bottom": [],
+              "left": [
+                {
+                  "id": "main",
+                  "interface": "auth_token_validator",
+                  "type": "provide"
+                }
+              ],
+              "right": [],
+              "top": []
             }
           }
         }
@@ -86169,9 +90603,21 @@ Reason: ${error2}`);
         return this.random_wait_resolve(SampleInterfaceList);
       }
       async get_configs() {
-        return this.random_wait_resolve(SampleConfigList);
+        const configs = LoopbackRpcIssuer.getConfigsFromLocalStorageOrDefault();
+        return this.random_wait_resolve(configs);
       }
-      async save_config() {
+      static getConfigsFromLocalStorageOrDefault() {
+        const configsString = localStorage.getItem("configs");
+        if (configsString) {
+          return Object.assign({}, SampleConfigList, JSON.parse(configsString));
+        } else {
+          return SampleConfigList;
+        }
+      }
+      async save_config(params) {
+        const configs = LoopbackRpcIssuer.getConfigsFromLocalStorageOrDefault();
+        configs[params.name] = params.config;
+        localStorage.setItem("configs", JSON.stringify(configs));
         return this.random_wait_resolve();
       }
       async restart_modules() {
@@ -86261,7 +90707,7 @@ Reason: ${error2}`);
         }
       }
     }
-    const LOOPBACK_WAIT_MS = 500;
+    const LOOPBACK_WAIT_MS = 0;
     class EVBackendConnection {
       constructor(_url, _listener) {
         __publicField(this, "_socket");
@@ -86303,7 +90749,7 @@ Reason: ${error2}`);
         __publicField(this, "_cxn", null);
         __publicField(this, "_event_handler_map", {});
         __publicField(this, "_last_event_map", {});
-        __publicField(this, "_configs");
+        __publicField(this, "evbcStore", useEvbcStore());
         __publicField(this, "everest_definitions", {
           modules: null,
           interfaces: null
@@ -86336,14 +90782,14 @@ Reason: ${error2}`);
       // - these shouldn't be callable, until we're successfully connected
       // - it would be nice, if we got an object after successful connection, that contains that
       load_config(name) {
-        if (!(name in this._configs)) {
+        if (!(name in this.evbcStore.available_configs)) {
           throw Error(`Configuration "${name}" not found`);
         }
-        const config2 = this._configs[name];
+        const config2 = this.evbcStore.available_configs[name];
         return new EVConfigModel(this.everest_definitions, name, config2);
       }
-      create_empty_config(name) {
-        return new EVConfigModel(this.everest_definitions, name);
+      create_config_model(name, config2) {
+        return new EVConfigModel(this.everest_definitions, name, config2 ?? void 0);
       }
       async save_config(config2) {
         await this._cxn.rpc_issuer.save_config({
@@ -86392,8 +90838,9 @@ Reason: ${error2}`);
         });
       }
       async _reload_configs() {
-        this._configs = await this._cxn.rpc_issuer.get_configs();
-        this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(this._configs).length} config files` });
+        const cfgs = await this._cxn.rpc_issuer.get_configs();
+        Object.assign(this.evbcStore.available_configs, cfgs);
+        this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(cfgs).length} config files` });
       }
       _reload_instance_data() {
         return Promise.all([this._reload_interfaces(), this._reload_configs(), this._reload_modules()]);
@@ -86408,10 +90855,10 @@ Reason: ${error2}`);
         });
       }
     }
-    const evbc = new EVBackendClient();
     const evbcPlugin = {
       install(app2) {
-        app2.provide("evbc", evbc);
+        const evbc2 = new EVBackendClient();
+        app2.provide("evbc", evbc2);
       }
     };
     const pinia = createPinia();
