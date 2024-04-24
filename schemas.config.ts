@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+
 // configure the release branch here
 const releaseBranch = 'release/2024.3.0-rc1';
 
