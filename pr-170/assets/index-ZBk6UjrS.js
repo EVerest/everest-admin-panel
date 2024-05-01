@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-Y29TO06T.js"(exports, module) {
+  "assets/index-ZBk6UjrS.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.25
+    * @vue/shared v3.4.26
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -535,10 +535,11 @@ var require_index_001 = __commonJS({
         fns[i2](arg);
       }
     };
-    const def$C = (obj, key, value) => {
+    const def$C = (obj, key, value, writable = false) => {
       Object.defineProperty(obj, key, {
         configurable: true,
         enumerable: false,
+        writable,
         value
       });
     };
@@ -657,7 +658,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.25
+    * @vue/reactivity v3.4.26
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -804,11 +805,10 @@ var require_index_001 = __commonJS({
         }
       }
       stop() {
-        var _a2;
         if (this.active) {
           preCleanupEffect(this);
           postCleanupEffect(this);
-          (_a2 = this.onStop) == null ? void 0 : _a2.call(this);
+          this.onStop && this.onStop();
           this.active = false;
         }
       }
@@ -974,8 +974,8 @@ var require_index_001 = __commonJS({
       resetScheduling();
     }
     function getDepFromReactive(object, key) {
-      var _a2;
-      return (_a2 = targetMap.get(object)) == null ? void 0 : _a2.get(key);
+      const depsMap = targetMap.get(object);
+      return depsMap && depsMap.get(key);
     }
     const isNonTrackableKeys = /* @__PURE__ */ makeMap(`__proto__,__v_isRef,__isVue`);
     const builtInSymbols = new Set(
@@ -1694,7 +1694,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.25
+    * @vue/runtime-core v3.4.26
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -2189,7 +2189,7 @@ var require_index_001 = __commonJS({
               false ? {
                 get attrs() {
                   markAttrsAccessed();
-                  return attrs;
+                  return shallowReadonly(attrs);
                 },
                 slots,
                 emit: emit2
@@ -2218,12 +2218,12 @@ var require_index_001 = __commonJS({
                 propsOptions
               );
             }
-            root = cloneVNode(root, fallthroughAttrs);
+            root = cloneVNode(root, fallthroughAttrs, false, true);
           }
         }
       }
       if (vnode.dirs) {
-        root = cloneVNode(root);
+        root = cloneVNode(root, null, false, true);
         root.dirs = root.dirs ? root.dirs.concat(vnode.dirs) : vnode.dirs;
       }
       if (vnode.transition) {
@@ -2234,6 +2234,24 @@ var require_index_001 = __commonJS({
       }
       setCurrentRenderingInstance(prev);
       return result;
+    }
+    function filterSingleRoot(children, recurse2 = true) {
+      let singleRoot;
+      for (let i2 = 0; i2 < children.length; i2++) {
+        const child = children[i2];
+        if (isVNode(child)) {
+          if (child.type !== Comment || child.children === "v-if") {
+            if (singleRoot) {
+              return;
+            } else {
+              singleRoot = child;
+            }
+          }
+        } else {
+          return;
+        }
+      }
+      return singleRoot;
     }
     const getFunctionalFallthrough = (attrs) => {
       let res;
@@ -2369,6 +2387,538 @@ var require_index_001 = __commonJS({
       return registry && (registry[name] || registry[camelize(name)] || registry[capitalize(camelize(name))]);
     }
     const isSuspense = (type2) => type2.__isSuspense;
+    let suspenseId = 0;
+    const SuspenseImpl = {
+      name: "Suspense",
+      // In order to make Suspense tree-shakable, we need to avoid importing it
+      // directly in the renderer. The renderer checks for the __isSuspense flag
+      // on a vnode's type and calls the `process` method, passing in renderer
+      // internals.
+      __isSuspense: true,
+      process(n1, n2, container, anchor, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals) {
+        if (n1 == null) {
+          mountSuspense(
+            n2,
+            container,
+            anchor,
+            parentComponent,
+            parentSuspense,
+            namespace,
+            slotScopeIds,
+            optimized,
+            rendererInternals
+          );
+        } else {
+          if (parentSuspense && parentSuspense.deps > 0 && !n1.suspense.isInFallback) {
+            n2.suspense = n1.suspense;
+            n2.suspense.vnode = n2;
+            n2.el = n1.el;
+            return;
+          }
+          patchSuspense(
+            n1,
+            n2,
+            container,
+            anchor,
+            parentComponent,
+            namespace,
+            slotScopeIds,
+            optimized,
+            rendererInternals
+          );
+        }
+      },
+      hydrate: hydrateSuspense,
+      create: createSuspenseBoundary,
+      normalize: normalizeSuspenseChildren
+    };
+    const Suspense = SuspenseImpl;
+    function triggerEvent(vnode, name) {
+      const eventListener = vnode.props && vnode.props[name];
+      if (isFunction$1(eventListener)) {
+        eventListener();
+      }
+    }
+    function mountSuspense(vnode, container, anchor, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals) {
+      const {
+        p: patch,
+        o: { createElement }
+      } = rendererInternals;
+      const hiddenContainer = createElement("div");
+      const suspense = vnode.suspense = createSuspenseBoundary(
+        vnode,
+        parentSuspense,
+        parentComponent,
+        container,
+        hiddenContainer,
+        anchor,
+        namespace,
+        slotScopeIds,
+        optimized,
+        rendererInternals
+      );
+      patch(
+        null,
+        suspense.pendingBranch = vnode.ssContent,
+        hiddenContainer,
+        null,
+        parentComponent,
+        suspense,
+        namespace,
+        slotScopeIds
+      );
+      if (suspense.deps > 0) {
+        triggerEvent(vnode, "onPending");
+        triggerEvent(vnode, "onFallback");
+        patch(
+          null,
+          vnode.ssFallback,
+          container,
+          anchor,
+          parentComponent,
+          null,
+          // fallback tree will not have suspense context
+          namespace,
+          slotScopeIds
+        );
+        setActiveBranch(suspense, vnode.ssFallback);
+      } else {
+        suspense.resolve(false, true);
+      }
+    }
+    function patchSuspense(n1, n2, container, anchor, parentComponent, namespace, slotScopeIds, optimized, { p: patch, um: unmount, o: { createElement } }) {
+      const suspense = n2.suspense = n1.suspense;
+      suspense.vnode = n2;
+      n2.el = n1.el;
+      const newBranch = n2.ssContent;
+      const newFallback = n2.ssFallback;
+      const { activeBranch, pendingBranch, isInFallback, isHydrating } = suspense;
+      if (pendingBranch) {
+        suspense.pendingBranch = newBranch;
+        if (isSameVNodeType(newBranch, pendingBranch)) {
+          patch(
+            pendingBranch,
+            newBranch,
+            suspense.hiddenContainer,
+            null,
+            parentComponent,
+            suspense,
+            namespace,
+            slotScopeIds,
+            optimized
+          );
+          if (suspense.deps <= 0) {
+            suspense.resolve();
+          } else if (isInFallback) {
+            if (!isHydrating) {
+              patch(
+                activeBranch,
+                newFallback,
+                container,
+                anchor,
+                parentComponent,
+                null,
+                // fallback tree will not have suspense context
+                namespace,
+                slotScopeIds,
+                optimized
+              );
+              setActiveBranch(suspense, newFallback);
+            }
+          }
+        } else {
+          suspense.pendingId = suspenseId++;
+          if (isHydrating) {
+            suspense.isHydrating = false;
+            suspense.activeBranch = pendingBranch;
+          } else {
+            unmount(pendingBranch, parentComponent, suspense);
+          }
+          suspense.deps = 0;
+          suspense.effects.length = 0;
+          suspense.hiddenContainer = createElement("div");
+          if (isInFallback) {
+            patch(
+              null,
+              newBranch,
+              suspense.hiddenContainer,
+              null,
+              parentComponent,
+              suspense,
+              namespace,
+              slotScopeIds,
+              optimized
+            );
+            if (suspense.deps <= 0) {
+              suspense.resolve();
+            } else {
+              patch(
+                activeBranch,
+                newFallback,
+                container,
+                anchor,
+                parentComponent,
+                null,
+                // fallback tree will not have suspense context
+                namespace,
+                slotScopeIds,
+                optimized
+              );
+              setActiveBranch(suspense, newFallback);
+            }
+          } else if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
+            patch(
+              activeBranch,
+              newBranch,
+              container,
+              anchor,
+              parentComponent,
+              suspense,
+              namespace,
+              slotScopeIds,
+              optimized
+            );
+            suspense.resolve(true);
+          } else {
+            patch(
+              null,
+              newBranch,
+              suspense.hiddenContainer,
+              null,
+              parentComponent,
+              suspense,
+              namespace,
+              slotScopeIds,
+              optimized
+            );
+            if (suspense.deps <= 0) {
+              suspense.resolve();
+            }
+          }
+        }
+      } else {
+        if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
+          patch(
+            activeBranch,
+            newBranch,
+            container,
+            anchor,
+            parentComponent,
+            suspense,
+            namespace,
+            slotScopeIds,
+            optimized
+          );
+          setActiveBranch(suspense, newBranch);
+        } else {
+          triggerEvent(n2, "onPending");
+          suspense.pendingBranch = newBranch;
+          if (newBranch.shapeFlag & 512) {
+            suspense.pendingId = newBranch.component.suspenseId;
+          } else {
+            suspense.pendingId = suspenseId++;
+          }
+          patch(
+            null,
+            newBranch,
+            suspense.hiddenContainer,
+            null,
+            parentComponent,
+            suspense,
+            namespace,
+            slotScopeIds,
+            optimized
+          );
+          if (suspense.deps <= 0) {
+            suspense.resolve();
+          } else {
+            const { timeout, pendingId } = suspense;
+            if (timeout > 0) {
+              setTimeout(() => {
+                if (suspense.pendingId === pendingId) {
+                  suspense.fallback(newFallback);
+                }
+              }, timeout);
+            } else if (timeout === 0) {
+              suspense.fallback(newFallback);
+            }
+          }
+        }
+      }
+    }
+    function createSuspenseBoundary(vnode, parentSuspense, parentComponent, container, hiddenContainer, anchor, namespace, slotScopeIds, optimized, rendererInternals, isHydrating = false) {
+      const {
+        p: patch,
+        m: move,
+        um: unmount,
+        n: next2,
+        o: { parentNode, remove: remove2 }
+      } = rendererInternals;
+      let parentSuspenseId;
+      const isSuspensible = isVNodeSuspensible(vnode);
+      if (isSuspensible) {
+        if (parentSuspense && parentSuspense.pendingBranch) {
+          parentSuspenseId = parentSuspense.pendingId;
+          parentSuspense.deps++;
+        }
+      }
+      const timeout = vnode.props ? toNumber$1(vnode.props.timeout) : void 0;
+      const initialAnchor = anchor;
+      const suspense = {
+        vnode,
+        parent: parentSuspense,
+        parentComponent,
+        namespace,
+        container,
+        hiddenContainer,
+        deps: 0,
+        pendingId: suspenseId++,
+        timeout: typeof timeout === "number" ? timeout : -1,
+        activeBranch: null,
+        pendingBranch: null,
+        isInFallback: !isHydrating,
+        isHydrating,
+        isUnmounted: false,
+        effects: [],
+        resolve(resume = false, sync = false) {
+          const {
+            vnode: vnode2,
+            activeBranch,
+            pendingBranch,
+            pendingId,
+            effects,
+            parentComponent: parentComponent2,
+            container: container2
+          } = suspense;
+          let delayEnter = false;
+          if (suspense.isHydrating) {
+            suspense.isHydrating = false;
+          } else if (!resume) {
+            delayEnter = activeBranch && pendingBranch.transition && pendingBranch.transition.mode === "out-in";
+            if (delayEnter) {
+              activeBranch.transition.afterLeave = () => {
+                if (pendingId === suspense.pendingId) {
+                  move(
+                    pendingBranch,
+                    container2,
+                    anchor === initialAnchor ? next2(activeBranch) : anchor,
+                    0
+                  );
+                  queuePostFlushCb(effects);
+                }
+              };
+            }
+            if (activeBranch) {
+              if (parentNode(activeBranch.el) !== suspense.hiddenContainer) {
+                anchor = next2(activeBranch);
+              }
+              unmount(activeBranch, parentComponent2, suspense, true);
+            }
+            if (!delayEnter) {
+              move(pendingBranch, container2, anchor, 0);
+            }
+          }
+          setActiveBranch(suspense, pendingBranch);
+          suspense.pendingBranch = null;
+          suspense.isInFallback = false;
+          let parent = suspense.parent;
+          let hasUnresolvedAncestor = false;
+          while (parent) {
+            if (parent.pendingBranch) {
+              parent.effects.push(...effects);
+              hasUnresolvedAncestor = true;
+              break;
+            }
+            parent = parent.parent;
+          }
+          if (!hasUnresolvedAncestor && !delayEnter) {
+            queuePostFlushCb(effects);
+          }
+          suspense.effects = [];
+          if (isSuspensible) {
+            if (parentSuspense && parentSuspense.pendingBranch && parentSuspenseId === parentSuspense.pendingId) {
+              parentSuspense.deps--;
+              if (parentSuspense.deps === 0 && !sync) {
+                parentSuspense.resolve();
+              }
+            }
+          }
+          triggerEvent(vnode2, "onResolve");
+        },
+        fallback(fallbackVNode) {
+          if (!suspense.pendingBranch) {
+            return;
+          }
+          const { vnode: vnode2, activeBranch, parentComponent: parentComponent2, container: container2, namespace: namespace2 } = suspense;
+          triggerEvent(vnode2, "onFallback");
+          const anchor2 = next2(activeBranch);
+          const mountFallback = () => {
+            if (!suspense.isInFallback) {
+              return;
+            }
+            patch(
+              null,
+              fallbackVNode,
+              container2,
+              anchor2,
+              parentComponent2,
+              null,
+              // fallback tree will not have suspense context
+              namespace2,
+              slotScopeIds,
+              optimized
+            );
+            setActiveBranch(suspense, fallbackVNode);
+          };
+          const delayEnter = fallbackVNode.transition && fallbackVNode.transition.mode === "out-in";
+          if (delayEnter) {
+            activeBranch.transition.afterLeave = mountFallback;
+          }
+          suspense.isInFallback = true;
+          unmount(
+            activeBranch,
+            parentComponent2,
+            null,
+            // no suspense so unmount hooks fire now
+            true
+            // shouldRemove
+          );
+          if (!delayEnter) {
+            mountFallback();
+          }
+        },
+        move(container2, anchor2, type2) {
+          suspense.activeBranch && move(suspense.activeBranch, container2, anchor2, type2);
+          suspense.container = container2;
+        },
+        next() {
+          return suspense.activeBranch && next2(suspense.activeBranch);
+        },
+        registerDep(instance, setupRenderEffect) {
+          const isInPendingSuspense = !!suspense.pendingBranch;
+          if (isInPendingSuspense) {
+            suspense.deps++;
+          }
+          const hydratedEl = instance.vnode.el;
+          instance.asyncDep.catch((err) => {
+            handleError(err, instance, 0);
+          }).then((asyncSetupResult) => {
+            if (instance.isUnmounted || suspense.isUnmounted || suspense.pendingId !== instance.suspenseId) {
+              return;
+            }
+            instance.asyncResolved = true;
+            const { vnode: vnode2 } = instance;
+            handleSetupResult(instance, asyncSetupResult, false);
+            if (hydratedEl) {
+              vnode2.el = hydratedEl;
+            }
+            const placeholder = !hydratedEl && instance.subTree.el;
+            setupRenderEffect(
+              instance,
+              vnode2,
+              // component may have been moved before resolve.
+              // if this is not a hydration, instance.subTree will be the comment
+              // placeholder.
+              parentNode(hydratedEl || instance.subTree.el),
+              // anchor will not be used if this is hydration, so only need to
+              // consider the comment placeholder case.
+              hydratedEl ? null : next2(instance.subTree),
+              suspense,
+              namespace,
+              optimized
+            );
+            if (placeholder) {
+              remove2(placeholder);
+            }
+            updateHOCHostEl(instance, vnode2.el);
+            if (isInPendingSuspense && --suspense.deps === 0) {
+              suspense.resolve();
+            }
+          });
+        },
+        unmount(parentSuspense2, doRemove) {
+          suspense.isUnmounted = true;
+          if (suspense.activeBranch) {
+            unmount(
+              suspense.activeBranch,
+              parentComponent,
+              parentSuspense2,
+              doRemove
+            );
+          }
+          if (suspense.pendingBranch) {
+            unmount(
+              suspense.pendingBranch,
+              parentComponent,
+              parentSuspense2,
+              doRemove
+            );
+          }
+        }
+      };
+      return suspense;
+    }
+    function hydrateSuspense(node, vnode, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals, hydrateNode) {
+      const suspense = vnode.suspense = createSuspenseBoundary(
+        vnode,
+        parentSuspense,
+        parentComponent,
+        node.parentNode,
+        // eslint-disable-next-line no-restricted-globals
+        document.createElement("div"),
+        null,
+        namespace,
+        slotScopeIds,
+        optimized,
+        rendererInternals,
+        true
+      );
+      const result = hydrateNode(
+        node,
+        suspense.pendingBranch = vnode.ssContent,
+        parentComponent,
+        suspense,
+        slotScopeIds,
+        optimized
+      );
+      if (suspense.deps === 0) {
+        suspense.resolve(false, true);
+      }
+      return result;
+    }
+    function normalizeSuspenseChildren(vnode) {
+      const { shapeFlag, children } = vnode;
+      const isSlotChildren = shapeFlag & 32;
+      vnode.ssContent = normalizeSuspenseSlot(
+        isSlotChildren ? children.default : children
+      );
+      vnode.ssFallback = isSlotChildren ? normalizeSuspenseSlot(children.fallback) : createVNode(Comment);
+    }
+    function normalizeSuspenseSlot(s) {
+      let block2;
+      if (isFunction$1(s)) {
+        const trackBlock = isBlockTreeEnabled && s._c;
+        if (trackBlock) {
+          s._d = false;
+          openBlock();
+        }
+        s = s();
+        if (trackBlock) {
+          s._d = true;
+          block2 = currentBlock;
+          closeBlock();
+        }
+      }
+      if (isArray$1(s)) {
+        const singleChild = filterSingleRoot(s);
+        s = singleChild;
+      }
+      s = normalizeVNode(s);
+      if (block2 && !s.dynamicChildren) {
+        s.dynamicChildren = block2.filter((c) => c !== s);
+      }
+      return s;
+    }
     function queueEffectWithSuspense(fn, suspense) {
       if (suspense && suspense.pendingBranch) {
         if (isArray$1(fn)) {
@@ -2379,6 +2929,24 @@ var require_index_001 = __commonJS({
       } else {
         queuePostFlushCb(fn);
       }
+    }
+    function setActiveBranch(suspense, branch) {
+      suspense.activeBranch = branch;
+      const { vnode, parentComponent } = suspense;
+      let el2 = branch.el;
+      while (!el2 && branch.component) {
+        branch = branch.component.subTree;
+        el2 = branch.el;
+      }
+      vnode.el = el2;
+      if (parentComponent && parentComponent.subTree === vnode) {
+        parentComponent.vnode.el = el2;
+        updateHOCHostEl(parentComponent, el2);
+      }
+    }
+    function isVNodeSuspensible(vnode) {
+      const suspensible = vnode.props && vnode.props.suspensible;
+      return suspensible != null && suspensible !== false;
     }
     const ssrContextKey = Symbol.for("v-scx");
     const useSSRContext = () => {
@@ -2571,34 +3139,29 @@ var require_index_001 = __commonJS({
         return cur;
       };
     }
-    function traverse$2(value, depth, currentDepth = 0, seen) {
-      if (!isObject$4(value) || value["__v_skip"]) {
+    function traverse$2(value, depth = Infinity, seen) {
+      if (depth <= 0 || !isObject$4(value) || value["__v_skip"]) {
         return value;
-      }
-      if (depth && depth > 0) {
-        if (currentDepth >= depth) {
-          return value;
-        }
-        currentDepth++;
       }
       seen = seen || /* @__PURE__ */ new Set();
       if (seen.has(value)) {
         return value;
       }
       seen.add(value);
+      depth--;
       if (isRef(value)) {
-        traverse$2(value.value, depth, currentDepth, seen);
+        traverse$2(value.value, depth, seen);
       } else if (isArray$1(value)) {
         for (let i2 = 0; i2 < value.length; i2++) {
-          traverse$2(value[i2], depth, currentDepth, seen);
+          traverse$2(value[i2], depth, seen);
         }
       } else if (isSet$1(value) || isMap$1(value)) {
         value.forEach((v) => {
-          traverse$2(v, depth, currentDepth, seen);
+          traverse$2(v, depth, seen);
         });
       } else if (isPlainObject$3(value)) {
         for (const key in value) {
-          traverse$2(value[key], depth, currentDepth, seen);
+          traverse$2(value[key], depth, seen);
         }
       }
       return value;
@@ -2738,7 +3301,7 @@ var require_index_001 = __commonJS({
               instance
             );
             setTransitionHooks(oldInnerChild, leavingHooks);
-            if (mode === "out-in") {
+            if (mode === "out-in" && innerChild.type !== Comment) {
               state.isLeaving = true;
               leavingHooks.afterLeave = () => {
                 state.isLeaving = false;
@@ -4121,7 +4684,7 @@ var require_index_001 = __commonJS({
         const type2 = children._;
         if (type2) {
           extend$1(slots, children);
-          def$C(slots, "_", type2);
+          def$C(slots, "_", type2, true);
         } else {
           normalizeObjectSlots(children, slots);
         }
@@ -6042,8 +6605,8 @@ var require_index_001 = __commonJS({
         return null;
       return isProxy(props) || isInternalObject(props) ? extend$1({}, props) : props;
     }
-    function cloneVNode(vnode, extraProps, mergeRef = false) {
-      const { props, ref: ref3, patchFlag, children } = vnode;
+    function cloneVNode(vnode, extraProps, mergeRef = false, cloneTransition = false) {
+      const { props, ref: ref3, patchFlag, children, transition } = vnode;
       const mergedProps = extraProps ? mergeProps(props || {}, extraProps) : props;
       const cloned = {
         __v_isVNode: true,
@@ -6073,7 +6636,7 @@ var require_index_001 = __commonJS({
         dynamicChildren: vnode.dynamicChildren,
         appContext: vnode.appContext,
         dirs: vnode.dirs,
-        transition: vnode.transition,
+        transition,
         // These should technically only be non-null on mounted VNodes. However,
         // they *should* be copied for kept-alive vnodes. So we just always copy
         // them since them being non-null during a mount doesn't affect the logic as
@@ -6087,6 +6650,9 @@ var require_index_001 = __commonJS({
         ctx: vnode.ctx,
         ce: vnode.ce
       };
+      if (transition && cloneTransition) {
+        cloned.transition = transition.clone(cloned);
+      }
       return cloned;
     }
     function createTextVNode(text2 = " ", flag = 0) {
@@ -6509,9 +7075,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.25";
+    const version$2 = "3.4.26";
     /**
-    * @vue/runtime-dom v3.4.25
+    * @vue/runtime-dom v3.4.26
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -9802,6 +10368,16 @@ var require_index_001 = __commonJS({
       const timeoutId = window.setTimeout(cb, timeout);
       return () => window.clearTimeout(timeoutId);
     }
+    function eagerComputed(fn, options) {
+      const result = shallowRef();
+      watchEffect(() => {
+        result.value = fn();
+      }, {
+        flush: "sync",
+        ...options
+      });
+      return readonly(result);
+    }
     function isClickInsideElement(event, targetDiv) {
       const mouseX = event.clientX;
       const mouseY = event.clientY;
@@ -10688,7 +11264,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const layout = inject$1(VuetifyLayoutKey);
       if (!layout)
         throw new Error("[Vuetify] Could not find injected layout");
+      const layoutIsReady = nextTick();
       return {
+        layoutIsReady,
         getLayoutItem: layout.getLayoutItem,
         mainRect: layout.mainRect,
         mainStyles: layout.mainStyles
@@ -10706,6 +11284,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const isKeptAlive = shallowRef(false);
       onDeactivated(() => isKeptAlive.value = true);
       onActivated(() => isKeptAlive.value = false);
+      const layoutIsReady = nextTick();
       const {
         layoutItemStyles,
         layoutItemScrimStyles
@@ -10718,7 +11297,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return {
         layoutItemStyles,
         layoutRect: layout.layoutRect,
-        layoutItemScrimStyles
+        layoutItemScrimStyles,
+        layoutIsReady
       };
     }
     const generateLayers = (layout, positions, layoutSizes, activeItems) => {
@@ -10765,31 +11345,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         resizeRef,
         contentRect: layoutRect
       } = useResizeObserver$1();
-      const computedOverlaps = computed(() => {
-        const map2 = /* @__PURE__ */ new Map();
-        const overlaps = props.overlaps ?? [];
-        for (const overlap of overlaps.filter((item) => item.includes(":"))) {
-          const [top2, bottom2] = overlap.split(":");
-          if (!registered.value.includes(top2) || !registered.value.includes(bottom2))
-            continue;
-          const topPosition = positions.get(top2);
-          const bottomPosition = positions.get(bottom2);
-          const topAmount = layoutSizes.get(top2);
-          const bottomAmount = layoutSizes.get(bottom2);
-          if (!topPosition || !bottomPosition || !topAmount || !bottomAmount)
-            continue;
-          map2.set(bottom2, {
-            position: topPosition.value,
-            amount: parseInt(topAmount.value, 10)
-          });
-          map2.set(top2, {
-            position: bottomPosition.value,
-            amount: -parseInt(bottomAmount.value, 10)
-          });
-        }
-        return map2;
-      });
-      const layers = computed(() => {
+      const layers = eagerComputed(() => {
         const uniquePriorities = [...new Set([...priorities.values()].map((p2) => p2.value))].sort((a, b) => a - b);
         const layout = [];
         for (const p2 of uniquePriorities) {
@@ -10818,7 +11374,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
         };
       });
-      const items2 = computed(() => {
+      const items2 = eagerComputed(() => {
         return layers.value.slice(1).map((_ref, index) => {
           let {
             id: id2
@@ -10840,10 +11396,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return items2.value.find((item) => item.id === id2);
       };
       const rootVm = getCurrentInstance("createLayout");
-      const isMounted = shallowRef(false);
-      onMounted(() => {
-        isMounted.value = true;
-      });
+      const layoutIsReady = nextTick();
       provide(VuetifyLayoutKey, {
         register: (vm, _ref2) => {
           let {
@@ -10873,24 +11426,22 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             const isHorizontal = position.value === "left" || position.value === "right";
             const isOppositeHorizontal = position.value === "right";
             const isOppositeVertical = position.value === "bottom";
+            const size2 = elementSize.value ?? layoutSize.value;
+            const unit = size2 === 0 ? "%" : "px";
             const styles = {
               [position.value]: 0,
               zIndex: zIndex.value,
-              transform: `translate${isHorizontal ? "X" : "Y"}(${(active.value ? 0 : -110) * (isOppositeHorizontal || isOppositeVertical ? -1 : 1)}%)`,
+              transform: `translate${isHorizontal ? "X" : "Y"}(${(active.value ? 0 : -(size2 === 0 ? 100 : size2)) * (isOppositeHorizontal || isOppositeVertical ? -1 : 1)}${unit})`,
               position: absolute.value || rootZIndex.value !== ROOT_ZINDEX ? "absolute" : "fixed",
               ...transitionsEnabled.value ? void 0 : {
                 transition: "none"
               }
             };
-            if (!isMounted.value)
-              return styles;
+            if (index.value < 0)
+              throw new Error(`Layout item "${id2}" is missing`);
             const item = items2.value[index.value];
             if (!item)
               throw new Error(`[Vuetify] Could not find layout item "${id2}"`);
-            const overlap = computedOverlaps.value.get(id2);
-            if (overlap) {
-              item[overlap.position] += overlap.amount;
-            }
             return {
               ...styles,
               height: isHorizontal ? `calc(100% - ${item.top}px - ${item.bottom}px)` : elementSize.value ? `${elementSize.value}px` : void 0,
@@ -10923,7 +11474,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         getLayoutItem,
         items: items2,
         layoutRect,
-        rootZIndex
+        rootZIndex,
+        layoutIsReady
       });
       const layoutClasses = computed(() => ["v-layout", {
         "v-layout--full-height": props.fullHeight
@@ -10939,6 +11491,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         getLayoutItem,
         items: items2,
         layoutRect,
+        layoutIsReady,
         layoutRef: resizeRef
       };
     }
@@ -11592,16 +12145,18 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           rtlClasses
         } = useRtl();
-        useRender(() => {
-          var _a2;
-          return createVNode("div", {
-            "ref": layoutRef,
-            "class": ["v-application", theme.themeClasses.value, layoutClasses.value, rtlClasses.value, props.class],
-            "style": [props.style]
-          }, [createVNode("div", {
-            "class": "v-application__wrap"
-          }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])]);
-        });
+        useRender(() => createVNode("div", {
+          "ref": layoutRef,
+          "class": ["v-application", theme.themeClasses.value, layoutClasses.value, rtlClasses.value, props.class],
+          "style": [props.style]
+        }, [createVNode("div", {
+          "class": "v-application__wrap"
+        }, [createVNode(Suspense, null, {
+          default: () => {
+            var _a2;
+            return [createVNode(Fragment, null, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])];
+          }
+        })])]));
         return {
           getLayoutItem,
           items: items2,
@@ -11735,14 +12290,16 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             type: String,
             default: mode
           },
-          disabled: Boolean
+          disabled: Boolean,
+          group: Boolean
         },
         setup(props, _ref2) {
           let {
             slots
           } = _ref2;
+          const tag = props.group ? TransitionGroup : Transition;
           return () => {
-            return h(Transition, {
+            return h(tag, {
               name: props.disabled ? "" : name,
               css: !props.disabled,
               // mode: props.mode, // TODO: vuejs/vue-next#3104
@@ -12854,7 +13411,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const behavior = new Set(((_a2 = props.scrollBehavior) == null ? void 0 : _a2.split(" ")) ?? []);
           return {
             hide: behavior.has("hide"),
-            // fullyHide: behavior.has('fully-hide'),
+            fullyHide: behavior.has("fully-hide"),
             inverted: behavior.has("inverted"),
             collapse: behavior.has("collapse"),
             elevate: behavior.has("elevate"),
@@ -12864,8 +13421,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
         const canScroll = computed(() => {
           const behavior = scrollBehavior.value;
-          return behavior.hide || // behavior.fullyHide ||
-          behavior.inverted || behavior.collapse || behavior.elevate || behavior.fadeImage || // behavior.shrink ||
+          return behavior.hide || behavior.fullyHide || behavior.inverted || behavior.collapse || behavior.elevate || behavior.fadeImage || // behavior.shrink ||
           !isActive.value;
         });
         const {
@@ -12876,20 +13432,21 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         } = useScroll(props, {
           canScroll
         });
+        const canHide = computed(() => scrollBehavior.value.hide || scrollBehavior.value.fullyHide);
         const isCollapsed = computed(() => props.collapse || scrollBehavior.value.collapse && (scrollBehavior.value.inverted ? scrollRatio.value > 0 : scrollRatio.value === 0));
-        const isFlat = computed(() => props.flat || scrollBehavior.value.elevate && (scrollBehavior.value.inverted ? currentScroll.value > 0 : currentScroll.value === 0));
+        const isFlat = computed(() => props.flat || scrollBehavior.value.fullyHide && !isActive.value || scrollBehavior.value.elevate && (scrollBehavior.value.inverted ? currentScroll.value > 0 : currentScroll.value === 0));
         const opacity = computed(() => scrollBehavior.value.fadeImage ? scrollBehavior.value.inverted ? 1 - scrollRatio.value : scrollRatio.value : void 0);
         const height = computed(() => {
           var _a2, _b;
-          if (scrollBehavior.value.hide && scrollBehavior.value.inverted)
-            return 0;
-          const height2 = ((_a2 = vToolbarRef.value) == null ? void 0 : _a2.contentHeight) ?? 0;
-          const extensionHeight = ((_b = vToolbarRef.value) == null ? void 0 : _b.extensionHeight) ?? 0;
-          return height2 + extensionHeight;
+          const height2 = Number(((_a2 = vToolbarRef.value) == null ? void 0 : _a2.contentHeight) ?? props.height);
+          const extensionHeight = Number(((_b = vToolbarRef.value) == null ? void 0 : _b.extensionHeight) ?? 0);
+          if (!canHide.value)
+            return height2 + extensionHeight;
+          return currentScroll.value < scrollThreshold.value || scrollBehavior.value.fullyHide ? height2 + extensionHeight : height2;
         });
         useToggleScope(computed(() => !!props.scrollBehavior), () => {
           watchEffect(() => {
-            if (scrollBehavior.value.hide) {
+            if (canHide.value) {
               if (scrollBehavior.value.inverted) {
                 isActive.value = currentScroll.value > scrollThreshold.value;
               } else {
@@ -12904,7 +13461,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           ssrBootStyles
         } = useSsrBoot();
         const {
-          layoutItemStyles
+          layoutItemStyles,
+          layoutIsReady
         } = useLayoutItem({
           id: props.name,
           order: computed(() => parseInt(props.order, 10)),
@@ -12932,7 +13490,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "flat": isFlat.value
           }), slots);
         });
-        return {};
+        return layoutIsReady;
       }
     });
     const allowedDensities = [null, "default", "comfortable", "compact"];
@@ -12997,6 +13555,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
     }
     const makeVBtnGroupProps = propsFactory({
+      baseColor: String,
       divided: Boolean,
       ...makeBorderProps(),
       ...makeComponentProps(),
@@ -13032,6 +13591,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         provideDefaults({
           VBtn: {
             height: "auto",
+            baseColor: toRef(props, "baseColor"),
             color: toRef(props, "color"),
             density: toRef(props, "density"),
             flat: true,
@@ -13457,7 +14017,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           ...aliases,
           /* eslint-disable max-len */
           vuetify: ["M8.2241 14.2009L12 21L22 3H14.4459L8.2241 14.2009Z", ["M7.26303 12.4733L7.00113 12L2 3H12.5261C12.5261 3 12.5261 3 12.5261 3L7.26303 12.4733Z", 0.6]],
-          "vuetify-outline": "svg:M7.26 12.47 12.53 3H2L7.26 12.47ZM14.45 3 8.22 14.2 12 21 22 3H14.45ZM18.6 5 12 16.88 10.51 14.2 15.62 5ZM7.26 8.35 5.4 5H9.13L7.26 8.35Z"
+          "vuetify-outline": "svg:M7.26 12.47 12.53 3H2L7.26 12.47ZM14.45 3 8.22 14.2 12 21 22 3H14.45ZM18.6 5 12 16.88 10.51 14.2 15.62 5ZM7.26 8.35 5.4 5H9.13L7.26 8.35Z",
+          "vuetify-play": ["m6.376 13.184-4.11-7.192C1.505 4.66 2.467 3 4.003 3h8.532l-.953 1.576-.006.01-.396.677c-.429.732-.214 1.507.194 2.015.404.503 1.092.878 1.869.806a3.72 3.72 0 0 1 1.005.022c.276.053.434.143.523.237.138.146.38.635-.25 2.09-.893 1.63-1.553 1.722-1.847 1.677-.213-.033-.468-.158-.756-.406a4.95 4.95 0 0 1-.8-.927c-.39-.564-1.04-.84-1.66-.846-.625-.006-1.316.27-1.693.921l-.478.826-.911 1.506Z", ["M9.093 11.552c.046-.079.144-.15.32-.148a.53.53 0 0 1 .43.207c.285.414.636.847 1.046 1.2.405.35.914.662 1.516.754 1.334.205 2.502-.698 3.48-2.495l.014-.028.013-.03c.687-1.574.774-2.852-.005-3.675-.37-.391-.861-.586-1.333-.676a5.243 5.243 0 0 0-1.447-.044c-.173.016-.393-.073-.54-.257-.145-.18-.127-.316-.082-.392l.393-.672L14.287 3h5.71c1.536 0 2.499 1.659 1.737 2.992l-7.997 13.996c-.768 1.344-2.706 1.344-3.473 0l-3.037-5.314 1.377-2.278.004-.006.004-.007.481-.831Z", 0.6]]
           /* eslint-enable max-len */
         }
       }, options);
@@ -13812,6 +14373,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         type: [Number, String],
         default: 0
       },
+      bufferColor: String,
+      bufferOpacity: [Number, String],
       clickable: Boolean,
       color: String,
       height: {
@@ -13827,6 +14390,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         type: [Number, String],
         default: 0
       },
+      opacity: [Number, String],
       reverse: Boolean,
       stream: Boolean,
       striped: Boolean,
@@ -13869,6 +14433,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           backgroundColorStyles
         } = useBackgroundColor(computed(() => props.bgColor || props.color));
         const {
+          backgroundColorClasses: bufferColorClasses,
+          backgroundColorStyles: bufferColorStyles
+        } = useBackgroundColor(computed(() => props.bufferColor || props.bgColor || props.color));
+        const {
           backgroundColorClasses: barColorClasses,
           backgroundColorStyles: barColorStyles
         } = useBackgroundColor(props, "color");
@@ -13879,15 +14447,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           intersectionRef,
           isIntersecting
         } = useIntersectionObserver();
-        const max = computed(() => parseInt(props.max, 10));
-        const height = computed(() => parseInt(props.height, 10));
-        const normalizedBuffer = computed(() => parseFloat(props.bufferValue) / max.value * 100);
-        const normalizedValue = computed(() => parseFloat(progress.value) / max.value * 100);
+        const max = computed(() => parseFloat(props.max));
+        const height = computed(() => parseFloat(props.height));
+        const normalizedBuffer = computed(() => clamp(parseFloat(props.bufferValue) / max.value * 100, 0, 100));
+        const normalizedValue = computed(() => clamp(parseFloat(progress.value) / max.value * 100, 0, 100));
         const isReversed = computed(() => isRtl.value !== props.reverse);
         const transition = computed(() => props.indeterminate ? "fade-transition" : "slide-x-transition");
-        const opacity = computed(() => {
-          return props.bgOpacity == null ? props.bgOpacity : parseFloat(props.bgOpacity);
-        });
         function handleClick(e) {
           if (!intersectionRef.value)
             return;
@@ -13930,7 +14495,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               ...textColorStyles.value,
               [isReversed.value ? "left" : "right"]: convertToUnit(-height.value),
               borderTop: `${convertToUnit(height.value / 2)} dotted`,
-              opacity: opacity.value,
+              opacity: parseFloat(props.bufferOpacity),
               top: `calc(50% - ${convertToUnit(height.value / 4)})`,
               width: convertToUnit(100 - normalizedBuffer.value, "%"),
               "--v-progress-linear-stream-to": convertToUnit(height.value * (isReversed.value ? 1 : -1))
@@ -13938,8 +14503,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }, null), createVNode("div", {
             "class": ["v-progress-linear__background", backgroundColorClasses.value],
             "style": [backgroundColorStyles.value, {
-              opacity: opacity.value,
-              width: convertToUnit(!props.stream ? 100 : normalizedBuffer.value, "%")
+              opacity: parseFloat(props.bgOpacity),
+              width: props.stream ? 0 : void 0
+            }]
+          }, null), createVNode("div", {
+            "class": ["v-progress-linear__buffer", bufferColorClasses.value],
+            "style": [bufferColorStyles.value, {
+              opacity: parseFloat(props.bufferOpacity),
+              width: convertToUnit(normalizedBuffer.value, "%")
             }]
           }, null), createVNode(Transition, {
             "name": transition.value
@@ -14410,6 +14981,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         type: Boolean,
         default: void 0
       },
+      baseColor: String,
       symbol: {
         type: null,
         default: VBtnToggleSymbol
@@ -14419,6 +14991,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       prependIcon: IconValue,
       appendIcon: IconValue,
       block: Boolean,
+      readonly: Boolean,
       slim: Boolean,
       stacked: Boolean,
       ripple: {
@@ -14464,11 +15037,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           borderClasses
         } = useBorder(props);
         const {
-          colorClasses,
-          colorStyles,
-          variantClasses
-        } = useVariant(props);
-        const {
           densityClasses
         } = useDensity(props);
         const {
@@ -14505,6 +15073,19 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
           return group == null ? void 0 : group.isSelected.value;
         });
+        const variantProps = computed(() => {
+          var _a2, _b;
+          const showColor = (group == null ? void 0 : group.isSelected.value) && (!link2.isLink.value || ((_a2 = link2.isActive) == null ? void 0 : _a2.value)) || !group || ((_b = link2.isActive) == null ? void 0 : _b.value);
+          return {
+            color: showColor ? props.color ?? props.baseColor : props.baseColor,
+            variant: props.variant
+          };
+        });
+        const {
+          colorClasses,
+          colorStyles,
+          variantClasses
+        } = useVariant(variantProps);
         const isDisabled = computed(() => (group == null ? void 0 : group.disabled.value) || props.disabled);
         const isElevated = computed(() => {
           return props.variant === "elevated" && !(props.disabled || props.flat || props.border);
@@ -14523,12 +15104,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         useSelectLink(link2, group == null ? void 0 : group.select);
         useRender(() => {
-          var _a2, _b;
           const Tag2 = link2.isLink.value ? "a" : props.tag;
           const hasPrepend = !!(props.prependIcon || slots.prepend);
           const hasAppend = !!(props.appendIcon || slots.append);
           const hasIcon = !!(props.icon && props.icon !== true);
-          const hasColor = (group == null ? void 0 : group.isSelected.value) && (!link2.isLink.value || ((_a2 = link2.isActive) == null ? void 0 : _a2.value)) || !group || ((_b = link2.isActive) == null ? void 0 : _b.value);
           return withDirectives(createVNode(Tag2, {
             "type": Tag2 === "a" ? void 0 : "button",
             "class": ["v-btn", group == null ? void 0 : group.selectedClass.value, {
@@ -14539,19 +15118,20 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "v-btn--flat": props.flat,
               "v-btn--icon": !!props.icon,
               "v-btn--loading": props.loading,
+              "v-btn--readonly": props.readonly,
               "v-btn--slim": props.slim,
               "v-btn--stacked": props.stacked
-            }, themeClasses.value, borderClasses.value, hasColor ? colorClasses.value : void 0, densityClasses.value, elevationClasses.value, loaderClasses.value, positionClasses.value, roundedClasses.value, sizeClasses.value, variantClasses.value, props.class],
-            "style": [hasColor ? colorStyles.value : void 0, dimensionStyles.value, locationStyles.value, sizeStyles.value, props.style],
+            }, themeClasses.value, borderClasses.value, colorClasses.value, densityClasses.value, elevationClasses.value, loaderClasses.value, positionClasses.value, roundedClasses.value, sizeClasses.value, variantClasses.value, props.class],
+            "style": [colorStyles.value, dimensionStyles.value, locationStyles.value, sizeStyles.value, props.style],
             "aria-busy": props.loading ? true : void 0,
             "disabled": isDisabled.value || void 0,
             "href": link2.href.value,
-            "tabindex": props.loading ? -1 : void 0,
+            "tabindex": props.loading || props.readonly ? -1 : void 0,
             "onClick": onClick,
             "value": valueAttr.value
           }, {
             default: () => {
-              var _a3;
+              var _a2;
               return [genOverlays(true, "v-btn"), !props.icon && hasPrepend && createVNode("span", {
                 "key": "prepend",
                 "class": "v-btn__prepend"
@@ -14582,8 +15162,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 }
               }, {
                 default: () => {
-                  var _a4;
-                  return [((_a4 = slots.default) == null ? void 0 : _a4.call(slots)) ?? props.text];
+                  var _a3;
+                  return [((_a3 = slots.default) == null ? void 0 : _a3.call(slots)) ?? props.text];
                 }
               })]), !props.icon && hasAppend && createVNode("span", {
                 "key": "append",
@@ -14602,7 +15182,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               }, slots.append)]), !!props.loading && createVNode("span", {
                 "key": "loader",
                 "class": "v-btn__loader"
-              }, [((_a3 = slots.loader) == null ? void 0 : _a3.call(slots)) ?? createVNode(VProgressCircular, {
+              }, [((_a2 = slots.loader) == null ? void 0 : _a2.call(slots)) ?? createVNode(VProgressCircular, {
                 "color": typeof props.loading === "boolean" ? void 0 : props.loading,
                 "indeterminate": true,
                 "width": "2"
@@ -14659,7 +15239,27 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {};
       }
     });
-    const VCardSubtitle = createSimpleFunctional("v-card-subtitle");
+    const makeVCardSubtitleProps = propsFactory({
+      opacity: [Number, String],
+      ...makeComponentProps(),
+      ...makeTagProps()
+    }, "VCardSubtitle");
+    const VCardSubtitle = genericComponent()({
+      name: "VCardSubtitle",
+      props: makeVCardSubtitleProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-card-subtitle", props.class],
+          "style": [{
+            "--v-card-subtitle-opacity": props.opacity
+          }, props.style]
+        }, slots));
+        return {};
+      }
+    });
     const VCardTitle = createSimpleFunctional("v-card-title");
     const makeVAvatarProps = propsFactory({
       start: Boolean,
@@ -14832,7 +15432,27 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {};
       }
     });
-    const VCardText = createSimpleFunctional("v-card-text");
+    const makeVCardTextProps = propsFactory({
+      opacity: [Number, String],
+      ...makeComponentProps(),
+      ...makeTagProps()
+    }, "VCardText");
+    const VCardText = genericComponent()({
+      name: "VCardText",
+      props: makeVCardTextProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-card-text", props.class],
+          "style": [{
+            "--v-card-text-opacity": props.opacity
+          }, props.style]
+        }, slots));
+        return {};
+      }
+    });
     const makeVCardProps = propsFactory({
       appendAvatar: String,
       appendIcon: IconValue,
@@ -15134,6 +15754,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
     }
     const makeDisplayProps = propsFactory({
+      mobile: {
+        type: Boolean,
+        default: null
+      },
       mobileBreakpoint: [Number, String]
     }, "display");
     function useDisplay() {
@@ -15143,6 +15767,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       if (!display)
         throw new Error("Could not find Vuetify display injection");
       const mobile = computed(() => {
+        if (props.mobile != null)
+          return props.mobile;
         if (!props.mobileBreakpoint)
           return display.mobile.value;
         const breakpointValue = typeof props.mobileBreakpoint === "number" ? props.mobileBreakpoint : display.thresholds.value[props.mobileBreakpoint];
@@ -16132,7 +16758,27 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
-    const VListItemSubtitle = createSimpleFunctional("v-list-item-subtitle");
+    const makeVListItemSubtitleProps = propsFactory({
+      opacity: [Number, String],
+      ...makeComponentProps(),
+      ...makeTagProps()
+    }, "VListItemSubtitle");
+    const VListItemSubtitle = genericComponent()({
+      name: "VListItemSubtitle",
+      props: makeVListItemSubtitleProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-list-item-subtitle", props.class],
+          "style": [{
+            "--v-list-item-subtitle-opacity": props.opacity
+          }, props.style]
+        }, slots));
+        return {};
+      }
+    });
     const VListItemTitle = createSimpleFunctional("v-list-item-title");
     const makeVListItemProps = propsFactory({
       active: {
@@ -16457,6 +17103,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       color: String,
       inset: Boolean,
       length: [Number, String],
+      opacity: [Number, String],
       thickness: [Number, String],
       vertical: Boolean,
       ...makeComponentProps(),
@@ -16467,7 +17114,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       props: makeVDividerProps(),
       setup(props, _ref) {
         let {
-          attrs
+          attrs,
+          slots
         } = _ref;
         const {
           themeClasses
@@ -16486,16 +17134,30 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
           return styles;
         });
-        useRender(() => createVNode("hr", {
-          "class": [{
-            "v-divider": true,
-            "v-divider--inset": props.inset,
-            "v-divider--vertical": props.vertical
-          }, themeClasses.value, textColorClasses.value, props.class],
-          "style": [dividerStyles.value, textColorStyles.value, props.style],
-          "aria-orientation": !attrs.role || attrs.role === "separator" ? props.vertical ? "vertical" : "horizontal" : void 0,
-          "role": `${attrs.role || "separator"}`
-        }, null));
+        useRender(() => {
+          const divider = createVNode("hr", {
+            "class": [{
+              "v-divider": true,
+              "v-divider--inset": props.inset,
+              "v-divider--vertical": props.vertical
+            }, themeClasses.value, textColorClasses.value, props.class],
+            "style": [dividerStyles.value, textColorStyles.value, {
+              "--v-border-opacity": props.opacity
+            }, props.style],
+            "aria-orientation": !attrs.role || attrs.role === "separator" ? props.vertical ? "vertical" : "horizontal" : void 0,
+            "role": `${attrs.role || "separator"}`
+          }, null);
+          if (!slots.default)
+            return divider;
+          return createVNode("div", {
+            "class": ["v-divider__wrapper", {
+              "v-divider__wrapper--vertical": props.vertical,
+              "v-divider__wrapper--inset": props.inset
+            }]
+          }, [divider, createVNode("div", {
+            "class": "v-divider__content"
+          }, [slots.default()]), divider]);
+        });
         return {};
       }
     });
@@ -16916,6 +17578,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const makeVMainProps = propsFactory({
       scrollable: Boolean,
       ...makeComponentProps(),
+      ...makeDimensionProps(),
       ...makeTagProps({
         tag: "main"
       })
@@ -16928,7 +17591,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           slots
         } = _ref;
         const {
-          mainStyles
+          dimensionStyles
+        } = useDimension(props);
+        const {
+          mainStyles,
+          layoutIsReady
         } = useLayout();
         const {
           ssrBootStyles
@@ -16937,7 +17604,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           "class": ["v-main", {
             "v-main--scrollable": props.scrollable
           }, props.class],
-          "style": [mainStyles.value, ssrBootStyles.value, props.style]
+          "style": [mainStyles.value, ssrBootStyles.value, dimensionStyles.value, props.style]
         }, {
           default: () => {
             var _a2, _b;
@@ -16946,7 +17613,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)]) : (_b = slots.default) == null ? void 0 : _b.call(slots)];
           }
         }));
-        return {};
+        return layoutIsReady;
       }
     });
     function useSticky(_ref) {
@@ -17491,20 +18158,27 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       let options = {};
       switch (formatString) {
+        case "fullDate":
+          options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          };
+          break;
         case "fullDateWithWeekday":
           options = {
             weekday: "long",
-            day: "numeric",
+            year: "numeric",
             month: "long",
-            year: "numeric"
+            day: "numeric"
           };
           break;
-        case "hours12h":
-          options = {
-            hour: "numeric",
-            hour12: true
-          };
-          break;
+        case "normalDate":
+          const day = newDate.getDate();
+          const month = new Intl.DateTimeFormat(locale, {
+            month: "long"
+          }).format(newDate);
+          return `${day} ${month}`;
         case "normalDateWithWeekday":
           options = {
             weekday: "short",
@@ -17512,22 +18186,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             month: "short"
           };
           break;
-        case "keyboardDate":
+        case "shortDate":
           options = {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-          };
-          break;
-        case "monthAndDate":
-          options = {
-            month: "long",
+            month: "short",
             day: "numeric"
           };
           break;
-        case "monthAndYear":
+        case "year":
           options = {
-            month: "long",
             year: "numeric"
           };
           break;
@@ -17541,13 +18207,21 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             month: "short"
           };
           break;
-        case "dayOfMonth":
-          return new Intl.NumberFormat(locale).format(newDate.getDate());
-        case "shortDate":
+        case "monthAndYear":
           options = {
-            year: "2-digit",
-            month: "numeric",
+            month: "long",
+            year: "numeric"
+          };
+          break;
+        case "monthAndDate":
+          options = {
+            month: "long",
             day: "numeric"
+          };
+          break;
+        case "weekday":
+          options = {
+            weekday: "long"
           };
           break;
         case "weekdayShort":
@@ -17555,9 +18229,125 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             weekday: "short"
           };
           break;
-        case "year":
+        case "dayOfMonth":
+          return new Intl.NumberFormat(locale).format(newDate.getDate());
+        case "hours12h":
           options = {
-            year: "numeric"
+            hour: "numeric",
+            hour12: true
+          };
+          break;
+        case "hours24h":
+          options = {
+            hour: "numeric",
+            hour12: false
+          };
+          break;
+        case "minutes":
+          options = {
+            minute: "numeric"
+          };
+          break;
+        case "seconds":
+          options = {
+            second: "numeric"
+          };
+          break;
+        case "fullTime":
+          options = {
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "fullTime12h":
+          options = {
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "fullTime24h":
+          options = {
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false
+          };
+          break;
+        case "fullDateTime":
+          options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "fullDateTime12h":
+          options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "fullDateTime24h":
+          options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false
+          };
+          break;
+        case "keyboardDate":
+          options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+          };
+          break;
+        case "keyboardDateTime":
+          options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false
+          };
+          break;
+        case "keyboardDateTime12h":
+          options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "keyboardDateTime24h":
+          options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false
           };
           break;
         default:
@@ -17616,6 +18406,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function getNextMonth(date2) {
       return new Date(date2.getFullYear(), date2.getMonth() + 1, 1);
     }
+    function getPreviousMonth(date2) {
+      return new Date(date2.getFullYear(), date2.getMonth() - 1, 1);
+    }
     function getHours(date2) {
       return date2.getHours();
     }
@@ -17638,6 +18431,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function isAfter(date2, comparing) {
       return date2.getTime() > comparing.getTime();
     }
+    function isAfterDay(date2, comparing) {
+      return isAfter(startOfDay(date2), startOfDay(comparing));
+    }
     function isBefore(date2, comparing) {
       return date2.getTime() < comparing.getTime();
     }
@@ -17649,6 +18445,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     function isSameMonth(date2, comparing) {
       return date2.getMonth() === comparing.getMonth() && date2.getFullYear() === comparing.getFullYear();
+    }
+    function isSameYear(date2, comparing) {
+      return date2.getFullYear() === comparing.getFullYear();
     }
     function getDiff(date2, comparing, unit) {
       const d = new Date(date2);
@@ -17768,6 +18567,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       isAfter(date2, comparing) {
         return isAfter(date2, comparing);
       }
+      isAfterDay(date2, comparing) {
+        return isAfterDay(date2, comparing);
+      }
       isBefore(date2, comparing) {
         return !isAfter(date2, comparing) && !isEqual$1(date2, comparing);
       }
@@ -17776,6 +18578,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       isSameMonth(date2, comparing) {
         return isSameMonth(date2, comparing);
+      }
+      isSameYear(date2, comparing) {
+        return isSameYear(date2, comparing);
       }
       setMinutes(date2, count) {
         return setMinutes(date2, count);
@@ -17809,6 +18614,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       getNextMonth(date2) {
         return getNextMonth(date2);
+      }
+      getPreviousMonth(date2) {
+        return getPreviousMonth(date2);
       }
       getHours(date2) {
         return getHours(date2);
@@ -17943,10 +18751,139 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
       };
     }
+    function getContainer(el2) {
+      return getTarget$1(el2) ?? (document.scrollingElement || document.body);
+    }
+    function getTarget$1(el2) {
+      return typeof el2 === "string" ? document.querySelector(el2) : refElement(el2);
+    }
+    function getOffset$2(target2, horizontal, rtl) {
+      if (typeof target2 === "number")
+        return horizontal && rtl ? -target2 : target2;
+      let el2 = getTarget$1(target2);
+      let totalOffset = 0;
+      while (el2) {
+        totalOffset += horizontal ? el2.offsetLeft : el2.offsetTop;
+        el2 = el2.offsetParent;
+      }
+      return totalOffset;
+    }
     function createGoTo(options, locale) {
       return {
         rtl: locale.isRtl,
         options: mergeDeep(genDefaults(), options)
+      };
+    }
+    async function scrollTo(_target, _options, horizontal, goTo) {
+      const property = horizontal ? "scrollLeft" : "scrollTop";
+      const options = mergeDeep((goTo == null ? void 0 : goTo.options) ?? genDefaults(), _options);
+      const rtl = goTo == null ? void 0 : goTo.rtl.value;
+      const target2 = (typeof _target === "number" ? _target : getTarget$1(_target)) ?? 0;
+      const container = options.container === "parent" && target2 instanceof HTMLElement ? target2.parentElement : getContainer(options.container);
+      const ease = typeof options.easing === "function" ? options.easing : options.patterns[options.easing];
+      if (!ease)
+        throw new TypeError(`Easing function "${options.easing}" not found.`);
+      let targetLocation;
+      if (typeof target2 === "number") {
+        targetLocation = getOffset$2(target2, horizontal, rtl);
+      } else {
+        targetLocation = getOffset$2(target2, horizontal, rtl) - getOffset$2(container, horizontal, rtl);
+        if (options.layout) {
+          const styles = window.getComputedStyle(target2);
+          const layoutOffset = styles.getPropertyValue("--v-layout-top");
+          if (layoutOffset)
+            targetLocation -= parseInt(layoutOffset, 10);
+        }
+      }
+      targetLocation += options.offset;
+      targetLocation = clampTarget(container, targetLocation, !!rtl, !!horizontal);
+      const startLocation = container[property] ?? 0;
+      if (targetLocation === startLocation)
+        return Promise.resolve(targetLocation);
+      const startTime = performance.now();
+      return new Promise((resolve2) => requestAnimationFrame(function step(currentTime) {
+        const timeElapsed = currentTime - startTime;
+        const progress = timeElapsed / options.duration;
+        const location2 = Math.floor(startLocation + (targetLocation - startLocation) * ease(clamp(progress, 0, 1)));
+        container[property] = location2;
+        if (progress >= 1 && Math.abs(location2 - container[property]) < 10) {
+          return resolve2(targetLocation);
+        } else if (progress > 2) {
+          return resolve2(container[property]);
+        }
+        requestAnimationFrame(step);
+      }));
+    }
+    function useGoTo() {
+      let _options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+      const goToInstance = inject$1(GoToSymbol);
+      const {
+        isRtl
+      } = useRtl();
+      if (!goToInstance)
+        throw new Error("[Vuetify] Could not find injected goto instance");
+      const goTo = {
+        ...goToInstance,
+        // can be set via VLocaleProvider
+        rtl: computed(() => goToInstance.rtl.value || isRtl.value)
+      };
+      async function go(target2, options) {
+        return scrollTo(target2, mergeDeep(_options, options), false, goTo);
+      }
+      go.horizontal = async (target2, options) => {
+        return scrollTo(target2, mergeDeep(_options, options), true, goTo);
+      };
+      return go;
+    }
+    function clampTarget(container, value, rtl, horizontal) {
+      const {
+        scrollWidth,
+        scrollHeight
+      } = container;
+      const [containerWidth, containerHeight] = container === document.scrollingElement ? [window.innerWidth, window.innerHeight] : [container.offsetWidth, container.offsetHeight];
+      let min;
+      let max;
+      if (horizontal) {
+        if (rtl) {
+          min = -(scrollWidth - containerWidth);
+          max = 0;
+        } else {
+          min = 0;
+          max = scrollWidth - containerWidth;
+        }
+      } else {
+        min = 0;
+        max = scrollHeight + -containerHeight;
+      }
+      return Math.max(Math.min(value, max), min);
+    }
+    const makeDelayProps = propsFactory({
+      closeDelay: [Number, String],
+      openDelay: [Number, String]
+    }, "delay");
+    function useDelay(props, cb) {
+      let clearDelay = () => {
+      };
+      function runDelay(isOpening) {
+        clearDelay == null ? void 0 : clearDelay();
+        const delay = Number(isOpening ? props.openDelay : props.closeDelay);
+        return new Promise((resolve2) => {
+          clearDelay = defer(delay, () => {
+            cb == null ? void 0 : cb(isOpening);
+            resolve2(isOpening);
+          });
+        });
+      }
+      function runOpenDelay() {
+        return runDelay(true);
+      }
+      function runCloseDelay() {
+        return runDelay(false);
+      }
+      return {
+        clearDelay,
+        runOpenDelay,
+        runCloseDelay
       };
     }
     function useScopeId() {
@@ -17984,6 +18921,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       },
       image: String,
       temporary: Boolean,
+      persistent: Boolean,
       touchless: Boolean,
       width: {
         type: [Number, String],
@@ -17997,6 +18935,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       sticky: Boolean,
       ...makeBorderProps(),
       ...makeComponentProps(),
+      ...makeDelayProps(),
       ...makeDisplayProps(),
       ...makeElevationProps(),
       ...makeLayoutItemProps(),
@@ -18052,12 +18991,19 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         } = useScopeId();
         const rootEl = ref$1();
         const isHovering = shallowRef(false);
+        const {
+          runOpenDelay,
+          runCloseDelay
+        } = useDelay(props, (value) => {
+          isHovering.value = value;
+        });
         const width = computed(() => {
           return props.rail && props.expandOnHover && isHovering.value ? Number(props.width) : Number(props.rail ? props.railWidth : props.width);
         });
         const location2 = computed(() => {
           return toPhysical(props.location, isRtl.value);
         });
+        const isPersistent = computed(() => props.persistent);
         const isTemporary = computed(() => !props.permanent && (mobile.value || props.temporary));
         const isSticky = computed(() => props.sticky && !isTemporary.value && location2.value !== "bottom");
         useToggleScope(() => props.expandOnHover && props.rail != null, () => {
@@ -18073,11 +19019,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (val)
             isActive.value = true;
         });
-        onBeforeMount(() => {
-          if (props.modelValue != null || isTemporary.value)
-            return;
+        if (props.modelValue == null && !isTemporary.value) {
           isActive.value = props.permanent || !mobile.value;
-        });
+        }
         const {
           isDragging,
           dragProgress
@@ -18093,15 +19037,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const size2 = isTemporary.value ? 0 : props.rail && props.expandOnHover ? Number(props.railWidth) : width.value;
           return isDragging.value ? size2 * dragProgress.value : size2;
         });
+        const elementSize = computed(() => ["top", "bottom"].includes(props.location) ? 0 : width.value);
         const {
           layoutItemStyles,
-          layoutItemScrimStyles
+          layoutItemScrimStyles,
+          layoutIsReady
         } = useLayoutItem({
           id: props.name,
           order: computed(() => parseInt(props.order, 10)),
           position: location2,
           layoutSize,
-          elementSize: width,
+          elementSize,
           active: computed(() => isActive.value || isDragging.value),
           disableTransitions: computed(() => isDragging.value),
           absolute: computed(() => (
@@ -18132,28 +19078,25 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             bgColor: "transparent"
           }
         });
-        function onMouseenter() {
-          isHovering.value = true;
-        }
-        function onMouseleave() {
-          isHovering.value = false;
-        }
         useRender(() => {
           const hasImage = slots.image || props.image;
           return createVNode(Fragment, null, [createVNode(props.tag, mergeProps({
             "ref": rootEl,
-            "onMouseenter": onMouseenter,
-            "onMouseleave": onMouseleave,
+            "onMouseenter": runOpenDelay,
+            "onMouseleave": runCloseDelay,
             "class": ["v-navigation-drawer", `v-navigation-drawer--${location2.value}`, {
               "v-navigation-drawer--expand-on-hover": props.expandOnHover,
               "v-navigation-drawer--floating": props.floating,
               "v-navigation-drawer--is-hovering": isHovering.value,
               "v-navigation-drawer--rail": props.rail,
               "v-navigation-drawer--temporary": isTemporary.value,
+              "v-navigation-drawer--persistent": isPersistent.value,
               "v-navigation-drawer--active": isActive.value,
               "v-navigation-drawer--sticky": isSticky.value
             }, themeClasses.value, backgroundColorClasses.value, borderClasses.value, displayClasses.value, elevationClasses.value, roundedClasses.value, props.class],
-            "style": [backgroundColorStyles.value, layoutItemStyles.value, ssrBootStyles.value, stickyStyles.value, props.style]
+            "style": [backgroundColorStyles.value, layoutItemStyles.value, ssrBootStyles.value, stickyStyles.value, props.style, ["top", "bottom"].includes(location2.value) ? {
+              height: "auto"
+            } : {}]
           }, scopeId, attrs), {
             default: () => {
               var _a2, _b, _c;
@@ -18191,13 +19134,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             default: () => [isTemporary.value && (isDragging.value || isActive.value) && !!props.scrim && createVNode("div", mergeProps({
               "class": ["v-navigation-drawer__scrim", scrimColor.backgroundColorClasses.value],
               "style": [scrimStyles.value, scrimColor.backgroundColorStyles.value],
-              "onClick": () => isActive.value = false
+              "onClick": () => {
+                if (isPersistent.value)
+                  return;
+                isActive.value = false;
+              }
             }, scopeId), null)]
           })]);
         });
-        return {
+        return layoutIsReady.then(() => ({
           isStuck
-        };
+        }));
       }
     });
     function elementToViewport(point, offset) {
@@ -18743,35 +19690,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       });
     }
     const VMenuSymbol = Symbol.for("vuetify:v-menu");
-    const makeDelayProps = propsFactory({
-      closeDelay: [Number, String],
-      openDelay: [Number, String]
-    }, "delay");
-    function useDelay(props, cb) {
-      let clearDelay = () => {
-      };
-      function runDelay(isOpening) {
-        clearDelay == null ? void 0 : clearDelay();
-        const delay = Number(isOpening ? props.openDelay : props.closeDelay);
-        return new Promise((resolve2) => {
-          clearDelay = defer(delay, () => {
-            cb == null ? void 0 : cb(isOpening);
-            resolve2(isOpening);
-          });
-        });
-      }
-      function runOpenDelay() {
-        return runDelay(true);
-      }
-      function runCloseDelay() {
-        return runDelay(false);
-      }
-      return {
-        clearDelay,
-        runOpenDelay,
-        runCloseDelay
-      };
-    }
     const makeActivatorProps = propsFactory({
       target: [String, Object],
       activator: [String, Object],
@@ -19438,9 +20356,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           var _a2;
           return createVNode(Fragment, null, [(_a2 = slots.activator) == null ? void 0 : _a2.call(slots, {
             isActive: isActive.value,
+            targetRef,
             props: mergeProps({
-              ref: activatorRef,
-              targetRef
+              ref: activatorRef
             }, activatorEvents.value, props.activatorProps)
           }), isMounted.value && hasContent.value && createVNode(Teleport, {
             "disabled": !teleportTarget.value,
@@ -22771,6 +23689,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         register: (_ref) => {
           let {
             id: id2,
+            vm,
             validate: validate3,
             reset: reset2,
             resetValidation: resetValidation2
@@ -22782,6 +23701,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             validate: validate3,
             reset: reset2,
             resetValidation: resetValidation2,
+            vm: markRaw(vm),
             isValid: null,
             errorMessages: []
           });
@@ -22897,10 +23817,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           [`${name}--readonly`]: isReadonly2.value
         };
       });
+      const vm = getCurrentInstance("validation");
       const uid2 = computed(() => props.name ?? unref(id2));
       onBeforeMount(() => {
         form == null ? void 0 : form.register({
           id: uid2.value,
+          vm,
           validate: validate2,
           reset,
           resetValidation
@@ -23012,6 +23934,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       "onClick:append": EventProp(),
       ...makeComponentProps(),
       ...makeDensityProps(),
+      ...only(makeDimensionProps(), ["maxWidth", "minWidth", "width"]),
       ...makeThemeProps(),
       ...makeValidationProps()
     }, "VInput");
@@ -23032,6 +23955,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           densityClasses
         } = useDensity(props);
+        const {
+          dimensionStyles
+        } = useDimension(props);
         const {
           themeClasses
         } = provideTheme(props);
@@ -23091,7 +24017,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "v-input--center-affix": props.centerAffix,
               "v-input--hide-spin-buttons": props.hideSpinButtons
             }, densityClasses.value, themeClasses.value, rtlClasses.value, validationClasses.value, props.class],
-            "style": props.style
+            "style": [dimensionStyles.value, props.style]
           }, [hasPrepend && createVNode("div", {
             "key": "prepend",
             "class": "v-input__prepend"
@@ -23190,45 +24116,65 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {};
       }
     });
-    function bias(val) {
-      const c = 0.501;
-      const x2 = Math.abs(val);
-      return Math.sign(val) * (x2 / ((1 / c - 2) * (1 - x2) + 1));
-    }
-    function calculateUpdatedOffset(_ref) {
+    function calculateUpdatedTarget(_ref) {
       let {
         selectedElement,
-        containerSize,
-        contentSize,
+        containerElement,
         isRtl,
-        currentScrollOffset,
         isHorizontal
       } = _ref;
-      const clientSize = isHorizontal ? selectedElement.clientWidth : selectedElement.clientHeight;
-      const offsetStart = isHorizontal ? selectedElement.offsetLeft : selectedElement.offsetTop;
-      const adjustedOffsetStart = isRtl && isHorizontal ? contentSize - offsetStart - clientSize : offsetStart;
-      const totalSize = containerSize + currentScrollOffset;
-      const itemOffset = clientSize + adjustedOffsetStart;
-      const additionalOffset = clientSize * 0.4;
-      if (adjustedOffsetStart <= currentScrollOffset) {
-        currentScrollOffset = Math.max(adjustedOffsetStart - additionalOffset, 0);
-      } else if (totalSize <= itemOffset) {
-        currentScrollOffset = Math.min(currentScrollOffset - (totalSize - itemOffset - additionalOffset), contentSize - containerSize);
+      const containerSize = getOffsetSize(isHorizontal, containerElement);
+      const scrollPosition = getScrollPosition(isHorizontal, isRtl, containerElement);
+      const childrenSize = getOffsetSize(isHorizontal, selectedElement);
+      const childrenStartPosition = getOffsetPosition(isHorizontal, selectedElement);
+      const additionalOffset = childrenSize * 0.4;
+      if (scrollPosition > childrenStartPosition) {
+        return childrenStartPosition - additionalOffset;
+      } else if (scrollPosition + containerSize < childrenStartPosition + childrenSize) {
+        return childrenStartPosition - containerSize + childrenSize + additionalOffset;
       }
-      return currentScrollOffset;
+      return scrollPosition;
     }
-    function calculateCenteredOffset(_ref2) {
+    function calculateCenteredTarget(_ref2) {
       let {
         selectedElement,
-        containerSize,
-        contentSize,
-        isRtl,
+        containerElement,
         isHorizontal
       } = _ref2;
-      const clientSize = isHorizontal ? selectedElement.clientWidth : selectedElement.clientHeight;
-      const offsetStart = isHorizontal ? selectedElement.offsetLeft : selectedElement.offsetTop;
-      const offsetCentered = isRtl && isHorizontal ? contentSize - offsetStart - clientSize / 2 - containerSize / 2 : offsetStart + clientSize / 2 - containerSize / 2;
-      return Math.min(contentSize - containerSize, Math.max(0, offsetCentered));
+      const containerOffsetSize = getOffsetSize(isHorizontal, containerElement);
+      const childrenOffsetPosition = getOffsetPosition(isHorizontal, selectedElement);
+      const childrenOffsetSize = getOffsetSize(isHorizontal, selectedElement);
+      return childrenOffsetPosition - containerOffsetSize / 2 + childrenOffsetSize / 2;
+    }
+    function getScrollSize(isHorizontal, element) {
+      const key = isHorizontal ? "scrollWidth" : "scrollHeight";
+      return (element == null ? void 0 : element[key]) || 0;
+    }
+    function getClientSize(isHorizontal, element) {
+      const key = isHorizontal ? "clientWidth" : "clientHeight";
+      return (element == null ? void 0 : element[key]) || 0;
+    }
+    function getScrollPosition(isHorizontal, rtl, element) {
+      if (!element) {
+        return 0;
+      }
+      const {
+        scrollLeft,
+        offsetWidth,
+        scrollWidth
+      } = element;
+      if (isHorizontal) {
+        return rtl ? scrollWidth - offsetWidth + scrollLeft : scrollLeft;
+      }
+      return element.scrollTop;
+    }
+    function getOffsetSize(isHorizontal, element) {
+      const key = isHorizontal ? "offsetWidth" : "offsetHeight";
+      return (element == null ? void 0 : element[key]) || 0;
+    }
+    function getOffsetPosition(isHorizontal, element) {
+      const key = isHorizontal ? "offsetLeft" : "offsetTop";
+      return (element == null ? void 0 : element[key]) || 0;
     }
     const VSlideGroupSymbol = Symbol.for("vuetify:v-slide-group");
     const makeVSlideGroupProps = propsFactory({
@@ -23291,6 +24237,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           resizeRef: contentRef,
           contentRect
         } = useResizeObserver$1();
+        const goTo = useGoTo();
+        const goToOptions = computed(() => {
+          return {
+            container: containerRef.value,
+            duration: 200,
+            easing: "easeOutQuart"
+          };
+        });
         const firstSelectedIndex = computed(() => {
           if (!group.selected.value.length)
             return -1;
@@ -23314,62 +24268,59 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               }
               if (firstSelectedIndex.value >= 0 && contentRef.value) {
                 const selectedElement = contentRef.value.children[lastSelectedIndex.value];
-                if (firstSelectedIndex.value === 0 || !isOverflowing.value) {
-                  scrollOffset.value = 0;
-                } else if (props.centerActive) {
-                  scrollOffset.value = calculateCenteredOffset({
-                    selectedElement,
-                    containerSize: containerSize.value,
-                    contentSize: contentSize.value,
-                    isRtl: isRtl.value,
-                    isHorizontal: isHorizontal.value
-                  });
-                } else if (isOverflowing.value) {
-                  scrollOffset.value = calculateUpdatedOffset({
-                    selectedElement,
-                    containerSize: containerSize.value,
-                    contentSize: contentSize.value,
-                    isRtl: isRtl.value,
-                    currentScrollOffset: scrollOffset.value,
-                    isHorizontal: isHorizontal.value
-                  });
-                }
+                scrollToChildren(selectedElement, props.centerActive);
               }
             });
           });
         }
-        const disableTransition = shallowRef(false);
-        let startTouch = 0;
-        let startOffset = 0;
-        function onTouchstart(e) {
-          const sizeProperty = isHorizontal.value ? "clientX" : "clientY";
-          const sign = isRtl.value && isHorizontal.value ? -1 : 1;
-          startOffset = sign * scrollOffset.value;
-          startTouch = e.touches[0][sizeProperty];
-          disableTransition.value = true;
-        }
-        function onTouchmove(e) {
-          if (!isOverflowing.value)
-            return;
-          const sizeProperty = isHorizontal.value ? "clientX" : "clientY";
-          const sign = isRtl.value && isHorizontal.value ? -1 : 1;
-          scrollOffset.value = sign * (startOffset + startTouch - e.touches[0][sizeProperty]);
-        }
-        function onTouchend(e) {
-          const maxScrollOffset = contentSize.value - containerSize.value;
-          if (scrollOffset.value < 0 || !isOverflowing.value) {
-            scrollOffset.value = 0;
-          } else if (scrollOffset.value >= maxScrollOffset) {
-            scrollOffset.value = maxScrollOffset;
-          }
-          disableTransition.value = false;
-        }
-        function onScroll() {
-          if (!containerRef.value)
-            return;
-          containerRef.value[isHorizontal.value ? "scrollLeft" : "scrollTop"] = 0;
-        }
         const isFocused = shallowRef(false);
+        function scrollToChildren(children, center) {
+          let target2 = 0;
+          if (center) {
+            target2 = calculateCenteredTarget({
+              containerElement: containerRef.value,
+              isHorizontal: isHorizontal.value,
+              selectedElement: children
+            });
+          } else {
+            target2 = calculateUpdatedTarget({
+              containerElement: containerRef.value,
+              isHorizontal: isHorizontal.value,
+              isRtl: isRtl.value,
+              selectedElement: children
+            });
+          }
+          scrollToPosition2(target2);
+        }
+        function scrollToPosition2(newPosition) {
+          if (!IN_BROWSER || !containerRef.value)
+            return;
+          const offsetSize = getOffsetSize(isHorizontal.value, containerRef.value);
+          const scrollPosition = getScrollPosition(isHorizontal.value, isRtl.value, containerRef.value);
+          const scrollSize = getScrollSize(isHorizontal.value, containerRef.value);
+          if (scrollSize <= offsetSize || // Prevent scrolling by only a couple of pixels, which doesn't look smooth
+          Math.abs(newPosition - scrollPosition) < 16)
+            return;
+          if (isHorizontal.value && isRtl.value && containerRef.value) {
+            const {
+              scrollWidth,
+              offsetWidth: containerWidth
+            } = containerRef.value;
+            newPosition = scrollWidth - containerWidth - newPosition;
+          }
+          if (isHorizontal.value) {
+            goTo.horizontal(newPosition, goToOptions.value);
+          } else {
+            goTo(newPosition, goToOptions.value);
+          }
+        }
+        function onScroll(e) {
+          const {
+            scrollTop,
+            scrollLeft
+          } = e.target;
+          scrollOffset.value = isHorizontal.value ? scrollLeft : scrollTop;
+        }
         function onFocusin(e) {
           isFocused.value = true;
           if (!isOverflowing.value || !contentRef.value)
@@ -23377,14 +24328,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           for (const el2 of e.composedPath()) {
             for (const item of contentRef.value.children) {
               if (item === el2) {
-                scrollOffset.value = calculateUpdatedOffset({
-                  selectedElement: item,
-                  containerSize: containerSize.value,
-                  contentSize: contentSize.value,
-                  isRtl: isRtl.value,
-                  currentScrollOffset: scrollOffset.value,
-                  isHorizontal: isHorizontal.value
-                });
+                scrollToChildren(item);
                 return;
               }
             }
@@ -23393,74 +24337,82 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         function onFocusout(e) {
           isFocused.value = false;
         }
+        let ignoreFocusEvent = false;
         function onFocus(e) {
           var _a2;
-          if (!isFocused.value && !(e.relatedTarget && ((_a2 = contentRef.value) == null ? void 0 : _a2.contains(e.relatedTarget))))
+          if (!ignoreFocusEvent && !isFocused.value && !(e.relatedTarget && ((_a2 = contentRef.value) == null ? void 0 : _a2.contains(e.relatedTarget))))
             focus();
+          ignoreFocusEvent = false;
+        }
+        function onFocusAffixes() {
+          ignoreFocusEvent = true;
         }
         function onKeydown(e) {
           if (!contentRef.value)
             return;
+          function toFocus(location2) {
+            e.preventDefault();
+            focus(location2);
+          }
           if (isHorizontal.value) {
             if (e.key === "ArrowRight") {
-              focus(isRtl.value ? "prev" : "next");
+              toFocus(isRtl.value ? "prev" : "next");
             } else if (e.key === "ArrowLeft") {
-              focus(isRtl.value ? "next" : "prev");
+              toFocus(isRtl.value ? "next" : "prev");
             }
           } else {
             if (e.key === "ArrowDown") {
-              focus("next");
+              toFocus("next");
             } else if (e.key === "ArrowUp") {
-              focus("prev");
+              toFocus("prev");
             }
           }
           if (e.key === "Home") {
-            focus("first");
+            toFocus("first");
           } else if (e.key === "End") {
-            focus("last");
+            toFocus("last");
           }
         }
         function focus(location2) {
-          var _a2, _b, _c, _d, _e;
+          var _a2, _b;
           if (!contentRef.value)
             return;
+          let el2;
           if (!location2) {
             const focusable = focusableChildren(contentRef.value);
-            (_a2 = focusable[0]) == null ? void 0 : _a2.focus();
+            el2 = focusable[0];
           } else if (location2 === "next") {
-            const el2 = (_b = contentRef.value.querySelector(":focus")) == null ? void 0 : _b.nextElementSibling;
-            if (el2)
-              el2.focus();
-            else
-              focus("first");
+            el2 = (_a2 = contentRef.value.querySelector(":focus")) == null ? void 0 : _a2.nextElementSibling;
+            if (!el2)
+              return focus("first");
           } else if (location2 === "prev") {
-            const el2 = (_c = contentRef.value.querySelector(":focus")) == null ? void 0 : _c.previousElementSibling;
-            if (el2)
-              el2.focus();
-            else
-              focus("last");
+            el2 = (_b = contentRef.value.querySelector(":focus")) == null ? void 0 : _b.previousElementSibling;
+            if (!el2)
+              return focus("last");
           } else if (location2 === "first") {
-            (_d = contentRef.value.firstElementChild) == null ? void 0 : _d.focus();
+            el2 = contentRef.value.firstElementChild;
           } else if (location2 === "last") {
-            (_e = contentRef.value.lastElementChild) == null ? void 0 : _e.focus();
+            el2 = contentRef.value.lastElementChild;
+          }
+          if (el2) {
+            el2.focus({
+              preventScroll: true
+            });
           }
         }
-        function scrollTo(location2) {
-          const newAbsoluteOffset = scrollOffset.value + (location2 === "prev" ? -1 : 1) * containerSize.value;
-          scrollOffset.value = clamp(newAbsoluteOffset, 0, contentSize.value - containerSize.value);
-        }
-        const contentStyles = computed(() => {
-          let scrollAmount = scrollOffset.value > contentSize.value - containerSize.value ? -(contentSize.value - containerSize.value) + bias(contentSize.value - containerSize.value - scrollOffset.value) : -scrollOffset.value;
-          if (scrollOffset.value <= 0) {
-            scrollAmount = bias(-scrollOffset.value);
+        function scrollTo2(location2) {
+          const direction = isHorizontal.value && isRtl.value ? -1 : 1;
+          const offsetStep = (location2 === "prev" ? -direction : direction) * containerSize.value;
+          let newPosition = scrollOffset.value + offsetStep;
+          if (isHorizontal.value && isRtl.value && containerRef.value) {
+            const {
+              scrollWidth,
+              offsetWidth: containerWidth
+            } = containerRef.value;
+            newPosition += scrollWidth - containerWidth;
           }
-          const sign = isRtl.value && isHorizontal.value ? -1 : 1;
-          return {
-            transform: `translate${isHorizontal.value ? "X" : "Y"}(${sign * scrollAmount}px)`,
-            transition: disableTransition.value ? "none" : "",
-            willChange: disableTransition.value ? "transform" : ""
-          };
-        });
+          scrollToPosition2(newPosition);
+        }
         const slotProps = computed(() => ({
           next: group.next,
           prev: group.prev,
@@ -23482,10 +24434,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
         });
         const hasPrev = computed(() => {
-          return Math.abs(scrollOffset.value) > 0;
+          return Math.abs(scrollOffset.value) > 1;
         });
         const hasNext = computed(() => {
-          return contentSize.value > Math.abs(scrollOffset.value) + containerSize.value;
+          if (!containerRef.value)
+            return false;
+          const scrollSize = getScrollSize(isHorizontal.value, containerRef.value);
+          const clientSize = getClientSize(isHorizontal.value, containerRef.value);
+          const scrollSizeMax = scrollSize - clientSize;
+          return scrollSizeMax - Math.abs(scrollOffset.value) > 1;
         });
         useRender(() => createVNode(props.tag, {
           "class": ["v-slide-group", {
@@ -23504,7 +24461,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "class": ["v-slide-group__prev", {
                 "v-slide-group__prev--disabled": !hasPrev.value
               }],
-              "onClick": () => hasPrev.value && scrollTo("prev")
+              "onMousedown": onFocusAffixes,
+              "onClick": () => hasPrev.value && scrollTo2("prev")
             }, [((_a2 = slots.prev) == null ? void 0 : _a2.call(slots, slotProps.value)) ?? createVNode(VFadeTransition, null, {
               default: () => [createVNode(VIcon, {
                 "icon": isRtl.value ? props.nextIcon : props.prevIcon
@@ -23517,10 +24475,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, [createVNode("div", {
               "ref": contentRef,
               "class": "v-slide-group__content",
-              "style": contentStyles.value,
-              "onTouchstartPassive": onTouchstart,
-              "onTouchmovePassive": onTouchmove,
-              "onTouchendPassive": onTouchend,
               "onFocusin": onFocusin,
               "onFocusout": onFocusout,
               "onKeydown": onKeydown
@@ -23529,7 +24483,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "class": ["v-slide-group__next", {
                 "v-slide-group__next--disabled": !hasNext.value
               }],
-              "onClick": () => hasNext.value && scrollTo("next")
+              "onMousedown": onFocusAffixes,
+              "onClick": () => hasNext.value && scrollTo2("next")
             }, [((_c = slots.next) == null ? void 0 : _c.call(slots, slotProps.value)) ?? createVNode(VFadeTransition, null, {
               default: () => [createVNode(VIcon, {
                 "icon": isRtl.value ? props.prevIcon : props.nextIcon
@@ -23539,7 +24494,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }));
         return {
           selected: group.selected,
-          scrollTo,
+          scrollTo: scrollTo2,
           scrollOffset,
           focus
         };
@@ -24024,6 +24979,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     });
     const makeVCounterProps = propsFactory({
       active: Boolean,
+      disabled: Boolean,
       max: [Number, String],
       value: {
         type: [Number, String],
@@ -24051,7 +25007,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           "transition": props.transition
         }, {
           default: () => [withDirectives(createVNode("div", {
-            "class": ["v-counter", props.class],
+            "class": ["v-counter", {
+              "text-error": props.max && !props.disabled && parseFloat(props.value) > parseFloat(props.max)
+            }, props.class],
             "style": props.style
           }, [slots.default ? slots.default({
             counter: counter.value,
@@ -24580,7 +25538,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
                 "active": props.persistentCounter || isFocused.value,
                 "value": counterValue.value,
-                "max": max.value
+                "max": max.value,
+                "disabled": props.disabled
               }, slots.counter)])]);
             } : void 0
           });
@@ -36381,7 +37340,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.5.17";
+    const version$1 = "3.6.1";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -39953,7 +40912,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         throw new Error("Function yaml." + from + " is removed in js-yaml 4. Use yaml." + to + " instead, which is now safe by default.");
       };
     }
-    var Type = type$9;
+    var Type$2 = type$9;
     var Schema = schema;
     var FAILSAFE_SCHEMA = failsafe;
     var JSON_SCHEMA = json$1;
@@ -39982,7 +40941,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     var safeLoadAll = renamed("safeLoadAll", "loadAll");
     var safeDump = renamed("safeDump", "dump");
     var jsYaml = {
-      Type,
+      Type: Type$2,
       Schema,
       FAILSAFE_SCHEMA,
       JSON_SCHEMA,
@@ -41856,97 +42815,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return forwardRefs({}, rootEl);
       }
     });
-    function parseItems(items2) {
-      if (!items2)
-        return [];
-      return items2.map((item) => {
-        if (!isObject$3(item))
-          return {
-            text: item,
-            value: item
-          };
-        return item;
-      });
-    }
-    const makeVTabsProps = propsFactory({
-      alignTabs: {
-        type: String,
-        default: "start"
-      },
-      color: String,
-      fixedTabs: Boolean,
-      items: {
-        type: Array,
-        default: () => []
-      },
-      stacked: Boolean,
-      bgColor: String,
-      grow: Boolean,
-      height: {
-        type: [Number, String],
-        default: void 0
-      },
-      hideSlider: Boolean,
-      sliderColor: String,
-      ...makeVSlideGroupProps({
-        mandatory: "force"
-      }),
-      ...makeDensityProps(),
-      ...makeTagProps()
-    }, "VTabs");
-    const VTabs = genericComponent()({
-      name: "VTabs",
-      props: makeVTabsProps(),
-      emits: {
-        "update:modelValue": (v) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const model = useProxiedModel(props, "modelValue");
-        const parsedItems = computed(() => parseItems(props.items));
-        const {
-          densityClasses
-        } = useDensity(props);
-        const {
-          backgroundColorClasses,
-          backgroundColorStyles
-        } = useBackgroundColor(toRef(props, "bgColor"));
-        provideDefaults({
-          VTab: {
-            color: toRef(props, "color"),
-            direction: toRef(props, "direction"),
-            stacked: toRef(props, "stacked"),
-            fixed: toRef(props, "fixedTabs"),
-            sliderColor: toRef(props, "sliderColor"),
-            hideSlider: toRef(props, "hideSlider")
-          }
-        });
-        useRender(() => {
-          const slideGroupProps = VSlideGroup.filterProps(props);
-          return createVNode(VSlideGroup, mergeProps(slideGroupProps, {
-            "modelValue": model.value,
-            "onUpdate:modelValue": ($event) => model.value = $event,
-            "class": ["v-tabs", `v-tabs--${props.direction}`, `v-tabs--align-tabs-${props.alignTabs}`, {
-              "v-tabs--fixed-tabs": props.fixedTabs,
-              "v-tabs--grow": props.grow,
-              "v-tabs--stacked": props.stacked
-            }, densityClasses.value, backgroundColorClasses.value, props.class],
-            "style": [{
-              "--v-tabs-height": convertToUnit(props.height)
-            }, backgroundColorStyles.value, props.style],
-            "role": "tablist",
-            "symbol": VTabsSymbol
-          }), {
-            default: () => [slots.default ? slots.default() : parsedItems.value.map((item) => createVNode(VTab, mergeProps(item, {
-              "key": item.text
-            }), null))]
-          });
-        });
-        return {};
-      }
-    });
     const handleGesture = (wrapper) => {
       const {
         touchstartX,
@@ -42234,6 +43102,47 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
+    const makeVTabsWindowProps = propsFactory({
+      ...omit$1(makeVWindowProps(), ["continuous", "nextIcon", "prevIcon", "showArrows", "touch", "mandatory"])
+    }, "VTabsWindow");
+    const VTabsWindow = genericComponent()({
+      name: "VTabsWindow",
+      props: makeVTabsWindowProps(),
+      emits: {
+        "update:modelValue": (v) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const group = inject$1(VTabsSymbol, null);
+        const _model = useProxiedModel(props, "modelValue");
+        const model = computed({
+          get() {
+            var _a2;
+            if (_model.value != null || !group)
+              return _model.value;
+            return (_a2 = group.items.value.find((item) => group.selected.value.includes(item.id))) == null ? void 0 : _a2.value;
+          },
+          set(val) {
+            _model.value = val;
+          }
+        });
+        useRender(() => {
+          const windowProps = VWindow.filterProps(props);
+          return createVNode(VWindow, mergeProps({
+            "_as": "VTabsWindow"
+          }, windowProps, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "class": "v-tabs-window",
+            "mandatory": false,
+            "touch": false
+          }), slots);
+        });
+        return {};
+      }
+    });
     const makeVWindowItemProps = propsFactory({
       reverseTransition: {
         type: [Boolean, String],
@@ -42337,6 +43246,160 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {
           groupItem
         };
+      }
+    });
+    const makeVTabsWindowItemProps = propsFactory({
+      ...makeVWindowItemProps()
+    }, "VTabsWindowItem");
+    const VTabsWindowItem = genericComponent()({
+      name: "VTabsWindowItem",
+      props: makeVTabsWindowItemProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => {
+          const windowItemProps = VWindowItem.filterProps(props);
+          return createVNode(VWindowItem, mergeProps({
+            "_as": "VTabsWindowItem"
+          }, windowItemProps, {
+            "class": ["v-tabs-window-item", props.class],
+            "style": props.style
+          }), slots);
+        });
+        return {};
+      }
+    });
+    function parseItems(items2) {
+      if (!items2)
+        return [];
+      return items2.map((item) => {
+        if (!isObject$3(item))
+          return {
+            text: item,
+            value: item
+          };
+        return item;
+      });
+    }
+    const makeVTabsProps = propsFactory({
+      alignTabs: {
+        type: String,
+        default: "start"
+      },
+      color: String,
+      fixedTabs: Boolean,
+      items: {
+        type: Array,
+        default: () => []
+      },
+      stacked: Boolean,
+      bgColor: String,
+      grow: Boolean,
+      height: {
+        type: [Number, String],
+        default: void 0
+      },
+      hideSlider: Boolean,
+      sliderColor: String,
+      ...makeVSlideGroupProps({
+        mandatory: "force",
+        selectedClass: "v-tab-item--selected"
+      }),
+      ...makeDensityProps(),
+      ...makeTagProps()
+    }, "VTabs");
+    const VTabs = genericComponent()({
+      name: "VTabs",
+      props: makeVTabsProps(),
+      emits: {
+        "update:modelValue": (v) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const model = useProxiedModel(props, "modelValue");
+        const items2 = computed(() => parseItems(props.items));
+        const {
+          densityClasses
+        } = useDensity(props);
+        const {
+          backgroundColorClasses,
+          backgroundColorStyles
+        } = useBackgroundColor(toRef(props, "bgColor"));
+        provideDefaults({
+          VTab: {
+            color: toRef(props, "color"),
+            direction: toRef(props, "direction"),
+            stacked: toRef(props, "stacked"),
+            fixed: toRef(props, "fixedTabs"),
+            sliderColor: toRef(props, "sliderColor"),
+            hideSlider: toRef(props, "hideSlider")
+          }
+        });
+        useRender(() => {
+          const slideGroupProps = VSlideGroup.filterProps(props);
+          const hasWindow = !!(slots.window || props.items.length > 0);
+          return createVNode(Fragment, null, [createVNode(VSlideGroup, mergeProps(slideGroupProps, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "class": ["v-tabs", `v-tabs--${props.direction}`, `v-tabs--align-tabs-${props.alignTabs}`, {
+              "v-tabs--fixed-tabs": props.fixedTabs,
+              "v-tabs--grow": props.grow,
+              "v-tabs--stacked": props.stacked
+            }, densityClasses.value, backgroundColorClasses.value, props.class],
+            "style": [{
+              "--v-tabs-height": convertToUnit(props.height)
+            }, backgroundColorStyles.value, props.style],
+            "role": "tablist",
+            "symbol": VTabsSymbol
+          }), {
+            default: () => {
+              var _a2;
+              return [((_a2 = slots.default) == null ? void 0 : _a2.call(slots)) ?? items2.value.map((item) => {
+                var _a3;
+                return ((_a3 = slots.tab) == null ? void 0 : _a3.call(slots, {
+                  item
+                })) ?? createVNode(VTab, mergeProps(item, {
+                  "key": item.text,
+                  "value": item.value
+                }), {
+                  default: () => {
+                    var _a4;
+                    return (_a4 = slots[`tab.${item.value}`]) == null ? void 0 : _a4.call(slots, {
+                      item
+                    });
+                  }
+                });
+              })];
+            }
+          }), hasWindow && createVNode(VTabsWindow, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "key": "tabs-window"
+          }, {
+            default: () => {
+              var _a2;
+              return [items2.value.map((item) => {
+                var _a3;
+                return ((_a3 = slots.item) == null ? void 0 : _a3.call(slots, {
+                  item
+                })) ?? createVNode(VTabsWindowItem, {
+                  "value": item.value
+                }, {
+                  default: () => {
+                    var _a4;
+                    return (_a4 = slots[`item.${item.value}`]) == null ? void 0 : _a4.call(slots, {
+                      item
+                    });
+                  }
+                });
+              }), (_a2 = slots.window) == null ? void 0 : _a2.call(slots)];
+            }
+          })]);
+        });
+        return {};
       }
     });
     const _hoisted_1$6 = { class: "title-content" };
@@ -42934,7 +43997,7 @@ Reason: ${error2}`);
       (function(UsedValueState2) {
         UsedValueState2[UsedValueState2["Started"] = 0] = "Started";
         UsedValueState2[UsedValueState2["Completed"] = 1] = "Completed";
-      })(UsedValueState = exports2.UsedValueState || (exports2.UsedValueState = {}));
+      })(UsedValueState || (exports2.UsedValueState = UsedValueState = {}));
       exports2.varKinds = {
         const: new code_12.Name("const"),
         let: new code_12.Name("let"),
@@ -43776,193 +44839,197 @@ Reason: ${error2}`);
       }
     })(codegen);
     var util = {};
-    (function(exports2) {
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.checkStrictMode = exports2.getErrorPath = exports2.Type = exports2.useFunc = exports2.setEvaluated = exports2.evaluatedPropsToName = exports2.mergeEvaluated = exports2.eachItem = exports2.unescapeJsonPointer = exports2.escapeJsonPointer = exports2.escapeFragment = exports2.unescapeFragment = exports2.schemaRefOrVal = exports2.schemaHasRulesButRef = exports2.schemaHasRules = exports2.checkUnknownRules = exports2.alwaysValidSchema = exports2.toHash = void 0;
-      const codegen_12 = codegen;
-      const code_12 = code$2;
-      function toHash(arr) {
-        const hash = {};
-        for (const item of arr)
-          hash[item] = true;
-        return hash;
+    Object.defineProperty(util, "__esModule", { value: true });
+    util.checkStrictMode = util.getErrorPath = util.Type = util.useFunc = util.setEvaluated = util.evaluatedPropsToName = util.mergeEvaluated = util.eachItem = util.unescapeJsonPointer = util.escapeJsonPointer = util.escapeFragment = util.unescapeFragment = util.schemaRefOrVal = util.schemaHasRulesButRef = util.schemaHasRules = util.checkUnknownRules = util.alwaysValidSchema = util.toHash = void 0;
+    const codegen_1$z = codegen;
+    const code_1$a = code$2;
+    function toHash(arr) {
+      const hash = {};
+      for (const item of arr)
+        hash[item] = true;
+      return hash;
+    }
+    util.toHash = toHash;
+    function alwaysValidSchema(it2, schema2) {
+      if (typeof schema2 == "boolean")
+        return schema2;
+      if (Object.keys(schema2).length === 0)
+        return true;
+      checkUnknownRules(it2, schema2);
+      return !schemaHasRules(schema2, it2.self.RULES.all);
+    }
+    util.alwaysValidSchema = alwaysValidSchema;
+    function checkUnknownRules(it2, schema2 = it2.schema) {
+      const { opts, self: self2 } = it2;
+      if (!opts.strictSchema)
+        return;
+      if (typeof schema2 === "boolean")
+        return;
+      const rules2 = self2.RULES.keywords;
+      for (const key in schema2) {
+        if (!rules2[key])
+          checkStrictMode(it2, `unknown keyword: "${key}"`);
       }
-      exports2.toHash = toHash;
-      function alwaysValidSchema(it2, schema2) {
-        if (typeof schema2 == "boolean")
-          return schema2;
-        if (Object.keys(schema2).length === 0)
+    }
+    util.checkUnknownRules = checkUnknownRules;
+    function schemaHasRules(schema2, rules2) {
+      if (typeof schema2 == "boolean")
+        return !schema2;
+      for (const key in schema2)
+        if (rules2[key])
           return true;
-        checkUnknownRules(it2, schema2);
-        return !schemaHasRules(schema2, it2.self.RULES.all);
+      return false;
+    }
+    util.schemaHasRules = schemaHasRules;
+    function schemaHasRulesButRef(schema2, RULES2) {
+      if (typeof schema2 == "boolean")
+        return !schema2;
+      for (const key in schema2)
+        if (key !== "$ref" && RULES2.all[key])
+          return true;
+      return false;
+    }
+    util.schemaHasRulesButRef = schemaHasRulesButRef;
+    function schemaRefOrVal({ topSchemaRef, schemaPath }, schema2, keyword2, $data) {
+      if (!$data) {
+        if (typeof schema2 == "number" || typeof schema2 == "boolean")
+          return schema2;
+        if (typeof schema2 == "string")
+          return (0, codegen_1$z._)`${schema2}`;
       }
-      exports2.alwaysValidSchema = alwaysValidSchema;
-      function checkUnknownRules(it2, schema2 = it2.schema) {
-        const { opts, self: self2 } = it2;
-        if (!opts.strictSchema)
-          return;
-        if (typeof schema2 === "boolean")
-          return;
-        const rules2 = self2.RULES.keywords;
-        for (const key in schema2) {
-          if (!rules2[key])
-            checkStrictMode(it2, `unknown keyword: "${key}"`);
-        }
+      return (0, codegen_1$z._)`${topSchemaRef}${schemaPath}${(0, codegen_1$z.getProperty)(keyword2)}`;
+    }
+    util.schemaRefOrVal = schemaRefOrVal;
+    function unescapeFragment(str2) {
+      return unescapeJsonPointer(decodeURIComponent(str2));
+    }
+    util.unescapeFragment = unescapeFragment;
+    function escapeFragment(str2) {
+      return encodeURIComponent(escapeJsonPointer(str2));
+    }
+    util.escapeFragment = escapeFragment;
+    function escapeJsonPointer(str2) {
+      if (typeof str2 == "number")
+        return `${str2}`;
+      return str2.replace(/~/g, "~0").replace(/\//g, "~1");
+    }
+    util.escapeJsonPointer = escapeJsonPointer;
+    function unescapeJsonPointer(str2) {
+      return str2.replace(/~1/g, "/").replace(/~0/g, "~");
+    }
+    util.unescapeJsonPointer = unescapeJsonPointer;
+    function eachItem(xs, f) {
+      if (Array.isArray(xs)) {
+        for (const x2 of xs)
+          f(x2);
+      } else {
+        f(xs);
       }
-      exports2.checkUnknownRules = checkUnknownRules;
-      function schemaHasRules(schema2, rules2) {
-        if (typeof schema2 == "boolean")
-          return !schema2;
-        for (const key in schema2)
-          if (rules2[key])
-            return true;
-        return false;
-      }
-      exports2.schemaHasRules = schemaHasRules;
-      function schemaHasRulesButRef(schema2, RULES2) {
-        if (typeof schema2 == "boolean")
-          return !schema2;
-        for (const key in schema2)
-          if (key !== "$ref" && RULES2.all[key])
-            return true;
-        return false;
-      }
-      exports2.schemaHasRulesButRef = schemaHasRulesButRef;
-      function schemaRefOrVal({ topSchemaRef, schemaPath }, schema2, keyword2, $data) {
-        if (!$data) {
-          if (typeof schema2 == "number" || typeof schema2 == "boolean")
-            return schema2;
-          if (typeof schema2 == "string")
-            return (0, codegen_12._)`${schema2}`;
-        }
-        return (0, codegen_12._)`${topSchemaRef}${schemaPath}${(0, codegen_12.getProperty)(keyword2)}`;
-      }
-      exports2.schemaRefOrVal = schemaRefOrVal;
-      function unescapeFragment(str2) {
-        return unescapeJsonPointer(decodeURIComponent(str2));
-      }
-      exports2.unescapeFragment = unescapeFragment;
-      function escapeFragment(str2) {
-        return encodeURIComponent(escapeJsonPointer(str2));
-      }
-      exports2.escapeFragment = escapeFragment;
-      function escapeJsonPointer(str2) {
-        if (typeof str2 == "number")
-          return `${str2}`;
-        return str2.replace(/~/g, "~0").replace(/\//g, "~1");
-      }
-      exports2.escapeJsonPointer = escapeJsonPointer;
-      function unescapeJsonPointer(str2) {
-        return str2.replace(/~1/g, "/").replace(/~0/g, "~");
-      }
-      exports2.unescapeJsonPointer = unescapeJsonPointer;
-      function eachItem(xs, f) {
-        if (Array.isArray(xs)) {
-          for (const x2 of xs)
-            f(x2);
-        } else {
-          f(xs);
-        }
-      }
-      exports2.eachItem = eachItem;
-      function makeMergeEvaluated({ mergeNames, mergeToName, mergeValues, resultToName }) {
-        return (gen, from, to, toName) => {
-          const res = to === void 0 ? from : to instanceof codegen_12.Name ? (from instanceof codegen_12.Name ? mergeNames(gen, from, to) : mergeToName(gen, from, to), to) : from instanceof codegen_12.Name ? (mergeToName(gen, to, from), from) : mergeValues(from, to);
-          return toName === codegen_12.Name && !(res instanceof codegen_12.Name) ? resultToName(gen, res) : res;
-        };
-      }
-      exports2.mergeEvaluated = {
-        props: makeMergeEvaluated({
-          mergeNames: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true && ${from} !== undefined`, () => {
-            gen.if((0, codegen_12._)`${from} === true`, () => gen.assign(to, true), () => gen.assign(to, (0, codegen_12._)`${to} || {}`).code((0, codegen_12._)`Object.assign(${to}, ${from})`));
-          }),
-          mergeToName: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true`, () => {
-            if (from === true) {
-              gen.assign(to, true);
-            } else {
-              gen.assign(to, (0, codegen_12._)`${to} || {}`);
-              setEvaluated(gen, to, from);
-            }
-          }),
-          mergeValues: (from, to) => from === true ? true : { ...from, ...to },
-          resultToName: evaluatedPropsToName
-        }),
-        items: makeMergeEvaluated({
-          mergeNames: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true && ${from} !== undefined`, () => gen.assign(to, (0, codegen_12._)`${from} === true ? true : ${to} > ${from} ? ${to} : ${from}`)),
-          mergeToName: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true`, () => gen.assign(to, from === true ? true : (0, codegen_12._)`${to} > ${from} ? ${to} : ${from}`)),
-          mergeValues: (from, to) => from === true ? true : Math.max(from, to),
-          resultToName: (gen, items2) => gen.var("items", items2)
-        })
+    }
+    util.eachItem = eachItem;
+    function makeMergeEvaluated({ mergeNames, mergeToName, mergeValues, resultToName }) {
+      return (gen, from, to, toName) => {
+        const res = to === void 0 ? from : to instanceof codegen_1$z.Name ? (from instanceof codegen_1$z.Name ? mergeNames(gen, from, to) : mergeToName(gen, from, to), to) : from instanceof codegen_1$z.Name ? (mergeToName(gen, to, from), from) : mergeValues(from, to);
+        return toName === codegen_1$z.Name && !(res instanceof codegen_1$z.Name) ? resultToName(gen, res) : res;
       };
-      function evaluatedPropsToName(gen, ps) {
-        if (ps === true)
-          return gen.var("props", true);
-        const props = gen.var("props", (0, codegen_12._)`{}`);
-        if (ps !== void 0)
-          setEvaluated(gen, props, ps);
-        return props;
+    }
+    util.mergeEvaluated = {
+      props: makeMergeEvaluated({
+        mergeNames: (gen, from, to) => gen.if((0, codegen_1$z._)`${to} !== true && ${from} !== undefined`, () => {
+          gen.if((0, codegen_1$z._)`${from} === true`, () => gen.assign(to, true), () => gen.assign(to, (0, codegen_1$z._)`${to} || {}`).code((0, codegen_1$z._)`Object.assign(${to}, ${from})`));
+        }),
+        mergeToName: (gen, from, to) => gen.if((0, codegen_1$z._)`${to} !== true`, () => {
+          if (from === true) {
+            gen.assign(to, true);
+          } else {
+            gen.assign(to, (0, codegen_1$z._)`${to} || {}`);
+            setEvaluated(gen, to, from);
+          }
+        }),
+        mergeValues: (from, to) => from === true ? true : { ...from, ...to },
+        resultToName: evaluatedPropsToName
+      }),
+      items: makeMergeEvaluated({
+        mergeNames: (gen, from, to) => gen.if((0, codegen_1$z._)`${to} !== true && ${from} !== undefined`, () => gen.assign(to, (0, codegen_1$z._)`${from} === true ? true : ${to} > ${from} ? ${to} : ${from}`)),
+        mergeToName: (gen, from, to) => gen.if((0, codegen_1$z._)`${to} !== true`, () => gen.assign(to, from === true ? true : (0, codegen_1$z._)`${to} > ${from} ? ${to} : ${from}`)),
+        mergeValues: (from, to) => from === true ? true : Math.max(from, to),
+        resultToName: (gen, items2) => gen.var("items", items2)
+      })
+    };
+    function evaluatedPropsToName(gen, ps) {
+      if (ps === true)
+        return gen.var("props", true);
+      const props = gen.var("props", (0, codegen_1$z._)`{}`);
+      if (ps !== void 0)
+        setEvaluated(gen, props, ps);
+      return props;
+    }
+    util.evaluatedPropsToName = evaluatedPropsToName;
+    function setEvaluated(gen, props, ps) {
+      Object.keys(ps).forEach((p2) => gen.assign((0, codegen_1$z._)`${props}${(0, codegen_1$z.getProperty)(p2)}`, true));
+    }
+    util.setEvaluated = setEvaluated;
+    const snippets = {};
+    function useFunc(gen, f) {
+      return gen.scopeValue("func", {
+        ref: f,
+        code: snippets[f.code] || (snippets[f.code] = new code_1$a._Code(f.code))
+      });
+    }
+    util.useFunc = useFunc;
+    var Type;
+    (function(Type2) {
+      Type2[Type2["Num"] = 0] = "Num";
+      Type2[Type2["Str"] = 1] = "Str";
+    })(Type || (util.Type = Type = {}));
+    function getErrorPath(dataProp, dataPropType, jsPropertySyntax) {
+      if (dataProp instanceof codegen_1$z.Name) {
+        const isNumber = dataPropType === Type.Num;
+        return jsPropertySyntax ? isNumber ? (0, codegen_1$z._)`"[" + ${dataProp} + "]"` : (0, codegen_1$z._)`"['" + ${dataProp} + "']"` : isNumber ? (0, codegen_1$z._)`"/" + ${dataProp}` : (0, codegen_1$z._)`"/" + ${dataProp}.replace(/~/g, "~0").replace(/\\//g, "~1")`;
       }
-      exports2.evaluatedPropsToName = evaluatedPropsToName;
-      function setEvaluated(gen, props, ps) {
-        Object.keys(ps).forEach((p2) => gen.assign((0, codegen_12._)`${props}${(0, codegen_12.getProperty)(p2)}`, true));
-      }
-      exports2.setEvaluated = setEvaluated;
-      const snippets = {};
-      function useFunc(gen, f) {
-        return gen.scopeValue("func", {
-          ref: f,
-          code: snippets[f.code] || (snippets[f.code] = new code_12._Code(f.code))
-        });
-      }
-      exports2.useFunc = useFunc;
-      var Type2;
-      (function(Type3) {
-        Type3[Type3["Num"] = 0] = "Num";
-        Type3[Type3["Str"] = 1] = "Str";
-      })(Type2 = exports2.Type || (exports2.Type = {}));
-      function getErrorPath(dataProp, dataPropType, jsPropertySyntax) {
-        if (dataProp instanceof codegen_12.Name) {
-          const isNumber = dataPropType === Type2.Num;
-          return jsPropertySyntax ? isNumber ? (0, codegen_12._)`"[" + ${dataProp} + "]"` : (0, codegen_12._)`"['" + ${dataProp} + "']"` : isNumber ? (0, codegen_12._)`"/" + ${dataProp}` : (0, codegen_12._)`"/" + ${dataProp}.replace(/~/g, "~0").replace(/\\//g, "~1")`;
-        }
-        return jsPropertySyntax ? (0, codegen_12.getProperty)(dataProp).toString() : "/" + escapeJsonPointer(dataProp);
-      }
-      exports2.getErrorPath = getErrorPath;
-      function checkStrictMode(it2, msg, mode = it2.opts.strictSchema) {
-        if (!mode)
-          return;
-        msg = `strict mode: ${msg}`;
-        if (mode === true)
-          throw new Error(msg);
-        it2.self.logger.warn(msg);
-      }
-      exports2.checkStrictMode = checkStrictMode;
-    })(util);
+      return jsPropertySyntax ? (0, codegen_1$z.getProperty)(dataProp).toString() : "/" + escapeJsonPointer(dataProp);
+    }
+    util.getErrorPath = getErrorPath;
+    function checkStrictMode(it2, msg, mode = it2.opts.strictSchema) {
+      if (!mode)
+        return;
+      msg = `strict mode: ${msg}`;
+      if (mode === true)
+        throw new Error(msg);
+      it2.self.logger.warn(msg);
+    }
+    util.checkStrictMode = checkStrictMode;
     var names$2 = {};
     Object.defineProperty(names$2, "__esModule", { value: true });
-    const codegen_1$x = codegen;
+    const codegen_1$y = codegen;
     const names$1 = {
       // validation function arguments
-      data: new codegen_1$x.Name("data"),
+      data: new codegen_1$y.Name("data"),
+      // data passed to validation function
       // args passed from referencing schema
-      valCxt: new codegen_1$x.Name("valCxt"),
-      instancePath: new codegen_1$x.Name("instancePath"),
-      parentData: new codegen_1$x.Name("parentData"),
-      parentDataProperty: new codegen_1$x.Name("parentDataProperty"),
-      rootData: new codegen_1$x.Name("rootData"),
-      dynamicAnchors: new codegen_1$x.Name("dynamicAnchors"),
+      valCxt: new codegen_1$y.Name("valCxt"),
+      // validation/data context - should not be used directly, it is destructured to the names below
+      instancePath: new codegen_1$y.Name("instancePath"),
+      parentData: new codegen_1$y.Name("parentData"),
+      parentDataProperty: new codegen_1$y.Name("parentDataProperty"),
+      rootData: new codegen_1$y.Name("rootData"),
+      // root data - same as the data passed to the first/top validation function
+      dynamicAnchors: new codegen_1$y.Name("dynamicAnchors"),
+      // used to support recursiveRef and dynamicRef
       // function scoped variables
-      vErrors: new codegen_1$x.Name("vErrors"),
-      errors: new codegen_1$x.Name("errors"),
-      this: new codegen_1$x.Name("this"),
+      vErrors: new codegen_1$y.Name("vErrors"),
+      // null or array of validation errors
+      errors: new codegen_1$y.Name("errors"),
+      // counter of validation errors
+      this: new codegen_1$y.Name("this"),
       // "globals"
-      self: new codegen_1$x.Name("self"),
-      scope: new codegen_1$x.Name("scope"),
+      self: new codegen_1$y.Name("self"),
+      scope: new codegen_1$y.Name("scope"),
       // JTD serialize/parse name for JSON string and position
-      json: new codegen_1$x.Name("json"),
-      jsonPos: new codegen_1$x.Name("jsonPos"),
-      jsonLen: new codegen_1$x.Name("jsonLen"),
-      jsonPart: new codegen_1$x.Name("jsonPart")
+      json: new codegen_1$y.Name("json"),
+      jsonPos: new codegen_1$y.Name("jsonPos"),
+      jsonLen: new codegen_1$y.Name("jsonLen"),
+      jsonPart: new codegen_1$y.Name("jsonPart")
     };
     names$2.default = names$1;
     (function(exports2) {
@@ -44035,6 +45102,7 @@ Reason: ${error2}`);
       const E = {
         keyword: new codegen_12.Name("keyword"),
         schemaPath: new codegen_12.Name("schemaPath"),
+        // also used in JTD errors
         params: new codegen_12.Name("params"),
         propertyName: new codegen_12.Name("propertyName"),
         message: new codegen_12.Name("message"),
@@ -44083,8 +45151,8 @@ Reason: ${error2}`);
     })(errors$1);
     Object.defineProperty(boolSchema, "__esModule", { value: true });
     boolSchema.boolOrEmptySchema = boolSchema.topBoolOrEmptySchema = void 0;
-    const errors_1$2 = errors$1;
-    const codegen_1$w = codegen;
+    const errors_1$3 = errors$1;
+    const codegen_1$x = codegen;
     const names_1$9 = names$2;
     const boolError = {
       message: "boolean schema is false"
@@ -44096,7 +45164,7 @@ Reason: ${error2}`);
       } else if (typeof schema2 == "object" && schema2.$async === true) {
         gen.return(names_1$9.default.data);
       } else {
-        gen.assign((0, codegen_1$w._)`${validateName}.errors`, null);
+        gen.assign((0, codegen_1$x._)`${validateName}.errors`, null);
         gen.return(true);
       }
     }
@@ -44123,7 +45191,7 @@ Reason: ${error2}`);
         params: {},
         it: it2
       };
-      (0, errors_1$2.reportError)(cxt, boolError, void 0, overrideAllErrors);
+      (0, errors_1$3.reportError)(cxt, boolError, void 0, overrideAllErrors);
     }
     var dataType = {};
     var rules = {};
@@ -44168,185 +45236,183 @@ Reason: ${error2}`);
       return schema2[rule.keyword] !== void 0 || ((_a2 = rule.definition.implements) === null || _a2 === void 0 ? void 0 : _a2.some((kwd) => schema2[kwd] !== void 0));
     }
     applicability.shouldUseRule = shouldUseRule;
-    (function(exports2) {
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.reportTypeError = exports2.checkDataTypes = exports2.checkDataType = exports2.coerceAndCheckDataType = exports2.getJSONTypes = exports2.getSchemaTypes = exports2.DataType = void 0;
-      const rules_1 = rules;
-      const applicability_12 = applicability;
-      const errors_12 = errors$1;
-      const codegen_12 = codegen;
-      const util_12 = util;
-      var DataType;
-      (function(DataType2) {
-        DataType2[DataType2["Correct"] = 0] = "Correct";
-        DataType2[DataType2["Wrong"] = 1] = "Wrong";
-      })(DataType = exports2.DataType || (exports2.DataType = {}));
-      function getSchemaTypes(schema2) {
-        const types2 = getJSONTypes(schema2.type);
-        const hasNull = types2.includes("null");
-        if (hasNull) {
-          if (schema2.nullable === false)
-            throw new Error("type: null contradicts nullable: false");
-        } else {
-          if (!types2.length && schema2.nullable !== void 0) {
-            throw new Error('"nullable" cannot be used without "type"');
-          }
-          if (schema2.nullable === true)
-            types2.push("null");
+    Object.defineProperty(dataType, "__esModule", { value: true });
+    dataType.reportTypeError = dataType.checkDataTypes = dataType.checkDataType = dataType.coerceAndCheckDataType = dataType.getJSONTypes = dataType.getSchemaTypes = dataType.DataType = void 0;
+    const rules_1 = rules;
+    const applicability_1$1 = applicability;
+    const errors_1$2 = errors$1;
+    const codegen_1$w = codegen;
+    const util_1$u = util;
+    var DataType;
+    (function(DataType2) {
+      DataType2[DataType2["Correct"] = 0] = "Correct";
+      DataType2[DataType2["Wrong"] = 1] = "Wrong";
+    })(DataType || (dataType.DataType = DataType = {}));
+    function getSchemaTypes(schema2) {
+      const types2 = getJSONTypes(schema2.type);
+      const hasNull = types2.includes("null");
+      if (hasNull) {
+        if (schema2.nullable === false)
+          throw new Error("type: null contradicts nullable: false");
+      } else {
+        if (!types2.length && schema2.nullable !== void 0) {
+          throw new Error('"nullable" cannot be used without "type"');
         }
+        if (schema2.nullable === true)
+          types2.push("null");
+      }
+      return types2;
+    }
+    dataType.getSchemaTypes = getSchemaTypes;
+    function getJSONTypes(ts) {
+      const types2 = Array.isArray(ts) ? ts : ts ? [ts] : [];
+      if (types2.every(rules_1.isJSONType))
         return types2;
-      }
-      exports2.getSchemaTypes = getSchemaTypes;
-      function getJSONTypes(ts) {
-        const types2 = Array.isArray(ts) ? ts : ts ? [ts] : [];
-        if (types2.every(rules_1.isJSONType))
-          return types2;
-        throw new Error("type must be JSONType or JSONType[]: " + types2.join(","));
-      }
-      exports2.getJSONTypes = getJSONTypes;
-      function coerceAndCheckDataType(it2, types2) {
-        const { gen, data, opts } = it2;
-        const coerceTo = coerceToTypes(types2, opts.coerceTypes);
-        const checkTypes = types2.length > 0 && !(coerceTo.length === 0 && types2.length === 1 && (0, applicability_12.schemaHasRulesForType)(it2, types2[0]));
-        if (checkTypes) {
-          const wrongType = checkDataTypes(types2, data, opts.strictNumbers, DataType.Wrong);
-          gen.if(wrongType, () => {
-            if (coerceTo.length)
-              coerceData(it2, types2, coerceTo);
-            else
-              reportTypeError(it2);
-          });
-        }
-        return checkTypes;
-      }
-      exports2.coerceAndCheckDataType = coerceAndCheckDataType;
-      const COERCIBLE = /* @__PURE__ */ new Set(["string", "number", "integer", "boolean", "null"]);
-      function coerceToTypes(types2, coerceTypes) {
-        return coerceTypes ? types2.filter((t) => COERCIBLE.has(t) || coerceTypes === "array" && t === "array") : [];
-      }
-      function coerceData(it2, types2, coerceTo) {
-        const { gen, data, opts } = it2;
-        const dataType2 = gen.let("dataType", (0, codegen_12._)`typeof ${data}`);
-        const coerced = gen.let("coerced", (0, codegen_12._)`undefined`);
-        if (opts.coerceTypes === "array") {
-          gen.if((0, codegen_12._)`${dataType2} == 'object' && Array.isArray(${data}) && ${data}.length == 1`, () => gen.assign(data, (0, codegen_12._)`${data}[0]`).assign(dataType2, (0, codegen_12._)`typeof ${data}`).if(checkDataTypes(types2, data, opts.strictNumbers), () => gen.assign(coerced, data)));
-        }
-        gen.if((0, codegen_12._)`${coerced} !== undefined`);
-        for (const t of coerceTo) {
-          if (COERCIBLE.has(t) || t === "array" && opts.coerceTypes === "array") {
-            coerceSpecificType(t);
-          }
-        }
-        gen.else();
-        reportTypeError(it2);
-        gen.endIf();
-        gen.if((0, codegen_12._)`${coerced} !== undefined`, () => {
-          gen.assign(data, coerced);
-          assignParentData(it2, coerced);
+      throw new Error("type must be JSONType or JSONType[]: " + types2.join(","));
+    }
+    dataType.getJSONTypes = getJSONTypes;
+    function coerceAndCheckDataType(it2, types2) {
+      const { gen, data, opts } = it2;
+      const coerceTo = coerceToTypes(types2, opts.coerceTypes);
+      const checkTypes = types2.length > 0 && !(coerceTo.length === 0 && types2.length === 1 && (0, applicability_1$1.schemaHasRulesForType)(it2, types2[0]));
+      if (checkTypes) {
+        const wrongType = checkDataTypes(types2, data, opts.strictNumbers, DataType.Wrong);
+        gen.if(wrongType, () => {
+          if (coerceTo.length)
+            coerceData(it2, types2, coerceTo);
+          else
+            reportTypeError(it2);
         });
-        function coerceSpecificType(t) {
-          switch (t) {
-            case "string":
-              gen.elseIf((0, codegen_12._)`${dataType2} == "number" || ${dataType2} == "boolean"`).assign(coerced, (0, codegen_12._)`"" + ${data}`).elseIf((0, codegen_12._)`${data} === null`).assign(coerced, (0, codegen_12._)`""`);
-              return;
-            case "number":
-              gen.elseIf((0, codegen_12._)`${dataType2} == "boolean" || ${data} === null
-              || (${dataType2} == "string" && ${data} && ${data} == +${data})`).assign(coerced, (0, codegen_12._)`+${data}`);
-              return;
-            case "integer":
-              gen.elseIf((0, codegen_12._)`${dataType2} === "boolean" || ${data} === null
-              || (${dataType2} === "string" && ${data} && ${data} == +${data} && !(${data} % 1))`).assign(coerced, (0, codegen_12._)`+${data}`);
-              return;
-            case "boolean":
-              gen.elseIf((0, codegen_12._)`${data} === "false" || ${data} === 0 || ${data} === null`).assign(coerced, false).elseIf((0, codegen_12._)`${data} === "true" || ${data} === 1`).assign(coerced, true);
-              return;
-            case "null":
-              gen.elseIf((0, codegen_12._)`${data} === "" || ${data} === 0 || ${data} === false`);
-              gen.assign(coerced, null);
-              return;
-            case "array":
-              gen.elseIf((0, codegen_12._)`${dataType2} === "string" || ${dataType2} === "number"
-              || ${dataType2} === "boolean" || ${data} === null`).assign(coerced, (0, codegen_12._)`[${data}]`);
-          }
+      }
+      return checkTypes;
+    }
+    dataType.coerceAndCheckDataType = coerceAndCheckDataType;
+    const COERCIBLE = /* @__PURE__ */ new Set(["string", "number", "integer", "boolean", "null"]);
+    function coerceToTypes(types2, coerceTypes) {
+      return coerceTypes ? types2.filter((t) => COERCIBLE.has(t) || coerceTypes === "array" && t === "array") : [];
+    }
+    function coerceData(it2, types2, coerceTo) {
+      const { gen, data, opts } = it2;
+      const dataType2 = gen.let("dataType", (0, codegen_1$w._)`typeof ${data}`);
+      const coerced = gen.let("coerced", (0, codegen_1$w._)`undefined`);
+      if (opts.coerceTypes === "array") {
+        gen.if((0, codegen_1$w._)`${dataType2} == 'object' && Array.isArray(${data}) && ${data}.length == 1`, () => gen.assign(data, (0, codegen_1$w._)`${data}[0]`).assign(dataType2, (0, codegen_1$w._)`typeof ${data}`).if(checkDataTypes(types2, data, opts.strictNumbers), () => gen.assign(coerced, data)));
+      }
+      gen.if((0, codegen_1$w._)`${coerced} !== undefined`);
+      for (const t of coerceTo) {
+        if (COERCIBLE.has(t) || t === "array" && opts.coerceTypes === "array") {
+          coerceSpecificType(t);
         }
       }
-      function assignParentData({ gen, parentData, parentDataProperty }, expr) {
-        gen.if((0, codegen_12._)`${parentData} !== undefined`, () => gen.assign((0, codegen_12._)`${parentData}[${parentDataProperty}]`, expr));
-      }
-      function checkDataType(dataType2, data, strictNums, correct = DataType.Correct) {
-        const EQ = correct === DataType.Correct ? codegen_12.operators.EQ : codegen_12.operators.NEQ;
-        let cond;
-        switch (dataType2) {
-          case "null":
-            return (0, codegen_12._)`${data} ${EQ} null`;
-          case "array":
-            cond = (0, codegen_12._)`Array.isArray(${data})`;
-            break;
-          case "object":
-            cond = (0, codegen_12._)`${data} && typeof ${data} == "object" && !Array.isArray(${data})`;
-            break;
-          case "integer":
-            cond = numCond((0, codegen_12._)`!(${data} % 1) && !isNaN(${data})`);
-            break;
+      gen.else();
+      reportTypeError(it2);
+      gen.endIf();
+      gen.if((0, codegen_1$w._)`${coerced} !== undefined`, () => {
+        gen.assign(data, coerced);
+        assignParentData(it2, coerced);
+      });
+      function coerceSpecificType(t) {
+        switch (t) {
+          case "string":
+            gen.elseIf((0, codegen_1$w._)`${dataType2} == "number" || ${dataType2} == "boolean"`).assign(coerced, (0, codegen_1$w._)`"" + ${data}`).elseIf((0, codegen_1$w._)`${data} === null`).assign(coerced, (0, codegen_1$w._)`""`);
+            return;
           case "number":
-            cond = numCond();
-            break;
-          default:
-            return (0, codegen_12._)`typeof ${data} ${EQ} ${dataType2}`;
-        }
-        return correct === DataType.Correct ? cond : (0, codegen_12.not)(cond);
-        function numCond(_cond = codegen_12.nil) {
-          return (0, codegen_12.and)((0, codegen_12._)`typeof ${data} == "number"`, _cond, strictNums ? (0, codegen_12._)`isFinite(${data})` : codegen_12.nil);
+            gen.elseIf((0, codegen_1$w._)`${dataType2} == "boolean" || ${data} === null
+              || (${dataType2} == "string" && ${data} && ${data} == +${data})`).assign(coerced, (0, codegen_1$w._)`+${data}`);
+            return;
+          case "integer":
+            gen.elseIf((0, codegen_1$w._)`${dataType2} === "boolean" || ${data} === null
+              || (${dataType2} === "string" && ${data} && ${data} == +${data} && !(${data} % 1))`).assign(coerced, (0, codegen_1$w._)`+${data}`);
+            return;
+          case "boolean":
+            gen.elseIf((0, codegen_1$w._)`${data} === "false" || ${data} === 0 || ${data} === null`).assign(coerced, false).elseIf((0, codegen_1$w._)`${data} === "true" || ${data} === 1`).assign(coerced, true);
+            return;
+          case "null":
+            gen.elseIf((0, codegen_1$w._)`${data} === "" || ${data} === 0 || ${data} === false`);
+            gen.assign(coerced, null);
+            return;
+          case "array":
+            gen.elseIf((0, codegen_1$w._)`${dataType2} === "string" || ${dataType2} === "number"
+              || ${dataType2} === "boolean" || ${data} === null`).assign(coerced, (0, codegen_1$w._)`[${data}]`);
         }
       }
-      exports2.checkDataType = checkDataType;
-      function checkDataTypes(dataTypes, data, strictNums, correct) {
-        if (dataTypes.length === 1) {
-          return checkDataType(dataTypes[0], data, strictNums, correct);
-        }
-        let cond;
-        const types2 = (0, util_12.toHash)(dataTypes);
-        if (types2.array && types2.object) {
-          const notObj = (0, codegen_12._)`typeof ${data} != "object"`;
-          cond = types2.null ? notObj : (0, codegen_12._)`!${data} || ${notObj}`;
-          delete types2.null;
-          delete types2.array;
-          delete types2.object;
-        } else {
-          cond = codegen_12.nil;
-        }
-        if (types2.number)
-          delete types2.integer;
-        for (const t in types2)
-          cond = (0, codegen_12.and)(cond, checkDataType(t, data, strictNums, correct));
-        return cond;
+    }
+    function assignParentData({ gen, parentData, parentDataProperty }, expr) {
+      gen.if((0, codegen_1$w._)`${parentData} !== undefined`, () => gen.assign((0, codegen_1$w._)`${parentData}[${parentDataProperty}]`, expr));
+    }
+    function checkDataType(dataType2, data, strictNums, correct = DataType.Correct) {
+      const EQ = correct === DataType.Correct ? codegen_1$w.operators.EQ : codegen_1$w.operators.NEQ;
+      let cond;
+      switch (dataType2) {
+        case "null":
+          return (0, codegen_1$w._)`${data} ${EQ} null`;
+        case "array":
+          cond = (0, codegen_1$w._)`Array.isArray(${data})`;
+          break;
+        case "object":
+          cond = (0, codegen_1$w._)`${data} && typeof ${data} == "object" && !Array.isArray(${data})`;
+          break;
+        case "integer":
+          cond = numCond((0, codegen_1$w._)`!(${data} % 1) && !isNaN(${data})`);
+          break;
+        case "number":
+          cond = numCond();
+          break;
+        default:
+          return (0, codegen_1$w._)`typeof ${data} ${EQ} ${dataType2}`;
       }
-      exports2.checkDataTypes = checkDataTypes;
-      const typeError = {
-        message: ({ schema: schema2 }) => `must be ${schema2}`,
-        params: ({ schema: schema2, schemaValue }) => typeof schema2 == "string" ? (0, codegen_12._)`{type: ${schema2}}` : (0, codegen_12._)`{type: ${schemaValue}}`
+      return correct === DataType.Correct ? cond : (0, codegen_1$w.not)(cond);
+      function numCond(_cond = codegen_1$w.nil) {
+        return (0, codegen_1$w.and)((0, codegen_1$w._)`typeof ${data} == "number"`, _cond, strictNums ? (0, codegen_1$w._)`isFinite(${data})` : codegen_1$w.nil);
+      }
+    }
+    dataType.checkDataType = checkDataType;
+    function checkDataTypes(dataTypes, data, strictNums, correct) {
+      if (dataTypes.length === 1) {
+        return checkDataType(dataTypes[0], data, strictNums, correct);
+      }
+      let cond;
+      const types2 = (0, util_1$u.toHash)(dataTypes);
+      if (types2.array && types2.object) {
+        const notObj = (0, codegen_1$w._)`typeof ${data} != "object"`;
+        cond = types2.null ? notObj : (0, codegen_1$w._)`!${data} || ${notObj}`;
+        delete types2.null;
+        delete types2.array;
+        delete types2.object;
+      } else {
+        cond = codegen_1$w.nil;
+      }
+      if (types2.number)
+        delete types2.integer;
+      for (const t in types2)
+        cond = (0, codegen_1$w.and)(cond, checkDataType(t, data, strictNums, correct));
+      return cond;
+    }
+    dataType.checkDataTypes = checkDataTypes;
+    const typeError = {
+      message: ({ schema: schema2 }) => `must be ${schema2}`,
+      params: ({ schema: schema2, schemaValue }) => typeof schema2 == "string" ? (0, codegen_1$w._)`{type: ${schema2}}` : (0, codegen_1$w._)`{type: ${schemaValue}}`
+    };
+    function reportTypeError(it2) {
+      const cxt = getTypeErrorContext(it2);
+      (0, errors_1$2.reportError)(cxt, typeError);
+    }
+    dataType.reportTypeError = reportTypeError;
+    function getTypeErrorContext(it2) {
+      const { gen, data, schema: schema2 } = it2;
+      const schemaCode = (0, util_1$u.schemaRefOrVal)(it2, schema2, "type");
+      return {
+        gen,
+        keyword: "type",
+        data,
+        schema: schema2.type,
+        schemaCode,
+        schemaValue: schemaCode,
+        parentSchema: schema2,
+        params: {},
+        it: it2
       };
-      function reportTypeError(it2) {
-        const cxt = getTypeErrorContext(it2);
-        (0, errors_12.reportError)(cxt, typeError);
-      }
-      exports2.reportTypeError = reportTypeError;
-      function getTypeErrorContext(it2) {
-        const { gen, data, schema: schema2 } = it2;
-        const schemaCode = (0, util_12.schemaRefOrVal)(it2, schema2, "type");
-        return {
-          gen,
-          keyword: "type",
-          data,
-          schema: schema2.type,
-          schemaCode,
-          schemaValue: schemaCode,
-          parentSchema: schema2,
-          params: {},
-          it: it2
-        };
-      }
-    })(dataType);
+    }
     var defaults = {};
     Object.defineProperty(defaults, "__esModule", { value: true });
     defaults.assignDefaults = void 0;
@@ -44920,15 +45986,15 @@ Reason: ${error2}`);
         if (parentJsonPtr === void 0)
           return;
         const fullPath = pathPrefix + jsonPtr;
-        let baseId2 = baseIds[parentJsonPtr];
+        let innerBaseId = baseIds[parentJsonPtr];
         if (typeof sch[schemaId] == "string")
-          baseId2 = addRef.call(this, sch[schemaId]);
+          innerBaseId = addRef.call(this, sch[schemaId]);
         addAnchor.call(this, sch.$anchor);
         addAnchor.call(this, sch.$dynamicAnchor);
-        baseIds[jsonPtr] = baseId2;
+        baseIds[jsonPtr] = innerBaseId;
         function addRef(ref2) {
           const _resolve = this.opts.uriResolver.resolve;
-          ref2 = normalizeId(baseId2 ? _resolve(baseId2, ref2) : ref2);
+          ref2 = normalizeId(innerBaseId ? _resolve(innerBaseId, ref2) : ref2);
           if (schemaRefs.has(ref2))
             throw ambiguos(ref2);
           schemaRefs.add(ref2);
@@ -45540,6 +46606,7 @@ Reason: ${error2}`);
         parentDataProperty: names_1$5.default.parentDataProperty,
         dataNames: [names_1$5.default.data],
         dataPathArr: [codegen_1$q.nil],
+        // TODO can its length be used as dataLevel if nil is removed?
         dataLevel: 0,
         dataTypes: [],
         definedProperties: /* @__PURE__ */ new Set(),
@@ -45949,7 +47016,7 @@ Reason: ${error2}`);
           var inputLength = input.length;
           var i2 = 0;
           var n = initialN2;
-          var bias2 = initialBias2;
+          var bias = initialBias2;
           var basic = input.lastIndexOf(delimiter2);
           if (basic < 0) {
             basic = 0;
@@ -45976,7 +47043,7 @@ Reason: ${error2}`);
                 error$12("overflow");
               }
               i2 += digit * w;
-              var t = k <= bias2 ? tMin2 : k >= bias2 + tMax2 ? tMax2 : k - bias2;
+              var t = k <= bias ? tMin2 : k >= bias + tMax2 ? tMax2 : k - bias;
               if (digit < t) {
                 break;
               }
@@ -45987,7 +47054,7 @@ Reason: ${error2}`);
               w *= baseMinusT;
             }
             var out = output.length + 1;
-            bias2 = adapt2(i2 - oldi, out, oldi == 0);
+            bias = adapt2(i2 - oldi, out, oldi == 0);
             if (floor2(i2 / out) > maxInt2 - n) {
               error$12("overflow");
             }
@@ -46003,7 +47070,7 @@ Reason: ${error2}`);
           var inputLength = input.length;
           var n = initialN2;
           var delta2 = 0;
-          var bias2 = initialBias2;
+          var bias = initialBias2;
           var _iteratorNormalCompletion = true;
           var _didIteratorError = false;
           var _iteratorError = void 0;
@@ -46082,7 +47149,7 @@ Reason: ${error2}`);
                     /* no condition */
                     k += base2
                   ) {
-                    var t = k <= bias2 ? tMin2 : k >= bias2 + tMax2 ? tMax2 : k - bias2;
+                    var t = k <= bias ? tMin2 : k >= bias + tMax2 ? tMax2 : k - bias;
                     if (q < t) {
                       break;
                     }
@@ -46092,7 +47159,7 @@ Reason: ${error2}`);
                     q = floor2(qMinusT / baseMinusT);
                   }
                   output.push(stringFromCharCode2(digitToBasic2(q, 0)));
-                  bias2 = adapt2(delta2, handledCPCountPlusOne, handledCPCount == basicLength);
+                  bias = adapt2(delta2, handledCPCountPlusOne, handledCPCount == basicLength);
                   delta2 = 0;
                   ++handledCPCount;
                 }
@@ -46806,7 +47873,7 @@ Reason: ${error2}`);
       } });
       const validation_error_12 = validation_error;
       const ref_error_12 = ref_error;
-      const rules_1 = rules;
+      const rules_12 = rules;
       const compile_12 = compile$2;
       const codegen_2 = codegen;
       const resolve_12 = resolve$1;
@@ -46897,7 +47964,7 @@ Reason: ${error2}`);
           this.logger = getLogger(opts.logger);
           const formatOpt = opts.validateFormats;
           opts.validateFormats = false;
-          this.RULES = (0, rules_1.getRules)();
+          this.RULES = (0, rules_12.getRules)();
           checkOptions.call(this, removedOptions, opts, "NOT SUPPORTED");
           checkOptions.call(this, deprecatedOptions, opts, "DEPRECATED", "warn");
           this._metaOpts = getMetaSchemaOptions.call(this);
@@ -47253,9 +48320,9 @@ Reason: ${error2}`);
           }
         }
       }
-      exports2.default = Ajv2;
       Ajv2.ValidationError = validation_error_12.default;
       Ajv2.MissingRefError = ref_error_12.default;
+      exports2.default = Ajv2;
       function checkOptions(checkOpts, options, msg, log = "error") {
         for (const key in checkOpts) {
           const opt = key;
@@ -48849,14 +49916,13 @@ Reason: ${error2}`);
     draft7.default = draft7Vocabularies;
     var discriminator = {};
     var types = {};
-    (function(exports2) {
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.DiscrError = void 0;
-      (function(DiscrError) {
-        DiscrError["Tag"] = "tag";
-        DiscrError["Mapping"] = "mapping";
-      })(exports2.DiscrError || (exports2.DiscrError = {}));
-    })(types);
+    Object.defineProperty(types, "__esModule", { value: true });
+    types.DiscrError = void 0;
+    var DiscrError;
+    (function(DiscrError2) {
+      DiscrError2["Tag"] = "tag";
+      DiscrError2["Mapping"] = "mapping";
+    })(DiscrError || (types.DiscrError = DiscrError = {}));
     Object.defineProperty(discriminator, "__esModule", { value: true });
     const codegen_1$4 = codegen;
     const types_1 = types;
@@ -49200,7 +50266,7 @@ Reason: ${error2}`);
     };
     (function(module2, exports2) {
       Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
+      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = exports2.Ajv = void 0;
       const core_12 = core$3;
       const draft7_1 = draft7;
       const discriminator_1 = discriminator;
@@ -49226,7 +50292,9 @@ Reason: ${error2}`);
           return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
         }
       }
+      exports2.Ajv = Ajv2;
       module2.exports = exports2 = Ajv2;
+      module2.exports.Ajv = Ajv2;
       Object.defineProperty(exports2, "__esModule", { value: true });
       exports2.default = Ajv2;
       var validate_12 = validate;
@@ -49625,60 +50693,6 @@ Reason: ${error2}`);
         }
       }
     });
-    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
-    const allowedVariants = ["default", "accordion", "inset", "popout"];
-    const makeVExpansionPanelsProps = propsFactory({
-      color: String,
-      flat: Boolean,
-      focusable: Boolean,
-      static: Boolean,
-      tile: Boolean,
-      variant: {
-        type: String,
-        default: "default",
-        validator: (v) => allowedVariants.includes(v)
-      },
-      readonly: Boolean,
-      ...makeComponentProps(),
-      ...makeGroupProps(),
-      ...makeTagProps(),
-      ...makeThemeProps()
-    }, "VExpansionPanels");
-    const VExpansionPanels = genericComponent()({
-      name: "VExpansionPanels",
-      props: makeVExpansionPanelsProps(),
-      emits: {
-        "update:modelValue": (val) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        useGroup(props, VExpansionPanelSymbol);
-        const {
-          themeClasses
-        } = provideTheme(props);
-        const variantClass = computed(() => props.variant && `v-expansion-panels--variant-${props.variant}`);
-        provideDefaults({
-          VExpansionPanel: {
-            color: toRef(props, "color"),
-            readonly: toRef(props, "readonly")
-          },
-          VExpansionPanelTitle: {
-            focusable: toRef(props, "focusable"),
-            static: toRef(props, "static")
-          }
-        });
-        useRender(() => createVNode(props.tag, {
-          "class": ["v-expansion-panels", {
-            "v-expansion-panels--flat": props.flat,
-            "v-expansion-panels--tile": props.tile
-          }, themeClasses.value, variantClass.value, props.class],
-          "style": props.style
-        }, slots));
-        return {};
-      }
-    });
     const makeVExpansionPanelTextProps = propsFactory({
       ...makeComponentProps(),
       ...makeLazyProps()
@@ -49786,13 +50800,12 @@ Reason: ${error2}`);
       title: String,
       text: String,
       bgColor: String,
-      ...makeComponentProps(),
       ...makeElevationProps(),
       ...makeGroupItemProps(),
-      ...makeLazyProps(),
       ...makeRoundedProps(),
       ...makeTagProps(),
-      ...makeVExpansionPanelTitleProps()
+      ...makeVExpansionPanelTitleProps(),
+      ...makeVExpansionPanelTextProps()
     }, "VExpansionPanel");
     const VExpansionPanel = genericComponent()({
       name: "VExpansionPanel",
@@ -49830,17 +50843,11 @@ Reason: ${error2}`);
           return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === -1);
         });
         provide(VExpansionPanelSymbol, groupItem);
-        provideDefaults({
-          VExpansionPanelText: {
-            eager: toRef(props, "eager")
-          },
-          VExpansionPanelTitle: {
-            readonly: toRef(props, "readonly")
-          }
-        });
         useRender(() => {
           const hasText = !!(slots.text || props.text);
           const hasTitle = !!(slots.title || props.title);
+          const expansionPanelTitleProps = VExpansionPanelTitle.filterProps(props);
+          const expansionPanelTextProps = VExpansionPanelText.filterProps(props);
           return createVNode(props.tag, {
             "class": ["v-expansion-panel", {
               "v-expansion-panel--active": groupItem.isSelected.value,
@@ -49854,23 +50861,72 @@ Reason: ${error2}`);
               var _a2;
               return [createVNode("div", {
                 "class": ["v-expansion-panel__shadow", ...elevationClasses.value]
-              }, null), hasTitle && createVNode(VExpansionPanelTitle, {
-                "key": "title",
-                "collapseIcon": props.collapseIcon,
-                "color": props.color,
-                "expandIcon": props.expandIcon,
-                "hideActions": props.hideActions,
-                "ripple": props.ripple
-              }, {
+              }, null), hasTitle && createVNode(VExpansionPanelTitle, mergeProps({
+                "key": "title"
+              }, expansionPanelTitleProps), {
                 default: () => [slots.title ? slots.title() : props.title]
-              }), hasText && createVNode(VExpansionPanelText, {
+              }), hasText && createVNode(VExpansionPanelText, mergeProps({
                 "key": "text"
-              }, {
+              }, expansionPanelTextProps), {
                 default: () => [slots.text ? slots.text() : props.text]
               }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots)];
             }
           });
         });
+        return {};
+      }
+    });
+    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
+    const allowedVariants = ["default", "accordion", "inset", "popout"];
+    const makeVExpansionPanelsProps = propsFactory({
+      flat: Boolean,
+      ...makeGroupProps(),
+      ...makeVExpansionPanelProps(),
+      ...makeThemeProps(),
+      variant: {
+        type: String,
+        default: "default",
+        validator: (v) => allowedVariants.includes(v)
+      }
+    }, "VExpansionPanels");
+    const VExpansionPanels = genericComponent()({
+      name: "VExpansionPanels",
+      props: makeVExpansionPanelsProps(),
+      emits: {
+        "update:modelValue": (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useGroup(props, VExpansionPanelSymbol);
+        const {
+          themeClasses
+        } = provideTheme(props);
+        const variantClass = computed(() => props.variant && `v-expansion-panels--variant-${props.variant}`);
+        provideDefaults({
+          VExpansionPanel: {
+            bgColor: toRef(props, "bgColor"),
+            collapseIcon: toRef(props, "collapseIcon"),
+            color: toRef(props, "color"),
+            eager: toRef(props, "eager"),
+            elevation: toRef(props, "elevation"),
+            expandIcon: toRef(props, "expandIcon"),
+            focusable: toRef(props, "focusable"),
+            hideActions: toRef(props, "hideActions"),
+            readonly: toRef(props, "readonly"),
+            ripple: toRef(props, "ripple"),
+            rounded: toRef(props, "rounded"),
+            static: toRef(props, "static")
+          }
+        });
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-expansion-panels", {
+            "v-expansion-panels--flat": props.flat,
+            "v-expansion-panels--tile": props.tile
+          }, themeClasses.value, variantClass.value, props.class],
+          "style": props.style
+        }, slots));
         return {};
       }
     });
@@ -50799,7 +51855,7 @@ Reason: ${error2}`);
     jsonSchema201909.default = addMetaSchema2019;
     (function(module2, exports2) {
       Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
+      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = exports2.Ajv2019 = void 0;
       const core_12 = core$3;
       const draft7_1 = draft7;
       const dynamic_1 = dynamic$1;
@@ -50838,7 +51894,9 @@ Reason: ${error2}`);
           return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
         }
       }
+      exports2.Ajv2019 = Ajv2019;
       module2.exports = exports2 = Ajv2019;
+      module2.exports.Ajv2019 = Ajv2019;
       Object.defineProperty(exports2, "__esModule", { value: true });
       exports2.default = Ajv2019;
       var validate_12 = validate;
@@ -64016,7 +65074,7 @@ Reason: ${error2}`);
       const inputLength = input.length;
       let i2 = 0;
       let n = initialN;
-      let bias2 = initialBias;
+      let bias = initialBias;
       let basic = input.lastIndexOf(delimiter);
       if (basic < 0) {
         basic = 0;
@@ -64041,7 +65099,7 @@ Reason: ${error2}`);
             error("overflow");
           }
           i2 += digit * w;
-          const t = k <= bias2 ? tMin : k >= bias2 + tMax ? tMax : k - bias2;
+          const t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
           if (digit < t) {
             break;
           }
@@ -64052,7 +65110,7 @@ Reason: ${error2}`);
           w *= baseMinusT;
         }
         const out = output.length + 1;
-        bias2 = adapt(i2 - oldi, out, oldi == 0);
+        bias = adapt(i2 - oldi, out, oldi == 0);
         if (floor(i2 / out) > maxInt - n) {
           error("overflow");
         }
@@ -64068,7 +65126,7 @@ Reason: ${error2}`);
       const inputLength = input.length;
       let n = initialN;
       let delta2 = 0;
-      let bias2 = initialBias;
+      let bias = initialBias;
       for (const currentValue of input) {
         if (currentValue < 128) {
           output.push(stringFromCharCode(currentValue));
@@ -64099,7 +65157,7 @@ Reason: ${error2}`);
           if (currentValue === n) {
             let q = delta2;
             for (let k = base; ; k += base) {
-              const t = k <= bias2 ? tMin : k >= bias2 + tMax ? tMax : k - bias2;
+              const t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
               if (q < t) {
                 break;
               }
@@ -64111,7 +65169,7 @@ Reason: ${error2}`);
               q = floor(qMinusT / baseMinusT);
             }
             output.push(stringFromCharCode(digitToBasic(q, 0)));
-            bias2 = adapt(delta2, handledCPCountPlusOne, handledCPCount === basicLength);
+            bias = adapt(delta2, handledCPCountPlusOne, handledCPCount === basicLength);
             delta2 = 0;
             ++handledCPCount;
           }
@@ -78425,6 +79483,10 @@ Reason: ${error2}`);
       weekdays: {
         type: Array,
         default: () => [0, 1, 2, 3, 4, 5, 6]
+      },
+      weeksInMonth: {
+        type: String,
+        default: "dynamic"
       }
     }, "calendar");
     function useCalendar(props) {
@@ -78454,7 +79516,7 @@ Reason: ${error2}`);
         const weeks = adapter.getWeekArray(month.value);
         const days = weeks.flat();
         const daysInMonth2 = 6 * 7;
-        if (days.length < daysInMonth2) {
+        if (props.weeksInMonth === "static" && days.length < daysInMonth2) {
           const lastDay = days[days.length - 1];
           let week = [];
           for (let day = 1; day <= daysInMonth2 - days.length; day++) {
@@ -78502,9 +79564,8 @@ Reason: ${error2}`);
         for (let day = 0; day <= 6; day++) {
           week.push(adapter.addDays(lastDay, day));
         }
-        const days = week;
         const today = adapter.date();
-        return genDays(days, today);
+        return genDays(week, today);
       });
       const daysInMonth = computed(() => {
         const days = weeksInMonth.value.flat();
@@ -78547,6 +79608,14 @@ Reason: ${error2}`);
       hideWeekdays: Boolean,
       multiple: [Boolean, Number, String],
       showWeek: Boolean,
+      transition: {
+        type: String,
+        default: "picker-transition"
+      },
+      reverseTransition: {
+        type: String,
+        default: "picker-reverse-transition"
+      },
       ...makeCalendarProps()
     }, "VDatePickerMonth");
     const VDatePickerMonth = genericComponent()({
@@ -78571,6 +79640,10 @@ Reason: ${error2}`);
         const adapter = useDate();
         const rangeStart = shallowRef();
         const rangeStop = shallowRef();
+        const isReverse = shallowRef(false);
+        const transition = computed(() => {
+          return !isReverse.value ? props.transition : props.reverseTransition;
+        });
         if (props.multiple === "range" && model.value.length > 0) {
           rangeStart.value = model.value[0];
           if (model.value.length > 1) {
@@ -78580,6 +79653,11 @@ Reason: ${error2}`);
         const atMax = computed(() => {
           const max = ["number", "string"].includes(typeof props.multiple) ? Number(props.multiple) : Infinity;
           return model.value.length >= max;
+        });
+        watch(daysInMonth, (val, oldVal) => {
+          if (!oldVal)
+            return;
+          isReverse.value = adapter.isBefore(val[0].date, oldVal[0].date);
         });
         function onRangeClick(value) {
           const _value = adapter.startOfDay(value);
@@ -78640,51 +79718,59 @@ Reason: ${error2}`);
           "class": "v-date-picker-month__day"
         }, [createTextVNode(" ")]), weekNumbers.value.map((week) => createVNode("div", {
           "class": ["v-date-picker-month__day", "v-date-picker-month__day--adjacent"]
-        }, [week]))]), createVNode("div", {
-          "ref": daysRef,
-          "class": "v-date-picker-month__days"
-        }, [!props.hideWeekdays && adapter.getWeekdays().map((weekDay) => createVNode("div", {
-          "class": ["v-date-picker-month__day", "v-date-picker-month__weekday"]
-        }, [weekDay])), daysInMonth.value.map((item, i2) => {
-          const slotProps = {
-            props: {
-              onClick: () => onClick(item.date)
-            },
-            item,
-            i: i2
-          };
-          if (atMax.value && !item.isSelected) {
-            item.isDisabled = true;
-          }
-          return createVNode("div", {
-            "class": ["v-date-picker-month__day", {
-              "v-date-picker-month__day--adjacent": item.isAdjacent,
-              "v-date-picker-month__day--hide-adjacent": item.isHidden,
-              "v-date-picker-month__day--selected": item.isSelected,
-              "v-date-picker-month__day--week-end": item.isWeekEnd,
-              "v-date-picker-month__day--week-start": item.isWeekStart
-            }],
-            "data-v-date": !item.isDisabled ? item.isoDate : void 0
-          }, [(props.showAdjacentMonths || !item.isAdjacent) && createVNode(VDefaultsProvider, {
-            "defaults": {
-              VBtn: {
-                class: "v-date-picker-month__day-btn",
-                color: (item.isSelected || item.isToday) && !item.isDisabled ? props.color : void 0,
-                disabled: item.isDisabled,
-                icon: true,
-                ripple: false,
-                text: item.localized,
-                variant: item.isDisabled ? item.isToday ? "outlined" : "text" : item.isToday && !item.isSelected ? "outlined" : "flat",
-                onClick: () => onClick(item.date)
+        }, [week]))]), createVNode(MaybeTransition, {
+          "name": transition.value
+        }, {
+          default: () => {
+            var _a2;
+            return [createVNode("div", {
+              "ref": daysRef,
+              "key": (_a2 = daysInMonth.value[0].date) == null ? void 0 : _a2.toString(),
+              "class": "v-date-picker-month__days"
+            }, [!props.hideWeekdays && adapter.getWeekdays().map((weekDay) => createVNode("div", {
+              "class": ["v-date-picker-month__day", "v-date-picker-month__weekday"]
+            }, [weekDay])), daysInMonth.value.map((item, i2) => {
+              const slotProps = {
+                props: {
+                  onClick: () => onClick(item.date)
+                },
+                item,
+                i: i2
+              };
+              if (atMax.value && !item.isSelected) {
+                item.isDisabled = true;
               }
-            }
-          }, {
-            default: () => {
-              var _a2;
-              return [((_a2 = slots.day) == null ? void 0 : _a2.call(slots, slotProps)) ?? createVNode(VBtn, slotProps.props, null)];
-            }
-          })]);
-        })])]);
+              return createVNode("div", {
+                "class": ["v-date-picker-month__day", {
+                  "v-date-picker-month__day--adjacent": item.isAdjacent,
+                  "v-date-picker-month__day--hide-adjacent": item.isHidden,
+                  "v-date-picker-month__day--selected": item.isSelected,
+                  "v-date-picker-month__day--week-end": item.isWeekEnd,
+                  "v-date-picker-month__day--week-start": item.isWeekStart
+                }],
+                "data-v-date": !item.isDisabled ? item.isoDate : void 0
+              }, [(props.showAdjacentMonths || !item.isAdjacent) && createVNode(VDefaultsProvider, {
+                "defaults": {
+                  VBtn: {
+                    class: "v-date-picker-month__day-btn",
+                    color: (item.isSelected || item.isToday) && !item.isDisabled ? props.color : void 0,
+                    disabled: item.isDisabled,
+                    icon: true,
+                    ripple: false,
+                    text: item.localized,
+                    variant: item.isDisabled ? item.isToday ? "outlined" : "text" : item.isToday && !item.isSelected ? "outlined" : "flat",
+                    onClick: () => onClick(item.date)
+                  }
+                }
+              }, {
+                default: () => {
+                  var _a3;
+                  return [((_a3 = slots.day) == null ? void 0 : _a3.call(slots, slotProps)) ?? createVNode(VBtn, slotProps.props, null)];
+                }
+              })]);
+            })])];
+          }
+        })]);
       }
     });
     const makeVDatePickerMonthsProps = propsFactory({
@@ -78933,7 +80019,9 @@ Reason: ${error2}`);
         default: "$vuetify.datePicker.header"
       },
       ...makeVDatePickerControlsProps(),
-      ...makeVDatePickerMonthProps(),
+      ...makeVDatePickerMonthProps({
+        weeksInMonth: "static"
+      }),
       ...omit$1(makeVDatePickerMonthsProps(), ["modelValue"]),
       ...omit$1(makeVDatePickerYearsProps(), ["modelValue"]),
       ...makeVPickerProps({
@@ -79053,10 +80141,10 @@ Reason: ${error2}`);
           emit2("update:year", value);
         }
         watch(model, (val, oldVal) => {
-          const before = adapter.date(wrapInArray(val)[0]);
-          const after = adapter.date(wrapInArray(oldVal)[0]);
-          const newMonth = adapter.getMonth(before);
-          const newYear = adapter.getYear(before);
+          const before = adapter.date(wrapInArray(oldVal)[oldVal.length - 1]);
+          const after = adapter.date(wrapInArray(val)[val.length - 1]);
+          const newMonth = adapter.getMonth(after);
+          const newYear = adapter.getYear(after);
           if (newMonth !== month.value) {
             month.value = newMonth;
             onUpdateMonth(month.value);
@@ -79163,6 +80251,7 @@ Reason: ${error2}`);
         type: String,
         default: "$vuetify.fileInput.counter"
       },
+      hideInput: Boolean,
       multiple: Boolean,
       showSize: {
         type: [Boolean, Number, String],
@@ -79287,6 +80376,7 @@ Reason: ${error2}`);
             "onUpdate:modelValue": ($event) => model.value = $event,
             "class": ["v-file-input", {
               "v-file-input--chips": !!props.chips,
+              "v-file-input--hide": props.hideInput,
               "v-input--plain-underlined": isPlainOrUnderlined.value
             }, props.class],
             "style": props.style,
@@ -79352,7 +80442,7 @@ Reason: ${error2}`);
                     "onBlur": blur
                   }, slotProps, inputAttrs), null), createVNode("div", {
                     "class": fieldClass
-                  }, [!!((_a2 = model.value) == null ? void 0 : _a2.length) && (slots.selection ? slots.selection({
+                  }, [!!((_a2 = model.value) == null ? void 0 : _a2.length) && !props.hideInput && (slots.selection ? slots.selection({
                     fileNames: fileNames.value,
                     totalBytes: totalBytes.value,
                     totalBytesReadable: totalBytesReadable.value
@@ -79368,7 +80458,8 @@ Reason: ${error2}`);
               var _a2, _b;
               return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
                 "active": !!((_b = model.value) == null ? void 0 : _b.length),
-                "value": counterValue.value
+                "value": counterValue.value,
+                "disabled": props.disabled
               }, slots.counter)])]);
             } : void 0
           });
@@ -80240,7 +81331,8 @@ Reason: ${error2}`);
               return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
                 "active": props.persistentCounter || isFocused.value,
                 "value": counterValue.value,
-                "max": max.value
+                "max": max.value,
+                "disabled": props.disabled
               }, slots.counter)])]);
             } : void 0
           });
