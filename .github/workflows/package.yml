@@ -30,7 +30,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') && success()
         run: tar -C dist -czf everest-admin-panel.tar.gz ./
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') && success()
         with:
           files: everest-admin-panel.tar.gz
