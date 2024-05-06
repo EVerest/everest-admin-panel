@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-Jlug2APX.js"(exports, module) {
+  "assets/index-wGo2YUKM.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,10 +459,12 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.19
+    * @vue/shared v3.4.26
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
+    /*! #__NO_SIDE_EFFECTS__ */
+    // @__NO_SIDE_EFFECTS__
     function makeMap(str2, expectsLowerCase) {
       const set2 = new Set(str2.split(","));
       return expectsLowerCase ? (val) => set2.has(val.toLowerCase()) : (val) => set2.has(val);
@@ -533,10 +535,11 @@ var require_index_001 = __commonJS({
         fns[i2](arg);
       }
     };
-    const def$C = (obj, key, value) => {
+    const def$C = (obj, key, value, writable = false) => {
       Object.defineProperty(obj, key, {
         configurable: true,
         enumerable: false,
+        writable,
         value
       });
     };
@@ -648,10 +651,14 @@ var require_index_001 = __commonJS({
     };
     const stringifySymbol = (v, i2 = "") => {
       var _a2;
-      return isSymbol(v) ? `Symbol(${(_a2 = v.description) != null ? _a2 : i2})` : v;
+      return (
+        // Symbol.description in es2019+ so we need to cast here to pass
+        // the lib: es2016 check
+        isSymbol(v) ? `Symbol(${(_a2 = v.description) != null ? _a2 : i2})` : v
+      );
     };
     /**
-    * @vue/reactivity v3.4.19
+    * @vue/reactivity v3.4.26
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -798,11 +805,10 @@ var require_index_001 = __commonJS({
         }
       }
       stop() {
-        var _a2;
         if (this.active) {
           preCleanupEffect(this);
           postCleanupEffect(this);
-          (_a2 = this.onStop) == null ? void 0 : _a2.call(this);
+          this.onStop && this.onStop();
           this.active = false;
         }
       }
@@ -968,8 +974,8 @@ var require_index_001 = __commonJS({
       resetScheduling();
     }
     function getDepFromReactive(object, key) {
-      var _a2;
-      return (_a2 = targetMap.get(object)) == null ? void 0 : _a2.get(key);
+      const depsMap = targetMap.get(object);
+      return depsMap && depsMap.get(key);
     }
     const isNonTrackableKeys = /* @__PURE__ */ makeMap(`__proto__,__v_isRef,__isVue`);
     const builtInSymbols = new Set(
@@ -1005,25 +1011,27 @@ var require_index_001 = __commonJS({
       return instrumentations;
     }
     function hasOwnProperty(key) {
+      if (!isSymbol(key))
+        key = String(key);
       const obj = toRaw(this);
       track(obj, "has", key);
       return obj.hasOwnProperty(key);
     }
     class BaseReactiveHandler {
-      constructor(_isReadonly = false, _shallow = false) {
+      constructor(_isReadonly = false, _isShallow = false) {
         this._isReadonly = _isReadonly;
-        this._shallow = _shallow;
+        this._isShallow = _isShallow;
       }
       get(target2, key, receiver) {
-        const isReadonly2 = this._isReadonly, shallow = this._shallow;
+        const isReadonly2 = this._isReadonly, isShallow2 = this._isShallow;
         if (key === "__v_isReactive") {
           return !isReadonly2;
         } else if (key === "__v_isReadonly") {
           return isReadonly2;
         } else if (key === "__v_isShallow") {
-          return shallow;
+          return isShallow2;
         } else if (key === "__v_raw") {
-          if (receiver === (isReadonly2 ? shallow ? shallowReadonlyMap : readonlyMap : shallow ? shallowReactiveMap : reactiveMap).get(target2) || // receiver is not the reactive proxy, but has the same prototype
+          if (receiver === (isReadonly2 ? isShallow2 ? shallowReadonlyMap : readonlyMap : isShallow2 ? shallowReactiveMap : reactiveMap).get(target2) || // receiver is not the reactive proxy, but has the same prototype
           // this means the reciever is a user proxy of the reactive proxy
           Object.getPrototypeOf(target2) === Object.getPrototypeOf(receiver)) {
             return target2;
@@ -1046,7 +1054,7 @@ var require_index_001 = __commonJS({
         if (!isReadonly2) {
           track(target2, "get", key);
         }
-        if (shallow) {
+        if (isShallow2) {
           return res;
         }
         if (isRef(res)) {
@@ -1059,12 +1067,12 @@ var require_index_001 = __commonJS({
       }
     }
     class MutableReactiveHandler extends BaseReactiveHandler {
-      constructor(shallow = false) {
-        super(false, shallow);
+      constructor(isShallow2 = false) {
+        super(false, isShallow2);
       }
       set(target2, key, value, receiver) {
         let oldValue = target2[key];
-        if (!this._shallow) {
+        if (!this._isShallow) {
           const isOldValueReadonly = isReadonly(oldValue);
           if (!isShallow(value) && !isReadonly(value)) {
             oldValue = toRaw(oldValue);
@@ -1116,8 +1124,8 @@ var require_index_001 = __commonJS({
       }
     }
     class ReadonlyReactiveHandler extends BaseReactiveHandler {
-      constructor(shallow = false) {
-        super(true, shallow);
+      constructor(isShallow2 = false) {
+        super(true, isShallow2);
       }
       set(target2, key) {
         return true;
@@ -1131,6 +1139,7 @@ var require_index_001 = __commonJS({
     const shallowReactiveHandlers = /* @__PURE__ */ new MutableReactiveHandler(
       true
     );
+    const shallowReadonlyHandlers = /* @__PURE__ */ new ReadonlyReactiveHandler(true);
     const toShallow = (value) => value;
     const getProto = (v) => Reflect.getPrototypeOf(v);
     function get(target2, key, isReadonly2 = false, isShallow2 = false) {
@@ -1331,23 +1340,16 @@ var require_index_001 = __commonJS({
         clear: createReadonlyMethod("clear"),
         forEach: createForEach(true, true)
       };
-      const iteratorMethods = ["keys", "values", "entries", Symbol.iterator];
+      const iteratorMethods = [
+        "keys",
+        "values",
+        "entries",
+        Symbol.iterator
+      ];
       iteratorMethods.forEach((method) => {
-        mutableInstrumentations2[method] = createIterableMethod(
-          method,
-          false,
-          false
-        );
-        readonlyInstrumentations2[method] = createIterableMethod(
-          method,
-          true,
-          false
-        );
-        shallowInstrumentations2[method] = createIterableMethod(
-          method,
-          false,
-          true
-        );
+        mutableInstrumentations2[method] = createIterableMethod(method, false, false);
+        readonlyInstrumentations2[method] = createIterableMethod(method, true, false);
+        shallowInstrumentations2[method] = createIterableMethod(method, false, true);
         shallowReadonlyInstrumentations2[method] = createIterableMethod(
           method,
           true,
@@ -1392,6 +1394,9 @@ var require_index_001 = __commonJS({
     };
     const readonlyCollectionHandlers = {
       get: /* @__PURE__ */ createInstrumentationGetter(true, false)
+    };
+    const shallowReadonlyCollectionHandlers = {
+      get: /* @__PURE__ */ createInstrumentationGetter(true, true)
     };
     const reactiveMap = /* @__PURE__ */ new WeakMap();
     const shallowReactiveMap = /* @__PURE__ */ new WeakMap();
@@ -1444,6 +1449,15 @@ var require_index_001 = __commonJS({
         readonlyMap
       );
     }
+    function shallowReadonly(target2) {
+      return createReactiveObject(
+        target2,
+        true,
+        shallowReadonlyHandlers,
+        shallowReadonlyCollectionHandlers,
+        shallowReadonlyMap
+      );
+    }
     function createReactiveObject(target2, isReadonly2, baseHandlers, collectionHandlers, proxyMap) {
       if (!isObject$4(target2)) {
         return target2;
@@ -1479,7 +1493,7 @@ var require_index_001 = __commonJS({
       return !!(value && value["__v_isShallow"]);
     }
     function isProxy(value) {
-      return isReactive(value) || isReadonly(value);
+      return value ? !!value["__v_raw"] : false;
     }
     function toRaw(observed) {
       const raw = observed && observed["__v_raw"];
@@ -1495,6 +1509,7 @@ var require_index_001 = __commonJS({
     const toReadonly = (value) => isObject$4(value) ? readonly(value) : value;
     class ComputedRefImpl {
       constructor(getter, _setter, isReadonly2, isSSR) {
+        this.getter = getter;
         this._setter = _setter;
         this.dep = void 0;
         this.__v_isRef = true;
@@ -1679,7 +1694,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.19
+    * @vue/runtime-core v3.4.26
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -1695,7 +1710,10 @@ var require_index_001 = __commonJS({
           instance,
           11,
           [
-            msg + args.join(""),
+            msg + args.map((a) => {
+              var _a2, _b;
+              return (_b = (_a2 = a.toString) == null ? void 0 : _a2.call(a)) != null ? _b : JSON.stringify(a);
+            }).join(""),
             instance && instance.proxy,
             trace.map(
               ({ vnode }) => `at <${formatComponentName(instance, vnode.type)}>`
@@ -1798,11 +1816,13 @@ var require_index_001 = __commonJS({
         }
         return res;
       }
-      const values = [];
-      for (let i2 = 0; i2 < fn.length; i2++) {
-        values.push(callWithAsyncErrorHandling(fn[i2], instance, type2, args));
+      if (isArray$1(fn)) {
+        const values = [];
+        for (let i2 = 0; i2 < fn.length; i2++) {
+          values.push(callWithAsyncErrorHandling(fn[i2], instance, type2, args));
+        }
+        return values;
       }
-      return values;
     }
     function handleError(err, instance, type2, throwInDev = true) {
       const contextVNode = instance ? instance.vnode : null;
@@ -1823,12 +1843,14 @@ var require_index_001 = __commonJS({
         }
         const appErrorHandler = instance.appContext.config.errorHandler;
         if (appErrorHandler) {
+          pauseTracking();
           callWithErrorHandling(
             appErrorHandler,
             null,
             10,
             [err, exposedInstance, errorInfo]
           );
+          resetTracking();
           return;
         }
       }
@@ -2117,21 +2139,21 @@ var require_index_001 = __commonJS({
         vnode,
         proxy,
         withProxy,
-        props,
         propsOptions: [propsOptions],
         slots,
         attrs,
         emit: emit2,
         render,
         renderCache,
+        props,
         data,
         setupState,
         ctx,
         inheritAttrs
       } = instance;
+      const prev = setCurrentRenderingInstance(instance);
       let result;
       let fallthroughAttrs;
-      const prev = setCurrentRenderingInstance(instance);
       try {
         if (vnode.shapeFlag & 4) {
           const proxyToUse = withProxy || proxy;
@@ -2150,7 +2172,7 @@ var require_index_001 = __commonJS({
               thisProxy,
               proxyToUse,
               renderCache,
-              props,
+              false ? shallowReadonly(props) : props,
               setupState,
               data,
               ctx
@@ -2163,19 +2185,18 @@ var require_index_001 = __commonJS({
             ;
           result = normalizeVNode(
             render2.length > 1 ? render2(
-              props,
+              false ? shallowReadonly(props) : props,
               false ? {
                 get attrs() {
                   markAttrsAccessed();
-                  return attrs;
+                  return shallowReadonly(attrs);
                 },
                 slots,
                 emit: emit2
               } : { attrs, slots, emit: emit2 }
             ) : render2(
-              props,
+              false ? shallowReadonly(props) : props,
               null
-              /* we know it doesn't need it */
             )
           );
           fallthroughAttrs = Component.props ? attrs : getFunctionalFallthrough(attrs);
@@ -2197,12 +2218,12 @@ var require_index_001 = __commonJS({
                 propsOptions
               );
             }
-            root = cloneVNode(root, fallthroughAttrs);
+            root = cloneVNode(root, fallthroughAttrs, false, true);
           }
         }
       }
       if (vnode.dirs) {
-        root = cloneVNode(root);
+        root = cloneVNode(root, null, false, true);
         root.dirs = root.dirs ? root.dirs.concat(vnode.dirs) : vnode.dirs;
       }
       if (vnode.transition) {
@@ -2213,6 +2234,24 @@ var require_index_001 = __commonJS({
       }
       setCurrentRenderingInstance(prev);
       return result;
+    }
+    function filterSingleRoot(children, recurse2 = true) {
+      let singleRoot;
+      for (let i2 = 0; i2 < children.length; i2++) {
+        const child = children[i2];
+        if (isVNode(child)) {
+          if (child.type !== Comment || child.children === "v-if") {
+            if (singleRoot) {
+              return;
+            } else {
+              singleRoot = child;
+            }
+          }
+        } else {
+          return;
+        }
+      }
+      return singleRoot;
     }
     const getFunctionalFallthrough = (attrs) => {
       let res;
@@ -2348,6 +2387,538 @@ var require_index_001 = __commonJS({
       return registry && (registry[name] || registry[camelize(name)] || registry[capitalize(camelize(name))]);
     }
     const isSuspense = (type2) => type2.__isSuspense;
+    let suspenseId = 0;
+    const SuspenseImpl = {
+      name: "Suspense",
+      // In order to make Suspense tree-shakable, we need to avoid importing it
+      // directly in the renderer. The renderer checks for the __isSuspense flag
+      // on a vnode's type and calls the `process` method, passing in renderer
+      // internals.
+      __isSuspense: true,
+      process(n1, n2, container, anchor, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals) {
+        if (n1 == null) {
+          mountSuspense(
+            n2,
+            container,
+            anchor,
+            parentComponent,
+            parentSuspense,
+            namespace,
+            slotScopeIds,
+            optimized,
+            rendererInternals
+          );
+        } else {
+          if (parentSuspense && parentSuspense.deps > 0 && !n1.suspense.isInFallback) {
+            n2.suspense = n1.suspense;
+            n2.suspense.vnode = n2;
+            n2.el = n1.el;
+            return;
+          }
+          patchSuspense(
+            n1,
+            n2,
+            container,
+            anchor,
+            parentComponent,
+            namespace,
+            slotScopeIds,
+            optimized,
+            rendererInternals
+          );
+        }
+      },
+      hydrate: hydrateSuspense,
+      create: createSuspenseBoundary,
+      normalize: normalizeSuspenseChildren
+    };
+    const Suspense = SuspenseImpl;
+    function triggerEvent(vnode, name) {
+      const eventListener = vnode.props && vnode.props[name];
+      if (isFunction$1(eventListener)) {
+        eventListener();
+      }
+    }
+    function mountSuspense(vnode, container, anchor, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals) {
+      const {
+        p: patch,
+        o: { createElement }
+      } = rendererInternals;
+      const hiddenContainer = createElement("div");
+      const suspense = vnode.suspense = createSuspenseBoundary(
+        vnode,
+        parentSuspense,
+        parentComponent,
+        container,
+        hiddenContainer,
+        anchor,
+        namespace,
+        slotScopeIds,
+        optimized,
+        rendererInternals
+      );
+      patch(
+        null,
+        suspense.pendingBranch = vnode.ssContent,
+        hiddenContainer,
+        null,
+        parentComponent,
+        suspense,
+        namespace,
+        slotScopeIds
+      );
+      if (suspense.deps > 0) {
+        triggerEvent(vnode, "onPending");
+        triggerEvent(vnode, "onFallback");
+        patch(
+          null,
+          vnode.ssFallback,
+          container,
+          anchor,
+          parentComponent,
+          null,
+          // fallback tree will not have suspense context
+          namespace,
+          slotScopeIds
+        );
+        setActiveBranch(suspense, vnode.ssFallback);
+      } else {
+        suspense.resolve(false, true);
+      }
+    }
+    function patchSuspense(n1, n2, container, anchor, parentComponent, namespace, slotScopeIds, optimized, { p: patch, um: unmount, o: { createElement } }) {
+      const suspense = n2.suspense = n1.suspense;
+      suspense.vnode = n2;
+      n2.el = n1.el;
+      const newBranch = n2.ssContent;
+      const newFallback = n2.ssFallback;
+      const { activeBranch, pendingBranch, isInFallback, isHydrating } = suspense;
+      if (pendingBranch) {
+        suspense.pendingBranch = newBranch;
+        if (isSameVNodeType(newBranch, pendingBranch)) {
+          patch(
+            pendingBranch,
+            newBranch,
+            suspense.hiddenContainer,
+            null,
+            parentComponent,
+            suspense,
+            namespace,
+            slotScopeIds,
+            optimized
+          );
+          if (suspense.deps <= 0) {
+            suspense.resolve();
+          } else if (isInFallback) {
+            if (!isHydrating) {
+              patch(
+                activeBranch,
+                newFallback,
+                container,
+                anchor,
+                parentComponent,
+                null,
+                // fallback tree will not have suspense context
+                namespace,
+                slotScopeIds,
+                optimized
+              );
+              setActiveBranch(suspense, newFallback);
+            }
+          }
+        } else {
+          suspense.pendingId = suspenseId++;
+          if (isHydrating) {
+            suspense.isHydrating = false;
+            suspense.activeBranch = pendingBranch;
+          } else {
+            unmount(pendingBranch, parentComponent, suspense);
+          }
+          suspense.deps = 0;
+          suspense.effects.length = 0;
+          suspense.hiddenContainer = createElement("div");
+          if (isInFallback) {
+            patch(
+              null,
+              newBranch,
+              suspense.hiddenContainer,
+              null,
+              parentComponent,
+              suspense,
+              namespace,
+              slotScopeIds,
+              optimized
+            );
+            if (suspense.deps <= 0) {
+              suspense.resolve();
+            } else {
+              patch(
+                activeBranch,
+                newFallback,
+                container,
+                anchor,
+                parentComponent,
+                null,
+                // fallback tree will not have suspense context
+                namespace,
+                slotScopeIds,
+                optimized
+              );
+              setActiveBranch(suspense, newFallback);
+            }
+          } else if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
+            patch(
+              activeBranch,
+              newBranch,
+              container,
+              anchor,
+              parentComponent,
+              suspense,
+              namespace,
+              slotScopeIds,
+              optimized
+            );
+            suspense.resolve(true);
+          } else {
+            patch(
+              null,
+              newBranch,
+              suspense.hiddenContainer,
+              null,
+              parentComponent,
+              suspense,
+              namespace,
+              slotScopeIds,
+              optimized
+            );
+            if (suspense.deps <= 0) {
+              suspense.resolve();
+            }
+          }
+        }
+      } else {
+        if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
+          patch(
+            activeBranch,
+            newBranch,
+            container,
+            anchor,
+            parentComponent,
+            suspense,
+            namespace,
+            slotScopeIds,
+            optimized
+          );
+          setActiveBranch(suspense, newBranch);
+        } else {
+          triggerEvent(n2, "onPending");
+          suspense.pendingBranch = newBranch;
+          if (newBranch.shapeFlag & 512) {
+            suspense.pendingId = newBranch.component.suspenseId;
+          } else {
+            suspense.pendingId = suspenseId++;
+          }
+          patch(
+            null,
+            newBranch,
+            suspense.hiddenContainer,
+            null,
+            parentComponent,
+            suspense,
+            namespace,
+            slotScopeIds,
+            optimized
+          );
+          if (suspense.deps <= 0) {
+            suspense.resolve();
+          } else {
+            const { timeout, pendingId } = suspense;
+            if (timeout > 0) {
+              setTimeout(() => {
+                if (suspense.pendingId === pendingId) {
+                  suspense.fallback(newFallback);
+                }
+              }, timeout);
+            } else if (timeout === 0) {
+              suspense.fallback(newFallback);
+            }
+          }
+        }
+      }
+    }
+    function createSuspenseBoundary(vnode, parentSuspense, parentComponent, container, hiddenContainer, anchor, namespace, slotScopeIds, optimized, rendererInternals, isHydrating = false) {
+      const {
+        p: patch,
+        m: move,
+        um: unmount,
+        n: next2,
+        o: { parentNode, remove: remove2 }
+      } = rendererInternals;
+      let parentSuspenseId;
+      const isSuspensible = isVNodeSuspensible(vnode);
+      if (isSuspensible) {
+        if (parentSuspense && parentSuspense.pendingBranch) {
+          parentSuspenseId = parentSuspense.pendingId;
+          parentSuspense.deps++;
+        }
+      }
+      const timeout = vnode.props ? toNumber$1(vnode.props.timeout) : void 0;
+      const initialAnchor = anchor;
+      const suspense = {
+        vnode,
+        parent: parentSuspense,
+        parentComponent,
+        namespace,
+        container,
+        hiddenContainer,
+        deps: 0,
+        pendingId: suspenseId++,
+        timeout: typeof timeout === "number" ? timeout : -1,
+        activeBranch: null,
+        pendingBranch: null,
+        isInFallback: !isHydrating,
+        isHydrating,
+        isUnmounted: false,
+        effects: [],
+        resolve(resume = false, sync = false) {
+          const {
+            vnode: vnode2,
+            activeBranch,
+            pendingBranch,
+            pendingId,
+            effects,
+            parentComponent: parentComponent2,
+            container: container2
+          } = suspense;
+          let delayEnter = false;
+          if (suspense.isHydrating) {
+            suspense.isHydrating = false;
+          } else if (!resume) {
+            delayEnter = activeBranch && pendingBranch.transition && pendingBranch.transition.mode === "out-in";
+            if (delayEnter) {
+              activeBranch.transition.afterLeave = () => {
+                if (pendingId === suspense.pendingId) {
+                  move(
+                    pendingBranch,
+                    container2,
+                    anchor === initialAnchor ? next2(activeBranch) : anchor,
+                    0
+                  );
+                  queuePostFlushCb(effects);
+                }
+              };
+            }
+            if (activeBranch) {
+              if (parentNode(activeBranch.el) !== suspense.hiddenContainer) {
+                anchor = next2(activeBranch);
+              }
+              unmount(activeBranch, parentComponent2, suspense, true);
+            }
+            if (!delayEnter) {
+              move(pendingBranch, container2, anchor, 0);
+            }
+          }
+          setActiveBranch(suspense, pendingBranch);
+          suspense.pendingBranch = null;
+          suspense.isInFallback = false;
+          let parent = suspense.parent;
+          let hasUnresolvedAncestor = false;
+          while (parent) {
+            if (parent.pendingBranch) {
+              parent.effects.push(...effects);
+              hasUnresolvedAncestor = true;
+              break;
+            }
+            parent = parent.parent;
+          }
+          if (!hasUnresolvedAncestor && !delayEnter) {
+            queuePostFlushCb(effects);
+          }
+          suspense.effects = [];
+          if (isSuspensible) {
+            if (parentSuspense && parentSuspense.pendingBranch && parentSuspenseId === parentSuspense.pendingId) {
+              parentSuspense.deps--;
+              if (parentSuspense.deps === 0 && !sync) {
+                parentSuspense.resolve();
+              }
+            }
+          }
+          triggerEvent(vnode2, "onResolve");
+        },
+        fallback(fallbackVNode) {
+          if (!suspense.pendingBranch) {
+            return;
+          }
+          const { vnode: vnode2, activeBranch, parentComponent: parentComponent2, container: container2, namespace: namespace2 } = suspense;
+          triggerEvent(vnode2, "onFallback");
+          const anchor2 = next2(activeBranch);
+          const mountFallback = () => {
+            if (!suspense.isInFallback) {
+              return;
+            }
+            patch(
+              null,
+              fallbackVNode,
+              container2,
+              anchor2,
+              parentComponent2,
+              null,
+              // fallback tree will not have suspense context
+              namespace2,
+              slotScopeIds,
+              optimized
+            );
+            setActiveBranch(suspense, fallbackVNode);
+          };
+          const delayEnter = fallbackVNode.transition && fallbackVNode.transition.mode === "out-in";
+          if (delayEnter) {
+            activeBranch.transition.afterLeave = mountFallback;
+          }
+          suspense.isInFallback = true;
+          unmount(
+            activeBranch,
+            parentComponent2,
+            null,
+            // no suspense so unmount hooks fire now
+            true
+            // shouldRemove
+          );
+          if (!delayEnter) {
+            mountFallback();
+          }
+        },
+        move(container2, anchor2, type2) {
+          suspense.activeBranch && move(suspense.activeBranch, container2, anchor2, type2);
+          suspense.container = container2;
+        },
+        next() {
+          return suspense.activeBranch && next2(suspense.activeBranch);
+        },
+        registerDep(instance, setupRenderEffect) {
+          const isInPendingSuspense = !!suspense.pendingBranch;
+          if (isInPendingSuspense) {
+            suspense.deps++;
+          }
+          const hydratedEl = instance.vnode.el;
+          instance.asyncDep.catch((err) => {
+            handleError(err, instance, 0);
+          }).then((asyncSetupResult) => {
+            if (instance.isUnmounted || suspense.isUnmounted || suspense.pendingId !== instance.suspenseId) {
+              return;
+            }
+            instance.asyncResolved = true;
+            const { vnode: vnode2 } = instance;
+            handleSetupResult(instance, asyncSetupResult, false);
+            if (hydratedEl) {
+              vnode2.el = hydratedEl;
+            }
+            const placeholder = !hydratedEl && instance.subTree.el;
+            setupRenderEffect(
+              instance,
+              vnode2,
+              // component may have been moved before resolve.
+              // if this is not a hydration, instance.subTree will be the comment
+              // placeholder.
+              parentNode(hydratedEl || instance.subTree.el),
+              // anchor will not be used if this is hydration, so only need to
+              // consider the comment placeholder case.
+              hydratedEl ? null : next2(instance.subTree),
+              suspense,
+              namespace,
+              optimized
+            );
+            if (placeholder) {
+              remove2(placeholder);
+            }
+            updateHOCHostEl(instance, vnode2.el);
+            if (isInPendingSuspense && --suspense.deps === 0) {
+              suspense.resolve();
+            }
+          });
+        },
+        unmount(parentSuspense2, doRemove) {
+          suspense.isUnmounted = true;
+          if (suspense.activeBranch) {
+            unmount(
+              suspense.activeBranch,
+              parentComponent,
+              parentSuspense2,
+              doRemove
+            );
+          }
+          if (suspense.pendingBranch) {
+            unmount(
+              suspense.pendingBranch,
+              parentComponent,
+              parentSuspense2,
+              doRemove
+            );
+          }
+        }
+      };
+      return suspense;
+    }
+    function hydrateSuspense(node, vnode, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals, hydrateNode) {
+      const suspense = vnode.suspense = createSuspenseBoundary(
+        vnode,
+        parentSuspense,
+        parentComponent,
+        node.parentNode,
+        // eslint-disable-next-line no-restricted-globals
+        document.createElement("div"),
+        null,
+        namespace,
+        slotScopeIds,
+        optimized,
+        rendererInternals,
+        true
+      );
+      const result = hydrateNode(
+        node,
+        suspense.pendingBranch = vnode.ssContent,
+        parentComponent,
+        suspense,
+        slotScopeIds,
+        optimized
+      );
+      if (suspense.deps === 0) {
+        suspense.resolve(false, true);
+      }
+      return result;
+    }
+    function normalizeSuspenseChildren(vnode) {
+      const { shapeFlag, children } = vnode;
+      const isSlotChildren = shapeFlag & 32;
+      vnode.ssContent = normalizeSuspenseSlot(
+        isSlotChildren ? children.default : children
+      );
+      vnode.ssFallback = isSlotChildren ? normalizeSuspenseSlot(children.fallback) : createVNode(Comment);
+    }
+    function normalizeSuspenseSlot(s) {
+      let block2;
+      if (isFunction$1(s)) {
+        const trackBlock = isBlockTreeEnabled && s._c;
+        if (trackBlock) {
+          s._d = false;
+          openBlock();
+        }
+        s = s();
+        if (trackBlock) {
+          s._d = true;
+          block2 = currentBlock;
+          closeBlock();
+        }
+      }
+      if (isArray$1(s)) {
+        const singleChild = filterSingleRoot(s);
+        s = singleChild;
+      }
+      s = normalizeVNode(s);
+      if (block2 && !s.dynamicChildren) {
+        s.dynamicChildren = block2.filter((c) => c !== s);
+      }
+      return s;
+    }
     function queueEffectWithSuspense(fn, suspense) {
       if (suspense && suspense.pendingBranch) {
         if (isArray$1(fn)) {
@@ -2358,6 +2929,24 @@ var require_index_001 = __commonJS({
       } else {
         queuePostFlushCb(fn);
       }
+    }
+    function setActiveBranch(suspense, branch) {
+      suspense.activeBranch = branch;
+      const { vnode, parentComponent } = suspense;
+      let el2 = branch.el;
+      while (!el2 && branch.component) {
+        branch = branch.component.subTree;
+        el2 = branch.el;
+      }
+      vnode.el = el2;
+      if (parentComponent && parentComponent.subTree === vnode) {
+        parentComponent.vnode.el = el2;
+        updateHOCHostEl(parentComponent, el2);
+      }
+    }
+    function isVNodeSuspensible(vnode) {
+      const suspensible = vnode.props && vnode.props.suspensible;
+      return suspensible != null && suspensible !== false;
     }
     const ssrContextKey = Symbol.for("v-scx");
     const useSSRContext = () => {
@@ -2550,34 +3139,29 @@ var require_index_001 = __commonJS({
         return cur;
       };
     }
-    function traverse$2(value, depth, currentDepth = 0, seen) {
-      if (!isObject$4(value) || value["__v_skip"]) {
+    function traverse$2(value, depth = Infinity, seen) {
+      if (depth <= 0 || !isObject$4(value) || value["__v_skip"]) {
         return value;
-      }
-      if (depth && depth > 0) {
-        if (currentDepth >= depth) {
-          return value;
-        }
-        currentDepth++;
       }
       seen = seen || /* @__PURE__ */ new Set();
       if (seen.has(value)) {
         return value;
       }
       seen.add(value);
+      depth--;
       if (isRef(value)) {
-        traverse$2(value.value, depth, currentDepth, seen);
+        traverse$2(value.value, depth, seen);
       } else if (isArray$1(value)) {
         for (let i2 = 0; i2 < value.length; i2++) {
-          traverse$2(value[i2], depth, currentDepth, seen);
+          traverse$2(value[i2], depth, seen);
         }
       } else if (isSet$1(value) || isMap$1(value)) {
         value.forEach((v) => {
-          traverse$2(v, depth, currentDepth, seen);
+          traverse$2(v, depth, seen);
         });
       } else if (isPlainObject$3(value)) {
         for (const key in value) {
-          traverse$2(value[key], depth, currentDepth, seen);
+          traverse$2(value[key], depth, seen);
         }
       }
       return value;
@@ -2677,7 +3261,6 @@ var require_index_001 = __commonJS({
       setup(props, { slots }) {
         const instance = getCurrentInstance$1();
         const state = useTransitionState();
-        let prevTransitionKey;
         return () => {
           const children = slots.default && getTransitionRawChildren(slots.default(), true);
           if (!children || !children.length) {
@@ -2710,18 +3293,7 @@ var require_index_001 = __commonJS({
           setTransitionHooks(innerChild, enterHooks);
           const oldChild = instance.subTree;
           const oldInnerChild = oldChild && getKeepAliveChild(oldChild);
-          let transitionKeyChanged = false;
-          const { getTransitionKey } = innerChild.type;
-          if (getTransitionKey) {
-            const key = getTransitionKey();
-            if (prevTransitionKey === void 0) {
-              prevTransitionKey = key;
-            } else if (key !== prevTransitionKey) {
-              prevTransitionKey = key;
-              transitionKeyChanged = true;
-            }
-          }
-          if (oldInnerChild && oldInnerChild.type !== Comment && (!isSameVNodeType(innerChild, oldInnerChild) || transitionKeyChanged)) {
+          if (oldInnerChild && oldInnerChild.type !== Comment && !isSameVNodeType(innerChild, oldInnerChild)) {
             const leavingHooks = resolveTransitionHooks(
               oldInnerChild,
               rawProps,
@@ -2729,7 +3301,7 @@ var require_index_001 = __commonJS({
               instance
             );
             setTransitionHooks(oldInnerChild, leavingHooks);
-            if (mode === "out-in") {
+            if (mode === "out-in" && innerChild.type !== Comment) {
               state.isLeaving = true;
               leavingHooks.afterLeave = () => {
                 state.isLeaving = false;
@@ -2914,11 +3486,18 @@ var require_index_001 = __commonJS({
       }
     }
     function getKeepAliveChild(vnode) {
-      return isKeepAlive(vnode) ? (
-        // #7121 ensure get the child component subtree in case
-        // it's been replaced during HMR
-        vnode.children ? vnode.children[0] : void 0
-      ) : vnode;
+      if (!isKeepAlive(vnode)) {
+        return vnode;
+      }
+      const { shapeFlag, children } = vnode;
+      if (children) {
+        if (shapeFlag & 16) {
+          return children[0];
+        }
+        if (shapeFlag & 32 && isFunction$1(children.default)) {
+          return children.default();
+        }
+      }
     }
     function setTransitionHooks(vnode, hooks) {
       if (vnode.shapeFlag & 6 && vnode.component) {
@@ -3173,6 +3752,9 @@ var require_index_001 = __commonJS({
     const hasSetupBinding = (state, key) => state !== EMPTY_OBJ && !state.__isScriptSetup && hasOwn(state, key);
     const PublicInstanceProxyHandlers = {
       get({ _: instance }, key) {
+        if (key === "__v_skip") {
+          return true;
+        }
         const { ctx, setupState, data, props, accessCache, type: type2, appContext } = instance;
         let normalizedProps;
         if (key[0] !== "$") {
@@ -3212,7 +3794,7 @@ var require_index_001 = __commonJS({
         let cssModule, globalProperties;
         if (publicGetter) {
           if (key === "$attrs") {
-            track(instance, "get", key);
+            track(instance.attrs, "get", "");
           }
           return publicGetter(instance);
         } else if (
@@ -3771,10 +4353,12 @@ var require_index_001 = __commonJS({
     function hasInjectionContext() {
       return !!(currentInstance || currentRenderingInstance || currentApp);
     }
+    const internalObjectProto = {};
+    const createInternalObject = () => Object.create(internalObjectProto);
+    const isInternalObject = (obj) => Object.getPrototypeOf(obj) === internalObjectProto;
     function initProps(instance, rawProps, isStateful, isSSR = false) {
       const props = {};
-      const attrs = {};
-      def$C(attrs, InternalObjectKey, 1);
+      const attrs = createInternalObject();
       instance.propsDefaults = /* @__PURE__ */ Object.create(null);
       setFullProps(instance, rawProps, props, attrs);
       for (const key in instance.propsOptions[0]) {
@@ -3879,7 +4463,7 @@ var require_index_001 = __commonJS({
         }
       }
       if (hasAttrsChanged) {
-        trigger(instance, "set", "$attrs");
+        trigger(instance.attrs, "set", "");
       }
     }
     function setFullProps(instance, rawProps, props, attrs) {
@@ -4039,7 +4623,7 @@ var require_index_001 = __commonJS({
       }
       return false;
     }
-    function getType$1(ctor) {
+    function getType(ctor) {
       if (ctor === null) {
         return "null";
       }
@@ -4052,7 +4636,7 @@ var require_index_001 = __commonJS({
       return "";
     }
     function isSameType(a, b) {
-      return getType$1(a) === getType$1(b);
+      return getType(a) === getType(b);
     }
     function getTypeIndex(type2, expectedTypes) {
       if (isArray$1(expectedTypes)) {
@@ -4095,24 +4679,18 @@ var require_index_001 = __commonJS({
       instance.slots.default = () => normalized;
     };
     const initSlots = (instance, children) => {
+      const slots = instance.slots = createInternalObject();
       if (instance.vnode.shapeFlag & 32) {
         const type2 = children._;
         if (type2) {
-          instance.slots = toRaw(children);
-          def$C(children, "_", type2);
+          extend$1(slots, children);
+          def$C(slots, "_", type2, true);
         } else {
-          normalizeObjectSlots(
-            children,
-            instance.slots = {}
-          );
+          normalizeObjectSlots(children, slots);
         }
-      } else {
-        instance.slots = {};
-        if (children) {
-          normalizeVNodeSlots(instance, children);
-        }
+      } else if (children) {
+        normalizeVNodeSlots(instance, children);
       }
-      def$C(instance.slots, InternalObjectKey, 1);
     };
     const updateSlots = (instance, children, optimized) => {
       const { vnode, slots } = instance;
@@ -5908,7 +6486,6 @@ var require_index_001 = __commonJS({
     function isSameVNodeType(n1, n2) {
       return n1.type === n2.type && n1.key === n2.key;
     }
-    const InternalObjectKey = `__vInternal`;
     const normalizeKey = ({ key }) => key != null ? key : null;
     const normalizeRef = ({
       ref: ref3,
@@ -6026,10 +6603,10 @@ var require_index_001 = __commonJS({
     function guardReactiveProps(props) {
       if (!props)
         return null;
-      return isProxy(props) || InternalObjectKey in props ? extend$1({}, props) : props;
+      return isProxy(props) || isInternalObject(props) ? extend$1({}, props) : props;
     }
-    function cloneVNode(vnode, extraProps, mergeRef = false) {
-      const { props, ref: ref3, patchFlag, children } = vnode;
+    function cloneVNode(vnode, extraProps, mergeRef = false, cloneTransition = false) {
+      const { props, ref: ref3, patchFlag, children, transition } = vnode;
       const mergedProps = extraProps ? mergeProps(props || {}, extraProps) : props;
       const cloned = {
         __v_isVNode: true,
@@ -6059,7 +6636,7 @@ var require_index_001 = __commonJS({
         dynamicChildren: vnode.dynamicChildren,
         appContext: vnode.appContext,
         dirs: vnode.dirs,
-        transition: vnode.transition,
+        transition,
         // These should technically only be non-null on mounted VNodes. However,
         // they *should* be copied for kept-alive vnodes. So we just always copy
         // them since them being non-null during a mount doesn't affect the logic as
@@ -6073,6 +6650,9 @@ var require_index_001 = __commonJS({
         ctx: vnode.ctx,
         ce: vnode.ce
       };
+      if (transition && cloneTransition) {
+        cloned.transition = transition.clone(cloned);
+      }
       return cloned;
     }
     function createTextVNode(text2 = " ", flag = 0) {
@@ -6119,7 +6699,7 @@ var require_index_001 = __commonJS({
         } else {
           type2 = 32;
           const slotFlag = children._;
-          if (!slotFlag && !(InternalObjectKey in children)) {
+          if (!slotFlag && !isInternalObject(children)) {
             children._ctx = currentRenderingInstance;
           } else if (slotFlag === 3 && currentRenderingInstance) {
             if (currentRenderingInstance.slots._ === 1) {
@@ -6323,7 +6903,7 @@ var require_index_001 = __commonJS({
     function setupStatefulComponent(instance, isSSR) {
       const Component = instance.type;
       instance.accessCache = /* @__PURE__ */ Object.create(null);
-      instance.proxy = markRaw(new Proxy(instance.ctx, PublicInstanceProxyHandlers));
+      instance.proxy = new Proxy(instance.ctx, PublicInstanceProxyHandlers);
       const { setup: setup2 } = Component;
       if (setup2) {
         const setupContext = instance.setupContext = setup2.length > 1 ? createSetupContext(instance) : null;
@@ -6406,26 +6986,19 @@ var require_index_001 = __commonJS({
         }
       }
     }
-    function getAttrsProxy(instance) {
-      return instance.attrsProxy || (instance.attrsProxy = new Proxy(
-        instance.attrs,
-        {
-          get(target2, key) {
-            track(instance, "get", "$attrs");
-            return target2[key];
-          }
-        }
-      ));
-    }
+    const attrsProxyHandlers = {
+      get(target2, key) {
+        track(target2, "get", "");
+        return target2[key];
+      }
+    };
     function createSetupContext(instance) {
       const expose = (exposed) => {
         instance.exposed = exposed || {};
       };
       {
         return {
-          get attrs() {
-            return getAttrsProxy(instance);
-          },
+          attrs: new Proxy(instance.attrs, attrsProxyHandlers),
           slots: instance.slots,
           emit: instance.emit,
           expose
@@ -6479,7 +7052,8 @@ var require_index_001 = __commonJS({
       return isFunction$1(value) && "__vccOpts" in value;
     }
     const computed = (getterOrOptions, debugOptions) => {
-      return computed$1(getterOrOptions, debugOptions, isInSSRComponentSetup);
+      const c = computed$1(getterOrOptions, debugOptions, isInSSRComponentSetup);
+      return c;
     };
     function h(type2, propsOrChildren, children) {
       const l = arguments.length;
@@ -6501,9 +7075,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.19";
+    const version$2 = "3.4.26";
     /**
-    * @vue/runtime-dom v3.4.19
+    * @vue/runtime-dom v3.4.26
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -6692,8 +7266,8 @@ var require_index_001 = __commonJS({
           el2._isLeaving = true;
           const resolve2 = () => finishLeave(el2, done);
           addTransitionClass(el2, leaveFromClass);
-          forceReflow();
           addTransitionClass(el2, leaveActiveClass);
+          forceReflow();
           nextFrame(() => {
             if (!el2._isLeaving) {
               return;
@@ -6852,10 +7426,11 @@ var require_index_001 = __commonJS({
         el2.className = value;
       }
     }
-    const vShowOldKey = Symbol("_vod");
+    const vShowOriginalDisplay = Symbol("_vod");
+    const vShowHidden = Symbol("_vsh");
     const vShow = {
       beforeMount(el2, { value }, { transition }) {
-        el2[vShowOldKey] = el2.style.display === "none" ? "" : el2.style.display;
+        el2[vShowOriginalDisplay] = el2.style.display === "none" ? "" : el2.style.display;
         if (transition && value) {
           transition.beforeEnter(el2);
         } else {
@@ -6868,7 +7443,7 @@ var require_index_001 = __commonJS({
         }
       },
       updated(el2, { value, oldValue }, { transition }) {
-        if (!value === !oldValue && (el2.style.display === el2[vShowOldKey] || !value))
+        if (!value === !oldValue)
           return;
         if (transition) {
           if (value) {
@@ -6889,20 +7464,29 @@ var require_index_001 = __commonJS({
       }
     };
     function setDisplay(el2, value) {
-      el2.style.display = value ? el2[vShowOldKey] : "none";
+      el2.style.display = value ? el2[vShowOriginalDisplay] : "none";
+      el2[vShowHidden] = !value;
     }
     const CSS_VAR_TEXT = Symbol("");
     const displayRE = /(^|;)\s*display\s*:/;
     function patchStyle(el2, prev, next2) {
       const style = el2.style;
       const isCssString = isString$1(next2);
-      const currentDisplay = style.display;
       let hasControlledDisplay = false;
       if (next2 && !isCssString) {
-        if (prev && !isString$1(prev)) {
-          for (const key in prev) {
-            if (next2[key] == null) {
-              setStyle(style, key, "");
+        if (prev) {
+          if (!isString$1(prev)) {
+            for (const key in prev) {
+              if (next2[key] == null) {
+                setStyle(style, key, "");
+              }
+            }
+          } else {
+            for (const prevStyle of prev.split(";")) {
+              const key = prevStyle.slice(0, prevStyle.indexOf(":")).trim();
+              if (next2[key] == null) {
+                setStyle(style, key, "");
+              }
             }
           }
         }
@@ -6926,9 +7510,11 @@ var require_index_001 = __commonJS({
           el2.removeAttribute("style");
         }
       }
-      if (vShowOldKey in el2) {
-        el2[vShowOldKey] = hasControlledDisplay ? style.display : "";
-        style.display = currentDisplay;
+      if (vShowOriginalDisplay in el2) {
+        el2[vShowOriginalDisplay] = hasControlledDisplay ? style.display : "";
+        if (el2[vShowHidden]) {
+          style.display = "none";
+        }
       }
     }
     const importantRE = /\s*!important$/;
@@ -7002,15 +7588,15 @@ var require_index_001 = __commonJS({
       const tag = el2.tagName;
       if (key === "value" && tag !== "PROGRESS" && // custom elements may use _value internally
       !tag.includes("-")) {
-        el2._value = value;
-        const oldValue = tag === "OPTION" ? el2.getAttribute("value") : el2.value;
+        const oldValue = tag === "OPTION" ? el2.getAttribute("value") || "" : el2.value;
         const newValue = value == null ? "" : value;
-        if (oldValue !== newValue) {
+        if (oldValue !== newValue || !("_value" in el2)) {
           el2.value = newValue;
         }
         if (value == null) {
           el2.removeAttribute(key);
         }
+        el2._value = value;
         return;
       }
       let needRemove = false;
@@ -7047,7 +7633,10 @@ var require_index_001 = __commonJS({
       } else {
         const [name, options] = parseName(rawName);
         if (nextValue) {
-          const invoker = invokers[rawName] = createInvoker(nextValue, instance);
+          const invoker = invokers[rawName] = createInvoker(
+            nextValue,
+            instance
+          );
           addEventListener(el2, name, invoker, options);
         } else if (existingInvoker) {
           removeEventListener(el2, name, existingInvoker, options);
@@ -7097,7 +7686,9 @@ var require_index_001 = __commonJS({
           originalStop.call(e);
           e._stopped = true;
         };
-        return value.map((fn) => (e2) => !e2._stopped && fn && fn(e2));
+        return value.map(
+          (fn) => (e2) => !e2._stopped && fn && fn(e2)
+        );
       } else {
         return value;
       }
@@ -7219,7 +7810,28 @@ var require_index_001 = __commonJS({
           const rawProps = toRaw(props);
           const cssTransitionProps = resolveTransitionProps(rawProps);
           let tag = rawProps.tag || Fragment;
-          prevChildren = children;
+          prevChildren = [];
+          if (children) {
+            for (let i2 = 0; i2 < children.length; i2++) {
+              const child = children[i2];
+              if (child.el && child.el instanceof Element) {
+                prevChildren.push(child);
+                setTransitionHooks(
+                  child,
+                  resolveTransitionHooks(
+                    child,
+                    cssTransitionProps,
+                    state,
+                    instance
+                  )
+                );
+                positionMap.set(
+                  child,
+                  child.el.getBoundingClientRect()
+                );
+              }
+            }
+          }
           children = slots.default ? getTransitionRawChildren(slots.default()) : [];
           for (let i2 = 0; i2 < children.length; i2++) {
             const child = children[i2];
@@ -7228,16 +7840,6 @@ var require_index_001 = __commonJS({
                 child,
                 resolveTransitionHooks(child, cssTransitionProps, state, instance)
               );
-            }
-          }
-          if (prevChildren) {
-            for (let i2 = 0; i2 < prevChildren.length; i2++) {
-              const child = prevChildren[i2];
-              setTransitionHooks(
-                child,
-                resolveTransitionHooks(child, cssTransitionProps, state, instance)
-              );
-              positionMap.set(child, child.el.getBoundingClientRect());
             }
           }
           return createVNode(tag, null, children);
@@ -7337,7 +7939,7 @@ var require_index_001 = __commonJS({
         el2[assignKey] = getModelAssigner(vnode);
         if (el2.composing)
           return;
-        const elValue = number || el2.type === "number" ? looseToNumber(el2.value) : el2.value;
+        const elValue = (number || el2.type === "number") && !/^0\d/.test(el2.value) ? looseToNumber(el2.value) : el2.value;
         const newValue = value == null ? "" : value;
         if (elValue === newValue) {
           return;
@@ -7436,11 +8038,11 @@ var require_index_001 = __commonJS({
     }
     const App = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$7]]);
     /*!
-      * vue-router v4.2.5
-      * (c) 2023 Eduardo San Martin Morote
+      * vue-router v4.3.2
+      * (c) 2024 Eduardo San Martin Morote
       * @license MIT
       */
-    const isBrowser = typeof window !== "undefined";
+    const isBrowser = typeof document !== "undefined";
     function isESModule(obj) {
       return obj.__esModule || obj[Symbol.toStringTag] === "Module";
     }
@@ -7456,6 +8058,45 @@ var require_index_001 = __commonJS({
     const noop$2 = () => {
     };
     const isArray = Array.isArray;
+    const HASH_RE = /#/g;
+    const AMPERSAND_RE = /&/g;
+    const SLASH_RE = /\//g;
+    const EQUAL_RE = /=/g;
+    const IM_RE = /\?/g;
+    const PLUS_RE = /\+/g;
+    const ENC_BRACKET_OPEN_RE = /%5B/g;
+    const ENC_BRACKET_CLOSE_RE = /%5D/g;
+    const ENC_CARET_RE = /%5E/g;
+    const ENC_BACKTICK_RE = /%60/g;
+    const ENC_CURLY_OPEN_RE = /%7B/g;
+    const ENC_PIPE_RE = /%7C/g;
+    const ENC_CURLY_CLOSE_RE = /%7D/g;
+    const ENC_SPACE_RE = /%20/g;
+    function commonEncode(text2) {
+      return encodeURI("" + text2).replace(ENC_PIPE_RE, "|").replace(ENC_BRACKET_OPEN_RE, "[").replace(ENC_BRACKET_CLOSE_RE, "]");
+    }
+    function encodeHash(text2) {
+      return commonEncode(text2).replace(ENC_CURLY_OPEN_RE, "{").replace(ENC_CURLY_CLOSE_RE, "}").replace(ENC_CARET_RE, "^");
+    }
+    function encodeQueryValue(text2) {
+      return commonEncode(text2).replace(PLUS_RE, "%2B").replace(ENC_SPACE_RE, "+").replace(HASH_RE, "%23").replace(AMPERSAND_RE, "%26").replace(ENC_BACKTICK_RE, "`").replace(ENC_CURLY_OPEN_RE, "{").replace(ENC_CURLY_CLOSE_RE, "}").replace(ENC_CARET_RE, "^");
+    }
+    function encodeQueryKey(text2) {
+      return encodeQueryValue(text2).replace(EQUAL_RE, "%3D");
+    }
+    function encodePath(text2) {
+      return commonEncode(text2).replace(HASH_RE, "%23").replace(IM_RE, "%3F");
+    }
+    function encodeParam(text2) {
+      return text2 == null ? "" : encodePath(text2).replace(SLASH_RE, "%2F");
+    }
+    function decode$2(text2) {
+      try {
+        return decodeURIComponent("" + text2);
+      } catch (err) {
+      }
+      return "" + text2;
+    }
     const TRAILING_SLASH_RE = /\/$/;
     const removeTrailingSlash = (path) => path.replace(TRAILING_SLASH_RE, "");
     function parseURL(parseQuery2, location2, currentLocation = "/") {
@@ -7479,7 +8120,7 @@ var require_index_001 = __commonJS({
         fullPath: path + (searchString && "?") + searchString + hash,
         path,
         query,
-        hash
+        hash: decode$2(hash)
       };
     }
     function stringifyURL(stringifyQuery2, location2) {
@@ -7538,7 +8179,7 @@ var require_index_001 = __commonJS({
         } else
           break;
       }
-      return fromSegments.slice(0, position).join("/") + "/" + toSegments.slice(toPosition - (toPosition === toSegments.length ? 1 : 0)).join("/");
+      return fromSegments.slice(0, position).join("/") + "/" + toSegments.slice(toPosition).join("/");
     }
     var NavigationType;
     (function(NavigationType2) {
@@ -7579,8 +8220,8 @@ var require_index_001 = __commonJS({
       };
     }
     const computeScrollPosition = () => ({
-      left: window.pageXOffset,
-      top: window.pageYOffset
+      left: window.scrollX,
+      top: window.scrollY
     });
     function scrollToPosition(position) {
       let scrollToOptions;
@@ -7598,7 +8239,7 @@ var require_index_001 = __commonJS({
       if ("scrollBehavior" in document.documentElement.style)
         window.scrollTo(scrollToOptions);
       else {
-        window.scrollTo(scrollToOptions.left != null ? scrollToOptions.left : window.pageXOffset, scrollToOptions.top != null ? scrollToOptions.top : window.pageYOffset);
+        window.scrollTo(scrollToOptions.left != null ? scrollToOptions.left : window.scrollX, scrollToOptions.top != null ? scrollToOptions.top : window.scrollY);
       }
     }
     function getScrollKey(path, delta2) {
@@ -7848,7 +8489,7 @@ var require_index_001 = __commonJS({
     function tokensToParser(segments, extraOptions) {
       const options = assign$3({}, BASE_PATH_PARSER_OPTIONS, extraOptions);
       const score = [];
-      let pattern3 = options.start ? "^" : "";
+      let pattern2 = options.start ? "^" : "";
       const keys2 = [];
       for (const segment of segments) {
         const segmentScores = segment.length ? [] : [
@@ -7856,14 +8497,14 @@ var require_index_001 = __commonJS({
           /* PathScore.Root */
         ];
         if (options.strict && !segment.length)
-          pattern3 += "/";
+          pattern2 += "/";
         for (let tokenIndex = 0; tokenIndex < segment.length; tokenIndex++) {
           const token2 = segment[tokenIndex];
           let subSegmentScore = 40 + (options.sensitive ? 0.25 : 0);
           if (token2.type === 0) {
             if (!tokenIndex)
-              pattern3 += "/";
-            pattern3 += token2.value.replace(REGEX_CHARS_RE, "\\$&");
+              pattern2 += "/";
+            pattern2 += token2.value.replace(REGEX_CHARS_RE, "\\$&");
             subSegmentScore += 40;
           } else if (token2.type === 1) {
             const { value, repeatable, optional: optional2, regexp } = token2;
@@ -7888,7 +8529,7 @@ var require_index_001 = __commonJS({
               optional2 && segment.length < 2 ? `(?:/${subPattern})` : "/" + subPattern;
             if (optional2)
               subPattern += "?";
-            pattern3 += subPattern;
+            pattern2 += subPattern;
             subSegmentScore += 20;
             if (optional2)
               subSegmentScore += -8;
@@ -7906,12 +8547,12 @@ var require_index_001 = __commonJS({
         score[i2][score[i2].length - 1] += 0.7000000000000001;
       }
       if (!options.strict)
-        pattern3 += "/?";
+        pattern2 += "/?";
       if (options.end)
-        pattern3 += "$";
+        pattern2 += "$";
       else if (options.strict)
-        pattern3 += "(?:/|$)";
-      const re2 = new RegExp(pattern3, options.sensitive ? "" : "i");
+        pattern2 += "(?:/|$)";
+      const re2 = new RegExp(pattern2, options.sensitive ? "" : "i");
       function parse2(path) {
         const match = path.match(re2);
         const params = {};
@@ -8252,15 +8893,15 @@ var require_index_001 = __commonJS({
             paramsFromLocation(
               currentLocation.params,
               // only keep params that exist in the resolved location
-              // TODO: only keep optional params coming from a parent record
-              matcher.keys.filter((k) => !k.optional).map((k) => k.name)
+              // only keep optional params coming from a parent record
+              matcher.keys.filter((k) => !k.optional).concat(matcher.parent ? matcher.parent.keys.filter((k) => k.optional) : []).map((k) => k.name)
             ),
             // discard any existing params in the current location that do not exist here
             // #1497 this ensures better active/exact matching
             location2.params && paramsFromLocation(location2.params, matcher.keys.map((k) => k.name))
           );
           path = matcher.stringify(params);
-        } else if ("path" in location2) {
+        } else if (location2.path != null) {
           path = location2.path;
           matcher = matchers.find((m) => m.re.test(path));
           if (matcher) {
@@ -8352,45 +8993,6 @@ var require_index_001 = __commonJS({
     function isRecordChildOf(record, parent) {
       return parent.children.some((child) => child === record || isRecordChildOf(record, child));
     }
-    const HASH_RE = /#/g;
-    const AMPERSAND_RE = /&/g;
-    const SLASH_RE = /\//g;
-    const EQUAL_RE = /=/g;
-    const IM_RE = /\?/g;
-    const PLUS_RE = /\+/g;
-    const ENC_BRACKET_OPEN_RE = /%5B/g;
-    const ENC_BRACKET_CLOSE_RE = /%5D/g;
-    const ENC_CARET_RE = /%5E/g;
-    const ENC_BACKTICK_RE = /%60/g;
-    const ENC_CURLY_OPEN_RE = /%7B/g;
-    const ENC_PIPE_RE = /%7C/g;
-    const ENC_CURLY_CLOSE_RE = /%7D/g;
-    const ENC_SPACE_RE = /%20/g;
-    function commonEncode(text2) {
-      return encodeURI("" + text2).replace(ENC_PIPE_RE, "|").replace(ENC_BRACKET_OPEN_RE, "[").replace(ENC_BRACKET_CLOSE_RE, "]");
-    }
-    function encodeHash(text2) {
-      return commonEncode(text2).replace(ENC_CURLY_OPEN_RE, "{").replace(ENC_CURLY_CLOSE_RE, "}").replace(ENC_CARET_RE, "^");
-    }
-    function encodeQueryValue(text2) {
-      return commonEncode(text2).replace(PLUS_RE, "%2B").replace(ENC_SPACE_RE, "+").replace(HASH_RE, "%23").replace(AMPERSAND_RE, "%26").replace(ENC_BACKTICK_RE, "`").replace(ENC_CURLY_OPEN_RE, "{").replace(ENC_CURLY_CLOSE_RE, "}").replace(ENC_CARET_RE, "^");
-    }
-    function encodeQueryKey(text2) {
-      return encodeQueryValue(text2).replace(EQUAL_RE, "%3D");
-    }
-    function encodePath(text2) {
-      return commonEncode(text2).replace(HASH_RE, "%23").replace(IM_RE, "%3F");
-    }
-    function encodeParam(text2) {
-      return text2 == null ? "" : encodePath(text2).replace(SLASH_RE, "%2F");
-    }
-    function decode$2(text2) {
-      try {
-        return decodeURIComponent("" + text2);
-      } catch (err) {
-      }
-      return "" + text2;
-    }
     function parseQuery(search) {
       const query = {};
       if (search === "" || search === "?")
@@ -8470,7 +9072,7 @@ var require_index_001 = __commonJS({
         reset
       };
     }
-    function guardToPromiseFn(guard, to, from, record, name) {
+    function guardToPromiseFn(guard, to, from, record, name, runWithContext = (fn) => fn()) {
       const enterCallbackArray = record && // name is defined if record is because of the function overload
       (record.enterCallbacks[name] = record.enterCallbacks[name] || []);
       return () => new Promise((resolve2, reject) => {
@@ -8495,14 +9097,14 @@ var require_index_001 = __commonJS({
             resolve2();
           }
         };
-        const guardReturn = guard.call(record && record.instances[name], to, from, next2);
+        const guardReturn = runWithContext(() => guard.call(record && record.instances[name], to, from, next2));
         let guardCall = Promise.resolve(guardReturn);
         if (guard.length < 3)
           guardCall = guardCall.then(next2);
         guardCall.catch((err) => reject(err));
       });
     }
-    function extractComponentsGuards(matched, guardType, to, from) {
+    function extractComponentsGuards(matched, guardType, to, from, runWithContext = (fn) => fn()) {
       const guards = [];
       for (const record of matched) {
         for (const name in record.components) {
@@ -8512,7 +9114,7 @@ var require_index_001 = __commonJS({
           if (isRouteComponent(rawComponent)) {
             const options = rawComponent.__vccOpts || rawComponent;
             const guard = options[guardType];
-            guard && guards.push(guardToPromiseFn(guard, to, from, record, name));
+            guard && guards.push(guardToPromiseFn(guard, to, from, record, name, runWithContext));
           } else {
             let componentPromise = rawComponent();
             guards.push(() => componentPromise.then((resolved) => {
@@ -8522,7 +9124,7 @@ var require_index_001 = __commonJS({
               record.components[name] = resolvedComponent;
               const options = resolvedComponent.__vccOpts || resolvedComponent;
               const guard = options[guardType];
-              return guard && guardToPromiseFn(guard, to, from, record, name)();
+              return guard && guardToPromiseFn(guard, to, from, record, name, runWithContext)();
             }));
           }
         }
@@ -8535,7 +9137,10 @@ var require_index_001 = __commonJS({
     function useLink$1(props) {
       const router2 = inject$1(routerKey);
       const currentRoute = inject$1(routeLocationKey);
-      const route = computed(() => router2.resolve(unref(props.to)));
+      const route = computed(() => {
+        const to = unref(props.to);
+        return router2.resolve(to);
+      });
       const activeRecordIndex = computed(() => {
         const { matched } = route.value;
         const { length } = matched;
@@ -8794,7 +9399,7 @@ var require_index_001 = __commonJS({
           });
         }
         let matcherLocation;
-        if ("path" in rawLocation) {
+        if (rawLocation.path != null) {
           matcherLocation = assign$3({}, rawLocation, {
             path: parseURL(parseQuery$1, rawLocation.path, currentLocation.path).path
           });
@@ -8869,7 +9474,7 @@ var require_index_001 = __commonJS({
             query: to.query,
             hash: to.hash,
             // avoid transferring params if the redirect has a path
-            params: "path" in newTargetLocation ? {} : to.params
+            params: newTargetLocation.path != null ? {} : to.params
           }, newTargetLocation);
         }
       }
@@ -8994,7 +9599,7 @@ var require_index_001 = __commonJS({
           return runGuardQueue(guards);
         }).then(() => {
           to.matched.forEach((record) => record.enterCallbacks = {});
-          guards = extractComponentsGuards(enteringRecords, "beforeRouteEnter", to, from);
+          guards = extractComponentsGuards(enteringRecords, "beforeRouteEnter", to, from, runWithContext);
           guards.push(canceledNavigationCheck);
           return runGuardQueue(guards);
         }).then(() => {
@@ -9326,36 +9931,16 @@ var require_index_001 = __commonJS({
         throw new TypeError("Cannot initialize the same private elements twice on an object");
       }
     }
-    function _classPrivateFieldSet(receiver, privateMap, value) {
-      var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "set");
-      _classApplyDescriptorSet(receiver, descriptor, value);
-      return value;
+    function _classPrivateFieldSet(s, a, r2) {
+      return s.set(_assertClassBrand(s, a), r2), r2;
     }
-    function _classApplyDescriptorSet(receiver, descriptor, value) {
-      if (descriptor.set) {
-        descriptor.set.call(receiver, value);
-      } else {
-        if (!descriptor.writable) {
-          throw new TypeError("attempted to set read only private field");
-        }
-        descriptor.value = value;
-      }
+    function _classPrivateFieldGet(s, a) {
+      return s.get(_assertClassBrand(s, a));
     }
-    function _classPrivateFieldGet(receiver, privateMap) {
-      var descriptor = _classExtractFieldDescriptor(receiver, privateMap, "get");
-      return _classApplyDescriptorGet(receiver, descriptor);
-    }
-    function _classExtractFieldDescriptor(receiver, privateMap, action) {
-      if (!privateMap.has(receiver)) {
-        throw new TypeError("attempted to " + action + " private field on non-instance");
-      }
-      return privateMap.get(receiver);
-    }
-    function _classApplyDescriptorGet(receiver, descriptor) {
-      if (descriptor.get) {
-        return descriptor.get.call(receiver);
-      }
-      return descriptor.value;
+    function _assertClassBrand(e, t, n) {
+      if ("function" == typeof e ? e === t : e.has(t))
+        return arguments.length < 3 ? t : n;
+      throw new TypeError("Private element is not present on this object");
     }
     function getNestedValue(obj, path, fallback) {
       const last = path.length - 1;
@@ -9658,22 +10243,16 @@ var require_index_001 = __commonJS({
     var _pointer = /* @__PURE__ */ new WeakMap();
     class CircularBuffer {
       constructor(size2) {
-        _classPrivateFieldInitSpec(this, _arr, {
-          writable: true,
-          value: []
-        });
-        _classPrivateFieldInitSpec(this, _pointer, {
-          writable: true,
-          value: 0
-        });
+        _classPrivateFieldInitSpec(this, _arr, []);
+        _classPrivateFieldInitSpec(this, _pointer, 0);
         this.size = size2;
       }
       push(val) {
-        _classPrivateFieldGet(this, _arr)[_classPrivateFieldGet(this, _pointer)] = val;
-        _classPrivateFieldSet(this, _pointer, (_classPrivateFieldGet(this, _pointer) + 1) % this.size);
+        _classPrivateFieldGet(_arr, this)[_classPrivateFieldGet(_pointer, this)] = val;
+        _classPrivateFieldSet(_pointer, this, (_classPrivateFieldGet(_pointer, this) + 1) % this.size);
       }
       values() {
-        return _classPrivateFieldGet(this, _arr).slice(_classPrivateFieldGet(this, _pointer)).concat(_classPrivateFieldGet(this, _arr).slice(0, _classPrivateFieldGet(this, _pointer)));
+        return _classPrivateFieldGet(_arr, this).slice(_classPrivateFieldGet(_pointer, this)).concat(_classPrivateFieldGet(_arr, this).slice(0, _classPrivateFieldGet(_pointer, this)));
       }
     }
     function getEventCoordinates(e) {
@@ -9788,6 +10367,16 @@ var require_index_001 = __commonJS({
       }
       const timeoutId = window.setTimeout(cb, timeout);
       return () => window.clearTimeout(timeoutId);
+    }
+    function eagerComputed(fn, options) {
+      const result = shallowRef();
+      watchEffect(() => {
+        result.value = fn();
+      }, {
+        flush: "sync",
+        ...options
+      });
+      return readonly(result);
     }
     function isClickInsideElement(event, targetDiv) {
       const mouseX = event.clientX;
@@ -10675,7 +11264,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const layout = inject$1(VuetifyLayoutKey);
       if (!layout)
         throw new Error("[Vuetify] Could not find injected layout");
+      const layoutIsReady = nextTick();
       return {
+        layoutIsReady,
         getLayoutItem: layout.getLayoutItem,
         mainRect: layout.mainRect,
         mainStyles: layout.mainStyles
@@ -10693,6 +11284,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const isKeptAlive = shallowRef(false);
       onDeactivated(() => isKeptAlive.value = true);
       onActivated(() => isKeptAlive.value = false);
+      const layoutIsReady = nextTick();
       const {
         layoutItemStyles,
         layoutItemScrimStyles
@@ -10705,7 +11297,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return {
         layoutItemStyles,
         layoutRect: layout.layoutRect,
-        layoutItemScrimStyles
+        layoutItemScrimStyles,
+        layoutIsReady
       };
     }
     const generateLayers = (layout, positions, layoutSizes, activeItems) => {
@@ -10752,31 +11345,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         resizeRef,
         contentRect: layoutRect
       } = useResizeObserver$1();
-      const computedOverlaps = computed(() => {
-        const map2 = /* @__PURE__ */ new Map();
-        const overlaps = props.overlaps ?? [];
-        for (const overlap of overlaps.filter((item) => item.includes(":"))) {
-          const [top2, bottom2] = overlap.split(":");
-          if (!registered.value.includes(top2) || !registered.value.includes(bottom2))
-            continue;
-          const topPosition = positions.get(top2);
-          const bottomPosition = positions.get(bottom2);
-          const topAmount = layoutSizes.get(top2);
-          const bottomAmount = layoutSizes.get(bottom2);
-          if (!topPosition || !bottomPosition || !topAmount || !bottomAmount)
-            continue;
-          map2.set(bottom2, {
-            position: topPosition.value,
-            amount: parseInt(topAmount.value, 10)
-          });
-          map2.set(top2, {
-            position: bottomPosition.value,
-            amount: -parseInt(bottomAmount.value, 10)
-          });
-        }
-        return map2;
-      });
-      const layers = computed(() => {
+      const layers = eagerComputed(() => {
         const uniquePriorities = [...new Set([...priorities.values()].map((p2) => p2.value))].sort((a, b) => a - b);
         const layout = [];
         for (const p2 of uniquePriorities) {
@@ -10805,7 +11374,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
         };
       });
-      const items2 = computed(() => {
+      const items2 = eagerComputed(() => {
         return layers.value.slice(1).map((_ref, index) => {
           let {
             id: id2
@@ -10827,10 +11396,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return items2.value.find((item) => item.id === id2);
       };
       const rootVm = getCurrentInstance("createLayout");
-      const isMounted = shallowRef(false);
-      onMounted(() => {
-        isMounted.value = true;
-      });
+      const layoutIsReady = nextTick();
       provide(VuetifyLayoutKey, {
         register: (vm, _ref2) => {
           let {
@@ -10860,24 +11426,22 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             const isHorizontal = position.value === "left" || position.value === "right";
             const isOppositeHorizontal = position.value === "right";
             const isOppositeVertical = position.value === "bottom";
+            const size2 = elementSize.value ?? layoutSize.value;
+            const unit = size2 === 0 ? "%" : "px";
             const styles = {
               [position.value]: 0,
               zIndex: zIndex.value,
-              transform: `translate${isHorizontal ? "X" : "Y"}(${(active.value ? 0 : -110) * (isOppositeHorizontal || isOppositeVertical ? -1 : 1)}%)`,
+              transform: `translate${isHorizontal ? "X" : "Y"}(${(active.value ? 0 : -(size2 === 0 ? 100 : size2)) * (isOppositeHorizontal || isOppositeVertical ? -1 : 1)}${unit})`,
               position: absolute.value || rootZIndex.value !== ROOT_ZINDEX ? "absolute" : "fixed",
               ...transitionsEnabled.value ? void 0 : {
                 transition: "none"
               }
             };
-            if (!isMounted.value)
-              return styles;
+            if (index.value < 0)
+              throw new Error(`Layout item "${id2}" is missing`);
             const item = items2.value[index.value];
             if (!item)
               throw new Error(`[Vuetify] Could not find layout item "${id2}"`);
-            const overlap = computedOverlaps.value.get(id2);
-            if (overlap) {
-              item[overlap.position] += overlap.amount;
-            }
             return {
               ...styles,
               height: isHorizontal ? `calc(100% - ${item.top}px - ${item.bottom}px)` : elementSize.value ? `${elementSize.value}px` : void 0,
@@ -10910,7 +11474,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         getLayoutItem,
         items: items2,
         layoutRect,
-        rootZIndex
+        rootZIndex,
+        layoutIsReady
       });
       const layoutClasses = computed(() => ["v-layout", {
         "v-layout--full-height": props.fullHeight
@@ -10926,6 +11491,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         getLayoutItem,
         items: items2,
         layoutRect,
+        layoutIsReady,
         layoutRef: resizeRef
       };
     }
@@ -10997,6 +11563,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       badge: "Badge",
       open: "Open",
       close: "Close",
+      dismiss: "Dismiss",
       confirmEdit: {
         ok: "OK",
         cancel: "Cancel"
@@ -11065,7 +11632,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       },
       timePicker: {
         am: "AM",
-        pm: "PM"
+        pm: "PM",
+        title: "Select Time"
       },
       pagination: {
         ariaLabel: {
@@ -11410,8 +11978,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       });
       const current2 = computed(() => computedThemes.value[name.value]);
       const styles = computed(() => {
+        var _a2;
         const lines = [];
-        if (current2.value.dark) {
+        if ((_a2 = current2.value) == null ? void 0 : _a2.dark) {
           createCssClass(lines, ":root", ["color-scheme: dark"]);
         }
         createCssClass(lines, ":root", genCssVariables(current2.value));
@@ -11576,16 +12145,18 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           rtlClasses
         } = useRtl();
-        useRender(() => {
-          var _a2;
-          return createVNode("div", {
-            "ref": layoutRef,
-            "class": ["v-application", theme.themeClasses.value, layoutClasses.value, rtlClasses.value, props.class],
-            "style": [props.style]
-          }, [createVNode("div", {
-            "class": "v-application__wrap"
-          }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])]);
-        });
+        useRender(() => createVNode("div", {
+          "ref": layoutRef,
+          "class": ["v-application", theme.themeClasses.value, layoutClasses.value, rtlClasses.value, props.class],
+          "style": [props.style]
+        }, [createVNode("div", {
+          "class": "v-application__wrap"
+        }, [createVNode(Suspense, null, {
+          default: () => {
+            var _a2;
+            return [createVNode(Fragment, null, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])];
+          }
+        })])]));
         return {
           getLayoutItem,
           items: items2,
@@ -11719,14 +12290,16 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             type: String,
             default: mode
           },
-          disabled: Boolean
+          disabled: Boolean,
+          group: Boolean
         },
         setup(props, _ref2) {
           let {
             slots
           } = _ref2;
+          const tag = props.group ? TransitionGroup : Transition;
           return () => {
-            return h(Transition, {
+            return h(tag, {
               name: props.disabled ? "" : name,
               css: !props.disabled,
               // mode: props.mode, // TODO: vuejs/vue-next#3104
@@ -12124,7 +12697,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           for (const value of String(rounded).split(" ")) {
             classes.push(`rounded-${value}`);
           }
-        } else if (tile) {
+        } else if (tile || rounded === false) {
           classes.push("rounded-0");
         }
         return classes;
@@ -12147,17 +12720,22 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const {
         transition,
         disabled,
+        group,
         ...rest
       } = props;
       const {
-        component = Transition,
+        component = group ? TransitionGroup : Transition,
         ...customProps
       } = typeof transition === "object" ? transition : {};
       return h(component, mergeProps(typeof transition === "string" ? {
         name: disabled ? "" : transition
-      } : customProps, rest, {
-        disabled
-      }), slots);
+      } : customProps, typeof transition === "string" ? {} : Object.fromEntries(Object.entries({
+        disabled,
+        group
+      }).filter((_ref2) => {
+        let [_, v] = _ref2;
+        return v !== void 0;
+      })), rest), slots);
     };
     function mounted$2(el2, binding) {
       if (!SUPPORTS_INTERSECTION)
@@ -12833,7 +13411,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const behavior = new Set(((_a2 = props.scrollBehavior) == null ? void 0 : _a2.split(" ")) ?? []);
           return {
             hide: behavior.has("hide"),
-            // fullyHide: behavior.has('fully-hide'),
+            fullyHide: behavior.has("fully-hide"),
             inverted: behavior.has("inverted"),
             collapse: behavior.has("collapse"),
             elevate: behavior.has("elevate"),
@@ -12843,8 +13421,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
         const canScroll = computed(() => {
           const behavior = scrollBehavior.value;
-          return behavior.hide || // behavior.fullyHide ||
-          behavior.inverted || behavior.collapse || behavior.elevate || behavior.fadeImage || // behavior.shrink ||
+          return behavior.hide || behavior.fullyHide || behavior.inverted || behavior.collapse || behavior.elevate || behavior.fadeImage || // behavior.shrink ||
           !isActive.value;
         });
         const {
@@ -12855,20 +13432,21 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         } = useScroll(props, {
           canScroll
         });
+        const canHide = computed(() => scrollBehavior.value.hide || scrollBehavior.value.fullyHide);
         const isCollapsed = computed(() => props.collapse || scrollBehavior.value.collapse && (scrollBehavior.value.inverted ? scrollRatio.value > 0 : scrollRatio.value === 0));
-        const isFlat = computed(() => props.flat || scrollBehavior.value.elevate && (scrollBehavior.value.inverted ? currentScroll.value > 0 : currentScroll.value === 0));
+        const isFlat = computed(() => props.flat || scrollBehavior.value.fullyHide && !isActive.value || scrollBehavior.value.elevate && (scrollBehavior.value.inverted ? currentScroll.value > 0 : currentScroll.value === 0));
         const opacity = computed(() => scrollBehavior.value.fadeImage ? scrollBehavior.value.inverted ? 1 - scrollRatio.value : scrollRatio.value : void 0);
         const height = computed(() => {
           var _a2, _b;
-          if (scrollBehavior.value.hide && scrollBehavior.value.inverted)
-            return 0;
-          const height2 = ((_a2 = vToolbarRef.value) == null ? void 0 : _a2.contentHeight) ?? 0;
-          const extensionHeight = ((_b = vToolbarRef.value) == null ? void 0 : _b.extensionHeight) ?? 0;
-          return height2 + extensionHeight;
+          const height2 = Number(((_a2 = vToolbarRef.value) == null ? void 0 : _a2.contentHeight) ?? props.height);
+          const extensionHeight = Number(((_b = vToolbarRef.value) == null ? void 0 : _b.extensionHeight) ?? 0);
+          if (!canHide.value)
+            return height2 + extensionHeight;
+          return currentScroll.value < scrollThreshold.value || scrollBehavior.value.fullyHide ? height2 + extensionHeight : height2;
         });
         useToggleScope(computed(() => !!props.scrollBehavior), () => {
           watchEffect(() => {
-            if (scrollBehavior.value.hide) {
+            if (canHide.value) {
               if (scrollBehavior.value.inverted) {
                 isActive.value = currentScroll.value > scrollThreshold.value;
               } else {
@@ -12883,7 +13461,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           ssrBootStyles
         } = useSsrBoot();
         const {
-          layoutItemStyles
+          layoutItemStyles,
+          layoutIsReady
         } = useLayoutItem({
           id: props.name,
           order: computed(() => parseInt(props.order, 10)),
@@ -12911,7 +13490,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "flat": isFlat.value
           }), slots);
         });
-        return {};
+        return layoutIsReady;
       }
     });
     const allowedDensities = [null, "default", "comfortable", "compact"];
@@ -12976,6 +13555,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
     }
     const makeVBtnGroupProps = propsFactory({
+      baseColor: String,
       divided: Boolean,
       ...makeBorderProps(),
       ...makeComponentProps(),
@@ -13011,6 +13591,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         provideDefaults({
           VBtn: {
             height: "auto",
+            baseColor: toRef(props, "baseColor"),
             color: toRef(props, "color"),
             density: toRef(props, "density"),
             flat: true,
@@ -13108,6 +13689,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const index = children.indexOf(vm);
         if (unref(unwrapped.value) == null) {
           unwrapped.value = index;
+          unwrapped.useIndexAsValue = true;
         }
         if (index > -1) {
           items2.splice(index, 0, unwrapped);
@@ -13133,6 +13715,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       });
       onBeforeUnmount(() => {
         isUnmounted = true;
+      });
+      onUpdated(() => {
+        for (let i2 = 0; i2 < items2.length; i2++) {
+          if (items2[i2].useIndexAsValue) {
+            items2[i2].value = i2;
+          }
+        }
       });
       function select(id2, value) {
         const item = items2.find((item2) => item2.id === id2);
@@ -13312,6 +13901,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       plus: "mdi-plus",
       minus: "mdi-minus",
       calendar: "mdi-calendar",
+      treeviewCollapse: "mdi-menu-down",
+      treeviewExpand: "mdi-menu-right",
       eyeDropper: "mdi-eyedropper"
     };
     const mdi = {
@@ -13426,7 +14017,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           ...aliases,
           /* eslint-disable max-len */
           vuetify: ["M8.2241 14.2009L12 21L22 3H14.4459L8.2241 14.2009Z", ["M7.26303 12.4733L7.00113 12L2 3H12.5261C12.5261 3 12.5261 3 12.5261 3L7.26303 12.4733Z", 0.6]],
-          "vuetify-outline": "svg:M7.26 12.47 12.53 3H2L7.26 12.47ZM14.45 3 8.22 14.2 12 21 22 3H14.45ZM18.6 5 12 16.88 10.51 14.2 15.62 5ZM7.26 8.35 5.4 5H9.13L7.26 8.35Z"
+          "vuetify-outline": "svg:M7.26 12.47 12.53 3H2L7.26 12.47ZM14.45 3 8.22 14.2 12 21 22 3H14.45ZM18.6 5 12 16.88 10.51 14.2 15.62 5ZM7.26 8.35 5.4 5H9.13L7.26 8.35Z",
+          "vuetify-play": ["m6.376 13.184-4.11-7.192C1.505 4.66 2.467 3 4.003 3h8.532l-.953 1.576-.006.01-.396.677c-.429.732-.214 1.507.194 2.015.404.503 1.092.878 1.869.806a3.72 3.72 0 0 1 1.005.022c.276.053.434.143.523.237.138.146.38.635-.25 2.09-.893 1.63-1.553 1.722-1.847 1.677-.213-.033-.468-.158-.756-.406a4.95 4.95 0 0 1-.8-.927c-.39-.564-1.04-.84-1.66-.846-.625-.006-1.316.27-1.693.921l-.478.826-.911 1.506Z", ["M9.093 11.552c.046-.079.144-.15.32-.148a.53.53 0 0 1 .43.207c.285.414.636.847 1.046 1.2.405.35.914.662 1.516.754 1.334.205 2.502-.698 3.48-2.495l.014-.028.013-.03c.687-1.574.774-2.852-.005-3.675-.37-.391-.861-.586-1.333-.676a5.243 5.243 0 0 0-1.447-.044c-.173.016-.393-.073-.54-.257-.145-.18-.127-.316-.082-.392l.393-.672L14.287 3h5.71c1.536 0 2.499 1.659 1.737 2.992l-7.997 13.996c-.768 1.344-2.706 1.344-3.473 0l-3.037-5.314 1.377-2.278.004-.006.004-.007.481-.831Z", 0.6]]
           /* eslint-enable max-len */
         }
       }, options);
@@ -13449,8 +14041,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             icon = (_a2 = icons.aliases) == null ? void 0 : _a2[icon.slice(1)];
           }
         }
-        if (!icon)
-          throw new Error(`Could not find aliased icon "${iconAlias}"`);
         if (Array.isArray(icon)) {
           return {
             component: VSvgIcon,
@@ -13502,6 +14092,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     const makeVIconProps = propsFactory({
       color: String,
+      disabled: Boolean,
       start: Boolean,
       end: Boolean,
       icon: IconValue,
@@ -13540,11 +14131,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (slotValue) {
             slotIcon.value = (_b = flattenFragments(slotValue).filter((node) => node.type === Text$1 && node.children && typeof node.children === "string")[0]) == null ? void 0 : _b.children;
           }
+          const hasClick = !!(attrs.onClick || attrs.onClickOnce);
           return createVNode(iconData.value.component, {
             "tag": props.tag,
             "icon": iconData.value.icon,
             "class": ["v-icon", "notranslate", themeClasses.value, sizeClasses.value, textColorClasses.value, {
-              "v-icon--clickable": !!attrs.onClick,
+              "v-icon--clickable": hasClick,
+              "v-icon--disabled": props.disabled,
               "v-icon--start": props.start,
               "v-icon--end": props.end
             }, props.class],
@@ -13553,8 +14146,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               height: convertToUnit(props.size),
               width: convertToUnit(props.size)
             } : void 0, textColorStyles.value, props.style],
-            "role": attrs.onClick ? "button" : void 0,
-            "aria-hidden": !attrs.onClick
+            "role": hasClick ? "button" : void 0,
+            "aria-hidden": !hasClick,
+            "tabindex": hasClick ? props.disabled ? -1 : 0 : void 0
           }, {
             default: () => [slotValue]
           });
@@ -13779,6 +14373,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         type: [Number, String],
         default: 0
       },
+      bufferColor: String,
+      bufferOpacity: [Number, String],
       clickable: Boolean,
       color: String,
       height: {
@@ -13794,6 +14390,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         type: [Number, String],
         default: 0
       },
+      opacity: [Number, String],
       reverse: Boolean,
       stream: Boolean,
       striped: Boolean,
@@ -13836,6 +14433,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           backgroundColorStyles
         } = useBackgroundColor(computed(() => props.bgColor || props.color));
         const {
+          backgroundColorClasses: bufferColorClasses,
+          backgroundColorStyles: bufferColorStyles
+        } = useBackgroundColor(computed(() => props.bufferColor || props.bgColor || props.color));
+        const {
           backgroundColorClasses: barColorClasses,
           backgroundColorStyles: barColorStyles
         } = useBackgroundColor(props, "color");
@@ -13846,15 +14447,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           intersectionRef,
           isIntersecting
         } = useIntersectionObserver();
-        const max = computed(() => parseInt(props.max, 10));
-        const height = computed(() => parseInt(props.height, 10));
-        const normalizedBuffer = computed(() => parseFloat(props.bufferValue) / max.value * 100);
-        const normalizedValue = computed(() => parseFloat(progress.value) / max.value * 100);
+        const max = computed(() => parseFloat(props.max));
+        const height = computed(() => parseFloat(props.height));
+        const normalizedBuffer = computed(() => clamp(parseFloat(props.bufferValue) / max.value * 100, 0, 100));
+        const normalizedValue = computed(() => clamp(parseFloat(progress.value) / max.value * 100, 0, 100));
         const isReversed = computed(() => isRtl.value !== props.reverse);
         const transition = computed(() => props.indeterminate ? "fade-transition" : "slide-x-transition");
-        const opacity = computed(() => {
-          return props.bgOpacity == null ? props.bgOpacity : parseFloat(props.bgOpacity);
-        });
         function handleClick(e) {
           if (!intersectionRef.value)
             return;
@@ -13881,7 +14479,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             top: props.location === "top" ? 0 : void 0,
             height: props.active ? convertToUnit(height.value) : 0,
             "--v-progress-linear-height": convertToUnit(height.value),
-            ...locationStyles.value
+            ...props.absolute ? locationStyles.value : {}
           }, props.style],
           "role": "progressbar",
           "aria-hidden": props.active ? "false" : "true",
@@ -13897,7 +14495,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               ...textColorStyles.value,
               [isReversed.value ? "left" : "right"]: convertToUnit(-height.value),
               borderTop: `${convertToUnit(height.value / 2)} dotted`,
-              opacity: opacity.value,
+              opacity: parseFloat(props.bufferOpacity),
               top: `calc(50% - ${convertToUnit(height.value / 4)})`,
               width: convertToUnit(100 - normalizedBuffer.value, "%"),
               "--v-progress-linear-stream-to": convertToUnit(height.value * (isReversed.value ? 1 : -1))
@@ -13905,8 +14503,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }, null), createVNode("div", {
             "class": ["v-progress-linear__background", backgroundColorClasses.value],
             "style": [backgroundColorStyles.value, {
-              opacity: opacity.value,
-              width: convertToUnit(!props.stream ? 100 : normalizedBuffer.value, "%")
+              opacity: parseFloat(props.bgOpacity),
+              width: props.stream ? 0 : void 0
+            }]
+          }, null), createVNode("div", {
+            "class": ["v-progress-linear__buffer", bufferColorClasses.value],
+            "style": [bufferColorStyles.value, {
+              opacity: parseFloat(props.bufferOpacity),
+              width: convertToUnit(normalizedBuffer.value, "%")
             }]
           }, null), createVNode(Transition, {
             "name": transition.value
@@ -13994,34 +14598,45 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return (_b = (_a2 = getCurrentInstance("useRouter")) == null ? void 0 : _a2.proxy) == null ? void 0 : _b.$router;
     }
     function useLink(props, attrs) {
+      var _a2, _b;
       const RouterLink2 = resolveDynamicComponent("RouterLink");
       const isLink = computed(() => !!(props.href || props.to));
       const isClickable = computed(() => {
         return (isLink == null ? void 0 : isLink.value) || hasEvent(attrs, "click") || hasEvent(props, "click");
       });
-      if (typeof RouterLink2 === "string") {
+      if (typeof RouterLink2 === "string" || !("useLink" in RouterLink2)) {
         return {
           isLink,
           isClickable,
           href: toRef(props, "href")
         };
       }
-      const link2 = props.to ? RouterLink2.useLink(props) : void 0;
+      const linkProps = computed(() => ({
+        ...props,
+        to: toRef(() => props.to || "")
+      }));
+      const routerLink = RouterLink2.useLink(linkProps.value);
+      const link2 = computed(() => props.to ? routerLink : void 0);
       const route = useRoute();
       return {
         isLink,
         isClickable,
-        route: link2 == null ? void 0 : link2.route,
-        navigate: link2 == null ? void 0 : link2.navigate,
-        isActive: link2 && computed(() => {
-          var _a2, _b, _c;
+        route: (_a2 = link2.value) == null ? void 0 : _a2.route,
+        navigate: (_b = link2.value) == null ? void 0 : _b.navigate,
+        isActive: computed(() => {
+          var _a3, _b2, _c;
+          if (!link2.value)
+            return false;
           if (!props.exact)
-            return (_a2 = link2.isActive) == null ? void 0 : _a2.value;
+            return ((_a3 = link2.value.isActive) == null ? void 0 : _a3.value) ?? false;
           if (!route.value)
-            return (_b = link2.isExactActive) == null ? void 0 : _b.value;
-          return ((_c = link2.isExactActive) == null ? void 0 : _c.value) && deepEqual(link2.route.value.query, route.value.query);
+            return ((_b2 = link2.value.isExactActive) == null ? void 0 : _b2.value) ?? false;
+          return ((_c = link2.value.isExactActive) == null ? void 0 : _c.value) && deepEqual(link2.value.route.value.query, route.value.query);
         }),
-        href: computed(() => props.to ? link2 == null ? void 0 : link2.route.value.href : props.href)
+        href: computed(() => {
+          var _a3;
+          return props.to ? (_a3 = link2.value) == null ? void 0 : _a3.route.value.href : props.href;
+        })
       };
     }
     const makeRouterProps = propsFactory({
@@ -14366,6 +14981,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         type: Boolean,
         default: void 0
       },
+      baseColor: String,
       symbol: {
         type: null,
         default: VBtnToggleSymbol
@@ -14375,6 +14991,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       prependIcon: IconValue,
       appendIcon: IconValue,
       block: Boolean,
+      readonly: Boolean,
       slim: Boolean,
       stacked: Boolean,
       ripple: {
@@ -14404,9 +15021,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }, "VBtn");
     const VBtn = genericComponent()({
       name: "VBtn",
-      directives: {
-        Ripple
-      },
       props: makeVBtnProps(),
       emits: {
         "group:selected": (val) => true
@@ -14422,11 +15036,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           borderClasses
         } = useBorder(props);
-        const {
-          colorClasses,
-          colorStyles,
-          variantClasses
-        } = useVariant(props);
         const {
           densityClasses
         } = useDensity(props);
@@ -14464,6 +15073,19 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
           return group == null ? void 0 : group.isSelected.value;
         });
+        const variantProps = computed(() => {
+          var _a2, _b;
+          const showColor = (group == null ? void 0 : group.isSelected.value) && (!link2.isLink.value || ((_a2 = link2.isActive) == null ? void 0 : _a2.value)) || !group || ((_b = link2.isActive) == null ? void 0 : _b.value);
+          return {
+            color: showColor ? props.color ?? props.baseColor : props.baseColor,
+            variant: props.variant
+          };
+        });
+        const {
+          colorClasses,
+          colorStyles,
+          variantClasses
+        } = useVariant(variantProps);
         const isDisabled = computed(() => (group == null ? void 0 : group.disabled.value) || props.disabled);
         const isElevated = computed(() => {
           return props.variant === "elevated" && !(props.disabled || props.flat || props.border);
@@ -14482,12 +15104,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         useSelectLink(link2, group == null ? void 0 : group.select);
         useRender(() => {
-          var _a2, _b;
           const Tag2 = link2.isLink.value ? "a" : props.tag;
           const hasPrepend = !!(props.prependIcon || slots.prepend);
           const hasAppend = !!(props.appendIcon || slots.append);
           const hasIcon = !!(props.icon && props.icon !== true);
-          const hasColor = (group == null ? void 0 : group.isSelected.value) && (!link2.isLink.value || ((_a2 = link2.isActive) == null ? void 0 : _a2.value)) || !group || ((_b = link2.isActive) == null ? void 0 : _b.value);
           return withDirectives(createVNode(Tag2, {
             "type": Tag2 === "a" ? void 0 : "button",
             "class": ["v-btn", group == null ? void 0 : group.selectedClass.value, {
@@ -14498,17 +15118,20 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "v-btn--flat": props.flat,
               "v-btn--icon": !!props.icon,
               "v-btn--loading": props.loading,
+              "v-btn--readonly": props.readonly,
               "v-btn--slim": props.slim,
               "v-btn--stacked": props.stacked
-            }, themeClasses.value, borderClasses.value, hasColor ? colorClasses.value : void 0, densityClasses.value, elevationClasses.value, loaderClasses.value, positionClasses.value, roundedClasses.value, sizeClasses.value, variantClasses.value, props.class],
-            "style": [hasColor ? colorStyles.value : void 0, dimensionStyles.value, locationStyles.value, sizeStyles.value, props.style],
+            }, themeClasses.value, borderClasses.value, colorClasses.value, densityClasses.value, elevationClasses.value, loaderClasses.value, positionClasses.value, roundedClasses.value, sizeClasses.value, variantClasses.value, props.class],
+            "style": [colorStyles.value, dimensionStyles.value, locationStyles.value, sizeStyles.value, props.style],
+            "aria-busy": props.loading ? true : void 0,
             "disabled": isDisabled.value || void 0,
             "href": link2.href.value,
+            "tabindex": props.loading || props.readonly ? -1 : void 0,
             "onClick": onClick,
             "value": valueAttr.value
           }, {
             default: () => {
-              var _a3;
+              var _a2;
               return [genOverlays(true, "v-btn"), !props.icon && hasPrepend && createVNode("span", {
                 "key": "prepend",
                 "class": "v-btn__prepend"
@@ -14539,8 +15162,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 }
               }, {
                 default: () => {
-                  var _a4;
-                  return [((_a4 = slots.default) == null ? void 0 : _a4.call(slots)) ?? props.text];
+                  var _a3;
+                  return [((_a3 = slots.default) == null ? void 0 : _a3.call(slots)) ?? props.text];
                 }
               })]), !props.icon && hasAppend && createVNode("span", {
                 "key": "append",
@@ -14559,14 +15182,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               }, slots.append)]), !!props.loading && createVNode("span", {
                 "key": "loader",
                 "class": "v-btn__loader"
-              }, [((_a3 = slots.loader) == null ? void 0 : _a3.call(slots)) ?? createVNode(VProgressCircular, {
+              }, [((_a2 = slots.loader) == null ? void 0 : _a2.call(slots)) ?? createVNode(VProgressCircular, {
                 "color": typeof props.loading === "boolean" ? void 0 : props.loading,
                 "indeterminate": true,
-                "size": "23",
                 "width": "2"
               }, null)])];
             }
-          }), [[resolveDirective("ripple"), !isDisabled.value && props.ripple, null]]);
+          }), [[Ripple, !isDisabled.value && !!props.ripple, "", {
+            center: !!props.icon
+          }]]);
         });
         return {
           group
@@ -14615,7 +15239,27 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {};
       }
     });
-    const VCardSubtitle = createSimpleFunctional("v-card-subtitle");
+    const makeVCardSubtitleProps = propsFactory({
+      opacity: [Number, String],
+      ...makeComponentProps(),
+      ...makeTagProps()
+    }, "VCardSubtitle");
+    const VCardSubtitle = genericComponent()({
+      name: "VCardSubtitle",
+      props: makeVCardSubtitleProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-card-subtitle", props.class],
+          "style": [{
+            "--v-card-subtitle-opacity": props.opacity
+          }, props.style]
+        }, slots));
+        return {};
+      }
+    });
     const VCardTitle = createSimpleFunctional("v-card-title");
     const makeVAvatarProps = propsFactory({
       start: Boolean,
@@ -14788,7 +15432,27 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {};
       }
     });
-    const VCardText = createSimpleFunctional("v-card-text");
+    const makeVCardTextProps = propsFactory({
+      opacity: [Number, String],
+      ...makeComponentProps(),
+      ...makeTagProps()
+    }, "VCardText");
+    const VCardText = genericComponent()({
+      name: "VCardText",
+      props: makeVCardTextProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-card-text", props.class],
+          "style": [{
+            "--v-card-text-opacity": props.opacity
+          }, props.style]
+        }, slots));
+        return {};
+      }
+    });
     const makeVCardProps = propsFactory({
       appendAvatar: String,
       appendIcon: IconValue,
@@ -15090,6 +15754,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
     }
     const makeDisplayProps = propsFactory({
+      mobile: {
+        type: Boolean,
+        default: null
+      },
       mobileBreakpoint: [Number, String]
     }, "display");
     function useDisplay() {
@@ -15099,6 +15767,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       if (!display)
         throw new Error("Could not find Vuetify display injection");
       const mobile = computed(() => {
+        if (props.mobile != null)
+          return props.mobile;
         if (!props.mobileBreakpoint)
           return display.mobile.value;
         const breakpointValue = typeof props.mobileBreakpoint === "number" ? props.mobileBreakpoint : display.thresholds.value[props.mobileBreakpoint];
@@ -15364,6 +16034,123 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function useList() {
       return inject$1(ListKey, null);
     }
+    const independentActiveStrategy = (mandatory) => {
+      const strategy = {
+        activate: (_ref) => {
+          let {
+            id: id2,
+            value,
+            activated
+          } = _ref;
+          id2 = toRaw(id2);
+          if (mandatory && !value && activated.size === 1 && activated.has(id2))
+            return activated;
+          if (value) {
+            activated.add(id2);
+          } else {
+            activated.delete(id2);
+          }
+          return activated;
+        },
+        in: (v, children, parents) => {
+          let set2 = /* @__PURE__ */ new Set();
+          for (const id2 of v || []) {
+            set2 = strategy.activate({
+              id: id2,
+              value: true,
+              activated: new Set(set2),
+              children,
+              parents
+            });
+          }
+          return set2;
+        },
+        out: (v) => {
+          return Array.from(v);
+        }
+      };
+      return strategy;
+    };
+    const independentSingleActiveStrategy = (mandatory) => {
+      const parentStrategy = independentActiveStrategy(mandatory);
+      const strategy = {
+        activate: (_ref2) => {
+          let {
+            activated,
+            id: id2,
+            ...rest
+          } = _ref2;
+          id2 = toRaw(id2);
+          const singleSelected = activated.has(id2) ? /* @__PURE__ */ new Set([id2]) : /* @__PURE__ */ new Set();
+          return parentStrategy.activate({
+            ...rest,
+            id: id2,
+            activated: singleSelected
+          });
+        },
+        in: (v, children, parents) => {
+          let set2 = /* @__PURE__ */ new Set();
+          if (v == null ? void 0 : v.length) {
+            set2 = parentStrategy.in(v.slice(0, 1), children, parents);
+          }
+          return set2;
+        },
+        out: (v, children, parents) => {
+          return parentStrategy.out(v, children, parents);
+        }
+      };
+      return strategy;
+    };
+    const leafActiveStrategy = (mandatory) => {
+      const parentStrategy = independentActiveStrategy(mandatory);
+      const strategy = {
+        activate: (_ref3) => {
+          let {
+            id: id2,
+            activated,
+            children,
+            ...rest
+          } = _ref3;
+          id2 = toRaw(id2);
+          if (children.has(id2))
+            return activated;
+          return parentStrategy.activate({
+            id: id2,
+            activated,
+            children,
+            ...rest
+          });
+        },
+        in: parentStrategy.in,
+        out: parentStrategy.out
+      };
+      return strategy;
+    };
+    const leafSingleActiveStrategy = (mandatory) => {
+      const parentStrategy = independentSingleActiveStrategy(mandatory);
+      const strategy = {
+        activate: (_ref4) => {
+          let {
+            id: id2,
+            activated,
+            children,
+            ...rest
+          } = _ref4;
+          id2 = toRaw(id2);
+          if (children.has(id2))
+            return activated;
+          return parentStrategy.activate({
+            id: id2,
+            activated,
+            children,
+            ...rest
+          });
+        },
+        in: parentStrategy.in,
+        out: parentStrategy.out
+      };
+      return strategy;
+    };
     const singleOpenStrategy = {
       open: (_ref) => {
         let {
@@ -15443,7 +16230,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (mandatory && !value) {
             const on = Array.from(selected.entries()).reduce((arr, _ref2) => {
               let [key, value2] = _ref2;
-              return value2 === "on" ? [...arr, key] : arr;
+              if (value2 === "on")
+                arr.push(key);
+              return arr;
             }, []);
             if (on.length === 1 && on[0] === id2)
               return selected;
@@ -15586,7 +16375,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (mandatory && !value) {
             const on = Array.from(selected.entries()).reduce((arr, _ref7) => {
               let [key, value2] = _ref7;
-              return value2 === "on" ? [...arr, key] : arr;
+              if (value2 === "on")
+                arr.push(key);
+              return arr;
             }, []);
             if (on.length === 0)
               return original;
@@ -15627,16 +16418,24 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         children: ref$1(/* @__PURE__ */ new Map()),
         open: () => null,
         openOnSelect: () => null,
+        activate: () => null,
         select: () => null,
+        activatable: ref$1(false),
+        selectable: ref$1(false),
         opened: ref$1(/* @__PURE__ */ new Set()),
+        activated: ref$1(/* @__PURE__ */ new Set()),
         selected: ref$1(/* @__PURE__ */ new Map()),
         selectedValues: ref$1([])
       }
     };
     const makeNestedProps = propsFactory({
+      activatable: Boolean,
+      selectable: Boolean,
+      activeStrategy: [String, Function],
       selectStrategy: [String, Function],
       openStrategy: [String, Object],
       opened: Array,
+      activated: Array,
       selected: Array,
       mandatory: Boolean
     }, "nested");
@@ -15645,6 +16444,21 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const children = ref$1(/* @__PURE__ */ new Map());
       const parents = ref$1(/* @__PURE__ */ new Map());
       const opened = useProxiedModel(props, "opened", props.opened, (v) => new Set(v), (v) => [...v.values()]);
+      const activeStrategy = computed(() => {
+        if (typeof props.activeStrategy === "object")
+          return props.activeStrategy;
+        switch (props.activeStrategy) {
+          case "leaf":
+            return leafActiveStrategy(props.mandatory);
+          case "single-leaf":
+            return leafSingleActiveStrategy(props.mandatory);
+          case "independent":
+            return independentActiveStrategy(props.mandatory);
+          case "single-independent":
+          default:
+            return independentSingleActiveStrategy(props.mandatory);
+        }
+      });
       const selectStrategy = computed(() => {
         if (typeof props.selectStrategy === "object")
           return props.selectStrategy;
@@ -15675,6 +16489,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             return multipleOpenStrategy;
         }
       });
+      const activated = useProxiedModel(props, "activated", props.activated, (v) => activeStrategy.value.in(v, children.value, parents.value), (v) => activeStrategy.value.out(v, children.value, parents.value));
       const selected = useProxiedModel(props, "selected", props.selected, (v) => selectStrategy.value.in(v, children.value, parents.value), (v) => selectStrategy.value.out(v, children.value, parents.value));
       onBeforeUnmount(() => {
         isUnmounted = true;
@@ -15693,6 +16508,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         id: shallowRef(),
         root: {
           opened,
+          activatable: toRef(props, "activatable"),
+          selectable: toRef(props, "selectable"),
+          activated,
           selected,
           selectedValues: computed(() => {
             const arr = [];
@@ -15768,6 +16586,26 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             newSelected && (selected.value = newSelected);
             nested.root.openOnSelect(id2, value, event);
           },
+          activate: (id2, value, event) => {
+            if (!props.activatable) {
+              return nested.root.select(id2, true, event);
+            }
+            vm.emit("click:activate", {
+              id: id2,
+              value,
+              path: getPath(id2),
+              event
+            });
+            const newActivated = activeStrategy.value.activate({
+              id: id2,
+              value,
+              activated: new Set(activated.value),
+              children: children.value,
+              parents: parents.value,
+              event
+            });
+            newActivated && (activated.value = newActivated);
+          },
           children,
           parents
         }
@@ -15786,6 +16624,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         openOnSelect: (open, e) => parent.root.openOnSelect(computedId.value, open, e),
         isOpen: computed(() => parent.root.opened.value.has(computedId.value)),
         parent: computed(() => parent.root.parents.value.get(computedId.value)),
+        activate: (activated, e) => parent.root.activate(computedId.value, activated, e),
+        isActivated: computed(() => parent.root.activated.value.has(toRaw(computedId.value))),
         select: (selected, e) => parent.root.select(computedId.value, selected, e),
         isSelected: computed(() => parent.root.selected.value.get(toRaw(computedId.value)) === "on"),
         isIndeterminate: computed(() => parent.root.selected.value.get(computedId.value) === "indeterminate"),
@@ -15913,10 +16753,32 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }
           })]
         }));
+        return {
+          isOpen
+        };
+      }
+    });
+    const makeVListItemSubtitleProps = propsFactory({
+      opacity: [Number, String],
+      ...makeComponentProps(),
+      ...makeTagProps()
+    }, "VListItemSubtitle");
+    const VListItemSubtitle = genericComponent()({
+      name: "VListItemSubtitle",
+      props: makeVListItemSubtitleProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-list-item-subtitle", props.class],
+          "style": [{
+            "--v-list-item-subtitle-opacity": props.opacity
+          }, props.style]
+        }, slots));
         return {};
       }
     });
-    const VListItemSubtitle = createSimpleFunctional("v-list-item-subtitle");
     const VListItemTitle = createSimpleFunctional("v-list-item-title");
     const makeVListItemProps = propsFactory({
       active: {
@@ -15979,6 +16841,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const link2 = useLink(props, attrs);
         const id2 = computed(() => props.value === void 0 ? link2.href.value : props.value);
         const {
+          activate,
+          isActivated,
           select,
           isSelected,
           isIndeterminate,
@@ -15990,10 +16854,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const list2 = useList();
         const isActive = computed(() => {
           var _a2;
-          return props.active !== false && (props.active || ((_a2 = link2.isActive) == null ? void 0 : _a2.value) || isSelected.value);
+          return props.active !== false && (props.active || ((_a2 = link2.isActive) == null ? void 0 : _a2.value) || (root.activatable.value ? isActivated.value : isSelected.value));
         });
         const isLink = computed(() => props.link !== false && link2.isLink.value);
-        const isClickable = computed(() => !props.disabled && props.link !== false && (props.link || link2.isClickable.value || props.value != null && !!list2));
+        const isClickable = computed(() => !props.disabled && props.link !== false && (props.link || link2.isClickable.value || !!list2 && (root.selectable.value || root.activatable.value || props.value != null)));
         const roundedProps = computed(() => props.rounded || props.nav);
         const color = computed(() => props.color ?? props.activeColor);
         const variantProps = computed(() => ({
@@ -16049,7 +16913,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (isGroupActivator || !isClickable.value)
             return;
           (_a2 = link2.navigate) == null ? void 0 : _a2.call(link2, e);
-          props.value != null && select(!isSelected.value, e);
+          if (root.activatable.value) {
+            activate(!isActivated.value, e);
+          } else if (root.selectable.value) {
+            select(!isSelected.value, e);
+          } else if (props.value != null) {
+            select(!isSelected.value, e);
+          }
         }
         function onKeyDown(e) {
           if (e.key === "Enter" || e.key === " ") {
@@ -16180,7 +17050,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }
           }), [[resolveDirective("ripple"), isClickable.value && props.ripple]]);
         });
-        return {};
+        return {
+          isGroupActivator,
+          isSelected,
+          list: list2,
+          select
+        };
       }
     });
     const makeVListSubheaderProps = propsFactory({
@@ -16228,6 +17103,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       color: String,
       inset: Boolean,
       length: [Number, String],
+      opacity: [Number, String],
       thickness: [Number, String],
       vertical: Boolean,
       ...makeComponentProps(),
@@ -16238,7 +17114,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       props: makeVDividerProps(),
       setup(props, _ref) {
         let {
-          attrs
+          attrs,
+          slots
         } = _ref;
         const {
           themeClasses
@@ -16257,16 +17134,30 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
           return styles;
         });
-        useRender(() => createVNode("hr", {
-          "class": [{
-            "v-divider": true,
-            "v-divider--inset": props.inset,
-            "v-divider--vertical": props.vertical
-          }, themeClasses.value, textColorClasses.value, props.class],
-          "style": [dividerStyles.value, textColorStyles.value, props.style],
-          "aria-orientation": !attrs.role || attrs.role === "separator" ? props.vertical ? "vertical" : "horizontal" : void 0,
-          "role": `${attrs.role || "separator"}`
-        }, null));
+        useRender(() => {
+          const divider = createVNode("hr", {
+            "class": [{
+              "v-divider": true,
+              "v-divider--inset": props.inset,
+              "v-divider--vertical": props.vertical
+            }, themeClasses.value, textColorClasses.value, props.class],
+            "style": [dividerStyles.value, textColorStyles.value, {
+              "--v-border-opacity": props.opacity
+            }, props.style],
+            "aria-orientation": !attrs.role || attrs.role === "separator" ? props.vertical ? "vertical" : "horizontal" : void 0,
+            "role": `${attrs.role || "separator"}`
+          }, null);
+          if (!slots.default)
+            return divider;
+          return createVNode("div", {
+            "class": ["v-divider__wrapper", {
+              "v-divider__wrapper--vertical": props.vertical,
+              "v-divider__wrapper--inset": props.inset
+            }]
+          }, [divider, createVNode("div", {
+            "class": "v-divider__content"
+          }, [slots.default()]), divider]);
+        });
         return {};
       }
     });
@@ -16523,8 +17414,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       props: makeVListProps(),
       emits: {
         "update:selected": (value) => true,
+        "update:activated": (value) => true,
         "update:opened": (value) => true,
         "click:open": (value) => true,
+        "click:activate": (value) => true,
         "click:select": (value) => true
       },
       setup(props, _ref) {
@@ -16557,7 +17450,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           roundedClasses
         } = useRounded(props);
         const {
+          children,
           open,
+          parents,
           select
         } = useNested(props);
         const lineClasses = computed(() => props.lines ? `v-list--${props.lines}-line` : void 0);
@@ -16600,7 +17495,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             focus();
         }
         function onKeydown(e) {
-          if (!contentRef.value)
+          const target2 = e.target;
+          if (!contentRef.value || ["INPUT", "TEXTAREA"].includes(target2.tagName))
             return;
           if (e.key === "ArrowDown") {
             focus("next");
@@ -16650,7 +17546,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {
           open,
           select,
-          focus
+          focus,
+          children,
+          parents
         };
       }
     });
@@ -16680,6 +17578,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const makeVMainProps = propsFactory({
       scrollable: Boolean,
       ...makeComponentProps(),
+      ...makeDimensionProps(),
       ...makeTagProps({
         tag: "main"
       })
@@ -16692,7 +17591,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           slots
         } = _ref;
         const {
-          mainStyles
+          dimensionStyles
+        } = useDimension(props);
+        const {
+          mainStyles,
+          layoutIsReady
         } = useLayout();
         const {
           ssrBootStyles
@@ -16701,7 +17604,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           "class": ["v-main", {
             "v-main--scrollable": props.scrollable
           }, props.class],
-          "style": [mainStyles.value, ssrBootStyles.value, props.style]
+          "style": [mainStyles.value, ssrBootStyles.value, dimensionStyles.value, props.style]
         }, {
           default: () => {
             var _a2, _b;
@@ -16710,7 +17613,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)]) : (_b = slots.default) == null ? void 0 : _b.call(slots)];
           }
         }));
-        return {};
+        return layoutIsReady;
       }
     });
     function useSticky(_ref) {
@@ -16870,6 +17773,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     function useTouch(_ref) {
       let {
+        el: el2,
         isActive,
         isTemporary,
         width,
@@ -16920,10 +17824,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const inTouchZone = position.value === "left" ? touchX < touchZone : position.value === "right" ? touchX > document.documentElement.clientWidth - touchZone : position.value === "top" ? touchY < touchZone : position.value === "bottom" ? touchY > document.documentElement.clientHeight - touchZone : oops();
         const inElement = isActive.value && (position.value === "left" ? touchX < width.value : position.value === "right" ? touchX > document.documentElement.clientWidth - width.value : position.value === "top" ? touchY < width.value : position.value === "bottom" ? touchY > document.documentElement.clientHeight - width.value : oops());
         if (inTouchZone || inElement || isActive.value && isTemporary.value) {
-          maybeDragging = true;
           start = [touchX, touchY];
           offset.value = getOffset2(isHorizontal.value ? touchX : touchY, isActive.value);
           dragProgress.value = getProgress(isHorizontal.value ? touchX : touchY);
+          maybeDragging = offset.value > -20 && offset.value < 80;
           endTouch(e);
           addMovement(e);
         }
@@ -16984,6 +17888,21 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           transform: position.value === "left" ? `translateX(calc(-100% + ${dragProgress.value * width.value}px))` : position.value === "right" ? `translateX(calc(100% - ${dragProgress.value * width.value}px))` : position.value === "top" ? `translateY(calc(-100% + ${dragProgress.value * width.value}px))` : position.value === "bottom" ? `translateY(calc(100% - ${dragProgress.value * width.value}px))` : oops(),
           transition: "none"
         } : void 0;
+      });
+      useToggleScope(isDragging, () => {
+        var _a2, _b;
+        const transform2 = ((_a2 = el2.value) == null ? void 0 : _a2.style.transform) ?? null;
+        const transition = ((_b = el2.value) == null ? void 0 : _b.style.transition) ?? null;
+        watchEffect(() => {
+          var _a3, _b2, _c, _d;
+          (_b2 = el2.value) == null ? void 0 : _b2.style.setProperty("transform", ((_a3 = dragStyles.value) == null ? void 0 : _a3.transform) || "none");
+          (_d = el2.value) == null ? void 0 : _d.style.setProperty("transition", ((_c = dragStyles.value) == null ? void 0 : _c.transition) || null);
+        });
+        onScopeDispose(() => {
+          var _a3, _b2;
+          (_a3 = el2.value) == null ? void 0 : _a3.style.setProperty("transform", transform2);
+          (_b2 = el2.value) == null ? void 0 : _b2.style.setProperty("transition", transition);
+        });
       });
       return {
         isDragging,
@@ -17177,16 +18096,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       return weeks;
     }
-    function startOfWeek(date2) {
+    function startOfWeek(date2, locale) {
       const d = new Date(date2);
-      while (d.getDay() !== 0) {
+      while (d.getDay() !== (firstDay[locale.slice(-2).toUpperCase()] ?? 0)) {
         d.setDate(d.getDate() - 1);
       }
       return d;
     }
-    function endOfWeek(date2) {
+    function endOfWeek(date2, locale) {
       const d = new Date(date2);
-      while (d.getDay() !== 6) {
+      const lastDay = ((firstDay[locale.slice(-2).toUpperCase()] ?? 0) + 6) % 7;
+      while (d.getDay() !== lastDay) {
         d.setDate(d.getDate() + 1);
       }
       return d;
@@ -17238,20 +18158,27 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       let options = {};
       switch (formatString) {
+        case "fullDate":
+          options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+          };
+          break;
         case "fullDateWithWeekday":
           options = {
             weekday: "long",
-            day: "numeric",
+            year: "numeric",
             month: "long",
-            year: "numeric"
+            day: "numeric"
           };
           break;
-        case "hours12h":
-          options = {
-            hour: "numeric",
-            hour12: true
-          };
-          break;
+        case "normalDate":
+          const day = newDate.getDate();
+          const month = new Intl.DateTimeFormat(locale, {
+            month: "long"
+          }).format(newDate);
+          return `${day} ${month}`;
         case "normalDateWithWeekday":
           options = {
             weekday: "short",
@@ -17259,22 +18186,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             month: "short"
           };
           break;
-        case "keyboardDate":
+        case "shortDate":
           options = {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
-          };
-          break;
-        case "monthAndDate":
-          options = {
-            month: "long",
+            month: "short",
             day: "numeric"
           };
           break;
-        case "monthAndYear":
+        case "year":
           options = {
-            month: "long",
             year: "numeric"
           };
           break;
@@ -17288,13 +18207,21 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             month: "short"
           };
           break;
-        case "dayOfMonth":
-          return new Intl.NumberFormat(locale).format(newDate.getDate());
-        case "shortDate":
+        case "monthAndYear":
           options = {
-            year: "2-digit",
-            month: "numeric",
+            month: "long",
+            year: "numeric"
+          };
+          break;
+        case "monthAndDate":
+          options = {
+            month: "long",
             day: "numeric"
+          };
+          break;
+        case "weekday":
+          options = {
+            weekday: "long"
           };
           break;
         case "weekdayShort":
@@ -17302,9 +18229,125 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             weekday: "short"
           };
           break;
-        case "year":
+        case "dayOfMonth":
+          return new Intl.NumberFormat(locale).format(newDate.getDate());
+        case "hours12h":
           options = {
-            year: "numeric"
+            hour: "numeric",
+            hour12: true
+          };
+          break;
+        case "hours24h":
+          options = {
+            hour: "numeric",
+            hour12: false
+          };
+          break;
+        case "minutes":
+          options = {
+            minute: "numeric"
+          };
+          break;
+        case "seconds":
+          options = {
+            second: "numeric"
+          };
+          break;
+        case "fullTime":
+          options = {
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "fullTime12h":
+          options = {
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "fullTime24h":
+          options = {
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false
+          };
+          break;
+        case "fullDateTime":
+          options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "fullDateTime12h":
+          options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "fullDateTime24h":
+          options = {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false
+          };
+          break;
+        case "keyboardDate":
+          options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+          };
+          break;
+        case "keyboardDateTime":
+          options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false
+          };
+          break;
+        case "keyboardDateTime12h":
+          options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: true
+          };
+          break;
+        case "keyboardDateTime24h":
+          options = {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric",
+            hour12: false
           };
           break;
         default:
@@ -17348,6 +18391,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     function addMonths(date2, amount) {
       const d = new Date(date2);
+      d.setDate(1);
       d.setMonth(d.getMonth() + amount);
       return d;
     }
@@ -17357,8 +18401,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function getMonth(date2) {
       return date2.getMonth();
     }
+    function getDate(date2) {
+      return date2.getDate();
+    }
     function getNextMonth(date2) {
       return new Date(date2.getFullYear(), date2.getMonth() + 1, 1);
+    }
+    function getPreviousMonth(date2) {
+      return new Date(date2.getFullYear(), date2.getMonth() - 1, 1);
     }
     function getHours(date2) {
       return date2.getHours();
@@ -17382,6 +18432,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function isAfter(date2, comparing) {
       return date2.getTime() > comparing.getTime();
     }
+    function isAfterDay(date2, comparing) {
+      return isAfter(startOfDay(date2), startOfDay(comparing));
+    }
     function isBefore(date2, comparing) {
       return date2.getTime() < comparing.getTime();
     }
@@ -17394,13 +18447,33 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function isSameMonth(date2, comparing) {
       return date2.getMonth() === comparing.getMonth() && date2.getFullYear() === comparing.getFullYear();
     }
+    function isSameYear(date2, comparing) {
+      return date2.getFullYear() === comparing.getFullYear();
+    }
     function getDiff(date2, comparing, unit) {
       const d = new Date(date2);
       const c = new Date(comparing);
-      if (unit === "month") {
-        return d.getMonth() - c.getMonth() + (d.getFullYear() - c.getFullYear()) * 12;
+      switch (unit) {
+        case "years":
+          return d.getFullYear() - c.getFullYear();
+        case "quarters":
+          return Math.floor((d.getMonth() - c.getMonth() + (d.getFullYear() - c.getFullYear()) * 12) / 4);
+        case "months":
+          return d.getMonth() - c.getMonth() + (d.getFullYear() - c.getFullYear()) * 12;
+        case "weeks":
+          return Math.floor((d.getTime() - c.getTime()) / (1e3 * 60 * 60 * 24 * 7));
+        case "days":
+          return Math.floor((d.getTime() - c.getTime()) / (1e3 * 60 * 60 * 24));
+        case "hours":
+          return Math.floor((d.getTime() - c.getTime()) / (1e3 * 60 * 60));
+        case "minutes":
+          return Math.floor((d.getTime() - c.getTime()) / (1e3 * 60));
+        case "seconds":
+          return Math.floor((d.getTime() - c.getTime()) / 1e3);
+        default: {
+          return d.getTime() - c.getTime();
+        }
       }
-      return Math.floor((d.getTime() - c.getTime()) / (1e3 * 60 * 60 * 24));
     }
     function setHours(date2, count) {
       const d = new Date(date2);
@@ -17417,13 +18490,18 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       d.setMonth(count);
       return d;
     }
+    function setDate(date2, day) {
+      const d = new Date(date2);
+      d.setDate(day);
+      return d;
+    }
     function setYear(date2, year) {
       const d = new Date(date2);
       d.setFullYear(year);
       return d;
     }
     function startOfDay(date2) {
-      return new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+      return new Date(date2.getFullYear(), date2.getMonth(), date2.getDate(), 0, 0, 0, 0);
     }
     function endOfDay(date2) {
       return new Date(date2.getFullYear(), date2.getMonth(), date2.getDate(), 23, 59, 59, 999);
@@ -17464,10 +18542,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return getWeekArray(date2, this.locale);
       }
       startOfWeek(date2) {
-        return startOfWeek(date2);
+        return startOfWeek(date2, this.locale);
       }
       endOfWeek(date2) {
-        return endOfWeek(date2);
+        return endOfWeek(date2, this.locale);
       }
       startOfMonth(date2) {
         return startOfMonth(date2);
@@ -17490,6 +18568,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       isAfter(date2, comparing) {
         return isAfter(date2, comparing);
       }
+      isAfterDay(date2, comparing) {
+        return isAfterDay(date2, comparing);
+      }
       isBefore(date2, comparing) {
         return !isAfter(date2, comparing) && !isEqual$1(date2, comparing);
       }
@@ -17499,6 +18580,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       isSameMonth(date2, comparing) {
         return isSameMonth(date2, comparing);
       }
+      isSameYear(date2, comparing) {
+        return isSameYear(date2, comparing);
+      }
       setMinutes(date2, count) {
         return setMinutes(date2, count);
       }
@@ -17507,6 +18591,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       setMonth(date2, count) {
         return setMonth(date2, count);
+      }
+      setDate(date2, day) {
+        return setDate(date2, day);
       }
       setYear(date2, year) {
         return setYear(date2, year);
@@ -17523,8 +18610,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       getMonth(date2) {
         return getMonth(date2);
       }
+      getDate(date2) {
+        return getDate(date2);
+      }
       getNextMonth(date2) {
         return getNextMonth(date2);
+      }
+      getPreviousMonth(date2) {
+        return getPreviousMonth(date2);
       }
       getHours(date2) {
         return getHours(date2);
@@ -17659,10 +18752,139 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
       };
     }
+    function getContainer(el2) {
+      return getTarget$1(el2) ?? (document.scrollingElement || document.body);
+    }
+    function getTarget$1(el2) {
+      return typeof el2 === "string" ? document.querySelector(el2) : refElement(el2);
+    }
+    function getOffset$2(target2, horizontal, rtl) {
+      if (typeof target2 === "number")
+        return horizontal && rtl ? -target2 : target2;
+      let el2 = getTarget$1(target2);
+      let totalOffset = 0;
+      while (el2) {
+        totalOffset += horizontal ? el2.offsetLeft : el2.offsetTop;
+        el2 = el2.offsetParent;
+      }
+      return totalOffset;
+    }
     function createGoTo(options, locale) {
       return {
         rtl: locale.isRtl,
         options: mergeDeep(genDefaults(), options)
+      };
+    }
+    async function scrollTo(_target, _options, horizontal, goTo) {
+      const property = horizontal ? "scrollLeft" : "scrollTop";
+      const options = mergeDeep((goTo == null ? void 0 : goTo.options) ?? genDefaults(), _options);
+      const rtl = goTo == null ? void 0 : goTo.rtl.value;
+      const target2 = (typeof _target === "number" ? _target : getTarget$1(_target)) ?? 0;
+      const container = options.container === "parent" && target2 instanceof HTMLElement ? target2.parentElement : getContainer(options.container);
+      const ease = typeof options.easing === "function" ? options.easing : options.patterns[options.easing];
+      if (!ease)
+        throw new TypeError(`Easing function "${options.easing}" not found.`);
+      let targetLocation;
+      if (typeof target2 === "number") {
+        targetLocation = getOffset$2(target2, horizontal, rtl);
+      } else {
+        targetLocation = getOffset$2(target2, horizontal, rtl) - getOffset$2(container, horizontal, rtl);
+        if (options.layout) {
+          const styles = window.getComputedStyle(target2);
+          const layoutOffset = styles.getPropertyValue("--v-layout-top");
+          if (layoutOffset)
+            targetLocation -= parseInt(layoutOffset, 10);
+        }
+      }
+      targetLocation += options.offset;
+      targetLocation = clampTarget(container, targetLocation, !!rtl, !!horizontal);
+      const startLocation = container[property] ?? 0;
+      if (targetLocation === startLocation)
+        return Promise.resolve(targetLocation);
+      const startTime = performance.now();
+      return new Promise((resolve2) => requestAnimationFrame(function step(currentTime) {
+        const timeElapsed = currentTime - startTime;
+        const progress = timeElapsed / options.duration;
+        const location2 = Math.floor(startLocation + (targetLocation - startLocation) * ease(clamp(progress, 0, 1)));
+        container[property] = location2;
+        if (progress >= 1 && Math.abs(location2 - container[property]) < 10) {
+          return resolve2(targetLocation);
+        } else if (progress > 2) {
+          return resolve2(container[property]);
+        }
+        requestAnimationFrame(step);
+      }));
+    }
+    function useGoTo() {
+      let _options = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+      const goToInstance = inject$1(GoToSymbol);
+      const {
+        isRtl
+      } = useRtl();
+      if (!goToInstance)
+        throw new Error("[Vuetify] Could not find injected goto instance");
+      const goTo = {
+        ...goToInstance,
+        // can be set via VLocaleProvider
+        rtl: computed(() => goToInstance.rtl.value || isRtl.value)
+      };
+      async function go(target2, options) {
+        return scrollTo(target2, mergeDeep(_options, options), false, goTo);
+      }
+      go.horizontal = async (target2, options) => {
+        return scrollTo(target2, mergeDeep(_options, options), true, goTo);
+      };
+      return go;
+    }
+    function clampTarget(container, value, rtl, horizontal) {
+      const {
+        scrollWidth,
+        scrollHeight
+      } = container;
+      const [containerWidth, containerHeight] = container === document.scrollingElement ? [window.innerWidth, window.innerHeight] : [container.offsetWidth, container.offsetHeight];
+      let min;
+      let max;
+      if (horizontal) {
+        if (rtl) {
+          min = -(scrollWidth - containerWidth);
+          max = 0;
+        } else {
+          min = 0;
+          max = scrollWidth - containerWidth;
+        }
+      } else {
+        min = 0;
+        max = scrollHeight + -containerHeight;
+      }
+      return Math.max(Math.min(value, max), min);
+    }
+    const makeDelayProps = propsFactory({
+      closeDelay: [Number, String],
+      openDelay: [Number, String]
+    }, "delay");
+    function useDelay(props, cb) {
+      let clearDelay = () => {
+      };
+      function runDelay(isOpening) {
+        clearDelay == null ? void 0 : clearDelay();
+        const delay = Number(isOpening ? props.openDelay : props.closeDelay);
+        return new Promise((resolve2) => {
+          clearDelay = defer(delay, () => {
+            cb == null ? void 0 : cb(isOpening);
+            resolve2(isOpening);
+          });
+        });
+      }
+      function runOpenDelay() {
+        return runDelay(true);
+      }
+      function runCloseDelay() {
+        return runDelay(false);
+      }
+      return {
+        clearDelay,
+        runOpenDelay,
+        runCloseDelay
       };
     }
     function useScopeId() {
@@ -17700,6 +18922,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       },
       image: String,
       temporary: Boolean,
+      persistent: Boolean,
       touchless: Boolean,
       width: {
         type: [Number, String],
@@ -17713,6 +18936,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       sticky: Boolean,
       ...makeBorderProps(),
       ...makeComponentProps(),
+      ...makeDelayProps(),
       ...makeDisplayProps(),
       ...makeElevationProps(),
       ...makeLayoutItemProps(),
@@ -17768,12 +18992,19 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         } = useScopeId();
         const rootEl = ref$1();
         const isHovering = shallowRef(false);
+        const {
+          runOpenDelay,
+          runCloseDelay
+        } = useDelay(props, (value) => {
+          isHovering.value = value;
+        });
         const width = computed(() => {
           return props.rail && props.expandOnHover && isHovering.value ? Number(props.width) : Number(props.rail ? props.railWidth : props.width);
         });
         const location2 = computed(() => {
           return toPhysical(props.location, isRtl.value);
         });
+        const isPersistent = computed(() => props.persistent);
         const isTemporary = computed(() => !props.permanent && (mobile.value || props.temporary));
         const isSticky = computed(() => props.sticky && !isTemporary.value && location2.value !== "bottom");
         useToggleScope(() => props.expandOnHover && props.rail != null, () => {
@@ -17789,16 +19020,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (val)
             isActive.value = true;
         });
-        onBeforeMount(() => {
-          if (props.modelValue != null || isTemporary.value)
-            return;
+        if (props.modelValue == null && !isTemporary.value) {
           isActive.value = props.permanent || !mobile.value;
-        });
+        }
         const {
           isDragging,
-          dragProgress,
-          dragStyles
+          dragProgress
         } = useTouch({
+          el: rootEl,
           isActive,
           isTemporary,
           width,
@@ -17809,15 +19038,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const size2 = isTemporary.value ? 0 : props.rail && props.expandOnHover ? Number(props.railWidth) : width.value;
           return isDragging.value ? size2 * dragProgress.value : size2;
         });
+        const elementSize = computed(() => ["top", "bottom"].includes(props.location) ? 0 : width.value);
         const {
           layoutItemStyles,
-          layoutItemScrimStyles
+          layoutItemScrimStyles,
+          layoutIsReady
         } = useLayoutItem({
           id: props.name,
           order: computed(() => parseInt(props.order, 10)),
           position: location2,
           layoutSize,
-          elementSize: width,
+          elementSize,
           active: computed(() => isActive.value || isDragging.value),
           disableTransitions: computed(() => isDragging.value),
           absolute: computed(() => (
@@ -17848,46 +19079,55 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             bgColor: "transparent"
           }
         });
-        function onMouseenter() {
-          isHovering.value = true;
-        }
-        function onMouseleave() {
-          isHovering.value = false;
-        }
         useRender(() => {
           const hasImage = slots.image || props.image;
           return createVNode(Fragment, null, [createVNode(props.tag, mergeProps({
             "ref": rootEl,
-            "onMouseenter": onMouseenter,
-            "onMouseleave": onMouseleave,
+            "onMouseenter": runOpenDelay,
+            "onMouseleave": runCloseDelay,
             "class": ["v-navigation-drawer", `v-navigation-drawer--${location2.value}`, {
               "v-navigation-drawer--expand-on-hover": props.expandOnHover,
               "v-navigation-drawer--floating": props.floating,
               "v-navigation-drawer--is-hovering": isHovering.value,
               "v-navigation-drawer--rail": props.rail,
               "v-navigation-drawer--temporary": isTemporary.value,
+              "v-navigation-drawer--persistent": isPersistent.value,
               "v-navigation-drawer--active": isActive.value,
               "v-navigation-drawer--sticky": isSticky.value
             }, themeClasses.value, backgroundColorClasses.value, borderClasses.value, displayClasses.value, elevationClasses.value, roundedClasses.value, props.class],
-            "style": [backgroundColorStyles.value, layoutItemStyles.value, dragStyles.value, ssrBootStyles.value, stickyStyles.value, props.style]
+            "style": [backgroundColorStyles.value, layoutItemStyles.value, ssrBootStyles.value, stickyStyles.value, props.style, ["top", "bottom"].includes(location2.value) ? {
+              height: "auto"
+            } : {}]
           }, scopeId, attrs), {
             default: () => {
-              var _a2, _b, _c, _d;
+              var _a2, _b, _c;
               return [hasImage && createVNode("div", {
                 "key": "image",
                 "class": "v-navigation-drawer__img"
-              }, [slots.image ? (_a2 = slots.image) == null ? void 0 : _a2.call(slots, {
-                image: props.image
-              }) : createVNode("img", {
-                "src": props.image,
-                "alt": ""
-              }, null)]), slots.prepend && createVNode("div", {
+              }, [!slots.image ? createVNode(VImg, {
+                "key": "image-img",
+                "alt": "",
+                "cover": true,
+                "height": "inherit",
+                "src": props.image
+              }, null) : createVNode(VDefaultsProvider, {
+                "key": "image-defaults",
+                "disabled": !props.image,
+                "defaults": {
+                  VImg: {
+                    alt: "",
+                    cover: true,
+                    height: "inherit",
+                    src: props.image
+                  }
+                }
+              }, slots.image)]), slots.prepend && createVNode("div", {
                 "class": "v-navigation-drawer__prepend"
-              }, [(_b = slots.prepend) == null ? void 0 : _b.call(slots)]), createVNode("div", {
+              }, [(_a2 = slots.prepend) == null ? void 0 : _a2.call(slots)]), createVNode("div", {
                 "class": "v-navigation-drawer__content"
-              }, [(_c = slots.default) == null ? void 0 : _c.call(slots)]), slots.append && createVNode("div", {
+              }, [(_b = slots.default) == null ? void 0 : _b.call(slots)]), slots.append && createVNode("div", {
                 "class": "v-navigation-drawer__append"
-              }, [(_d = slots.append) == null ? void 0 : _d.call(slots)])];
+              }, [(_c = slots.append) == null ? void 0 : _c.call(slots)])];
             }
           }), createVNode(Transition, {
             "name": "fade-transition"
@@ -17895,13 +19135,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             default: () => [isTemporary.value && (isDragging.value || isActive.value) && !!props.scrim && createVNode("div", mergeProps({
               "class": ["v-navigation-drawer__scrim", scrimColor.backgroundColorClasses.value],
               "style": [scrimStyles.value, scrimColor.backgroundColorStyles.value],
-              "onClick": () => isActive.value = false
+              "onClick": () => {
+                if (isPersistent.value)
+                  return;
+                isActive.value = false;
+              }
             }, scopeId), null)]
           })]);
         });
-        return {
+        return layoutIsReady.then(() => ({
           isStuck
-        };
+        }));
       }
     });
     function elementToViewport(point, offset) {
@@ -18343,7 +19587,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         if (!(data.isActive.value && props.scrollStrategy))
           return;
         scope2 = effectScope();
-        await nextTick();
+        await new Promise((resolve2) => setTimeout(resolve2));
         scope2.active && scope2.run(() => {
           var _a2;
           if (typeof props.scrollStrategy === "function") {
@@ -18447,35 +19691,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       });
     }
     const VMenuSymbol = Symbol.for("vuetify:v-menu");
-    const makeDelayProps = propsFactory({
-      closeDelay: [Number, String],
-      openDelay: [Number, String]
-    }, "delay");
-    function useDelay(props, cb) {
-      let clearDelay = () => {
-      };
-      function runDelay(isOpening) {
-        clearDelay == null ? void 0 : clearDelay();
-        const delay = Number(isOpening ? props.openDelay : props.closeDelay);
-        return new Promise((resolve2) => {
-          clearDelay = defer(delay, () => {
-            cb == null ? void 0 : cb(isOpening);
-            resolve2(isOpening);
-          });
-        });
-      }
-      function runOpenDelay() {
-        return runDelay(true);
-      }
-      function runCloseDelay() {
-        return runDelay(false);
-      }
-      return {
-        clearDelay,
-        runOpenDelay,
-        runCloseDelay
-      };
-    }
     const makeActivatorProps = propsFactory({
       target: [String, Object],
       activator: [String, Object],
@@ -18943,7 +20158,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       disabled: Boolean,
       opacity: [Number, String],
       noClickAnimation: Boolean,
-      modelValue: Boolean,
+      modelValue: {
+        type: Boolean,
+        default: null
+      },
       persistent: Boolean,
       scrim: {
         type: [Boolean, String],
@@ -18975,6 +20193,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       emits: {
         "click:outside": (e) => true,
         "update:modelValue": (value) => true,
+        afterEnter: () => true,
         afterLeave: () => true
       },
       setup(props, _ref) {
@@ -18985,7 +20204,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         } = _ref;
         const model = useProxiedModel(props, "modelValue");
         const isActive = computed({
-          get: () => model.value,
+          get: () => Boolean(model.value),
           set: (v) => {
             if (!(v && props.disabled))
               model.value = v;
@@ -19038,6 +20257,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             isActive.value = false;
         });
         const root = ref$1();
+        const scrimEl = ref$1();
         const contentEl = ref$1();
         const {
           contentStyles,
@@ -19062,8 +20282,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           else
             animateClick();
         }
-        function closeConditional() {
-          return isActive.value && globalTop.value;
+        function closeConditional(e) {
+          return isActive.value && globalTop.value && // If using scrim, only close if clicking on it rather than anything opened on top
+          (!props.scrim || e.target === scrimEl.value);
         }
         IN_BROWSER && watch(isActive, (val) => {
           if (val) {
@@ -19128,6 +20349,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             easing: standardEasing
           });
         }
+        function onAfterEnter() {
+          emit2("afterEnter");
+        }
         function onAfterLeave() {
           _onAfterLeave();
           emit2("afterLeave");
@@ -19136,9 +20360,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           var _a2;
           return createVNode(Fragment, null, [(_a2 = slots.activator) == null ? void 0 : _a2.call(slots, {
             isActive: isActive.value,
+            targetRef,
             props: mergeProps({
-              ref: activatorRef,
-              targetRef
+              ref: activatorRef
             }, activatorEvents.value, props.activatorProps)
           }), isMounted.value && hasContent.value && createVNode(Teleport, {
             "disabled": !teleportTarget.value,
@@ -19157,12 +20381,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "ref": root
             }, scopeId, attrs), [createVNode(Scrim, mergeProps({
               "color": scrimColor,
-              "modelValue": isActive.value && !!props.scrim
+              "modelValue": isActive.value && !!props.scrim,
+              "ref": scrimEl
             }, scrimEvents.value), null), createVNode(MaybeTransition, {
               "appear": true,
               "persisted": true,
               "transition": props.transition,
               "target": target2.value,
+              "onAfterEnter": onAfterEnter,
               "onAfterLeave": onAfterLeave
             }, {
               default: () => {
@@ -19184,6 +20410,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
         return {
           activatorEl,
+          scrimEl,
           target: target2,
           animateClick,
           contentEl,
@@ -19499,7 +20726,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
     /**
-      * vee-validate v4.12.6
+      * vee-validate v4.12.7
       * (c) 2024 Abdelrahman Awad
       * @license MIT
       */
@@ -20387,8 +21614,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return getFromPath(form.values, unref(path), unref(initialValue));
     }
     function createFieldMeta(currentValue, initialValue, errors2, schema2) {
-      var _a2, _b;
-      const isRequired = (_b = (_a2 = schema2 === null || schema2 === void 0 ? void 0 : schema2.describe) === null || _a2 === void 0 ? void 0 : _a2.call(schema2).required) !== null && _b !== void 0 ? _b : false;
+      const isRequired = computed(() => {
+        var _a2, _b, _c;
+        return (_c = (_b = (_a2 = toValue$1(schema2)) === null || _a2 === void 0 ? void 0 : _a2.describe) === null || _b === void 0 ? void 0 : _b.call(_a2).required) !== null && _c !== void 0 ? _c : false;
+      });
       const meta = reactive({
         touched: false,
         pending: false,
@@ -20439,14 +21668,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         return normalizeRules(rulesValue);
       });
+      const isTyped = !isCallable(validator.value) && isTypedSchema(toValue$1(rules2));
       const { id: id2, value, initialValue, meta, setState, errors: errors2, flags } = useFieldState(name, {
         modelValue,
         form,
         bails,
         label,
         type: type2,
-        validate: validator.value ? validate$1$1 : void 0,
-        schema: isTypedSchema(rules2) ? rules2 : void 0
+        validate: validator.value && !isTyped ? validate$1$1 : void 0,
+        schema: isTyped ? rules2 : void 0
       });
       const errorMessage = computed(() => errors2.value[0]);
       if (syncVModel) {
@@ -20745,7 +21975,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     let FORM_COUNTER = 0;
     const PRIVATE_PATH_STATE_KEYS = ["bails", "fieldsCount", "id", "multiple", "type", "validate"];
     function resolveInitialValues(opts) {
-      const providedValues = Object.assign({}, toValue$1((opts === null || opts === void 0 ? void 0 : opts.initialValues) || {}));
+      const givenInitial = (opts === null || opts === void 0 ? void 0 : opts.initialValues) || {};
+      const providedValues = Object.assign({}, toValue$1(givenInitial));
       const schema2 = unref(opts === null || opts === void 0 ? void 0 : opts.validationSchema);
       if (schema2 && isTypedSchema(schema2) && isCallable(schema2.cast)) {
         return klona(schema2.cast(providedValues) || {});
@@ -20862,12 +22093,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           UNSET_BATCH.splice(unsetBatchIndex, 1);
         }
         const isRequired = computed(() => {
-          var _a3, _b2, _c, _d, _e, _f;
-          if (isTypedSchema(schema2)) {
-            return (_c = (_b2 = (_a3 = schema2).describe) === null || _b2 === void 0 ? void 0 : _b2.call(_a3, toValue$1(path)).required) !== null && _c !== void 0 ? _c : false;
+          var _a3, _b2, _c, _d;
+          const schemaValue = toValue$1(schema2);
+          if (isTypedSchema(schemaValue)) {
+            return (_b2 = (_a3 = schemaValue.describe) === null || _a3 === void 0 ? void 0 : _a3.call(schemaValue, toValue$1(path)).required) !== null && _b2 !== void 0 ? _b2 : false;
           }
-          if (isTypedSchema(config2 === null || config2 === void 0 ? void 0 : config2.schema)) {
-            return (_f = (_e = (_d = config2 === null || config2 === void 0 ? void 0 : config2.schema).describe) === null || _e === void 0 ? void 0 : _e.call(_d).required) !== null && _f !== void 0 ? _f : false;
+          const configSchemaValue = toValue$1(config2 === null || config2 === void 0 ? void 0 : config2.schema);
+          if (isTypedSchema(configSchemaValue)) {
+            return (_d = (_c = configSchemaValue.describe) === null || _c === void 0 ? void 0 : _c.call(configSchemaValue).required) !== null && _d !== void 0 ? _d : false;
           }
           return false;
         });
@@ -21959,7 +23192,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       falseIcon: IconValue,
       trueIcon: IconValue,
       ripple: {
-        type: Boolean,
+        type: [Boolean, Object],
         default: true
       },
       multiple: {
@@ -22094,7 +23327,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         backgroundColorClasses,
         backgroundColorStyles
       } = useBackgroundColor(computed(() => {
-        return model.value && !props.error && !props.disabled ? props.color : void 0;
+        return model.value && !props.error && !props.disabled ? props.color : props.baseColor;
       }));
       const icon = computed(() => model.value ? props.trueIcon : props.falseIcon);
       return {
@@ -22188,6 +23421,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "onFocus": onFocus,
             "onInput": onInput,
             "aria-disabled": !!props.disabled,
+            "aria-label": props.label,
             "type": props.type,
             "value": trueValue.value,
             "name": props.name,
@@ -22465,6 +23699,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         register: (_ref) => {
           let {
             id: id2,
+            vm,
             validate: validate3,
             reset: reset2,
             resetValidation: resetValidation2
@@ -22476,6 +23711,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             validate: validate3,
             reset: reset2,
             resetValidation: resetValidation2,
+            vm: markRaw(vm),
             isValid: null,
             errorMessages: []
           });
@@ -22591,10 +23827,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           [`${name}--readonly`]: isReadonly2.value
         };
       });
+      const vm = getCurrentInstance("validation");
       const uid2 = computed(() => props.name ?? unref(id2));
       onBeforeMount(() => {
         form == null ? void 0 : form.register({
           id: uid2.value,
+          vm,
           validate: validate2,
           reset,
           resetValidation
@@ -22631,14 +23869,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       watch([isValid2, errorMessages], () => {
         form == null ? void 0 : form.update(uid2.value, isValid2.value, errorMessages.value);
       });
-      function reset() {
+      async function reset() {
         model.value = null;
-        nextTick(resetValidation);
+        await nextTick();
+        await resetValidation();
       }
-      function resetValidation() {
+      async function resetValidation() {
         isPristine.value = true;
         if (!validateOn.value.lazy) {
-          validate2(true);
+          await validate2(true);
         } else {
           internalErrorMessages.value = [];
         }
@@ -22705,6 +23944,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       "onClick:append": EventProp(),
       ...makeComponentProps(),
       ...makeDensityProps(),
+      ...only(makeDimensionProps(), ["maxWidth", "minWidth", "width"]),
+      ...makeThemeProps(),
       ...makeValidationProps()
     }, "VInput");
     const VInput = genericComponent()({
@@ -22724,6 +23965,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           densityClasses
         } = useDensity(props);
+        const {
+          dimensionStyles
+        } = useDimension(props);
+        const {
+          themeClasses
+        } = provideTheme(props);
         const {
           rtlClasses
         } = useRtl();
@@ -22779,8 +24026,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "class": ["v-input", `v-input--${props.direction}`, {
               "v-input--center-affix": props.centerAffix,
               "v-input--hide-spin-buttons": props.hideSpinButtons
-            }, densityClasses.value, rtlClasses.value, validationClasses.value, props.class],
-            "style": props.style
+            }, densityClasses.value, themeClasses.value, rtlClasses.value, validationClasses.value, props.class],
+            "style": [dimensionStyles.value, props.style]
           }, [hasPrepend && createVNode("div", {
             "key": "prepend",
             "class": "v-input__prepend"
@@ -22858,7 +24105,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 id: id3,
                 messagesId,
                 isDisabled,
-                isReadonly: isReadonly2
+                isReadonly: isReadonly2,
+                isValid: isValid2
               } = _ref2;
               return createVNode(VCheckboxBtn, mergeProps(checkboxProps, {
                 "id": id3.value,
@@ -22866,6 +24114,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 "disabled": isDisabled.value,
                 "readonly": isReadonly2.value
               }, controlAttrs, {
+                "error": isValid2.value === false,
                 "modelValue": model.value,
                 "onUpdate:modelValue": ($event) => model.value = $event,
                 "onFocus": focus,
@@ -22877,45 +24126,65 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {};
       }
     });
-    function bias(val) {
-      const c = 0.501;
-      const x2 = Math.abs(val);
-      return Math.sign(val) * (x2 / ((1 / c - 2) * (1 - x2) + 1));
-    }
-    function calculateUpdatedOffset(_ref) {
+    function calculateUpdatedTarget(_ref) {
       let {
         selectedElement,
-        containerSize,
-        contentSize,
+        containerElement,
         isRtl,
-        currentScrollOffset,
         isHorizontal
       } = _ref;
-      const clientSize = isHorizontal ? selectedElement.clientWidth : selectedElement.clientHeight;
-      const offsetStart = isHorizontal ? selectedElement.offsetLeft : selectedElement.offsetTop;
-      const adjustedOffsetStart = isRtl && isHorizontal ? contentSize - offsetStart - clientSize : offsetStart;
-      const totalSize = containerSize + currentScrollOffset;
-      const itemOffset = clientSize + adjustedOffsetStart;
-      const additionalOffset = clientSize * 0.4;
-      if (adjustedOffsetStart <= currentScrollOffset) {
-        currentScrollOffset = Math.max(adjustedOffsetStart - additionalOffset, 0);
-      } else if (totalSize <= itemOffset) {
-        currentScrollOffset = Math.min(currentScrollOffset - (totalSize - itemOffset - additionalOffset), contentSize - containerSize);
+      const containerSize = getOffsetSize(isHorizontal, containerElement);
+      const scrollPosition = getScrollPosition(isHorizontal, isRtl, containerElement);
+      const childrenSize = getOffsetSize(isHorizontal, selectedElement);
+      const childrenStartPosition = getOffsetPosition(isHorizontal, selectedElement);
+      const additionalOffset = childrenSize * 0.4;
+      if (scrollPosition > childrenStartPosition) {
+        return childrenStartPosition - additionalOffset;
+      } else if (scrollPosition + containerSize < childrenStartPosition + childrenSize) {
+        return childrenStartPosition - containerSize + childrenSize + additionalOffset;
       }
-      return currentScrollOffset;
+      return scrollPosition;
     }
-    function calculateCenteredOffset(_ref2) {
+    function calculateCenteredTarget(_ref2) {
       let {
         selectedElement,
-        containerSize,
-        contentSize,
-        isRtl,
+        containerElement,
         isHorizontal
       } = _ref2;
-      const clientSize = isHorizontal ? selectedElement.clientWidth : selectedElement.clientHeight;
-      const offsetStart = isHorizontal ? selectedElement.offsetLeft : selectedElement.offsetTop;
-      const offsetCentered = isRtl && isHorizontal ? contentSize - offsetStart - clientSize / 2 - containerSize / 2 : offsetStart + clientSize / 2 - containerSize / 2;
-      return Math.min(contentSize - containerSize, Math.max(0, offsetCentered));
+      const containerOffsetSize = getOffsetSize(isHorizontal, containerElement);
+      const childrenOffsetPosition = getOffsetPosition(isHorizontal, selectedElement);
+      const childrenOffsetSize = getOffsetSize(isHorizontal, selectedElement);
+      return childrenOffsetPosition - containerOffsetSize / 2 + childrenOffsetSize / 2;
+    }
+    function getScrollSize(isHorizontal, element) {
+      const key = isHorizontal ? "scrollWidth" : "scrollHeight";
+      return (element == null ? void 0 : element[key]) || 0;
+    }
+    function getClientSize(isHorizontal, element) {
+      const key = isHorizontal ? "clientWidth" : "clientHeight";
+      return (element == null ? void 0 : element[key]) || 0;
+    }
+    function getScrollPosition(isHorizontal, rtl, element) {
+      if (!element) {
+        return 0;
+      }
+      const {
+        scrollLeft,
+        offsetWidth,
+        scrollWidth
+      } = element;
+      if (isHorizontal) {
+        return rtl ? scrollWidth - offsetWidth + scrollLeft : scrollLeft;
+      }
+      return element.scrollTop;
+    }
+    function getOffsetSize(isHorizontal, element) {
+      const key = isHorizontal ? "offsetWidth" : "offsetHeight";
+      return (element == null ? void 0 : element[key]) || 0;
+    }
+    function getOffsetPosition(isHorizontal, element) {
+      const key = isHorizontal ? "offsetLeft" : "offsetTop";
+      return (element == null ? void 0 : element[key]) || 0;
     }
     const VSlideGroupSymbol = Symbol.for("vuetify:v-slide-group");
     const makeVSlideGroupProps = propsFactory({
@@ -22978,6 +24247,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           resizeRef: contentRef,
           contentRect
         } = useResizeObserver$1();
+        const goTo = useGoTo();
+        const goToOptions = computed(() => {
+          return {
+            container: containerRef.value,
+            duration: 200,
+            easing: "easeOutQuart"
+          };
+        });
         const firstSelectedIndex = computed(() => {
           if (!group.selected.value.length)
             return -1;
@@ -23001,62 +24278,59 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               }
               if (firstSelectedIndex.value >= 0 && contentRef.value) {
                 const selectedElement = contentRef.value.children[lastSelectedIndex.value];
-                if (firstSelectedIndex.value === 0 || !isOverflowing.value) {
-                  scrollOffset.value = 0;
-                } else if (props.centerActive) {
-                  scrollOffset.value = calculateCenteredOffset({
-                    selectedElement,
-                    containerSize: containerSize.value,
-                    contentSize: contentSize.value,
-                    isRtl: isRtl.value,
-                    isHorizontal: isHorizontal.value
-                  });
-                } else if (isOverflowing.value) {
-                  scrollOffset.value = calculateUpdatedOffset({
-                    selectedElement,
-                    containerSize: containerSize.value,
-                    contentSize: contentSize.value,
-                    isRtl: isRtl.value,
-                    currentScrollOffset: scrollOffset.value,
-                    isHorizontal: isHorizontal.value
-                  });
-                }
+                scrollToChildren(selectedElement, props.centerActive);
               }
             });
           });
         }
-        const disableTransition = shallowRef(false);
-        let startTouch = 0;
-        let startOffset = 0;
-        function onTouchstart(e) {
-          const sizeProperty = isHorizontal.value ? "clientX" : "clientY";
-          const sign = isRtl.value && isHorizontal.value ? -1 : 1;
-          startOffset = sign * scrollOffset.value;
-          startTouch = e.touches[0][sizeProperty];
-          disableTransition.value = true;
-        }
-        function onTouchmove(e) {
-          if (!isOverflowing.value)
-            return;
-          const sizeProperty = isHorizontal.value ? "clientX" : "clientY";
-          const sign = isRtl.value && isHorizontal.value ? -1 : 1;
-          scrollOffset.value = sign * (startOffset + startTouch - e.touches[0][sizeProperty]);
-        }
-        function onTouchend(e) {
-          const maxScrollOffset = contentSize.value - containerSize.value;
-          if (scrollOffset.value < 0 || !isOverflowing.value) {
-            scrollOffset.value = 0;
-          } else if (scrollOffset.value >= maxScrollOffset) {
-            scrollOffset.value = maxScrollOffset;
-          }
-          disableTransition.value = false;
-        }
-        function onScroll() {
-          if (!containerRef.value)
-            return;
-          containerRef.value[isHorizontal.value ? "scrollLeft" : "scrollTop"] = 0;
-        }
         const isFocused = shallowRef(false);
+        function scrollToChildren(children, center) {
+          let target2 = 0;
+          if (center) {
+            target2 = calculateCenteredTarget({
+              containerElement: containerRef.value,
+              isHorizontal: isHorizontal.value,
+              selectedElement: children
+            });
+          } else {
+            target2 = calculateUpdatedTarget({
+              containerElement: containerRef.value,
+              isHorizontal: isHorizontal.value,
+              isRtl: isRtl.value,
+              selectedElement: children
+            });
+          }
+          scrollToPosition2(target2);
+        }
+        function scrollToPosition2(newPosition) {
+          if (!IN_BROWSER || !containerRef.value)
+            return;
+          const offsetSize = getOffsetSize(isHorizontal.value, containerRef.value);
+          const scrollPosition = getScrollPosition(isHorizontal.value, isRtl.value, containerRef.value);
+          const scrollSize = getScrollSize(isHorizontal.value, containerRef.value);
+          if (scrollSize <= offsetSize || // Prevent scrolling by only a couple of pixels, which doesn't look smooth
+          Math.abs(newPosition - scrollPosition) < 16)
+            return;
+          if (isHorizontal.value && isRtl.value && containerRef.value) {
+            const {
+              scrollWidth,
+              offsetWidth: containerWidth
+            } = containerRef.value;
+            newPosition = scrollWidth - containerWidth - newPosition;
+          }
+          if (isHorizontal.value) {
+            goTo.horizontal(newPosition, goToOptions.value);
+          } else {
+            goTo(newPosition, goToOptions.value);
+          }
+        }
+        function onScroll(e) {
+          const {
+            scrollTop,
+            scrollLeft
+          } = e.target;
+          scrollOffset.value = isHorizontal.value ? scrollLeft : scrollTop;
+        }
         function onFocusin(e) {
           isFocused.value = true;
           if (!isOverflowing.value || !contentRef.value)
@@ -23064,14 +24338,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           for (const el2 of e.composedPath()) {
             for (const item of contentRef.value.children) {
               if (item === el2) {
-                scrollOffset.value = calculateUpdatedOffset({
-                  selectedElement: item,
-                  containerSize: containerSize.value,
-                  contentSize: contentSize.value,
-                  isRtl: isRtl.value,
-                  currentScrollOffset: scrollOffset.value,
-                  isHorizontal: isHorizontal.value
-                });
+                scrollToChildren(item);
                 return;
               }
             }
@@ -23080,74 +24347,82 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         function onFocusout(e) {
           isFocused.value = false;
         }
+        let ignoreFocusEvent = false;
         function onFocus(e) {
           var _a2;
-          if (!isFocused.value && !(e.relatedTarget && ((_a2 = contentRef.value) == null ? void 0 : _a2.contains(e.relatedTarget))))
+          if (!ignoreFocusEvent && !isFocused.value && !(e.relatedTarget && ((_a2 = contentRef.value) == null ? void 0 : _a2.contains(e.relatedTarget))))
             focus();
+          ignoreFocusEvent = false;
+        }
+        function onFocusAffixes() {
+          ignoreFocusEvent = true;
         }
         function onKeydown(e) {
           if (!contentRef.value)
             return;
+          function toFocus(location2) {
+            e.preventDefault();
+            focus(location2);
+          }
           if (isHorizontal.value) {
             if (e.key === "ArrowRight") {
-              focus(isRtl.value ? "prev" : "next");
+              toFocus(isRtl.value ? "prev" : "next");
             } else if (e.key === "ArrowLeft") {
-              focus(isRtl.value ? "next" : "prev");
+              toFocus(isRtl.value ? "next" : "prev");
             }
           } else {
             if (e.key === "ArrowDown") {
-              focus("next");
+              toFocus("next");
             } else if (e.key === "ArrowUp") {
-              focus("prev");
+              toFocus("prev");
             }
           }
           if (e.key === "Home") {
-            focus("first");
+            toFocus("first");
           } else if (e.key === "End") {
-            focus("last");
+            toFocus("last");
           }
         }
         function focus(location2) {
-          var _a2, _b, _c, _d, _e;
+          var _a2, _b;
           if (!contentRef.value)
             return;
+          let el2;
           if (!location2) {
             const focusable = focusableChildren(contentRef.value);
-            (_a2 = focusable[0]) == null ? void 0 : _a2.focus();
+            el2 = focusable[0];
           } else if (location2 === "next") {
-            const el2 = (_b = contentRef.value.querySelector(":focus")) == null ? void 0 : _b.nextElementSibling;
-            if (el2)
-              el2.focus();
-            else
-              focus("first");
+            el2 = (_a2 = contentRef.value.querySelector(":focus")) == null ? void 0 : _a2.nextElementSibling;
+            if (!el2)
+              return focus("first");
           } else if (location2 === "prev") {
-            const el2 = (_c = contentRef.value.querySelector(":focus")) == null ? void 0 : _c.previousElementSibling;
-            if (el2)
-              el2.focus();
-            else
-              focus("last");
+            el2 = (_b = contentRef.value.querySelector(":focus")) == null ? void 0 : _b.previousElementSibling;
+            if (!el2)
+              return focus("last");
           } else if (location2 === "first") {
-            (_d = contentRef.value.firstElementChild) == null ? void 0 : _d.focus();
+            el2 = contentRef.value.firstElementChild;
           } else if (location2 === "last") {
-            (_e = contentRef.value.lastElementChild) == null ? void 0 : _e.focus();
+            el2 = contentRef.value.lastElementChild;
+          }
+          if (el2) {
+            el2.focus({
+              preventScroll: true
+            });
           }
         }
-        function scrollTo(location2) {
-          const newAbsoluteOffset = scrollOffset.value + (location2 === "prev" ? -1 : 1) * containerSize.value;
-          scrollOffset.value = clamp(newAbsoluteOffset, 0, contentSize.value - containerSize.value);
-        }
-        const contentStyles = computed(() => {
-          let scrollAmount = scrollOffset.value > contentSize.value - containerSize.value ? -(contentSize.value - containerSize.value) + bias(contentSize.value - containerSize.value - scrollOffset.value) : -scrollOffset.value;
-          if (scrollOffset.value <= 0) {
-            scrollAmount = bias(-scrollOffset.value);
+        function scrollTo2(location2) {
+          const direction = isHorizontal.value && isRtl.value ? -1 : 1;
+          const offsetStep = (location2 === "prev" ? -direction : direction) * containerSize.value;
+          let newPosition = scrollOffset.value + offsetStep;
+          if (isHorizontal.value && isRtl.value && containerRef.value) {
+            const {
+              scrollWidth,
+              offsetWidth: containerWidth
+            } = containerRef.value;
+            newPosition += scrollWidth - containerWidth;
           }
-          const sign = isRtl.value && isHorizontal.value ? -1 : 1;
-          return {
-            transform: `translate${isHorizontal.value ? "X" : "Y"}(${sign * scrollAmount}px)`,
-            transition: disableTransition.value ? "none" : "",
-            willChange: disableTransition.value ? "transform" : ""
-          };
-        });
+          scrollToPosition2(newPosition);
+        }
         const slotProps = computed(() => ({
           next: group.next,
           prev: group.prev,
@@ -23169,10 +24444,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
         });
         const hasPrev = computed(() => {
-          return Math.abs(scrollOffset.value) > 0;
+          return Math.abs(scrollOffset.value) > 1;
         });
         const hasNext = computed(() => {
-          return contentSize.value > Math.abs(scrollOffset.value) + containerSize.value;
+          if (!containerRef.value)
+            return false;
+          const scrollSize = getScrollSize(isHorizontal.value, containerRef.value);
+          const clientSize = getClientSize(isHorizontal.value, containerRef.value);
+          const scrollSizeMax = scrollSize - clientSize;
+          return scrollSizeMax - Math.abs(scrollOffset.value) > 1;
         });
         useRender(() => createVNode(props.tag, {
           "class": ["v-slide-group", {
@@ -23191,7 +24471,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "class": ["v-slide-group__prev", {
                 "v-slide-group__prev--disabled": !hasPrev.value
               }],
-              "onClick": () => hasPrev.value && scrollTo("prev")
+              "onMousedown": onFocusAffixes,
+              "onClick": () => hasPrev.value && scrollTo2("prev")
             }, [((_a2 = slots.prev) == null ? void 0 : _a2.call(slots, slotProps.value)) ?? createVNode(VFadeTransition, null, {
               default: () => [createVNode(VIcon, {
                 "icon": isRtl.value ? props.nextIcon : props.prevIcon
@@ -23204,10 +24485,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, [createVNode("div", {
               "ref": contentRef,
               "class": "v-slide-group__content",
-              "style": contentStyles.value,
-              "onTouchstartPassive": onTouchstart,
-              "onTouchmovePassive": onTouchmove,
-              "onTouchendPassive": onTouchend,
               "onFocusin": onFocusin,
               "onFocusout": onFocusout,
               "onKeydown": onKeydown
@@ -23216,7 +24493,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "class": ["v-slide-group__next", {
                 "v-slide-group__next--disabled": !hasNext.value
               }],
-              "onClick": () => hasNext.value && scrollTo("next")
+              "onMousedown": onFocusAffixes,
+              "onClick": () => hasNext.value && scrollTo2("next")
             }, [((_c = slots.next) == null ? void 0 : _c.call(slots, slotProps.value)) ?? createVNode(VFadeTransition, null, {
               default: () => [createVNode(VIcon, {
                 "icon": isRtl.value ? props.prevIcon : props.nextIcon
@@ -23226,7 +24504,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }));
         return {
           selected: group.selected,
-          scrollTo,
+          scrollTo: scrollTo2,
           scrollOffset,
           focus
         };
@@ -23408,6 +24686,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const closeProps = computed(() => ({
           "aria-label": t(props.closeLabel),
           onClick(e) {
+            e.preventDefault();
             e.stopPropagation();
             isActive.value = false;
             emit2("click:close", e);
@@ -23633,12 +24912,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           var _a2, _b, _c;
           if (props.disabled)
             return;
-          if (e.key === "Tab") {
+          if (e.key === "Tab" || e.key === "Enter" && !props.closeOnContentClick) {
+            if (e.key === "Enter")
+              e.preventDefault();
             const nextElement = getNextElement(focusableChildren((_a2 = overlay.value) == null ? void 0 : _a2.contentEl, false), e.shiftKey ? "prev" : "next", (el2) => el2.tabIndex >= 0);
             if (!nextElement) {
               isActive.value = false;
               (_c = (_b = overlay.value) == null ? void 0 : _b.activatorEl) == null ? void 0 : _c.focus();
             }
+          } else if (["Enter", " "].includes(e.key) && props.closeOnContentClick) {
+            isActive.value = false;
+            parent == null ? void 0 : parent.closeParents();
           }
         }
         function onActivatorKeydown(e) {
@@ -23705,6 +24989,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     });
     const makeVCounterProps = propsFactory({
       active: Boolean,
+      disabled: Boolean,
       max: [Number, String],
       value: {
         type: [Number, String],
@@ -23732,7 +25017,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           "transition": props.transition
         }, {
           default: () => [withDirectives(createVNode("div", {
-            "class": ["v-counter", props.class],
+            "class": ["v-counter", {
+              "text-error": props.max && !props.disabled && parseFloat(props.value) > parseFloat(props.max)
+            }, props.class],
             "style": props.style
           }, [slots.default ? slots.default({
             counter: counter.value,
@@ -23912,10 +25199,18 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             e.preventDefault();
           }
         }
+        function onKeydownClear(e) {
+          var _a2;
+          if (e.key !== "Enter" && e.key !== " ")
+            return;
+          e.preventDefault();
+          e.stopPropagation();
+          (_a2 = props["onClick:clear"]) == null ? void 0 : _a2.call(props, new MouseEvent("click"));
+        }
         useRender(() => {
           var _a2, _b, _c;
           const isOutlined = props.variant === "outlined";
-          const hasPrepend = slots["prepend-inner"] || props.prependInnerIcon;
+          const hasPrepend = !!(slots["prepend-inner"] || props.prependInnerIcon);
           const hasClear = !!(props.clearable || slots.clear);
           const hasAppend = !!(slots["append-inner"] || props.appendInnerIcon || hasClear);
           const label = () => slots.label ? slots.label({
@@ -23993,9 +25288,28 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 e.preventDefault();
                 e.stopPropagation();
               }
-            }, [slots.clear ? slots.clear() : createVNode(InputIcon, {
-              "name": "clear"
-            }, null)]), [[vShow, props.dirty]])]
+            }, [createVNode(VDefaultsProvider, {
+              "defaults": {
+                VIcon: {
+                  icon: props.clearIcon
+                }
+              }
+            }, {
+              default: () => [slots.clear ? slots.clear({
+                ...slotProps.value,
+                props: {
+                  onKeydown: onKeydownClear,
+                  onFocus: focus,
+                  onBlur: blur,
+                  onClick: props["onClick:clear"]
+                }
+              }) : createVNode(InputIcon, {
+                "name": "clear",
+                "onKeydown": onKeydownClear,
+                "onFocus": focus,
+                "onBlur": blur
+              }, null)]
+            })]), [[vShow, props.dirty]])]
           }), hasAppend && createVNode("div", {
             "key": "append",
             "class": "v-field__append-inner"
@@ -24234,7 +25548,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
                 "active": props.persistentCounter || isFocused.value,
                 "value": counterValue.value,
-                "max": max.value
+                "max": max.value,
+                "disabled": props.disabled
               }, slots.counter)])]);
             } : void 0
           });
@@ -24845,22 +26160,33 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const item = items2.value.find((item2) => item2.title.toLowerCase().startsWith(keyboardLookupPrefix));
           if (item !== void 0) {
             model.value = [item];
+            const index = displayItems.value.indexOf(item);
+            IN_BROWSER && window.requestAnimationFrame(() => {
+              var _a3;
+              index >= 0 && ((_a3 = vVirtualScrollRef.value) == null ? void 0 : _a3.scrollToIndex(index));
+            });
           }
         }
         function select(item) {
-          const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
-          const add2 = index === -1;
+          let set2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+          if (item.props.disabled)
+            return;
           if (props.multiple) {
-            if (add2) {
-              model.value = [...model.value, item];
-            } else {
-              const value = [...model.value];
+            const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
+            const add2 = set2 == null ? !~index : set2;
+            if (~index) {
+              const value = add2 ? [...model.value, item] : [...model.value];
               value.splice(index, 1);
               model.value = value;
+            } else if (add2) {
+              model.value = [...model.value, item];
             }
           } else {
+            const add2 = set2 !== false;
             model.value = add2 ? [item] : [];
-            menu.value = false;
+            nextTick(() => {
+              menu.value = false;
+            });
           }
         }
         function onBlur(e) {
@@ -24899,13 +26225,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             });
           }
         });
-        watch(displayItems, (val, oldVal) => {
-          if (!isFocused.value)
+        watch(() => props.items, (newVal, oldVal) => {
+          if (menu.value)
             return;
-          if (!val.length && props.hideNoData) {
-            menu.value = false;
-          }
-          if (!oldVal.length && val.length) {
+          if (isFocused.value && !oldVal.length && newVal.length) {
             menu.value = true;
           }
         });
@@ -24988,7 +26311,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                       const itemProps = mergeProps(item.props, {
                         ref: itemRef,
                         key: index,
-                        onClick: () => select(item)
+                        onClick: () => select(item, null)
                       });
                       return ((_a3 = slots.item) == null ? void 0 : _a3.call(slots, {
                         item,
@@ -25021,10 +26344,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               function onChipClose(e) {
                 e.stopPropagation();
                 e.preventDefault();
-                select(item);
+                select(item, false);
               }
               const slotProps = {
                 "onClick:close": onChipClose,
+                onKeydown(e) {
+                  if (e.key !== "Enter" && e.key !== " ")
+                    return;
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onChipClose(e);
+                },
                 onMousedown(e) {
                   e.preventDefault();
                   e.stopPropagation();
@@ -25300,7 +26630,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                                 text: server.hint
                                               }, {
                                                 activator: withCtx(({ props }) => [
-                                                  createVNode(VListItemAction, normalizeProps(guardReactiveProps(props)), {
+                                                  createVNode(VListItemAction, mergeProps({ ref_for: true }, props), {
                                                     default: withCtx(() => [
                                                       createVNode(VBtn, {
                                                         variant: "text",
@@ -30025,8 +31355,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       __getFillPattern() {
         if (this.fillPatternImage()) {
           var ctx = getDummyContext$1();
-          const pattern3 = ctx.createPattern(this.fillPatternImage(), this.fillPatternRepeat() || "repeat");
-          if (pattern3 && pattern3.setTransform) {
+          const pattern2 = ctx.createPattern(this.fillPatternImage(), this.fillPatternRepeat() || "repeat");
+          if (pattern2 && pattern2.setTransform) {
             const tr = new Transform();
             tr.translate(this.fillPatternX(), this.fillPatternY());
             tr.rotate(Konva$2.getAngle(this.fillPatternRotation()));
@@ -30041,9 +31371,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               e: m[4],
               f: m[5]
             } : new DOMMatrix(m);
-            pattern3.setTransform(matrix);
+            pattern2.setTransform(matrix);
           }
-          return pattern3;
+          return pattern2;
         }
       }
       _getLinearGradient() {
@@ -36020,7 +37350,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.5.5";
+    const version$1 = "3.6.3";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -37245,7 +38575,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       result.compiledTypeMap = compileMap(result.compiledImplicit, result.compiledExplicit);
       return result;
     };
-    var schema = Schema$1;
+    var schema$2 = Schema$1;
     var str = new type$9("tag:yaml.org,2002:str", {
       kind: "scalar",
       construct: function(data) {
@@ -37264,7 +38594,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return data !== null ? data : {};
       }
     });
-    var failsafe = new schema({
+    var failsafe = new schema$2({
       explicit: [
         str,
         seq,
@@ -39592,8 +40922,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         throw new Error("Function yaml." + from + " is removed in js-yaml 4. Use yaml." + to + " instead, which is now safe by default.");
       };
     }
-    var Type = type$9;
-    var Schema = schema;
+    var Type$2 = type$9;
+    var Schema = schema$2;
     var FAILSAFE_SCHEMA = failsafe;
     var JSON_SCHEMA = json$1;
     var CORE_SCHEMA = core$5;
@@ -39621,7 +40951,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     var safeLoadAll = renamed("safeLoadAll", "loadAll");
     var safeDump = renamed("safeDump", "dump");
     var jsYaml = {
-      Type,
+      Type: Type$2,
       Schema,
       FAILSAFE_SCHEMA,
       JSON_SCHEMA,
@@ -41292,10 +42622,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       name: "VDialog",
       props: makeVDialogProps(),
       emits: {
-        "update:modelValue": (value) => true
+        "update:modelValue": (value) => true,
+        afterLeave: () => true
       },
       setup(props, _ref) {
         let {
+          emit: emit2,
           slots
         } = _ref;
         const isActive = useProxiedModel(props, "modelValue");
@@ -41330,25 +42662,35 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             immediate: true
           });
         }
-        watch(isActive, async (val) => {
-          var _a2, _b;
-          await nextTick();
-          if (val) {
-            (_a2 = overlay.value.contentEl) == null ? void 0 : _a2.focus({
+        function onAfterEnter() {
+          var _a2;
+          if (((_a2 = overlay.value) == null ? void 0 : _a2.contentEl) && !overlay.value.contentEl.contains(document.activeElement)) {
+            overlay.value.contentEl.focus({
               preventScroll: true
             });
-          } else {
-            (_b = overlay.value.activatorEl) == null ? void 0 : _b.focus({
+          }
+        }
+        function onAfterLeave() {
+          emit2("afterLeave");
+        }
+        watch(isActive, async (val) => {
+          var _a2;
+          if (!val) {
+            await nextTick();
+            (_a2 = overlay.value.activatorEl) == null ? void 0 : _a2.focus({
               preventScroll: true
             });
           }
         });
-        const activatorProps = computed(() => mergeProps({
-          "aria-haspopup": "dialog",
-          "aria-expanded": String(isActive.value)
-        }, props.activatorProps));
         useRender(() => {
           const overlayProps = VOverlay.filterProps(props);
+          const activatorProps = mergeProps({
+            "aria-haspopup": "dialog",
+            "aria-expanded": String(isActive.value)
+          }, props.activatorProps);
+          const contentProps = mergeProps({
+            tabindex: -1
+          }, props.contentProps);
           return createVNode(VOverlay, mergeProps({
             "ref": overlay,
             "class": ["v-dialog", {
@@ -41360,8 +42702,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "modelValue": isActive.value,
             "onUpdate:modelValue": ($event) => isActive.value = $event,
             "aria-modal": "true",
-            "activatorProps": activatorProps.value,
-            "role": "dialog"
+            "activatorProps": activatorProps,
+            "contentProps": contentProps,
+            "role": "dialog",
+            "onAfterEnter": onAfterEnter,
+            "onAfterLeave": onAfterLeave
           }, scopeId), {
             activator: slots.activator,
             default: function() {
@@ -41478,97 +42823,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           });
         });
         return forwardRefs({}, rootEl);
-      }
-    });
-    function parseItems(items2) {
-      if (!items2)
-        return [];
-      return items2.map((item) => {
-        if (!isObject$3(item))
-          return {
-            text: item,
-            value: item
-          };
-        return item;
-      });
-    }
-    const makeVTabsProps = propsFactory({
-      alignTabs: {
-        type: String,
-        default: "start"
-      },
-      color: String,
-      fixedTabs: Boolean,
-      items: {
-        type: Array,
-        default: () => []
-      },
-      stacked: Boolean,
-      bgColor: String,
-      grow: Boolean,
-      height: {
-        type: [Number, String],
-        default: void 0
-      },
-      hideSlider: Boolean,
-      sliderColor: String,
-      ...makeVSlideGroupProps({
-        mandatory: "force"
-      }),
-      ...makeDensityProps(),
-      ...makeTagProps()
-    }, "VTabs");
-    const VTabs = genericComponent()({
-      name: "VTabs",
-      props: makeVTabsProps(),
-      emits: {
-        "update:modelValue": (v) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const model = useProxiedModel(props, "modelValue");
-        const parsedItems = computed(() => parseItems(props.items));
-        const {
-          densityClasses
-        } = useDensity(props);
-        const {
-          backgroundColorClasses,
-          backgroundColorStyles
-        } = useBackgroundColor(toRef(props, "bgColor"));
-        provideDefaults({
-          VTab: {
-            color: toRef(props, "color"),
-            direction: toRef(props, "direction"),
-            stacked: toRef(props, "stacked"),
-            fixed: toRef(props, "fixedTabs"),
-            sliderColor: toRef(props, "sliderColor"),
-            hideSlider: toRef(props, "hideSlider")
-          }
-        });
-        useRender(() => {
-          const slideGroupProps = VSlideGroup.filterProps(props);
-          return createVNode(VSlideGroup, mergeProps(slideGroupProps, {
-            "modelValue": model.value,
-            "onUpdate:modelValue": ($event) => model.value = $event,
-            "class": ["v-tabs", `v-tabs--${props.direction}`, `v-tabs--align-tabs-${props.alignTabs}`, {
-              "v-tabs--fixed-tabs": props.fixedTabs,
-              "v-tabs--grow": props.grow,
-              "v-tabs--stacked": props.stacked
-            }, densityClasses.value, backgroundColorClasses.value, props.class],
-            "style": [{
-              "--v-tabs-height": convertToUnit(props.height)
-            }, backgroundColorStyles.value, props.style],
-            "role": "tablist",
-            "symbol": VTabsSymbol
-          }), {
-            default: () => [slots.default ? slots.default() : parsedItems.value.map((item) => createVNode(VTab, mergeProps(item, {
-              "key": item.text
-            }), null))]
-          });
-        });
-        return {};
       }
     });
     const handleGesture = (wrapper) => {
@@ -41858,6 +43112,47 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
+    const makeVTabsWindowProps = propsFactory({
+      ...omit$1(makeVWindowProps(), ["continuous", "nextIcon", "prevIcon", "showArrows", "touch", "mandatory"])
+    }, "VTabsWindow");
+    const VTabsWindow = genericComponent()({
+      name: "VTabsWindow",
+      props: makeVTabsWindowProps(),
+      emits: {
+        "update:modelValue": (v) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const group = inject$1(VTabsSymbol, null);
+        const _model = useProxiedModel(props, "modelValue");
+        const model = computed({
+          get() {
+            var _a2;
+            if (_model.value != null || !group)
+              return _model.value;
+            return (_a2 = group.items.value.find((item) => group.selected.value.includes(item.id))) == null ? void 0 : _a2.value;
+          },
+          set(val) {
+            _model.value = val;
+          }
+        });
+        useRender(() => {
+          const windowProps = VWindow.filterProps(props);
+          return createVNode(VWindow, mergeProps({
+            "_as": "VTabsWindow"
+          }, windowProps, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "class": "v-tabs-window",
+            "mandatory": false,
+            "touch": false
+          }), slots);
+        });
+        return {};
+      }
+    });
     const makeVWindowItemProps = propsFactory({
       reverseTransition: {
         type: [Boolean, String],
@@ -41961,6 +43256,160 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {
           groupItem
         };
+      }
+    });
+    const makeVTabsWindowItemProps = propsFactory({
+      ...makeVWindowItemProps()
+    }, "VTabsWindowItem");
+    const VTabsWindowItem = genericComponent()({
+      name: "VTabsWindowItem",
+      props: makeVTabsWindowItemProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => {
+          const windowItemProps = VWindowItem.filterProps(props);
+          return createVNode(VWindowItem, mergeProps({
+            "_as": "VTabsWindowItem"
+          }, windowItemProps, {
+            "class": ["v-tabs-window-item", props.class],
+            "style": props.style
+          }), slots);
+        });
+        return {};
+      }
+    });
+    function parseItems(items2) {
+      if (!items2)
+        return [];
+      return items2.map((item) => {
+        if (!isObject$3(item))
+          return {
+            text: item,
+            value: item
+          };
+        return item;
+      });
+    }
+    const makeVTabsProps = propsFactory({
+      alignTabs: {
+        type: String,
+        default: "start"
+      },
+      color: String,
+      fixedTabs: Boolean,
+      items: {
+        type: Array,
+        default: () => []
+      },
+      stacked: Boolean,
+      bgColor: String,
+      grow: Boolean,
+      height: {
+        type: [Number, String],
+        default: void 0
+      },
+      hideSlider: Boolean,
+      sliderColor: String,
+      ...makeVSlideGroupProps({
+        mandatory: "force",
+        selectedClass: "v-tab-item--selected"
+      }),
+      ...makeDensityProps(),
+      ...makeTagProps()
+    }, "VTabs");
+    const VTabs = genericComponent()({
+      name: "VTabs",
+      props: makeVTabsProps(),
+      emits: {
+        "update:modelValue": (v) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const model = useProxiedModel(props, "modelValue");
+        const items2 = computed(() => parseItems(props.items));
+        const {
+          densityClasses
+        } = useDensity(props);
+        const {
+          backgroundColorClasses,
+          backgroundColorStyles
+        } = useBackgroundColor(toRef(props, "bgColor"));
+        provideDefaults({
+          VTab: {
+            color: toRef(props, "color"),
+            direction: toRef(props, "direction"),
+            stacked: toRef(props, "stacked"),
+            fixed: toRef(props, "fixedTabs"),
+            sliderColor: toRef(props, "sliderColor"),
+            hideSlider: toRef(props, "hideSlider")
+          }
+        });
+        useRender(() => {
+          const slideGroupProps = VSlideGroup.filterProps(props);
+          const hasWindow = !!(slots.window || props.items.length > 0);
+          return createVNode(Fragment, null, [createVNode(VSlideGroup, mergeProps(slideGroupProps, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "class": ["v-tabs", `v-tabs--${props.direction}`, `v-tabs--align-tabs-${props.alignTabs}`, {
+              "v-tabs--fixed-tabs": props.fixedTabs,
+              "v-tabs--grow": props.grow,
+              "v-tabs--stacked": props.stacked
+            }, densityClasses.value, backgroundColorClasses.value, props.class],
+            "style": [{
+              "--v-tabs-height": convertToUnit(props.height)
+            }, backgroundColorStyles.value, props.style],
+            "role": "tablist",
+            "symbol": VTabsSymbol
+          }), {
+            default: () => {
+              var _a2;
+              return [((_a2 = slots.default) == null ? void 0 : _a2.call(slots)) ?? items2.value.map((item) => {
+                var _a3;
+                return ((_a3 = slots.tab) == null ? void 0 : _a3.call(slots, {
+                  item
+                })) ?? createVNode(VTab, mergeProps(item, {
+                  "key": item.text,
+                  "value": item.value
+                }), {
+                  default: () => {
+                    var _a4;
+                    return (_a4 = slots[`tab.${item.value}`]) == null ? void 0 : _a4.call(slots, {
+                      item
+                    });
+                  }
+                });
+              })];
+            }
+          }), hasWindow && createVNode(VTabsWindow, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "key": "tabs-window"
+          }, {
+            default: () => {
+              var _a2;
+              return [items2.value.map((item) => {
+                var _a3;
+                return ((_a3 = slots.item) == null ? void 0 : _a3.call(slots, {
+                  item
+                })) ?? createVNode(VTabsWindowItem, {
+                  "value": item.value
+                }, {
+                  default: () => {
+                    var _a4;
+                    return (_a4 = slots[`item.${item.value}`]) == null ? void 0 : _a4.call(slots, {
+                      item
+                    });
+                  }
+                });
+              }), (_a2 = slots.window) == null ? void 0 : _a2.call(slots)];
+            }
+          })]);
+        });
+        return {};
       }
     });
     const _hoisted_1$6 = { class: "title-content" };
@@ -42387,7 +43836,7 @@ Reason: ${error2}`);
       }, 8, ["model-value", "onClick:outside"]);
     }
     const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$3]]);
-    var ajv = { exports: {} };
+    var ajv$1 = { exports: {} };
     var core$3 = {};
     var validate = {};
     var boolSchema = {};
@@ -42558,7 +44007,7 @@ Reason: ${error2}`);
       (function(UsedValueState2) {
         UsedValueState2[UsedValueState2["Started"] = 0] = "Started";
         UsedValueState2[UsedValueState2["Completed"] = 1] = "Completed";
-      })(UsedValueState = exports2.UsedValueState || (exports2.UsedValueState = {}));
+      })(UsedValueState || (exports2.UsedValueState = UsedValueState = {}));
       exports2.varKinds = {
         const: new code_12.Name("const"),
         let: new code_12.Name("let"),
@@ -43400,193 +44849,197 @@ Reason: ${error2}`);
       }
     })(codegen);
     var util = {};
-    (function(exports2) {
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.checkStrictMode = exports2.getErrorPath = exports2.Type = exports2.useFunc = exports2.setEvaluated = exports2.evaluatedPropsToName = exports2.mergeEvaluated = exports2.eachItem = exports2.unescapeJsonPointer = exports2.escapeJsonPointer = exports2.escapeFragment = exports2.unescapeFragment = exports2.schemaRefOrVal = exports2.schemaHasRulesButRef = exports2.schemaHasRules = exports2.checkUnknownRules = exports2.alwaysValidSchema = exports2.toHash = void 0;
-      const codegen_12 = codegen;
-      const code_12 = code$2;
-      function toHash(arr) {
-        const hash = {};
-        for (const item of arr)
-          hash[item] = true;
-        return hash;
+    Object.defineProperty(util, "__esModule", { value: true });
+    util.checkStrictMode = util.getErrorPath = util.Type = util.useFunc = util.setEvaluated = util.evaluatedPropsToName = util.mergeEvaluated = util.eachItem = util.unescapeJsonPointer = util.escapeJsonPointer = util.escapeFragment = util.unescapeFragment = util.schemaRefOrVal = util.schemaHasRulesButRef = util.schemaHasRules = util.checkUnknownRules = util.alwaysValidSchema = util.toHash = void 0;
+    const codegen_1$z = codegen;
+    const code_1$a = code$2;
+    function toHash(arr) {
+      const hash = {};
+      for (const item of arr)
+        hash[item] = true;
+      return hash;
+    }
+    util.toHash = toHash;
+    function alwaysValidSchema(it2, schema2) {
+      if (typeof schema2 == "boolean")
+        return schema2;
+      if (Object.keys(schema2).length === 0)
+        return true;
+      checkUnknownRules(it2, schema2);
+      return !schemaHasRules(schema2, it2.self.RULES.all);
+    }
+    util.alwaysValidSchema = alwaysValidSchema;
+    function checkUnknownRules(it2, schema2 = it2.schema) {
+      const { opts, self: self2 } = it2;
+      if (!opts.strictSchema)
+        return;
+      if (typeof schema2 === "boolean")
+        return;
+      const rules2 = self2.RULES.keywords;
+      for (const key in schema2) {
+        if (!rules2[key])
+          checkStrictMode(it2, `unknown keyword: "${key}"`);
       }
-      exports2.toHash = toHash;
-      function alwaysValidSchema(it2, schema2) {
-        if (typeof schema2 == "boolean")
-          return schema2;
-        if (Object.keys(schema2).length === 0)
+    }
+    util.checkUnknownRules = checkUnknownRules;
+    function schemaHasRules(schema2, rules2) {
+      if (typeof schema2 == "boolean")
+        return !schema2;
+      for (const key in schema2)
+        if (rules2[key])
           return true;
-        checkUnknownRules(it2, schema2);
-        return !schemaHasRules(schema2, it2.self.RULES.all);
+      return false;
+    }
+    util.schemaHasRules = schemaHasRules;
+    function schemaHasRulesButRef(schema2, RULES2) {
+      if (typeof schema2 == "boolean")
+        return !schema2;
+      for (const key in schema2)
+        if (key !== "$ref" && RULES2.all[key])
+          return true;
+      return false;
+    }
+    util.schemaHasRulesButRef = schemaHasRulesButRef;
+    function schemaRefOrVal({ topSchemaRef, schemaPath }, schema2, keyword2, $data) {
+      if (!$data) {
+        if (typeof schema2 == "number" || typeof schema2 == "boolean")
+          return schema2;
+        if (typeof schema2 == "string")
+          return (0, codegen_1$z._)`${schema2}`;
       }
-      exports2.alwaysValidSchema = alwaysValidSchema;
-      function checkUnknownRules(it2, schema2 = it2.schema) {
-        const { opts, self: self2 } = it2;
-        if (!opts.strictSchema)
-          return;
-        if (typeof schema2 === "boolean")
-          return;
-        const rules2 = self2.RULES.keywords;
-        for (const key in schema2) {
-          if (!rules2[key])
-            checkStrictMode(it2, `unknown keyword: "${key}"`);
-        }
+      return (0, codegen_1$z._)`${topSchemaRef}${schemaPath}${(0, codegen_1$z.getProperty)(keyword2)}`;
+    }
+    util.schemaRefOrVal = schemaRefOrVal;
+    function unescapeFragment(str2) {
+      return unescapeJsonPointer(decodeURIComponent(str2));
+    }
+    util.unescapeFragment = unescapeFragment;
+    function escapeFragment(str2) {
+      return encodeURIComponent(escapeJsonPointer(str2));
+    }
+    util.escapeFragment = escapeFragment;
+    function escapeJsonPointer(str2) {
+      if (typeof str2 == "number")
+        return `${str2}`;
+      return str2.replace(/~/g, "~0").replace(/\//g, "~1");
+    }
+    util.escapeJsonPointer = escapeJsonPointer;
+    function unescapeJsonPointer(str2) {
+      return str2.replace(/~1/g, "/").replace(/~0/g, "~");
+    }
+    util.unescapeJsonPointer = unescapeJsonPointer;
+    function eachItem(xs, f) {
+      if (Array.isArray(xs)) {
+        for (const x2 of xs)
+          f(x2);
+      } else {
+        f(xs);
       }
-      exports2.checkUnknownRules = checkUnknownRules;
-      function schemaHasRules(schema2, rules2) {
-        if (typeof schema2 == "boolean")
-          return !schema2;
-        for (const key in schema2)
-          if (rules2[key])
-            return true;
-        return false;
-      }
-      exports2.schemaHasRules = schemaHasRules;
-      function schemaHasRulesButRef(schema2, RULES2) {
-        if (typeof schema2 == "boolean")
-          return !schema2;
-        for (const key in schema2)
-          if (key !== "$ref" && RULES2.all[key])
-            return true;
-        return false;
-      }
-      exports2.schemaHasRulesButRef = schemaHasRulesButRef;
-      function schemaRefOrVal({ topSchemaRef, schemaPath }, schema2, keyword2, $data) {
-        if (!$data) {
-          if (typeof schema2 == "number" || typeof schema2 == "boolean")
-            return schema2;
-          if (typeof schema2 == "string")
-            return (0, codegen_12._)`${schema2}`;
-        }
-        return (0, codegen_12._)`${topSchemaRef}${schemaPath}${(0, codegen_12.getProperty)(keyword2)}`;
-      }
-      exports2.schemaRefOrVal = schemaRefOrVal;
-      function unescapeFragment(str2) {
-        return unescapeJsonPointer(decodeURIComponent(str2));
-      }
-      exports2.unescapeFragment = unescapeFragment;
-      function escapeFragment(str2) {
-        return encodeURIComponent(escapeJsonPointer(str2));
-      }
-      exports2.escapeFragment = escapeFragment;
-      function escapeJsonPointer(str2) {
-        if (typeof str2 == "number")
-          return `${str2}`;
-        return str2.replace(/~/g, "~0").replace(/\//g, "~1");
-      }
-      exports2.escapeJsonPointer = escapeJsonPointer;
-      function unescapeJsonPointer(str2) {
-        return str2.replace(/~1/g, "/").replace(/~0/g, "~");
-      }
-      exports2.unescapeJsonPointer = unescapeJsonPointer;
-      function eachItem(xs, f) {
-        if (Array.isArray(xs)) {
-          for (const x2 of xs)
-            f(x2);
-        } else {
-          f(xs);
-        }
-      }
-      exports2.eachItem = eachItem;
-      function makeMergeEvaluated({ mergeNames, mergeToName, mergeValues, resultToName }) {
-        return (gen, from, to, toName) => {
-          const res = to === void 0 ? from : to instanceof codegen_12.Name ? (from instanceof codegen_12.Name ? mergeNames(gen, from, to) : mergeToName(gen, from, to), to) : from instanceof codegen_12.Name ? (mergeToName(gen, to, from), from) : mergeValues(from, to);
-          return toName === codegen_12.Name && !(res instanceof codegen_12.Name) ? resultToName(gen, res) : res;
-        };
-      }
-      exports2.mergeEvaluated = {
-        props: makeMergeEvaluated({
-          mergeNames: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true && ${from} !== undefined`, () => {
-            gen.if((0, codegen_12._)`${from} === true`, () => gen.assign(to, true), () => gen.assign(to, (0, codegen_12._)`${to} || {}`).code((0, codegen_12._)`Object.assign(${to}, ${from})`));
-          }),
-          mergeToName: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true`, () => {
-            if (from === true) {
-              gen.assign(to, true);
-            } else {
-              gen.assign(to, (0, codegen_12._)`${to} || {}`);
-              setEvaluated(gen, to, from);
-            }
-          }),
-          mergeValues: (from, to) => from === true ? true : { ...from, ...to },
-          resultToName: evaluatedPropsToName
-        }),
-        items: makeMergeEvaluated({
-          mergeNames: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true && ${from} !== undefined`, () => gen.assign(to, (0, codegen_12._)`${from} === true ? true : ${to} > ${from} ? ${to} : ${from}`)),
-          mergeToName: (gen, from, to) => gen.if((0, codegen_12._)`${to} !== true`, () => gen.assign(to, from === true ? true : (0, codegen_12._)`${to} > ${from} ? ${to} : ${from}`)),
-          mergeValues: (from, to) => from === true ? true : Math.max(from, to),
-          resultToName: (gen, items2) => gen.var("items", items2)
-        })
+    }
+    util.eachItem = eachItem;
+    function makeMergeEvaluated({ mergeNames, mergeToName, mergeValues, resultToName }) {
+      return (gen, from, to, toName) => {
+        const res = to === void 0 ? from : to instanceof codegen_1$z.Name ? (from instanceof codegen_1$z.Name ? mergeNames(gen, from, to) : mergeToName(gen, from, to), to) : from instanceof codegen_1$z.Name ? (mergeToName(gen, to, from), from) : mergeValues(from, to);
+        return toName === codegen_1$z.Name && !(res instanceof codegen_1$z.Name) ? resultToName(gen, res) : res;
       };
-      function evaluatedPropsToName(gen, ps) {
-        if (ps === true)
-          return gen.var("props", true);
-        const props = gen.var("props", (0, codegen_12._)`{}`);
-        if (ps !== void 0)
-          setEvaluated(gen, props, ps);
-        return props;
+    }
+    util.mergeEvaluated = {
+      props: makeMergeEvaluated({
+        mergeNames: (gen, from, to) => gen.if((0, codegen_1$z._)`${to} !== true && ${from} !== undefined`, () => {
+          gen.if((0, codegen_1$z._)`${from} === true`, () => gen.assign(to, true), () => gen.assign(to, (0, codegen_1$z._)`${to} || {}`).code((0, codegen_1$z._)`Object.assign(${to}, ${from})`));
+        }),
+        mergeToName: (gen, from, to) => gen.if((0, codegen_1$z._)`${to} !== true`, () => {
+          if (from === true) {
+            gen.assign(to, true);
+          } else {
+            gen.assign(to, (0, codegen_1$z._)`${to} || {}`);
+            setEvaluated(gen, to, from);
+          }
+        }),
+        mergeValues: (from, to) => from === true ? true : { ...from, ...to },
+        resultToName: evaluatedPropsToName
+      }),
+      items: makeMergeEvaluated({
+        mergeNames: (gen, from, to) => gen.if((0, codegen_1$z._)`${to} !== true && ${from} !== undefined`, () => gen.assign(to, (0, codegen_1$z._)`${from} === true ? true : ${to} > ${from} ? ${to} : ${from}`)),
+        mergeToName: (gen, from, to) => gen.if((0, codegen_1$z._)`${to} !== true`, () => gen.assign(to, from === true ? true : (0, codegen_1$z._)`${to} > ${from} ? ${to} : ${from}`)),
+        mergeValues: (from, to) => from === true ? true : Math.max(from, to),
+        resultToName: (gen, items2) => gen.var("items", items2)
+      })
+    };
+    function evaluatedPropsToName(gen, ps) {
+      if (ps === true)
+        return gen.var("props", true);
+      const props = gen.var("props", (0, codegen_1$z._)`{}`);
+      if (ps !== void 0)
+        setEvaluated(gen, props, ps);
+      return props;
+    }
+    util.evaluatedPropsToName = evaluatedPropsToName;
+    function setEvaluated(gen, props, ps) {
+      Object.keys(ps).forEach((p2) => gen.assign((0, codegen_1$z._)`${props}${(0, codegen_1$z.getProperty)(p2)}`, true));
+    }
+    util.setEvaluated = setEvaluated;
+    const snippets = {};
+    function useFunc(gen, f) {
+      return gen.scopeValue("func", {
+        ref: f,
+        code: snippets[f.code] || (snippets[f.code] = new code_1$a._Code(f.code))
+      });
+    }
+    util.useFunc = useFunc;
+    var Type;
+    (function(Type2) {
+      Type2[Type2["Num"] = 0] = "Num";
+      Type2[Type2["Str"] = 1] = "Str";
+    })(Type || (util.Type = Type = {}));
+    function getErrorPath(dataProp, dataPropType, jsPropertySyntax) {
+      if (dataProp instanceof codegen_1$z.Name) {
+        const isNumber = dataPropType === Type.Num;
+        return jsPropertySyntax ? isNumber ? (0, codegen_1$z._)`"[" + ${dataProp} + "]"` : (0, codegen_1$z._)`"['" + ${dataProp} + "']"` : isNumber ? (0, codegen_1$z._)`"/" + ${dataProp}` : (0, codegen_1$z._)`"/" + ${dataProp}.replace(/~/g, "~0").replace(/\\//g, "~1")`;
       }
-      exports2.evaluatedPropsToName = evaluatedPropsToName;
-      function setEvaluated(gen, props, ps) {
-        Object.keys(ps).forEach((p2) => gen.assign((0, codegen_12._)`${props}${(0, codegen_12.getProperty)(p2)}`, true));
-      }
-      exports2.setEvaluated = setEvaluated;
-      const snippets = {};
-      function useFunc(gen, f) {
-        return gen.scopeValue("func", {
-          ref: f,
-          code: snippets[f.code] || (snippets[f.code] = new code_12._Code(f.code))
-        });
-      }
-      exports2.useFunc = useFunc;
-      var Type2;
-      (function(Type3) {
-        Type3[Type3["Num"] = 0] = "Num";
-        Type3[Type3["Str"] = 1] = "Str";
-      })(Type2 = exports2.Type || (exports2.Type = {}));
-      function getErrorPath(dataProp, dataPropType, jsPropertySyntax) {
-        if (dataProp instanceof codegen_12.Name) {
-          const isNumber = dataPropType === Type2.Num;
-          return jsPropertySyntax ? isNumber ? (0, codegen_12._)`"[" + ${dataProp} + "]"` : (0, codegen_12._)`"['" + ${dataProp} + "']"` : isNumber ? (0, codegen_12._)`"/" + ${dataProp}` : (0, codegen_12._)`"/" + ${dataProp}.replace(/~/g, "~0").replace(/\\//g, "~1")`;
-        }
-        return jsPropertySyntax ? (0, codegen_12.getProperty)(dataProp).toString() : "/" + escapeJsonPointer(dataProp);
-      }
-      exports2.getErrorPath = getErrorPath;
-      function checkStrictMode(it2, msg, mode = it2.opts.strictSchema) {
-        if (!mode)
-          return;
-        msg = `strict mode: ${msg}`;
-        if (mode === true)
-          throw new Error(msg);
-        it2.self.logger.warn(msg);
-      }
-      exports2.checkStrictMode = checkStrictMode;
-    })(util);
+      return jsPropertySyntax ? (0, codegen_1$z.getProperty)(dataProp).toString() : "/" + escapeJsonPointer(dataProp);
+    }
+    util.getErrorPath = getErrorPath;
+    function checkStrictMode(it2, msg, mode = it2.opts.strictSchema) {
+      if (!mode)
+        return;
+      msg = `strict mode: ${msg}`;
+      if (mode === true)
+        throw new Error(msg);
+      it2.self.logger.warn(msg);
+    }
+    util.checkStrictMode = checkStrictMode;
     var names$2 = {};
     Object.defineProperty(names$2, "__esModule", { value: true });
-    const codegen_1$x = codegen;
+    const codegen_1$y = codegen;
     const names$1 = {
       // validation function arguments
-      data: new codegen_1$x.Name("data"),
+      data: new codegen_1$y.Name("data"),
+      // data passed to validation function
       // args passed from referencing schema
-      valCxt: new codegen_1$x.Name("valCxt"),
-      instancePath: new codegen_1$x.Name("instancePath"),
-      parentData: new codegen_1$x.Name("parentData"),
-      parentDataProperty: new codegen_1$x.Name("parentDataProperty"),
-      rootData: new codegen_1$x.Name("rootData"),
-      dynamicAnchors: new codegen_1$x.Name("dynamicAnchors"),
+      valCxt: new codegen_1$y.Name("valCxt"),
+      // validation/data context - should not be used directly, it is destructured to the names below
+      instancePath: new codegen_1$y.Name("instancePath"),
+      parentData: new codegen_1$y.Name("parentData"),
+      parentDataProperty: new codegen_1$y.Name("parentDataProperty"),
+      rootData: new codegen_1$y.Name("rootData"),
+      // root data - same as the data passed to the first/top validation function
+      dynamicAnchors: new codegen_1$y.Name("dynamicAnchors"),
+      // used to support recursiveRef and dynamicRef
       // function scoped variables
-      vErrors: new codegen_1$x.Name("vErrors"),
-      errors: new codegen_1$x.Name("errors"),
-      this: new codegen_1$x.Name("this"),
+      vErrors: new codegen_1$y.Name("vErrors"),
+      // null or array of validation errors
+      errors: new codegen_1$y.Name("errors"),
+      // counter of validation errors
+      this: new codegen_1$y.Name("this"),
       // "globals"
-      self: new codegen_1$x.Name("self"),
-      scope: new codegen_1$x.Name("scope"),
+      self: new codegen_1$y.Name("self"),
+      scope: new codegen_1$y.Name("scope"),
       // JTD serialize/parse name for JSON string and position
-      json: new codegen_1$x.Name("json"),
-      jsonPos: new codegen_1$x.Name("jsonPos"),
-      jsonLen: new codegen_1$x.Name("jsonLen"),
-      jsonPart: new codegen_1$x.Name("jsonPart")
+      json: new codegen_1$y.Name("json"),
+      jsonPos: new codegen_1$y.Name("jsonPos"),
+      jsonLen: new codegen_1$y.Name("jsonLen"),
+      jsonPart: new codegen_1$y.Name("jsonPart")
     };
     names$2.default = names$1;
     (function(exports2) {
@@ -43659,6 +45112,7 @@ Reason: ${error2}`);
       const E = {
         keyword: new codegen_12.Name("keyword"),
         schemaPath: new codegen_12.Name("schemaPath"),
+        // also used in JTD errors
         params: new codegen_12.Name("params"),
         propertyName: new codegen_12.Name("propertyName"),
         message: new codegen_12.Name("message"),
@@ -43707,8 +45161,8 @@ Reason: ${error2}`);
     })(errors$1);
     Object.defineProperty(boolSchema, "__esModule", { value: true });
     boolSchema.boolOrEmptySchema = boolSchema.topBoolOrEmptySchema = void 0;
-    const errors_1$2 = errors$1;
-    const codegen_1$w = codegen;
+    const errors_1$3 = errors$1;
+    const codegen_1$x = codegen;
     const names_1$9 = names$2;
     const boolError = {
       message: "boolean schema is false"
@@ -43720,7 +45174,7 @@ Reason: ${error2}`);
       } else if (typeof schema2 == "object" && schema2.$async === true) {
         gen.return(names_1$9.default.data);
       } else {
-        gen.assign((0, codegen_1$w._)`${validateName}.errors`, null);
+        gen.assign((0, codegen_1$x._)`${validateName}.errors`, null);
         gen.return(true);
       }
     }
@@ -43747,7 +45201,7 @@ Reason: ${error2}`);
         params: {},
         it: it2
       };
-      (0, errors_1$2.reportError)(cxt, boolError, void 0, overrideAllErrors);
+      (0, errors_1$3.reportError)(cxt, boolError, void 0, overrideAllErrors);
     }
     var dataType = {};
     var rules = {};
@@ -43792,185 +45246,183 @@ Reason: ${error2}`);
       return schema2[rule.keyword] !== void 0 || ((_a2 = rule.definition.implements) === null || _a2 === void 0 ? void 0 : _a2.some((kwd) => schema2[kwd] !== void 0));
     }
     applicability.shouldUseRule = shouldUseRule;
-    (function(exports2) {
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.reportTypeError = exports2.checkDataTypes = exports2.checkDataType = exports2.coerceAndCheckDataType = exports2.getJSONTypes = exports2.getSchemaTypes = exports2.DataType = void 0;
-      const rules_1 = rules;
-      const applicability_12 = applicability;
-      const errors_12 = errors$1;
-      const codegen_12 = codegen;
-      const util_12 = util;
-      var DataType;
-      (function(DataType2) {
-        DataType2[DataType2["Correct"] = 0] = "Correct";
-        DataType2[DataType2["Wrong"] = 1] = "Wrong";
-      })(DataType = exports2.DataType || (exports2.DataType = {}));
-      function getSchemaTypes(schema2) {
-        const types2 = getJSONTypes(schema2.type);
-        const hasNull = types2.includes("null");
-        if (hasNull) {
-          if (schema2.nullable === false)
-            throw new Error("type: null contradicts nullable: false");
-        } else {
-          if (!types2.length && schema2.nullable !== void 0) {
-            throw new Error('"nullable" cannot be used without "type"');
-          }
-          if (schema2.nullable === true)
-            types2.push("null");
+    Object.defineProperty(dataType, "__esModule", { value: true });
+    dataType.reportTypeError = dataType.checkDataTypes = dataType.checkDataType = dataType.coerceAndCheckDataType = dataType.getJSONTypes = dataType.getSchemaTypes = dataType.DataType = void 0;
+    const rules_1 = rules;
+    const applicability_1$1 = applicability;
+    const errors_1$2 = errors$1;
+    const codegen_1$w = codegen;
+    const util_1$u = util;
+    var DataType;
+    (function(DataType2) {
+      DataType2[DataType2["Correct"] = 0] = "Correct";
+      DataType2[DataType2["Wrong"] = 1] = "Wrong";
+    })(DataType || (dataType.DataType = DataType = {}));
+    function getSchemaTypes(schema2) {
+      const types2 = getJSONTypes(schema2.type);
+      const hasNull = types2.includes("null");
+      if (hasNull) {
+        if (schema2.nullable === false)
+          throw new Error("type: null contradicts nullable: false");
+      } else {
+        if (!types2.length && schema2.nullable !== void 0) {
+          throw new Error('"nullable" cannot be used without "type"');
         }
+        if (schema2.nullable === true)
+          types2.push("null");
+      }
+      return types2;
+    }
+    dataType.getSchemaTypes = getSchemaTypes;
+    function getJSONTypes(ts) {
+      const types2 = Array.isArray(ts) ? ts : ts ? [ts] : [];
+      if (types2.every(rules_1.isJSONType))
         return types2;
-      }
-      exports2.getSchemaTypes = getSchemaTypes;
-      function getJSONTypes(ts) {
-        const types2 = Array.isArray(ts) ? ts : ts ? [ts] : [];
-        if (types2.every(rules_1.isJSONType))
-          return types2;
-        throw new Error("type must be JSONType or JSONType[]: " + types2.join(","));
-      }
-      exports2.getJSONTypes = getJSONTypes;
-      function coerceAndCheckDataType(it2, types2) {
-        const { gen, data, opts } = it2;
-        const coerceTo = coerceToTypes(types2, opts.coerceTypes);
-        const checkTypes = types2.length > 0 && !(coerceTo.length === 0 && types2.length === 1 && (0, applicability_12.schemaHasRulesForType)(it2, types2[0]));
-        if (checkTypes) {
-          const wrongType = checkDataTypes(types2, data, opts.strictNumbers, DataType.Wrong);
-          gen.if(wrongType, () => {
-            if (coerceTo.length)
-              coerceData(it2, types2, coerceTo);
-            else
-              reportTypeError(it2);
-          });
-        }
-        return checkTypes;
-      }
-      exports2.coerceAndCheckDataType = coerceAndCheckDataType;
-      const COERCIBLE = /* @__PURE__ */ new Set(["string", "number", "integer", "boolean", "null"]);
-      function coerceToTypes(types2, coerceTypes) {
-        return coerceTypes ? types2.filter((t) => COERCIBLE.has(t) || coerceTypes === "array" && t === "array") : [];
-      }
-      function coerceData(it2, types2, coerceTo) {
-        const { gen, data, opts } = it2;
-        const dataType2 = gen.let("dataType", (0, codegen_12._)`typeof ${data}`);
-        const coerced = gen.let("coerced", (0, codegen_12._)`undefined`);
-        if (opts.coerceTypes === "array") {
-          gen.if((0, codegen_12._)`${dataType2} == 'object' && Array.isArray(${data}) && ${data}.length == 1`, () => gen.assign(data, (0, codegen_12._)`${data}[0]`).assign(dataType2, (0, codegen_12._)`typeof ${data}`).if(checkDataTypes(types2, data, opts.strictNumbers), () => gen.assign(coerced, data)));
-        }
-        gen.if((0, codegen_12._)`${coerced} !== undefined`);
-        for (const t of coerceTo) {
-          if (COERCIBLE.has(t) || t === "array" && opts.coerceTypes === "array") {
-            coerceSpecificType(t);
-          }
-        }
-        gen.else();
-        reportTypeError(it2);
-        gen.endIf();
-        gen.if((0, codegen_12._)`${coerced} !== undefined`, () => {
-          gen.assign(data, coerced);
-          assignParentData(it2, coerced);
+      throw new Error("type must be JSONType or JSONType[]: " + types2.join(","));
+    }
+    dataType.getJSONTypes = getJSONTypes;
+    function coerceAndCheckDataType(it2, types2) {
+      const { gen, data, opts } = it2;
+      const coerceTo = coerceToTypes(types2, opts.coerceTypes);
+      const checkTypes = types2.length > 0 && !(coerceTo.length === 0 && types2.length === 1 && (0, applicability_1$1.schemaHasRulesForType)(it2, types2[0]));
+      if (checkTypes) {
+        const wrongType = checkDataTypes(types2, data, opts.strictNumbers, DataType.Wrong);
+        gen.if(wrongType, () => {
+          if (coerceTo.length)
+            coerceData(it2, types2, coerceTo);
+          else
+            reportTypeError(it2);
         });
-        function coerceSpecificType(t) {
-          switch (t) {
-            case "string":
-              gen.elseIf((0, codegen_12._)`${dataType2} == "number" || ${dataType2} == "boolean"`).assign(coerced, (0, codegen_12._)`"" + ${data}`).elseIf((0, codegen_12._)`${data} === null`).assign(coerced, (0, codegen_12._)`""`);
-              return;
-            case "number":
-              gen.elseIf((0, codegen_12._)`${dataType2} == "boolean" || ${data} === null
-              || (${dataType2} == "string" && ${data} && ${data} == +${data})`).assign(coerced, (0, codegen_12._)`+${data}`);
-              return;
-            case "integer":
-              gen.elseIf((0, codegen_12._)`${dataType2} === "boolean" || ${data} === null
-              || (${dataType2} === "string" && ${data} && ${data} == +${data} && !(${data} % 1))`).assign(coerced, (0, codegen_12._)`+${data}`);
-              return;
-            case "boolean":
-              gen.elseIf((0, codegen_12._)`${data} === "false" || ${data} === 0 || ${data} === null`).assign(coerced, false).elseIf((0, codegen_12._)`${data} === "true" || ${data} === 1`).assign(coerced, true);
-              return;
-            case "null":
-              gen.elseIf((0, codegen_12._)`${data} === "" || ${data} === 0 || ${data} === false`);
-              gen.assign(coerced, null);
-              return;
-            case "array":
-              gen.elseIf((0, codegen_12._)`${dataType2} === "string" || ${dataType2} === "number"
-              || ${dataType2} === "boolean" || ${data} === null`).assign(coerced, (0, codegen_12._)`[${data}]`);
-          }
+      }
+      return checkTypes;
+    }
+    dataType.coerceAndCheckDataType = coerceAndCheckDataType;
+    const COERCIBLE = /* @__PURE__ */ new Set(["string", "number", "integer", "boolean", "null"]);
+    function coerceToTypes(types2, coerceTypes) {
+      return coerceTypes ? types2.filter((t) => COERCIBLE.has(t) || coerceTypes === "array" && t === "array") : [];
+    }
+    function coerceData(it2, types2, coerceTo) {
+      const { gen, data, opts } = it2;
+      const dataType2 = gen.let("dataType", (0, codegen_1$w._)`typeof ${data}`);
+      const coerced = gen.let("coerced", (0, codegen_1$w._)`undefined`);
+      if (opts.coerceTypes === "array") {
+        gen.if((0, codegen_1$w._)`${dataType2} == 'object' && Array.isArray(${data}) && ${data}.length == 1`, () => gen.assign(data, (0, codegen_1$w._)`${data}[0]`).assign(dataType2, (0, codegen_1$w._)`typeof ${data}`).if(checkDataTypes(types2, data, opts.strictNumbers), () => gen.assign(coerced, data)));
+      }
+      gen.if((0, codegen_1$w._)`${coerced} !== undefined`);
+      for (const t of coerceTo) {
+        if (COERCIBLE.has(t) || t === "array" && opts.coerceTypes === "array") {
+          coerceSpecificType(t);
         }
       }
-      function assignParentData({ gen, parentData, parentDataProperty }, expr) {
-        gen.if((0, codegen_12._)`${parentData} !== undefined`, () => gen.assign((0, codegen_12._)`${parentData}[${parentDataProperty}]`, expr));
-      }
-      function checkDataType(dataType2, data, strictNums, correct = DataType.Correct) {
-        const EQ = correct === DataType.Correct ? codegen_12.operators.EQ : codegen_12.operators.NEQ;
-        let cond;
-        switch (dataType2) {
-          case "null":
-            return (0, codegen_12._)`${data} ${EQ} null`;
-          case "array":
-            cond = (0, codegen_12._)`Array.isArray(${data})`;
-            break;
-          case "object":
-            cond = (0, codegen_12._)`${data} && typeof ${data} == "object" && !Array.isArray(${data})`;
-            break;
-          case "integer":
-            cond = numCond((0, codegen_12._)`!(${data} % 1) && !isNaN(${data})`);
-            break;
+      gen.else();
+      reportTypeError(it2);
+      gen.endIf();
+      gen.if((0, codegen_1$w._)`${coerced} !== undefined`, () => {
+        gen.assign(data, coerced);
+        assignParentData(it2, coerced);
+      });
+      function coerceSpecificType(t) {
+        switch (t) {
+          case "string":
+            gen.elseIf((0, codegen_1$w._)`${dataType2} == "number" || ${dataType2} == "boolean"`).assign(coerced, (0, codegen_1$w._)`"" + ${data}`).elseIf((0, codegen_1$w._)`${data} === null`).assign(coerced, (0, codegen_1$w._)`""`);
+            return;
           case "number":
-            cond = numCond();
-            break;
-          default:
-            return (0, codegen_12._)`typeof ${data} ${EQ} ${dataType2}`;
-        }
-        return correct === DataType.Correct ? cond : (0, codegen_12.not)(cond);
-        function numCond(_cond = codegen_12.nil) {
-          return (0, codegen_12.and)((0, codegen_12._)`typeof ${data} == "number"`, _cond, strictNums ? (0, codegen_12._)`isFinite(${data})` : codegen_12.nil);
+            gen.elseIf((0, codegen_1$w._)`${dataType2} == "boolean" || ${data} === null
+              || (${dataType2} == "string" && ${data} && ${data} == +${data})`).assign(coerced, (0, codegen_1$w._)`+${data}`);
+            return;
+          case "integer":
+            gen.elseIf((0, codegen_1$w._)`${dataType2} === "boolean" || ${data} === null
+              || (${dataType2} === "string" && ${data} && ${data} == +${data} && !(${data} % 1))`).assign(coerced, (0, codegen_1$w._)`+${data}`);
+            return;
+          case "boolean":
+            gen.elseIf((0, codegen_1$w._)`${data} === "false" || ${data} === 0 || ${data} === null`).assign(coerced, false).elseIf((0, codegen_1$w._)`${data} === "true" || ${data} === 1`).assign(coerced, true);
+            return;
+          case "null":
+            gen.elseIf((0, codegen_1$w._)`${data} === "" || ${data} === 0 || ${data} === false`);
+            gen.assign(coerced, null);
+            return;
+          case "array":
+            gen.elseIf((0, codegen_1$w._)`${dataType2} === "string" || ${dataType2} === "number"
+              || ${dataType2} === "boolean" || ${data} === null`).assign(coerced, (0, codegen_1$w._)`[${data}]`);
         }
       }
-      exports2.checkDataType = checkDataType;
-      function checkDataTypes(dataTypes, data, strictNums, correct) {
-        if (dataTypes.length === 1) {
-          return checkDataType(dataTypes[0], data, strictNums, correct);
-        }
-        let cond;
-        const types2 = (0, util_12.toHash)(dataTypes);
-        if (types2.array && types2.object) {
-          const notObj = (0, codegen_12._)`typeof ${data} != "object"`;
-          cond = types2.null ? notObj : (0, codegen_12._)`!${data} || ${notObj}`;
-          delete types2.null;
-          delete types2.array;
-          delete types2.object;
-        } else {
-          cond = codegen_12.nil;
-        }
-        if (types2.number)
-          delete types2.integer;
-        for (const t in types2)
-          cond = (0, codegen_12.and)(cond, checkDataType(t, data, strictNums, correct));
-        return cond;
+    }
+    function assignParentData({ gen, parentData, parentDataProperty }, expr) {
+      gen.if((0, codegen_1$w._)`${parentData} !== undefined`, () => gen.assign((0, codegen_1$w._)`${parentData}[${parentDataProperty}]`, expr));
+    }
+    function checkDataType(dataType2, data, strictNums, correct = DataType.Correct) {
+      const EQ = correct === DataType.Correct ? codegen_1$w.operators.EQ : codegen_1$w.operators.NEQ;
+      let cond;
+      switch (dataType2) {
+        case "null":
+          return (0, codegen_1$w._)`${data} ${EQ} null`;
+        case "array":
+          cond = (0, codegen_1$w._)`Array.isArray(${data})`;
+          break;
+        case "object":
+          cond = (0, codegen_1$w._)`${data} && typeof ${data} == "object" && !Array.isArray(${data})`;
+          break;
+        case "integer":
+          cond = numCond((0, codegen_1$w._)`!(${data} % 1) && !isNaN(${data})`);
+          break;
+        case "number":
+          cond = numCond();
+          break;
+        default:
+          return (0, codegen_1$w._)`typeof ${data} ${EQ} ${dataType2}`;
       }
-      exports2.checkDataTypes = checkDataTypes;
-      const typeError = {
-        message: ({ schema: schema2 }) => `must be ${schema2}`,
-        params: ({ schema: schema2, schemaValue }) => typeof schema2 == "string" ? (0, codegen_12._)`{type: ${schema2}}` : (0, codegen_12._)`{type: ${schemaValue}}`
+      return correct === DataType.Correct ? cond : (0, codegen_1$w.not)(cond);
+      function numCond(_cond = codegen_1$w.nil) {
+        return (0, codegen_1$w.and)((0, codegen_1$w._)`typeof ${data} == "number"`, _cond, strictNums ? (0, codegen_1$w._)`isFinite(${data})` : codegen_1$w.nil);
+      }
+    }
+    dataType.checkDataType = checkDataType;
+    function checkDataTypes(dataTypes, data, strictNums, correct) {
+      if (dataTypes.length === 1) {
+        return checkDataType(dataTypes[0], data, strictNums, correct);
+      }
+      let cond;
+      const types2 = (0, util_1$u.toHash)(dataTypes);
+      if (types2.array && types2.object) {
+        const notObj = (0, codegen_1$w._)`typeof ${data} != "object"`;
+        cond = types2.null ? notObj : (0, codegen_1$w._)`!${data} || ${notObj}`;
+        delete types2.null;
+        delete types2.array;
+        delete types2.object;
+      } else {
+        cond = codegen_1$w.nil;
+      }
+      if (types2.number)
+        delete types2.integer;
+      for (const t in types2)
+        cond = (0, codegen_1$w.and)(cond, checkDataType(t, data, strictNums, correct));
+      return cond;
+    }
+    dataType.checkDataTypes = checkDataTypes;
+    const typeError = {
+      message: ({ schema: schema2 }) => `must be ${schema2}`,
+      params: ({ schema: schema2, schemaValue }) => typeof schema2 == "string" ? (0, codegen_1$w._)`{type: ${schema2}}` : (0, codegen_1$w._)`{type: ${schemaValue}}`
+    };
+    function reportTypeError(it2) {
+      const cxt = getTypeErrorContext(it2);
+      (0, errors_1$2.reportError)(cxt, typeError);
+    }
+    dataType.reportTypeError = reportTypeError;
+    function getTypeErrorContext(it2) {
+      const { gen, data, schema: schema2 } = it2;
+      const schemaCode = (0, util_1$u.schemaRefOrVal)(it2, schema2, "type");
+      return {
+        gen,
+        keyword: "type",
+        data,
+        schema: schema2.type,
+        schemaCode,
+        schemaValue: schemaCode,
+        parentSchema: schema2,
+        params: {},
+        it: it2
       };
-      function reportTypeError(it2) {
-        const cxt = getTypeErrorContext(it2);
-        (0, errors_12.reportError)(cxt, typeError);
-      }
-      exports2.reportTypeError = reportTypeError;
-      function getTypeErrorContext(it2) {
-        const { gen, data, schema: schema2 } = it2;
-        const schemaCode = (0, util_12.schemaRefOrVal)(it2, schema2, "type");
-        return {
-          gen,
-          keyword: "type",
-          data,
-          schema: schema2.type,
-          schemaCode,
-          schemaValue: schemaCode,
-          parentSchema: schema2,
-          params: {},
-          it: it2
-        };
-      }
-    })(dataType);
+    }
     var defaults = {};
     Object.defineProperty(defaults, "__esModule", { value: true });
     defaults.assignDefaults = void 0;
@@ -44072,14 +45524,14 @@ Reason: ${error2}`);
     }
     code$1.callValidateCode = callValidateCode;
     const newRegExp = (0, codegen_1$u._)`new RegExp`;
-    function usePattern({ gen, it: { opts } }, pattern3) {
+    function usePattern({ gen, it: { opts } }, pattern2) {
       const u = opts.unicodeRegExp ? "u" : "";
       const { regExp } = opts.code;
-      const rx2 = regExp(pattern3, u);
+      const rx2 = regExp(pattern2, u);
       return gen.scopeValue("pattern", {
         key: rx2.toString(),
         ref: rx2,
-        code: (0, codegen_1$u._)`${regExp.code === "new RegExp" ? newRegExp : (0, util_2$1.useFunc)(gen, regExp)}(${pattern3}, ${u})`
+        code: (0, codegen_1$u._)`${regExp.code === "new RegExp" ? newRegExp : (0, util_2$1.useFunc)(gen, regExp)}(${pattern2}, ${u})`
       });
     }
     code$1.usePattern = usePattern;
@@ -44544,15 +45996,15 @@ Reason: ${error2}`);
         if (parentJsonPtr === void 0)
           return;
         const fullPath = pathPrefix + jsonPtr;
-        let baseId2 = baseIds[parentJsonPtr];
+        let innerBaseId = baseIds[parentJsonPtr];
         if (typeof sch[schemaId] == "string")
-          baseId2 = addRef.call(this, sch[schemaId]);
+          innerBaseId = addRef.call(this, sch[schemaId]);
         addAnchor.call(this, sch.$anchor);
         addAnchor.call(this, sch.$dynamicAnchor);
-        baseIds[jsonPtr] = baseId2;
+        baseIds[jsonPtr] = innerBaseId;
         function addRef(ref2) {
           const _resolve = this.opts.uriResolver.resolve;
-          ref2 = normalizeId(baseId2 ? _resolve(baseId2, ref2) : ref2);
+          ref2 = normalizeId(innerBaseId ? _resolve(innerBaseId, ref2) : ref2);
           if (schemaRefs.has(ref2))
             throw ambiguos(ref2);
           schemaRefs.add(ref2);
@@ -45164,6 +46616,7 @@ Reason: ${error2}`);
         parentDataProperty: names_1$5.default.parentDataProperty,
         dataNames: [names_1$5.default.data],
         dataPathArr: [codegen_1$q.nil],
+        // TODO can its length be used as dataLevel if nil is removed?
         dataLevel: 0,
         dataTypes: [],
         definedProperties: /* @__PURE__ */ new Set(),
@@ -45573,7 +47026,7 @@ Reason: ${error2}`);
           var inputLength = input.length;
           var i2 = 0;
           var n = initialN2;
-          var bias2 = initialBias2;
+          var bias = initialBias2;
           var basic = input.lastIndexOf(delimiter2);
           if (basic < 0) {
             basic = 0;
@@ -45600,7 +47053,7 @@ Reason: ${error2}`);
                 error$12("overflow");
               }
               i2 += digit * w;
-              var t = k <= bias2 ? tMin2 : k >= bias2 + tMax2 ? tMax2 : k - bias2;
+              var t = k <= bias ? tMin2 : k >= bias + tMax2 ? tMax2 : k - bias;
               if (digit < t) {
                 break;
               }
@@ -45611,7 +47064,7 @@ Reason: ${error2}`);
               w *= baseMinusT;
             }
             var out = output.length + 1;
-            bias2 = adapt2(i2 - oldi, out, oldi == 0);
+            bias = adapt2(i2 - oldi, out, oldi == 0);
             if (floor2(i2 / out) > maxInt2 - n) {
               error$12("overflow");
             }
@@ -45627,7 +47080,7 @@ Reason: ${error2}`);
           var inputLength = input.length;
           var n = initialN2;
           var delta2 = 0;
-          var bias2 = initialBias2;
+          var bias = initialBias2;
           var _iteratorNormalCompletion = true;
           var _didIteratorError = false;
           var _iteratorError = void 0;
@@ -45706,7 +47159,7 @@ Reason: ${error2}`);
                     /* no condition */
                     k += base2
                   ) {
-                    var t = k <= bias2 ? tMin2 : k >= bias2 + tMax2 ? tMax2 : k - bias2;
+                    var t = k <= bias ? tMin2 : k >= bias + tMax2 ? tMax2 : k - bias;
                     if (q < t) {
                       break;
                     }
@@ -45716,7 +47169,7 @@ Reason: ${error2}`);
                     q = floor2(qMinusT / baseMinusT);
                   }
                   output.push(stringFromCharCode2(digitToBasic2(q, 0)));
-                  bias2 = adapt2(delta2, handledCPCountPlusOne, handledCPCount == basicLength);
+                  bias = adapt2(delta2, handledCPCountPlusOne, handledCPCount == basicLength);
                   delta2 = 0;
                   ++handledCPCount;
                 }
@@ -46430,7 +47883,7 @@ Reason: ${error2}`);
       } });
       const validation_error_12 = validation_error;
       const ref_error_12 = ref_error;
-      const rules_1 = rules;
+      const rules_12 = rules;
       const compile_12 = compile$2;
       const codegen_2 = codegen;
       const resolve_12 = resolve$1;
@@ -46521,7 +47974,7 @@ Reason: ${error2}`);
           this.logger = getLogger(opts.logger);
           const formatOpt = opts.validateFormats;
           opts.validateFormats = false;
-          this.RULES = (0, rules_1.getRules)();
+          this.RULES = (0, rules_12.getRules)();
           checkOptions.call(this, removedOptions, opts, "NOT SUPPORTED");
           checkOptions.call(this, deprecatedOptions, opts, "DEPRECATED", "warn");
           this._metaOpts = getMetaSchemaOptions.call(this);
@@ -46877,9 +48330,9 @@ Reason: ${error2}`);
           }
         }
       }
-      exports2.default = Ajv2;
       Ajv2.ValidationError = validation_error_12.default;
       Ajv2.MissingRefError = ref_error_12.default;
+      exports2.default = Ajv2;
       function checkOptions(checkOpts, options, msg, log = "error") {
         for (const key in checkOpts) {
           const opt = key;
@@ -48473,14 +49926,13 @@ Reason: ${error2}`);
     draft7.default = draft7Vocabularies;
     var discriminator = {};
     var types = {};
-    (function(exports2) {
-      Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.DiscrError = void 0;
-      (function(DiscrError) {
-        DiscrError["Tag"] = "tag";
-        DiscrError["Mapping"] = "mapping";
-      })(exports2.DiscrError || (exports2.DiscrError = {}));
-    })(types);
+    Object.defineProperty(types, "__esModule", { value: true });
+    types.DiscrError = void 0;
+    var DiscrError;
+    (function(DiscrError2) {
+      DiscrError2["Tag"] = "tag";
+      DiscrError2["Mapping"] = "mapping";
+    })(DiscrError || (types.DiscrError = DiscrError = {}));
     Object.defineProperty(discriminator, "__esModule", { value: true });
     const codegen_1$4 = codegen;
     const types_1 = types;
@@ -48824,7 +50276,7 @@ Reason: ${error2}`);
     };
     (function(module2, exports2) {
       Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
+      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = exports2.Ajv = void 0;
       const core_12 = core$3;
       const draft7_1 = draft7;
       const discriminator_1 = discriminator;
@@ -48850,7 +50302,9 @@ Reason: ${error2}`);
           return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
         }
       }
+      exports2.Ajv = Ajv2;
       module2.exports = exports2 = Ajv2;
+      module2.exports.Ajv = Ajv2;
       Object.defineProperty(exports2, "__esModule", { value: true });
       exports2.default = Ajv2;
       var validate_12 = validate;
@@ -48884,9 +50338,9 @@ Reason: ${error2}`);
       Object.defineProperty(exports2, "MissingRefError", { enumerable: true, get: function() {
         return ref_error_12.default;
       } });
-    })(ajv, ajv.exports);
-    var ajvExports = ajv.exports;
-    const Ajv$2 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
+    })(ajv$1, ajv$1.exports);
+    var ajvExports = ajv$1.exports;
+    const Ajv$3 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
     function urlToPublicAsset(filePath) {
       let base2 = "/everest-admin-panel/pr-173";
       if (!base2.endsWith("/")) {
@@ -48898,7 +50352,7 @@ Reason: ${error2}`);
         return base2 + filePath.slice(1);
       }
     }
-    const _withScopeId = (n) => (pushScopeId("data-v-c906de4b"), n = n(), popScopeId(), n);
+    const _withScopeId = (n) => (pushScopeId("data-v-a578a337"), n = n(), popScopeId(), n);
     const _hoisted_1$4 = { class: "btn-container" };
     const _hoisted_2$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Upload Config", -1));
     const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
@@ -48971,7 +50425,7 @@ Reason: ${error2}`);
           }
         }
         async function validateConfigContent(content2) {
-          const ajv2 = new Ajv$2();
+          const ajv2 = new Ajv$3();
           const schema2 = await getConfigJsonSchema();
           const validate2 = ajv2.compile(schema2);
           const valid = validate2(content2);
@@ -49145,7 +50599,7 @@ Reason: ${error2}`);
         };
       }
     });
-    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-c906de4b"]]);
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-a578a337"]]);
     let evbcStore;
     let evbc;
     let notyf;
@@ -49249,58 +50703,6 @@ Reason: ${error2}`);
         }
       }
     });
-    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
-    const allowedVariants = ["default", "accordion", "inset", "popout"];
-    const makeVExpansionPanelsProps = propsFactory({
-      color: String,
-      flat: Boolean,
-      static: Boolean,
-      tile: Boolean,
-      variant: {
-        type: String,
-        default: "default",
-        validator: (v) => allowedVariants.includes(v)
-      },
-      readonly: Boolean,
-      ...makeComponentProps(),
-      ...makeGroupProps(),
-      ...makeTagProps(),
-      ...makeThemeProps()
-    }, "VExpansionPanels");
-    const VExpansionPanels = genericComponent()({
-      name: "VExpansionPanels",
-      props: makeVExpansionPanelsProps(),
-      emits: {
-        "update:modelValue": (val) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        useGroup(props, VExpansionPanelSymbol);
-        const {
-          themeClasses
-        } = provideTheme(props);
-        const variantClass = computed(() => props.variant && `v-expansion-panels--variant-${props.variant}`);
-        provideDefaults({
-          VExpansionPanel: {
-            color: toRef(props, "color"),
-            readonly: toRef(props, "readonly")
-          },
-          VExpansionPanelTitle: {
-            static: toRef(props, "static")
-          }
-        });
-        useRender(() => createVNode(props.tag, {
-          "class": ["v-expansion-panels", {
-            "v-expansion-panels--flat": props.flat,
-            "v-expansion-panels--tile": props.tile
-          }, themeClasses.value, variantClass.value, props.class],
-          "style": props.style
-        }, slots));
-        return {};
-      }
-    });
     const makeVExpansionPanelTextProps = propsFactory({
       ...makeComponentProps(),
       ...makeLazyProps()
@@ -49346,6 +50748,7 @@ Reason: ${error2}`);
         default: "$collapse"
       },
       hideActions: Boolean,
+      focusable: Boolean,
       static: Boolean,
       ripple: {
         type: [Boolean, Object],
@@ -49383,6 +50786,7 @@ Reason: ${error2}`);
           return withDirectives(createVNode("button", {
             "class": ["v-expansion-panel-title", {
               "v-expansion-panel-title--active": expansionPanel.isSelected.value,
+              "v-expansion-panel-title--focusable": props.focusable,
               "v-expansion-panel-title--static": props.static
             }, backgroundColorClasses.value, props.class],
             "style": [backgroundColorStyles.value, props.style],
@@ -49406,13 +50810,12 @@ Reason: ${error2}`);
       title: String,
       text: String,
       bgColor: String,
-      ...makeComponentProps(),
       ...makeElevationProps(),
       ...makeGroupItemProps(),
-      ...makeLazyProps(),
       ...makeRoundedProps(),
       ...makeTagProps(),
-      ...makeVExpansionPanelTitleProps()
+      ...makeVExpansionPanelTitleProps(),
+      ...makeVExpansionPanelTextProps()
     }, "VExpansionPanel");
     const VExpansionPanel = genericComponent()({
       name: "VExpansionPanel",
@@ -49450,17 +50853,11 @@ Reason: ${error2}`);
           return !groupItem.isSelected.value && selectedIndices.value.some((selectedIndex) => selectedIndex - index === -1);
         });
         provide(VExpansionPanelSymbol, groupItem);
-        provideDefaults({
-          VExpansionPanelText: {
-            eager: toRef(props, "eager")
-          },
-          VExpansionPanelTitle: {
-            readonly: toRef(props, "readonly")
-          }
-        });
         useRender(() => {
           const hasText = !!(slots.text || props.text);
           const hasTitle = !!(slots.title || props.title);
+          const expansionPanelTitleProps = VExpansionPanelTitle.filterProps(props);
+          const expansionPanelTextProps = VExpansionPanelText.filterProps(props);
           return createVNode(props.tag, {
             "class": ["v-expansion-panel", {
               "v-expansion-panel--active": groupItem.isSelected.value,
@@ -49474,23 +50871,72 @@ Reason: ${error2}`);
               var _a2;
               return [createVNode("div", {
                 "class": ["v-expansion-panel__shadow", ...elevationClasses.value]
-              }, null), hasTitle && createVNode(VExpansionPanelTitle, {
-                "key": "title",
-                "collapseIcon": props.collapseIcon,
-                "color": props.color,
-                "expandIcon": props.expandIcon,
-                "hideActions": props.hideActions,
-                "ripple": props.ripple
-              }, {
+              }, null), hasTitle && createVNode(VExpansionPanelTitle, mergeProps({
+                "key": "title"
+              }, expansionPanelTitleProps), {
                 default: () => [slots.title ? slots.title() : props.title]
-              }), hasText && createVNode(VExpansionPanelText, {
+              }), hasText && createVNode(VExpansionPanelText, mergeProps({
                 "key": "text"
-              }, {
+              }, expansionPanelTextProps), {
                 default: () => [slots.text ? slots.text() : props.text]
               }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots)];
             }
           });
         });
+        return {};
+      }
+    });
+    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
+    const allowedVariants = ["default", "accordion", "inset", "popout"];
+    const makeVExpansionPanelsProps = propsFactory({
+      flat: Boolean,
+      ...makeGroupProps(),
+      ...makeVExpansionPanelProps(),
+      ...makeThemeProps(),
+      variant: {
+        type: String,
+        default: "default",
+        validator: (v) => allowedVariants.includes(v)
+      }
+    }, "VExpansionPanels");
+    const VExpansionPanels = genericComponent()({
+      name: "VExpansionPanels",
+      props: makeVExpansionPanelsProps(),
+      emits: {
+        "update:modelValue": (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useGroup(props, VExpansionPanelSymbol);
+        const {
+          themeClasses
+        } = provideTheme(props);
+        const variantClass = computed(() => props.variant && `v-expansion-panels--variant-${props.variant}`);
+        provideDefaults({
+          VExpansionPanel: {
+            bgColor: toRef(props, "bgColor"),
+            collapseIcon: toRef(props, "collapseIcon"),
+            color: toRef(props, "color"),
+            eager: toRef(props, "eager"),
+            elevation: toRef(props, "elevation"),
+            expandIcon: toRef(props, "expandIcon"),
+            focusable: toRef(props, "focusable"),
+            hideActions: toRef(props, "hideActions"),
+            readonly: toRef(props, "readonly"),
+            ripple: toRef(props, "ripple"),
+            rounded: toRef(props, "rounded"),
+            static: toRef(props, "static")
+          }
+        });
+        useRender(() => createVNode(props.tag, {
+          "class": ["v-expansion-panels", {
+            "v-expansion-panels--flat": props.flat,
+            "v-expansion-panels--tile": props.tile
+          }, themeClasses.value, variantClass.value, props.class],
+          "style": props.style
+        }, slots));
         return {};
       }
     });
@@ -49537,7 +50983,7 @@ Reason: ${error2}`);
                           "open-delay": "500"
                         }, {
                           activator: withCtx(({ props }) => [
-                            createVNode(VListItem, mergeProps(props, {
+                            createVNode(VListItem, mergeProps({ ref_for: true }, props, {
                               title: module2.type,
                               onClick: withModifiers(($event) => _ctx.add_module_to_config(module2.type), ["stop"]),
                               "data-cy": "module-list-item"
@@ -49588,7 +51034,10 @@ Reason: ${error2}`);
                           "open-delay": "500"
                         }, {
                           activator: withCtx(({ props }) => [
-                            createVNode(VListItem, mergeProps({ title: config2 }, props, {
+                            createVNode(VListItem, mergeProps({
+                              title: config2,
+                              ref_for: true
+                            }, props, {
                               onClick: ($event) => _ctx.load_config_if_empty(config2),
                               "data-cy": "config-list-item"
                             }), {
@@ -50416,7 +51865,7 @@ Reason: ${error2}`);
     jsonSchema201909.default = addMetaSchema2019;
     (function(module2, exports2) {
       Object.defineProperty(exports2, "__esModule", { value: true });
-      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = void 0;
+      exports2.MissingRefError = exports2.ValidationError = exports2.CodeGen = exports2.Name = exports2.nil = exports2.stringify = exports2.str = exports2._ = exports2.KeywordCxt = exports2.Ajv2019 = void 0;
       const core_12 = core$3;
       const draft7_1 = draft7;
       const dynamic_1 = dynamic$1;
@@ -50455,7 +51904,9 @@ Reason: ${error2}`);
           return this.opts.defaultMeta = super.defaultMeta() || (this.getSchema(META_SCHEMA_ID) ? META_SCHEMA_ID : void 0);
         }
       }
+      exports2.Ajv2019 = Ajv2019;
       module2.exports = exports2 = Ajv2019;
+      module2.exports.Ajv2019 = Ajv2019;
       Object.defineProperty(exports2, "__esModule", { value: true });
       exports2.default = Ajv2019;
       var validate_12 = validate;
@@ -63633,7 +65084,7 @@ Reason: ${error2}`);
       const inputLength = input.length;
       let i2 = 0;
       let n = initialN;
-      let bias2 = initialBias;
+      let bias = initialBias;
       let basic = input.lastIndexOf(delimiter);
       if (basic < 0) {
         basic = 0;
@@ -63658,7 +65109,7 @@ Reason: ${error2}`);
             error("overflow");
           }
           i2 += digit * w;
-          const t = k <= bias2 ? tMin : k >= bias2 + tMax ? tMax : k - bias2;
+          const t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
           if (digit < t) {
             break;
           }
@@ -63669,7 +65120,7 @@ Reason: ${error2}`);
           w *= baseMinusT;
         }
         const out = output.length + 1;
-        bias2 = adapt(i2 - oldi, out, oldi == 0);
+        bias = adapt(i2 - oldi, out, oldi == 0);
         if (floor(i2 / out) > maxInt - n) {
           error("overflow");
         }
@@ -63685,7 +65136,7 @@ Reason: ${error2}`);
       const inputLength = input.length;
       let n = initialN;
       let delta2 = 0;
-      let bias2 = initialBias;
+      let bias = initialBias;
       for (const currentValue of input) {
         if (currentValue < 128) {
           output.push(stringFromCharCode(currentValue));
@@ -63716,7 +65167,7 @@ Reason: ${error2}`);
           if (currentValue === n) {
             let q = delta2;
             for (let k = base; ; k += base) {
-              const t = k <= bias2 ? tMin : k >= bias2 + tMax ? tMax : k - bias2;
+              const t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
               if (q < t) {
                 break;
               }
@@ -63728,7 +65179,7 @@ Reason: ${error2}`);
               q = floor(qMinusT / baseMinusT);
             }
             output.push(stringFromCharCode(digitToBasic(q, 0)));
-            bias2 = adapt(delta2, handledCPCountPlusOne, handledCPCount === basicLength);
+            bias = adapt(delta2, handledCPCountPlusOne, handledCPCount === basicLength);
             delta2 = 0;
             ++handledCPCount;
           }
@@ -64116,8802 +65567,6 @@ Reason: ${error2}`);
     var lib = MarkdownIt$1;
     var markdownIt = lib;
     const MarkdownIt = /* @__PURE__ */ getDefaultExportFromCjs(markdownIt);
-    const en = {
-      errorOneOf: "chose one",
-      errorRequired: "required information",
-      addItem: "Add item",
-      delete: "Delete",
-      edit: "Edit",
-      duplicate: "Duplicate",
-      sort: "Sort",
-      up: "Move up",
-      down: "Move down",
-      showHelp: "Show a help message",
-      mdeLink1: "[Link title",
-      mdeLink2: "](link url)",
-      mdeImg1: "![](",
-      mdeImg2: "image url)",
-      mdeTable1: "",
-      mdeTable2: "\n\n| Column 1 | Column 2 | ColoColumnnne 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n",
-      bold: "Bold",
-      italic: "Italic",
-      heading: "Title",
-      quote: "Quote",
-      unorderedList: "Unordered list",
-      orderedList: "Ordered list",
-      createLink: "Create a link",
-      insertImage: "Insert an image",
-      createTable: "Create a table",
-      preview: "Aperçu du rendu",
-      mdeGuide: "Documentation de la syntaxe",
-      undo: "Undo",
-      redo: "Redo"
-    };
-    const fr = {
-      errorOneOf: "choisissez une valeur",
-      errorRequired: "information obligatoire",
-      addItem: "Ajouter un élément",
-      delete: "Supprimer",
-      edit: "Éditer",
-      duplicate: "Dupliquer",
-      sort: "Trier",
-      up: "Décaler vers le haut",
-      down: "Décaler vers le bas",
-      showHelp: "Afficher un message d'aide",
-      mdeLink1: "[titre du lien",
-      mdeLink2: "](adresse du lien)",
-      mdeImg1: "![](",
-      mdeImg2: "adresse de l'image)",
-      mdeTable1: "",
-      mdeTable2: "\n\n| Colonne 1 | Colonne 2 | Colonne 3 |\n| -------- | -------- | -------- |\n| Texte     | Texte     | Texte     |\n\n",
-      bold: "Gras",
-      italic: "Italique",
-      heading: "Titre",
-      quote: "Citation",
-      unorderedList: "Liste à puce",
-      orderedList: "Liste numérotée",
-      createLink: "Créer un lien",
-      insertImage: "Insérer une image",
-      createTable: "Créer un tableau",
-      preview: "Preview",
-      mdeGuide: "Syntax documentation",
-      undo: "Défaire",
-      redo: "Refaire"
-    };
-    const i18n = {
-      en,
-      fr
-    };
-    const schema26 = { "$id": "https://json-layout.github.io/layout-keyword", "title": "layout keyword", "errorMessage": { "anyOf": "layout keyword must be a string with a valid component name, or a more complete object definition, or an array of children, or a switch structure" }, "anyOf": [{ "$ref": "#/$defs/comp-name" }, { "$ref": "#/$defs/partial-children" }, { "$ref": "#/$defs/partial-comp-object" }, { "$ref": "#/$defs/partial-switch" }], "$defs": { "partial-switch": { "type": "object", "required": ["switch"], "additionalProperties": false, "properties": { "switch": { "type": "array", "items": { "$ref": "#/$defs/partial-comp-object" } } } }, "partial-comp-object": { "title": "partial comp object", "type": "object", "properties": { "comp": { "$ref": "#/$defs/comp-name" }, "help": { "type": "string" }, "children": { "$ref": "#/$defs/partial-children" }, "label": { "type": "string" }, "title": { "type": ["string", "null"] }, "subtitle": { "type": ["string", "null"] }, "step": { "type": "number" }, "if": { "$ref": "#/$defs/partial-expression" }, "items": { "type": "array", "items": { "$ref": "#/$defs/partial-select-item" } }, "getItems": { "$ref": "#/$defs/partial-get-items" }, "listEditMode": { "type": "string", "enum": ["inline", "inline-single", "menu", "dialog"] }, "listActions": { "type": "array", "items": { "type": "string", "enum": ["add", "edit", "delete", "sort", "duplicate"] } }, "cols": { "$ref": "#/$defs/partial-cols" }, "props": { "type": "object" }, "getProps": { "$ref": "#/$defs/partial-expression" }, "slots": { "type": "object", "patternProperties": { ".*": { "$ref": "#/$defs/partial-slot" } } }, "options": { "type": "object" }, "getOptions": { "$ref": "#/$defs/partial-expression" }, "messages": { "type": "object" }, "defaultData": {}, "getDefaultData": { "$ref": "#/$defs/partial-expression" }, "constData": {}, "getConstData": { "$ref": "#/$defs/partial-expression" }, "transformData": { "$ref": "#/$defs/partial-expression" }, "autofocus": { "type": "boolean" } } }, "comp-name": { "title": "component name", "type": "string", "errorMessage": { "enum": "component name is unknown" }, "enum": ["none", "text-field", "number-field", "textarea", "markdown", "checkbox", "switch", "slider", "date-picker", "date-time-picker", "time-picker", "color-picker", "combobox", "number-combobox", "section", "list", "select", "autocomplete", "tabs", "vertical-tabs", "expansion-panels", "stepper", "one-of-select", "file-input"] }, "partial-child": { "type": "object", "unevaluatedProperties": false, "properties": { "key": { "type": ["string", "integer"] }, "cols": { "$ref": "#/$defs/partial-cols" } }, "allOf": [{ "$ref": "#/$defs/partial-comp-object" }, {}] }, "partial-children": { "type": "array", "items": { "oneOf": [{ "type": "string" }, { "$ref": "#/$defs/partial-child" }] } }, "partial-expression": { "oneOf": [{ "type": "string" }, { "$ref": "#/$defs/partial-expression-obj" }] }, "partial-expression-obj": { "type": "object", "required": ["expr"], "properties": { "type": { "type": "string", "enum": ["js-fn", "js-eval", "js-tpl"] }, "expr": { "type": "string" } } }, "partial-select-item": { "oneOf": [{ "type": "string" }, { "type": "object", "properties": { "key": { "type": "string" }, "title": { "type": "string" }, "value": {} } }] }, "partial-get-items": { "oneOf": [{ "type": "string" }, { "$ref": "#/$defs/partial-get-items-obj" }] }, "partial-get-items-obj": { "type": "object", "allOf": [{ "properties": { "itemTitle": { "$ref": "#/$defs/partial-expression" }, "itemKey": { "$ref": "#/$defs/partial-expression" }, "itemValue": { "$ref": "#/$defs/partial-expression" }, "itemIcon": { "$ref": "#/$defs/partial-expression" }, "itemsResults": { "$ref": "#/$defs/partial-expression" } } }, { "anyOf": [{ "type": "object" }, { "$ref": "#/$defs/partial-expression-obj" }, { "$ref": "#/$defs/partial-get-items-fetch" }] }] }, "partial-get-items-fetch": { "type": "object", "required": ["url"], "properties": { "url": { "$ref": "#/$defs/partial-expression" } } }, "partial-cols": { "oneOf": [{ "$ref": "#/$defs/partial-cols-number" }, { "$ref": "#/$defs/partial-cols-obj" }] }, "partial-cols-obj": { "type": "object", "additionalProperties": false, "properties": { "xs": { "$ref": "#/$defs/partial-cols-number" }, "sm": { "$ref": "#/$defs/partial-cols-number" }, "md": { "$ref": "#/$defs/partial-cols-number" }, "lg": { "$ref": "#/$defs/partial-cols-number" }, "xl": { "$ref": "#/$defs/partial-cols-number" }, "xxl": { "$ref": "#/$defs/partial-cols-number" } } }, "partial-cols-number": { "type": "integer", "minimum": 0, "maximum": 12 }, "partial-slot": { "oneOf": [{ "type": "string" }, { "$ref": "#/$defs/partial-slot-text" }, { "$ref": "#/$defs/partial-slot-markdown" }, { "$ref": "#/$defs/partial-slot-name" }] }, "partial-slot-text": { "type": "object", "additionalProperties": false, "required": ["text"], "properties": { "text": { "type": "string" } } }, "partial-slot-markdown": { "type": "object", "additionalProperties": false, "required": ["markdown"], "properties": { "markdown": { "type": "string" } } }, "partial-slot-name": { "type": "object", "additionalProperties": false, "required": ["name"], "properties": { "name": { "type": "string" } } } } };
-    const schema27 = { "title": "component name", "type": "string", "errorMessage": { "enum": "component name is unknown" }, "enum": ["none", "text-field", "number-field", "textarea", "markdown", "checkbox", "switch", "slider", "date-picker", "date-time-picker", "time-picker", "color-picker", "combobox", "number-combobox", "section", "list", "select", "autocomplete", "tabs", "vertical-tabs", "expansion-panels", "stepper", "one-of-select", "file-input"] };
-    const schema29 = { "type": "object", "unevaluatedProperties": false, "properties": { "key": { "type": ["string", "integer"] }, "cols": { "$ref": "#/$defs/partial-cols" } }, "allOf": [{ "$ref": "#/$defs/partial-comp-object" }, {}] };
-    const schema30 = { "title": "partial comp object", "type": "object", "properties": { "comp": { "$ref": "#/$defs/comp-name" }, "help": { "type": "string" }, "children": { "$ref": "#/$defs/partial-children" }, "label": { "type": "string" }, "title": { "type": ["string", "null"] }, "subtitle": { "type": ["string", "null"] }, "step": { "type": "number" }, "if": { "$ref": "#/$defs/partial-expression" }, "items": { "type": "array", "items": { "$ref": "#/$defs/partial-select-item" } }, "getItems": { "$ref": "#/$defs/partial-get-items" }, "listEditMode": { "type": "string", "enum": ["inline", "inline-single", "menu", "dialog"] }, "listActions": { "type": "array", "items": { "type": "string", "enum": ["add", "edit", "delete", "sort", "duplicate"] } }, "cols": { "$ref": "#/$defs/partial-cols" }, "props": { "type": "object" }, "getProps": { "$ref": "#/$defs/partial-expression" }, "slots": { "type": "object", "patternProperties": { ".*": { "$ref": "#/$defs/partial-slot" } } }, "options": { "type": "object" }, "getOptions": { "$ref": "#/$defs/partial-expression" }, "messages": { "type": "object" }, "defaultData": {}, "getDefaultData": { "$ref": "#/$defs/partial-expression" }, "constData": {}, "getConstData": { "$ref": "#/$defs/partial-expression" }, "transformData": { "$ref": "#/$defs/partial-expression" }, "autofocus": { "type": "boolean" } } };
-    const wrapper0 = { validate: validate23 };
-    const schema33 = { "type": "object", "required": ["expr"], "properties": { "type": { "type": "string", "enum": ["js-fn", "js-eval", "js-tpl"] }, "expr": { "type": "string" } } };
-    function validate26(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate26.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      const _errs0 = errors2;
-      let valid0 = false;
-      let passing0 = null;
-      const _errs1 = errors2;
-      if (typeof data !== "string") {
-        const err0 = { instancePath, schemaPath: "#/oneOf/0/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      var _valid0 = _errs1 === errors2;
-      if (_valid0) {
-        valid0 = true;
-        passing0 = 0;
-      }
-      const _errs3 = errors2;
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.expr === void 0) {
-          const err1 = { instancePath, schemaPath: "#/$defs/partial-expression-obj/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.type !== void 0) {
-          let data0 = data.type;
-          if (typeof data0 !== "string") {
-            const err2 = { instancePath: instancePath + "/type", schemaPath: "#/$defs/partial-expression-obj/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-          if (!(data0 === "js-fn" || data0 === "js-eval" || data0 === "js-tpl")) {
-            const err3 = { instancePath: instancePath + "/type", schemaPath: "#/$defs/partial-expression-obj/properties/type/enum", keyword: "enum", params: { allowedValues: schema33.properties.type.enum }, message: "must be equal to one of the allowed values" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.expr !== void 0) {
-          if (typeof data.expr !== "string") {
-            const err4 = { instancePath: instancePath + "/expr", schemaPath: "#/$defs/partial-expression-obj/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err5 = { instancePath, schemaPath: "#/$defs/partial-expression-obj/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err5];
-        } else {
-          vErrors.push(err5);
-        }
-        errors2++;
-      }
-      var _valid0 = _errs3 === errors2;
-      if (_valid0 && valid0) {
-        valid0 = false;
-        passing0 = [passing0, 1];
-      } else {
-        if (_valid0) {
-          valid0 = true;
-          passing0 = 1;
-          var props0 = {};
-          props0.type = true;
-          props0.expr = true;
-        }
-      }
-      if (!valid0) {
-        const err6 = { instancePath, schemaPath: "#/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-        if (vErrors === null) {
-          vErrors = [err6];
-        } else {
-          vErrors.push(err6);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs0;
-        if (vErrors !== null) {
-          if (_errs0) {
-            vErrors.length = _errs0;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      validate26.errors = vErrors;
-      evaluated0.props = props0;
-      return errors2 === 0;
-    }
-    validate26.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    function validate35(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate35.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.url === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "url" }, message: "must have required property 'url'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.url !== void 0) {
-          if (!validate26(data.url, { instancePath: instancePath + "/url", parentData: data, parentDataProperty: "url", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-      } else {
-        const err1 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err1];
-        } else {
-          vErrors.push(err1);
-        }
-        errors2++;
-      }
-      validate35.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate35.evaluated = { "props": { "url": true }, "dynamicProps": false, "dynamicItems": false };
-    function validate29(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate29.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (!(data && typeof data == "object" && !Array.isArray(data))) {
-        const err0 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.itemTitle !== void 0) {
-          if (!validate26(data.itemTitle, { instancePath: instancePath + "/itemTitle", parentData: data, parentDataProperty: "itemTitle", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.itemKey !== void 0) {
-          if (!validate26(data.itemKey, { instancePath: instancePath + "/itemKey", parentData: data, parentDataProperty: "itemKey", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.itemValue !== void 0) {
-          if (!validate26(data.itemValue, { instancePath: instancePath + "/itemValue", parentData: data, parentDataProperty: "itemValue", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.itemIcon !== void 0) {
-          if (!validate26(data.itemIcon, { instancePath: instancePath + "/itemIcon", parentData: data, parentDataProperty: "itemIcon", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.itemsResults !== void 0) {
-          if (!validate26(data.itemsResults, { instancePath: instancePath + "/itemsResults", parentData: data, parentDataProperty: "itemsResults", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-      }
-      const _errs8 = errors2;
-      let valid2 = false;
-      const _errs9 = errors2;
-      if (!(data && typeof data == "object" && !Array.isArray(data))) {
-        const err1 = { instancePath, schemaPath: "#/allOf/1/anyOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err1];
-        } else {
-          vErrors.push(err1);
-        }
-        errors2++;
-      }
-      var _valid0 = _errs9 === errors2;
-      valid2 = valid2 || _valid0;
-      const _errs11 = errors2;
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.expr === void 0) {
-          const err2 = { instancePath, schemaPath: "#/$defs/partial-expression-obj/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-          if (vErrors === null) {
-            vErrors = [err2];
-          } else {
-            vErrors.push(err2);
-          }
-          errors2++;
-        }
-        if (data.type !== void 0) {
-          let data5 = data.type;
-          if (typeof data5 !== "string") {
-            const err3 = { instancePath: instancePath + "/type", schemaPath: "#/$defs/partial-expression-obj/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-          if (!(data5 === "js-fn" || data5 === "js-eval" || data5 === "js-tpl")) {
-            const err4 = { instancePath: instancePath + "/type", schemaPath: "#/$defs/partial-expression-obj/properties/type/enum", keyword: "enum", params: { allowedValues: schema33.properties.type.enum }, message: "must be equal to one of the allowed values" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.expr !== void 0) {
-          if (typeof data.expr !== "string") {
-            const err5 = { instancePath: instancePath + "/expr", schemaPath: "#/$defs/partial-expression-obj/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err6 = { instancePath, schemaPath: "#/$defs/partial-expression-obj/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err6];
-        } else {
-          vErrors.push(err6);
-        }
-        errors2++;
-      }
-      var _valid0 = _errs11 === errors2;
-      valid2 = valid2 || _valid0;
-      if (_valid0) {
-        var props5 = {};
-        props5.type = true;
-        props5.expr = true;
-      }
-      const _errs18 = errors2;
-      if (!validate35(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate35.errors : vErrors.concat(validate35.errors);
-        errors2 = vErrors.length;
-      }
-      var _valid0 = _errs18 === errors2;
-      valid2 = valid2 || _valid0;
-      if (_valid0) {
-        if (props5 !== true) {
-          props5 = props5 || {};
-          props5.url = true;
-        }
-      }
-      if (!valid2) {
-        const err7 = { instancePath, schemaPath: "#/allOf/1/anyOf", keyword: "anyOf", params: {}, message: "must match a schema in anyOf" };
-        if (vErrors === null) {
-          vErrors = [err7];
-        } else {
-          vErrors.push(err7);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs8;
-        if (vErrors !== null) {
-          if (_errs8) {
-            vErrors.length = _errs8;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      if (props5 !== true) {
-        props5 = props5 || {};
-        props5.itemTitle = true;
-        props5.itemKey = true;
-        props5.itemValue = true;
-        props5.itemIcon = true;
-        props5.itemsResults = true;
-      }
-      validate29.errors = vErrors;
-      evaluated0.props = props5;
-      return errors2 === 0;
-    }
-    validate29.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    function validate28(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate28.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      const _errs0 = errors2;
-      let valid0 = false;
-      let passing0 = null;
-      const _errs1 = errors2;
-      if (typeof data !== "string") {
-        const err0 = { instancePath, schemaPath: "#/oneOf/0/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      var _valid0 = _errs1 === errors2;
-      if (_valid0) {
-        valid0 = true;
-        passing0 = 0;
-      }
-      const _errs3 = errors2;
-      if (!validate29(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate29.errors : vErrors.concat(validate29.errors);
-        errors2 = vErrors.length;
-      } else {
-        var props0 = validate29.evaluated.props;
-      }
-      var _valid0 = _errs3 === errors2;
-      if (_valid0 && valid0) {
-        valid0 = false;
-        passing0 = [passing0, 1];
-      } else {
-        if (_valid0) {
-          valid0 = true;
-          passing0 = 1;
-        }
-      }
-      if (!valid0) {
-        const err1 = { instancePath, schemaPath: "#/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-        if (vErrors === null) {
-          vErrors = [err1];
-        } else {
-          vErrors.push(err1);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs0;
-        if (vErrors !== null) {
-          if (_errs0) {
-            vErrors.length = _errs0;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      validate28.errors = vErrors;
-      evaluated0.props = props0;
-      return errors2 === 0;
-    }
-    validate28.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    function validate41(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate41.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        for (const key0 in data) {
-          if (!(key0 === "xs" || key0 === "sm" || key0 === "md" || key0 === "lg" || key0 === "xl" || key0 === "xxl")) {
-            const err0 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
-            if (vErrors === null) {
-              vErrors = [err0];
-            } else {
-              vErrors.push(err0);
-            }
-            errors2++;
-          }
-        }
-        if (data.xs !== void 0) {
-          let data0 = data.xs;
-          if (!(typeof data0 == "number" && (!(data0 % 1) && !isNaN(data0)) && isFinite(data0))) {
-            const err1 = { instancePath: instancePath + "/xs", schemaPath: "#/$defs/partial-cols-number/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err1];
-            } else {
-              vErrors.push(err1);
-            }
-            errors2++;
-          }
-          if (typeof data0 == "number" && isFinite(data0)) {
-            if (data0 > 12 || isNaN(data0)) {
-              const err2 = { instancePath: instancePath + "/xs", schemaPath: "#/$defs/partial-cols-number/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err2];
-              } else {
-                vErrors.push(err2);
-              }
-              errors2++;
-            }
-            if (data0 < 0 || isNaN(data0)) {
-              const err3 = { instancePath: instancePath + "/xs", schemaPath: "#/$defs/partial-cols-number/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err3];
-              } else {
-                vErrors.push(err3);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.sm !== void 0) {
-          let data1 = data.sm;
-          if (!(typeof data1 == "number" && (!(data1 % 1) && !isNaN(data1)) && isFinite(data1))) {
-            const err4 = { instancePath: instancePath + "/sm", schemaPath: "#/$defs/partial-cols-number/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-          if (typeof data1 == "number" && isFinite(data1)) {
-            if (data1 > 12 || isNaN(data1)) {
-              const err5 = { instancePath: instancePath + "/sm", schemaPath: "#/$defs/partial-cols-number/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err5];
-              } else {
-                vErrors.push(err5);
-              }
-              errors2++;
-            }
-            if (data1 < 0 || isNaN(data1)) {
-              const err6 = { instancePath: instancePath + "/sm", schemaPath: "#/$defs/partial-cols-number/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err6];
-              } else {
-                vErrors.push(err6);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.md !== void 0) {
-          let data2 = data.md;
-          if (!(typeof data2 == "number" && (!(data2 % 1) && !isNaN(data2)) && isFinite(data2))) {
-            const err7 = { instancePath: instancePath + "/md", schemaPath: "#/$defs/partial-cols-number/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err7];
-            } else {
-              vErrors.push(err7);
-            }
-            errors2++;
-          }
-          if (typeof data2 == "number" && isFinite(data2)) {
-            if (data2 > 12 || isNaN(data2)) {
-              const err8 = { instancePath: instancePath + "/md", schemaPath: "#/$defs/partial-cols-number/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err8];
-              } else {
-                vErrors.push(err8);
-              }
-              errors2++;
-            }
-            if (data2 < 0 || isNaN(data2)) {
-              const err9 = { instancePath: instancePath + "/md", schemaPath: "#/$defs/partial-cols-number/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err9];
-              } else {
-                vErrors.push(err9);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.lg !== void 0) {
-          let data3 = data.lg;
-          if (!(typeof data3 == "number" && (!(data3 % 1) && !isNaN(data3)) && isFinite(data3))) {
-            const err10 = { instancePath: instancePath + "/lg", schemaPath: "#/$defs/partial-cols-number/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err10];
-            } else {
-              vErrors.push(err10);
-            }
-            errors2++;
-          }
-          if (typeof data3 == "number" && isFinite(data3)) {
-            if (data3 > 12 || isNaN(data3)) {
-              const err11 = { instancePath: instancePath + "/lg", schemaPath: "#/$defs/partial-cols-number/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err11];
-              } else {
-                vErrors.push(err11);
-              }
-              errors2++;
-            }
-            if (data3 < 0 || isNaN(data3)) {
-              const err12 = { instancePath: instancePath + "/lg", schemaPath: "#/$defs/partial-cols-number/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err12];
-              } else {
-                vErrors.push(err12);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.xl !== void 0) {
-          let data4 = data.xl;
-          if (!(typeof data4 == "number" && (!(data4 % 1) && !isNaN(data4)) && isFinite(data4))) {
-            const err13 = { instancePath: instancePath + "/xl", schemaPath: "#/$defs/partial-cols-number/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err13];
-            } else {
-              vErrors.push(err13);
-            }
-            errors2++;
-          }
-          if (typeof data4 == "number" && isFinite(data4)) {
-            if (data4 > 12 || isNaN(data4)) {
-              const err14 = { instancePath: instancePath + "/xl", schemaPath: "#/$defs/partial-cols-number/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err14];
-              } else {
-                vErrors.push(err14);
-              }
-              errors2++;
-            }
-            if (data4 < 0 || isNaN(data4)) {
-              const err15 = { instancePath: instancePath + "/xl", schemaPath: "#/$defs/partial-cols-number/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err15];
-              } else {
-                vErrors.push(err15);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.xxl !== void 0) {
-          let data5 = data.xxl;
-          if (!(typeof data5 == "number" && (!(data5 % 1) && !isNaN(data5)) && isFinite(data5))) {
-            const err16 = { instancePath: instancePath + "/xxl", schemaPath: "#/$defs/partial-cols-number/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err16];
-            } else {
-              vErrors.push(err16);
-            }
-            errors2++;
-          }
-          if (typeof data5 == "number" && isFinite(data5)) {
-            if (data5 > 12 || isNaN(data5)) {
-              const err17 = { instancePath: instancePath + "/xxl", schemaPath: "#/$defs/partial-cols-number/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err17];
-              } else {
-                vErrors.push(err17);
-              }
-              errors2++;
-            }
-            if (data5 < 0 || isNaN(data5)) {
-              const err18 = { instancePath: instancePath + "/xxl", schemaPath: "#/$defs/partial-cols-number/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err18];
-              } else {
-                vErrors.push(err18);
-              }
-              errors2++;
-            }
-          }
-        }
-      } else {
-        const err19 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err19];
-        } else {
-          vErrors.push(err19);
-        }
-        errors2++;
-      }
-      validate41.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate41.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-    function validate40(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate40.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      const _errs0 = errors2;
-      let valid0 = false;
-      let passing0 = null;
-      const _errs1 = errors2;
-      if (!(typeof data == "number" && (!(data % 1) && !isNaN(data)) && isFinite(data))) {
-        const err0 = { instancePath, schemaPath: "#/$defs/partial-cols-number/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      if (typeof data == "number" && isFinite(data)) {
-        if (data > 12 || isNaN(data)) {
-          const err1 = { instancePath, schemaPath: "#/$defs/partial-cols-number/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data < 0 || isNaN(data)) {
-          const err2 = { instancePath, schemaPath: "#/$defs/partial-cols-number/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-          if (vErrors === null) {
-            vErrors = [err2];
-          } else {
-            vErrors.push(err2);
-          }
-          errors2++;
-        }
-      }
-      var _valid0 = _errs1 === errors2;
-      if (_valid0) {
-        valid0 = true;
-        passing0 = 0;
-      }
-      const _errs4 = errors2;
-      if (!validate41(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate41.errors : vErrors.concat(validate41.errors);
-        errors2 = vErrors.length;
-      }
-      var _valid0 = _errs4 === errors2;
-      if (_valid0 && valid0) {
-        valid0 = false;
-        passing0 = [passing0, 1];
-      } else {
-        if (_valid0) {
-          valid0 = true;
-          passing0 = 1;
-          var props0 = true;
-        }
-      }
-      if (!valid0) {
-        const err3 = { instancePath, schemaPath: "#/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-        if (vErrors === null) {
-          vErrors = [err3];
-        } else {
-          vErrors.push(err3);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs0;
-        if (vErrors !== null) {
-          if (_errs0) {
-            vErrors.length = _errs0;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      validate40.errors = vErrors;
-      evaluated0.props = props0;
-      return errors2 === 0;
-    }
-    validate40.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    function validate45(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate45.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      const _errs0 = errors2;
-      let valid0 = false;
-      let passing0 = null;
-      const _errs1 = errors2;
-      if (typeof data !== "string") {
-        const err0 = { instancePath, schemaPath: "#/oneOf/0/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      var _valid0 = _errs1 === errors2;
-      if (_valid0) {
-        valid0 = true;
-        passing0 = 0;
-      }
-      const _errs3 = errors2;
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.text === void 0) {
-          const err1 = { instancePath, schemaPath: "#/$defs/partial-slot-text/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        for (const key0 in data) {
-          if (!(key0 === "text")) {
-            const err2 = { instancePath, schemaPath: "#/$defs/partial-slot-text/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.text !== void 0) {
-          if (typeof data.text !== "string") {
-            const err3 = { instancePath: instancePath + "/text", schemaPath: "#/$defs/partial-slot-text/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err4 = { instancePath, schemaPath: "#/$defs/partial-slot-text/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err4];
-        } else {
-          vErrors.push(err4);
-        }
-        errors2++;
-      }
-      var _valid0 = _errs3 === errors2;
-      if (_valid0 && valid0) {
-        valid0 = false;
-        passing0 = [passing0, 1];
-      } else {
-        if (_valid0) {
-          valid0 = true;
-          passing0 = 1;
-          var props0 = true;
-        }
-        const _errs9 = errors2;
-        if (data && typeof data == "object" && !Array.isArray(data)) {
-          if (data.markdown === void 0) {
-            const err5 = { instancePath, schemaPath: "#/$defs/partial-slot-markdown/required", keyword: "required", params: { missingProperty: "markdown" }, message: "must have required property 'markdown'" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-          for (const key1 in data) {
-            if (!(key1 === "markdown")) {
-              const err6 = { instancePath, schemaPath: "#/$defs/partial-slot-markdown/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
-              if (vErrors === null) {
-                vErrors = [err6];
-              } else {
-                vErrors.push(err6);
-              }
-              errors2++;
-            }
-          }
-          if (data.markdown !== void 0) {
-            if (typeof data.markdown !== "string") {
-              const err7 = { instancePath: instancePath + "/markdown", schemaPath: "#/$defs/partial-slot-markdown/properties/markdown/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-              if (vErrors === null) {
-                vErrors = [err7];
-              } else {
-                vErrors.push(err7);
-              }
-              errors2++;
-            }
-          }
-        } else {
-          const err8 = { instancePath, schemaPath: "#/$defs/partial-slot-markdown/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-          if (vErrors === null) {
-            vErrors = [err8];
-          } else {
-            vErrors.push(err8);
-          }
-          errors2++;
-        }
-        var _valid0 = _errs9 === errors2;
-        if (_valid0 && valid0) {
-          valid0 = false;
-          passing0 = [passing0, 2];
-        } else {
-          if (_valid0) {
-            valid0 = true;
-            passing0 = 2;
-            if (props0 !== true) {
-              props0 = true;
-            }
-          }
-          const _errs15 = errors2;
-          if (data && typeof data == "object" && !Array.isArray(data)) {
-            if (data.name === void 0) {
-              const err9 = { instancePath, schemaPath: "#/$defs/partial-slot-name/required", keyword: "required", params: { missingProperty: "name" }, message: "must have required property 'name'" };
-              if (vErrors === null) {
-                vErrors = [err9];
-              } else {
-                vErrors.push(err9);
-              }
-              errors2++;
-            }
-            for (const key2 in data) {
-              if (!(key2 === "name")) {
-                const err10 = { instancePath, schemaPath: "#/$defs/partial-slot-name/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key2 }, message: "must NOT have additional properties" };
-                if (vErrors === null) {
-                  vErrors = [err10];
-                } else {
-                  vErrors.push(err10);
-                }
-                errors2++;
-              }
-            }
-            if (data.name !== void 0) {
-              if (typeof data.name !== "string") {
-                const err11 = { instancePath: instancePath + "/name", schemaPath: "#/$defs/partial-slot-name/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err11];
-                } else {
-                  vErrors.push(err11);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err12 = { instancePath, schemaPath: "#/$defs/partial-slot-name/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err12];
-            } else {
-              vErrors.push(err12);
-            }
-            errors2++;
-          }
-          var _valid0 = _errs15 === errors2;
-          if (_valid0 && valid0) {
-            valid0 = false;
-            passing0 = [passing0, 3];
-          } else {
-            if (_valid0) {
-              valid0 = true;
-              passing0 = 3;
-              if (props0 !== true) {
-                props0 = true;
-              }
-            }
-          }
-        }
-      }
-      if (!valid0) {
-        const err13 = { instancePath, schemaPath: "#/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-        if (vErrors === null) {
-          vErrors = [err13];
-        } else {
-          vErrors.push(err13);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs0;
-        if (vErrors !== null) {
-          if (_errs0) {
-            vErrors.length = _errs0;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      validate45.errors = vErrors;
-      evaluated0.props = props0;
-      return errors2 === 0;
-    }
-    validate45.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    const pattern2$1 = new RegExp(".*", "u");
-    function validate25(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate25.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp !== void 0) {
-          let data0 = data.comp;
-          if (typeof data0 !== "string") {
-            const err0 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/comp-name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err0];
-            } else {
-              vErrors.push(err0);
-            }
-            errors2++;
-          }
-          if (!(data0 === "none" || data0 === "text-field" || data0 === "number-field" || data0 === "textarea" || data0 === "markdown" || data0 === "checkbox" || data0 === "switch" || data0 === "slider" || data0 === "date-picker" || data0 === "date-time-picker" || data0 === "time-picker" || data0 === "color-picker" || data0 === "combobox" || data0 === "number-combobox" || data0 === "section" || data0 === "list" || data0 === "select" || data0 === "autocomplete" || data0 === "tabs" || data0 === "vertical-tabs" || data0 === "expansion-panels" || data0 === "stepper" || data0 === "one-of-select" || data0 === "file-input")) {
-            const err1 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/comp-name/enum", keyword: "enum", params: { allowedValues: schema27.enum }, message: "must be equal to one of the allowed values" };
-            if (vErrors === null) {
-              vErrors = [err1];
-            } else {
-              vErrors.push(err1);
-            }
-            errors2++;
-          }
-          if (errors2 > 0) {
-            const emErrors0 = { "enum": [] };
-            const templates0 = {};
-            for (const err2 of vErrors) {
-              if (err2.keyword !== "errorMessage" && !err2.emUsed && err2.instancePath === instancePath + "/comp" && err2.keyword in emErrors0 && err2.schemaPath.indexOf("#/$defs/comp-name") === 0 && /^\/[^\/]*$/.test(err2.schemaPath.slice(17))) {
-                emErrors0[err2.keyword].push(err2);
-                err2.emUsed = true;
-              }
-            }
-            for (const key0 in emErrors0) {
-              if (emErrors0[key0].length) {
-                const err3 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/comp-name/errorMessage", keyword: "errorMessage", params: { errors: emErrors0[key0] }, message: key0 in templates0 ? templates0[key0]() : schema27.errorMessage[key0] };
-                if (vErrors === null) {
-                  vErrors = [err3];
-                } else {
-                  vErrors.push(err3);
-                }
-                errors2++;
-              }
-            }
-            const emErrs0 = [];
-            for (const err4 of vErrors) {
-              if (!err4.emUsed) {
-                emErrs0.push(err4);
-              }
-            }
-            vErrors = emErrs0;
-            errors2 = emErrs0.length;
-          }
-        }
-        if (data.help !== void 0) {
-          if (typeof data.help !== "string") {
-            const err5 = { instancePath: instancePath + "/help", schemaPath: "#/properties/help/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-        }
-        if (data.children !== void 0) {
-          if (!wrapper0.validate(data.children, { instancePath: instancePath + "/children", parentData: data, parentDataProperty: "children", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? wrapper0.validate.errors : vErrors.concat(wrapper0.validate.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.label !== void 0) {
-          if (typeof data.label !== "string") {
-            const err6 = { instancePath: instancePath + "/label", schemaPath: "#/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err6];
-            } else {
-              vErrors.push(err6);
-            }
-            errors2++;
-          }
-        }
-        if (data.title !== void 0) {
-          let data4 = data.title;
-          if (typeof data4 !== "string" && data4 !== null) {
-            const err7 = { instancePath: instancePath + "/title", schemaPath: "#/properties/title/type", keyword: "type", params: { type: schema30.properties.title.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err7];
-            } else {
-              vErrors.push(err7);
-            }
-            errors2++;
-          }
-        }
-        if (data.subtitle !== void 0) {
-          let data5 = data.subtitle;
-          if (typeof data5 !== "string" && data5 !== null) {
-            const err8 = { instancePath: instancePath + "/subtitle", schemaPath: "#/properties/subtitle/type", keyword: "type", params: { type: schema30.properties.subtitle.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err8];
-            } else {
-              vErrors.push(err8);
-            }
-            errors2++;
-          }
-        }
-        if (data.step !== void 0) {
-          let data6 = data.step;
-          if (!(typeof data6 == "number" && isFinite(data6))) {
-            const err9 = { instancePath: instancePath + "/step", schemaPath: "#/properties/step/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-            if (vErrors === null) {
-              vErrors = [err9];
-            } else {
-              vErrors.push(err9);
-            }
-            errors2++;
-          }
-        }
-        if (data.if !== void 0) {
-          if (!validate26(data.if, { instancePath: instancePath + "/if", parentData: data, parentDataProperty: "if", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.items !== void 0) {
-          let data8 = data.items;
-          if (Array.isArray(data8)) {
-            const len0 = data8.length;
-            for (let i0 = 0; i0 < len0; i0++) {
-              let data9 = data8[i0];
-              const _errs20 = errors2;
-              let valid5 = false;
-              let passing0 = null;
-              const _errs21 = errors2;
-              if (typeof data9 !== "string") {
-                const err10 = { instancePath: instancePath + "/items/" + i0, schemaPath: "#/$defs/partial-select-item/oneOf/0/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err10];
-                } else {
-                  vErrors.push(err10);
-                }
-                errors2++;
-              }
-              var _valid0 = _errs21 === errors2;
-              if (_valid0) {
-                valid5 = true;
-                passing0 = 0;
-              }
-              const _errs23 = errors2;
-              if (data9 && typeof data9 == "object" && !Array.isArray(data9)) {
-                if (data9.key !== void 0) {
-                  if (typeof data9.key !== "string") {
-                    const err11 = { instancePath: instancePath + "/items/" + i0 + "/key", schemaPath: "#/$defs/partial-select-item/oneOf/1/properties/key/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err11];
-                    } else {
-                      vErrors.push(err11);
-                    }
-                    errors2++;
-                  }
-                }
-                if (data9.title !== void 0) {
-                  if (typeof data9.title !== "string") {
-                    const err12 = { instancePath: instancePath + "/items/" + i0 + "/title", schemaPath: "#/$defs/partial-select-item/oneOf/1/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err12];
-                    } else {
-                      vErrors.push(err12);
-                    }
-                    errors2++;
-                  }
-                }
-              } else {
-                const err13 = { instancePath: instancePath + "/items/" + i0, schemaPath: "#/$defs/partial-select-item/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                if (vErrors === null) {
-                  vErrors = [err13];
-                } else {
-                  vErrors.push(err13);
-                }
-                errors2++;
-              }
-              var _valid0 = _errs23 === errors2;
-              if (_valid0 && valid5) {
-                valid5 = false;
-                passing0 = [passing0, 1];
-              } else {
-                if (_valid0) {
-                  valid5 = true;
-                  passing0 = 1;
-                  var props2 = {};
-                  props2.key = true;
-                  props2.title = true;
-                  props2.value = true;
-                }
-              }
-              if (!valid5) {
-                const err14 = { instancePath: instancePath + "/items/" + i0, schemaPath: "#/$defs/partial-select-item/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-                if (vErrors === null) {
-                  vErrors = [err14];
-                } else {
-                  vErrors.push(err14);
-                }
-                errors2++;
-              } else {
-                errors2 = _errs20;
-                if (vErrors !== null) {
-                  if (_errs20) {
-                    vErrors.length = _errs20;
-                  } else {
-                    vErrors = null;
-                  }
-                }
-              }
-            }
-          } else {
-            const err15 = { instancePath: instancePath + "/items", schemaPath: "#/properties/items/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-            if (vErrors === null) {
-              vErrors = [err15];
-            } else {
-              vErrors.push(err15);
-            }
-            errors2++;
-          }
-        }
-        if (data.getItems !== void 0) {
-          if (!validate28(data.getItems, { instancePath: instancePath + "/getItems", parentData: data, parentDataProperty: "getItems", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate28.errors : vErrors.concat(validate28.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.listEditMode !== void 0) {
-          let data13 = data.listEditMode;
-          if (typeof data13 !== "string") {
-            const err16 = { instancePath: instancePath + "/listEditMode", schemaPath: "#/properties/listEditMode/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err16];
-            } else {
-              vErrors.push(err16);
-            }
-            errors2++;
-          }
-          if (!(data13 === "inline" || data13 === "inline-single" || data13 === "menu" || data13 === "dialog")) {
-            const err17 = { instancePath: instancePath + "/listEditMode", schemaPath: "#/properties/listEditMode/enum", keyword: "enum", params: { allowedValues: schema30.properties.listEditMode.enum }, message: "must be equal to one of the allowed values" };
-            if (vErrors === null) {
-              vErrors = [err17];
-            } else {
-              vErrors.push(err17);
-            }
-            errors2++;
-          }
-        }
-        if (data.listActions !== void 0) {
-          let data14 = data.listActions;
-          if (Array.isArray(data14)) {
-            const len1 = data14.length;
-            for (let i1 = 0; i1 < len1; i1++) {
-              let data15 = data14[i1];
-              if (typeof data15 !== "string") {
-                const err18 = { instancePath: instancePath + "/listActions/" + i1, schemaPath: "#/properties/listActions/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err18];
-                } else {
-                  vErrors.push(err18);
-                }
-                errors2++;
-              }
-              if (!(data15 === "add" || data15 === "edit" || data15 === "delete" || data15 === "sort" || data15 === "duplicate")) {
-                const err19 = { instancePath: instancePath + "/listActions/" + i1, schemaPath: "#/properties/listActions/items/enum", keyword: "enum", params: { allowedValues: schema30.properties.listActions.items.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err19];
-                } else {
-                  vErrors.push(err19);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err20 = { instancePath: instancePath + "/listActions", schemaPath: "#/properties/listActions/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-            if (vErrors === null) {
-              vErrors = [err20];
-            } else {
-              vErrors.push(err20);
-            }
-            errors2++;
-          }
-        }
-        if (data.cols !== void 0) {
-          if (!validate40(data.cols, { instancePath: instancePath + "/cols", parentData: data, parentDataProperty: "cols", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate40.errors : vErrors.concat(validate40.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.props !== void 0) {
-          let data17 = data.props;
-          if (!(data17 && typeof data17 == "object" && !Array.isArray(data17))) {
-            const err21 = { instancePath: instancePath + "/props", schemaPath: "#/properties/props/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err21];
-            } else {
-              vErrors.push(err21);
-            }
-            errors2++;
-          }
-        }
-        if (data.getProps !== void 0) {
-          if (!validate26(data.getProps, { instancePath: instancePath + "/getProps", parentData: data, parentDataProperty: "getProps", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.slots !== void 0) {
-          let data19 = data.slots;
-          if (data19 && typeof data19 == "object" && !Array.isArray(data19)) {
-            var props6 = {};
-            for (const key1 in data19) {
-              if (pattern2$1.test(key1)) {
-                if (!validate45(data19[key1], { instancePath: instancePath + "/slots/" + key1.replace(/~/g, "~0").replace(/\//g, "~1"), parentData: data19, parentDataProperty: key1, rootData, dynamicAnchors })) {
-                  vErrors = vErrors === null ? validate45.errors : vErrors.concat(validate45.errors);
-                  errors2 = vErrors.length;
-                }
-                props6[key1] = true;
-              }
-            }
-          } else {
-            const err22 = { instancePath: instancePath + "/slots", schemaPath: "#/properties/slots/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err22];
-            } else {
-              vErrors.push(err22);
-            }
-            errors2++;
-          }
-        }
-        if (data.options !== void 0) {
-          let data21 = data.options;
-          if (!(data21 && typeof data21 == "object" && !Array.isArray(data21))) {
-            const err23 = { instancePath: instancePath + "/options", schemaPath: "#/properties/options/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err23];
-            } else {
-              vErrors.push(err23);
-            }
-            errors2++;
-          }
-        }
-        if (data.getOptions !== void 0) {
-          if (!validate26(data.getOptions, { instancePath: instancePath + "/getOptions", parentData: data, parentDataProperty: "getOptions", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.messages !== void 0) {
-          let data23 = data.messages;
-          if (!(data23 && typeof data23 == "object" && !Array.isArray(data23))) {
-            const err24 = { instancePath: instancePath + "/messages", schemaPath: "#/properties/messages/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err24];
-            } else {
-              vErrors.push(err24);
-            }
-            errors2++;
-          }
-        }
-        if (data.getDefaultData !== void 0) {
-          if (!validate26(data.getDefaultData, { instancePath: instancePath + "/getDefaultData", parentData: data, parentDataProperty: "getDefaultData", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.getConstData !== void 0) {
-          if (!validate26(data.getConstData, { instancePath: instancePath + "/getConstData", parentData: data, parentDataProperty: "getConstData", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.transformData !== void 0) {
-          if (!validate26(data.transformData, { instancePath: instancePath + "/transformData", parentData: data, parentDataProperty: "transformData", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate26.errors : vErrors.concat(validate26.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.autofocus !== void 0) {
-          if (typeof data.autofocus !== "boolean") {
-            const err25 = { instancePath: instancePath + "/autofocus", schemaPath: "#/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err25];
-            } else {
-              vErrors.push(err25);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err26 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err26];
-        } else {
-          vErrors.push(err26);
-        }
-        errors2++;
-      }
-      validate25.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate25.evaluated = { "props": { "comp": true, "help": true, "children": true, "label": true, "title": true, "subtitle": true, "step": true, "if": true, "items": true, "getItems": true, "listEditMode": true, "listActions": true, "cols": true, "props": true, "getProps": true, "slots": true, "options": true, "getOptions": true, "messages": true, "defaultData": true, "getDefaultData": true, "constData": true, "getConstData": true, "transformData": true, "autofocus": true }, "dynamicProps": false, "dynamicItems": false };
-    function validate24(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate24.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (!validate25(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate25.errors : vErrors.concat(validate25.errors);
-        errors2 = vErrors.length;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.key !== void 0) {
-          let data0 = data.key;
-          if (typeof data0 !== "string" && !(typeof data0 == "number" && (!(data0 % 1) && !isNaN(data0)) && isFinite(data0))) {
-            const err0 = { instancePath: instancePath + "/key", schemaPath: "#/properties/key/type", keyword: "type", params: { type: schema29.properties.key.type }, message: "must be string,integer" };
-            if (vErrors === null) {
-              vErrors = [err0];
-            } else {
-              vErrors.push(err0);
-            }
-            errors2++;
-          }
-        }
-        if (data.cols !== void 0) {
-          if (!validate40(data.cols, { instancePath: instancePath + "/cols", parentData: data, parentDataProperty: "cols", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate40.errors : vErrors.concat(validate40.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        for (const key0 in data) {
-          if (key0 !== "key" && key0 !== "cols" && key0 !== "comp" && key0 !== "help" && key0 !== "children" && key0 !== "label" && key0 !== "title" && key0 !== "subtitle" && key0 !== "step" && key0 !== "if" && key0 !== "items" && key0 !== "getItems" && key0 !== "listEditMode" && key0 !== "listActions" && key0 !== "props" && key0 !== "getProps" && key0 !== "slots" && key0 !== "options" && key0 !== "getOptions" && key0 !== "messages" && key0 !== "defaultData" && key0 !== "getDefaultData" && key0 !== "constData" && key0 !== "getConstData" && key0 !== "transformData" && key0 !== "autofocus") {
-            const err1 = { instancePath, schemaPath: "#/unevaluatedProperties", keyword: "unevaluatedProperties", params: { unevaluatedProperty: key0 }, message: "must NOT have unevaluated properties" };
-            if (vErrors === null) {
-              vErrors = [err1];
-            } else {
-              vErrors.push(err1);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err2 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err2];
-        } else {
-          vErrors.push(err2);
-        }
-        errors2++;
-      }
-      validate24.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate24.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-    function validate23(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate23.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (Array.isArray(data)) {
-        const len0 = data.length;
-        for (let i0 = 0; i0 < len0; i0++) {
-          let data0 = data[i0];
-          const _errs2 = errors2;
-          let valid2 = false;
-          let passing0 = null;
-          const _errs3 = errors2;
-          if (typeof data0 !== "string") {
-            const err0 = { instancePath: instancePath + "/" + i0, schemaPath: "#/items/oneOf/0/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err0];
-            } else {
-              vErrors.push(err0);
-            }
-            errors2++;
-          }
-          var _valid0 = _errs3 === errors2;
-          if (_valid0) {
-            valid2 = true;
-            passing0 = 0;
-          }
-          const _errs5 = errors2;
-          if (!validate24(data0, { instancePath: instancePath + "/" + i0, parentData: data, parentDataProperty: i0, rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate24.errors : vErrors.concat(validate24.errors);
-            errors2 = vErrors.length;
-          }
-          var _valid0 = _errs5 === errors2;
-          if (_valid0 && valid2) {
-            valid2 = false;
-            passing0 = [passing0, 1];
-          } else {
-            if (_valid0) {
-              valid2 = true;
-              passing0 = 1;
-            }
-          }
-          if (!valid2) {
-            const err1 = { instancePath: instancePath + "/" + i0, schemaPath: "#/items/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-            if (vErrors === null) {
-              vErrors = [err1];
-            } else {
-              vErrors.push(err1);
-            }
-            errors2++;
-          } else {
-            errors2 = _errs2;
-            if (vErrors !== null) {
-              if (_errs2) {
-                vErrors.length = _errs2;
-              } else {
-                vErrors = null;
-              }
-            }
-          }
-        }
-      } else {
-        const err2 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-        if (vErrors === null) {
-          vErrors = [err2];
-        } else {
-          vErrors.push(err2);
-        }
-        errors2++;
-      }
-      validate23.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate23.evaluated = { "items": true, "dynamicProps": false, "dynamicItems": false };
-    function validate56(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate56.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.switch === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "switch" }, message: "must have required property 'switch'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        for (const key0 in data) {
-          if (!(key0 === "switch")) {
-            const err1 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
-            if (vErrors === null) {
-              vErrors = [err1];
-            } else {
-              vErrors.push(err1);
-            }
-            errors2++;
-          }
-        }
-        if (data.switch !== void 0) {
-          let data0 = data.switch;
-          if (Array.isArray(data0)) {
-            const len0 = data0.length;
-            for (let i0 = 0; i0 < len0; i0++) {
-              if (!validate25(data0[i0], { instancePath: instancePath + "/switch/" + i0, parentData: data0, parentDataProperty: i0, rootData, dynamicAnchors })) {
-                vErrors = vErrors === null ? validate25.errors : vErrors.concat(validate25.errors);
-                errors2 = vErrors.length;
-              }
-            }
-          } else {
-            const err2 = { instancePath: instancePath + "/switch", schemaPath: "#/properties/switch/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err3 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err3];
-        } else {
-          vErrors.push(err3);
-        }
-        errors2++;
-      }
-      validate56.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate56.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-    function validate22(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate22.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      const _errs0 = errors2;
-      let valid0 = false;
-      const _errs1 = errors2;
-      if (typeof data !== "string") {
-        const err0 = { instancePath, schemaPath: "#/$defs/comp-name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      if (!(data === "none" || data === "text-field" || data === "number-field" || data === "textarea" || data === "markdown" || data === "checkbox" || data === "switch" || data === "slider" || data === "date-picker" || data === "date-time-picker" || data === "time-picker" || data === "color-picker" || data === "combobox" || data === "number-combobox" || data === "section" || data === "list" || data === "select" || data === "autocomplete" || data === "tabs" || data === "vertical-tabs" || data === "expansion-panels" || data === "stepper" || data === "one-of-select" || data === "file-input")) {
-        const err1 = { instancePath, schemaPath: "#/$defs/comp-name/enum", keyword: "enum", params: { allowedValues: schema27.enum }, message: "must be equal to one of the allowed values" };
-        if (vErrors === null) {
-          vErrors = [err1];
-        } else {
-          vErrors.push(err1);
-        }
-        errors2++;
-      }
-      if (errors2 > 0) {
-        const emErrors0 = { "enum": [] };
-        const templates0 = {};
-        for (const err2 of vErrors) {
-          if (err2.keyword !== "errorMessage" && !err2.emUsed && err2.instancePath === instancePath && err2.keyword in emErrors0 && err2.schemaPath.indexOf("#/$defs/comp-name") === 0 && /^\/[^\/]*$/.test(err2.schemaPath.slice(17))) {
-            emErrors0[err2.keyword].push(err2);
-            err2.emUsed = true;
-          }
-        }
-        for (const key0 in emErrors0) {
-          if (emErrors0[key0].length) {
-            const err3 = { instancePath, schemaPath: "#/$defs/comp-name/errorMessage", keyword: "errorMessage", params: { errors: emErrors0[key0] }, message: key0 in templates0 ? templates0[key0]() : schema27.errorMessage[key0] };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        const emErrs0 = [];
-        for (const err4 of vErrors) {
-          if (!err4.emUsed) {
-            emErrs0.push(err4);
-          }
-        }
-        vErrors = emErrs0;
-        errors2 = emErrs0.length;
-      }
-      var _valid0 = _errs1 === errors2;
-      valid0 = valid0 || _valid0;
-      const _errs4 = errors2;
-      if (!validate23(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate23.errors : vErrors.concat(validate23.errors);
-        errors2 = vErrors.length;
-      }
-      var _valid0 = _errs4 === errors2;
-      valid0 = valid0 || _valid0;
-      if (_valid0) {
-        var items0 = true;
-      }
-      const _errs5 = errors2;
-      if (!validate25(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate25.errors : vErrors.concat(validate25.errors);
-        errors2 = vErrors.length;
-      }
-      var _valid0 = _errs5 === errors2;
-      valid0 = valid0 || _valid0;
-      if (_valid0) {
-        var props0 = {};
-        props0.comp = true;
-        props0.help = true;
-        props0.children = true;
-        props0.label = true;
-        props0.title = true;
-        props0.subtitle = true;
-        props0.step = true;
-        props0.if = true;
-        props0.items = true;
-        props0.getItems = true;
-        props0.listEditMode = true;
-        props0.listActions = true;
-        props0.cols = true;
-        props0.props = true;
-        props0.getProps = true;
-        props0.slots = true;
-        props0.options = true;
-        props0.getOptions = true;
-        props0.messages = true;
-        props0.defaultData = true;
-        props0.getDefaultData = true;
-        props0.constData = true;
-        props0.getConstData = true;
-        props0.transformData = true;
-        props0.autofocus = true;
-      }
-      const _errs6 = errors2;
-      if (!validate56(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate56.errors : vErrors.concat(validate56.errors);
-        errors2 = vErrors.length;
-      }
-      var _valid0 = _errs6 === errors2;
-      valid0 = valid0 || _valid0;
-      if (_valid0) {
-        if (props0 !== true) {
-          props0 = true;
-        }
-      }
-      if (!valid0) {
-        const err5 = { instancePath, schemaPath: "#/anyOf", keyword: "anyOf", params: {}, message: "must match a schema in anyOf" };
-        if (vErrors === null) {
-          vErrors = [err5];
-        } else {
-          vErrors.push(err5);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs0;
-        if (vErrors !== null) {
-          if (_errs0) {
-            vErrors.length = _errs0;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      if (errors2 > 0) {
-        const emErrors1 = { "anyOf": [] };
-        const templates1 = {};
-        for (const err6 of vErrors) {
-          if (err6.keyword !== "errorMessage" && !err6.emUsed && err6.instancePath === instancePath && err6.keyword in emErrors1 && err6.schemaPath.indexOf("#") === 0 && /^\/[^\/]*$/.test(err6.schemaPath.slice(1))) {
-            emErrors1[err6.keyword].push(err6);
-            err6.emUsed = true;
-          }
-        }
-        for (const key1 in emErrors1) {
-          if (emErrors1[key1].length) {
-            const err7 = { instancePath, schemaPath: "#/errorMessage", keyword: "errorMessage", params: { errors: emErrors1[key1] }, message: key1 in templates1 ? templates1[key1]() : schema26.errorMessage[key1] };
-            if (vErrors === null) {
-              vErrors = [err7];
-            } else {
-              vErrors.push(err7);
-            }
-            errors2++;
-          }
-        }
-        const emErrs1 = [];
-        for (const err8 of vErrors) {
-          if (!err8.emUsed) {
-            emErrs1.push(err8);
-          }
-        }
-        vErrors = emErrs1;
-        errors2 = emErrs1.length;
-      }
-      validate22.errors = vErrors;
-      evaluated0.props = props0;
-      evaluated0.items = items0;
-      return errors2 === 0;
-    }
-    validate22.evaluated = { "dynamicProps": true, "dynamicItems": true };
-    const validateLayoutKeyword = (
-      /** @type {any} */
-      validate22
-    );
-    function isComponentName(layoutKeyword) {
-      return typeof layoutKeyword === "string";
-    }
-    function isPartialSwitch(layoutKeyword) {
-      return typeof layoutKeyword === "object" && "switch" in layoutKeyword;
-    }
-    function isPartialChildren(layoutKeyword) {
-      return Array.isArray(layoutKeyword);
-    }
-    function isPartialCompObject(layoutKeyword) {
-      return typeof layoutKeyword === "object" && !Array.isArray(layoutKeyword);
-    }
-    function isPartialGetItemsExpr(getItems) {
-      return typeof getItems === "string" || !!getItems.expr;
-    }
-    function isPartialGetItemsObj(getItems) {
-      return typeof getItems === "object";
-    }
-    function isPartialGetItemsFetch(getItems) {
-      return typeof getItems === "object" && !!getItems.url;
-    }
-    function isPartialSlotMarkdown(partialSlot) {
-      return typeof partialSlot == "object" && !!/** @type {PartialSlotMarkdown} */
-      partialSlot.markdown;
-    }
-    const schema56 = { "type": "object", "required": ["type", "expr", "pure"], "properties": { "type": { "type": "string", "enum": ["js-fn", "js-eval", "js-tpl"] }, "expr": { "type": "string" }, "pure": { "type": "boolean" }, "ref": { "type": "integer", "readOnly": true } } };
-    const schema112 = { "type": "object", "required": ["comp", "label"], "properties": { "comp": { "const": "date-picker" }, "label": { "type": "string" }, "min": { "type": "string", "format": "date" }, "max": { "type": "string", "format": "date" }, "format": { "type": "string", "enum": ["date", "date-time"], "default": "date" } } };
-    const schema57 = { "type": "object", "allOf": [{ "$ref": "#/$defs/state-node-options-base-lib" }, { "properties": { "readOnly": { "type": "boolean", "default": false }, "summary": { "type": "boolean", "default": false }, "titleDepth": { "type": "integer", "minimum": 1, "maximum": 6, "default": 2 }, "density": { "type": "string", "enum": ["default", "comfortable", "compact"] } } }] };
-    const pattern2 = new RegExp(".*", "u");
-    function validate62(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate62.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (!(data && typeof data == "object" && !Array.isArray(data))) {
-        const err0 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        var props0 = {};
-        for (const key0 in data) {
-          if (pattern2.test(key0)) {
-            props0[key0] = true;
-          }
-        }
-      } else {
-        const err1 = { instancePath, schemaPath: "#/$defs/state-node-options-base-lib/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err1];
-        } else {
-          vErrors.push(err1);
-        }
-        errors2++;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.readOnly !== void 0) {
-          if (typeof data.readOnly !== "boolean") {
-            const err2 = { instancePath: instancePath + "/readOnly", schemaPath: "#/allOf/1/properties/readOnly/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.summary !== void 0) {
-          if (typeof data.summary !== "boolean") {
-            const err3 = { instancePath: instancePath + "/summary", schemaPath: "#/allOf/1/properties/summary/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.titleDepth !== void 0) {
-          let data2 = data.titleDepth;
-          if (!(typeof data2 == "number" && (!(data2 % 1) && !isNaN(data2)) && isFinite(data2))) {
-            const err4 = { instancePath: instancePath + "/titleDepth", schemaPath: "#/allOf/1/properties/titleDepth/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-          if (typeof data2 == "number" && isFinite(data2)) {
-            if (data2 > 6 || isNaN(data2)) {
-              const err5 = { instancePath: instancePath + "/titleDepth", schemaPath: "#/allOf/1/properties/titleDepth/maximum", keyword: "maximum", params: { comparison: "<=", limit: 6 }, message: "must be <= 6" };
-              if (vErrors === null) {
-                vErrors = [err5];
-              } else {
-                vErrors.push(err5);
-              }
-              errors2++;
-            }
-            if (data2 < 1 || isNaN(data2)) {
-              const err6 = { instancePath: instancePath + "/titleDepth", schemaPath: "#/allOf/1/properties/titleDepth/minimum", keyword: "minimum", params: { comparison: ">=", limit: 1 }, message: "must be >= 1" };
-              if (vErrors === null) {
-                vErrors = [err6];
-              } else {
-                vErrors.push(err6);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.density !== void 0) {
-          let data3 = data.density;
-          if (typeof data3 !== "string") {
-            const err7 = { instancePath: instancePath + "/density", schemaPath: "#/allOf/1/properties/density/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err7];
-            } else {
-              vErrors.push(err7);
-            }
-            errors2++;
-          }
-          if (!(data3 === "default" || data3 === "comfortable" || data3 === "compact")) {
-            const err8 = { instancePath: instancePath + "/density", schemaPath: "#/allOf/1/properties/density/enum", keyword: "enum", params: { allowedValues: schema57.allOf[1].properties.density.enum }, message: "must be equal to one of the allowed values" };
-            if (vErrors === null) {
-              vErrors = [err8];
-            } else {
-              vErrors.push(err8);
-            }
-            errors2++;
-          }
-        }
-      }
-      if (props0 !== true) {
-        props0 = props0 || {};
-        props0.readOnly = true;
-        props0.summary = true;
-        props0.titleDepth = true;
-        props0.density = true;
-      }
-      validate62.errors = vErrors;
-      evaluated0.props = props0;
-      return errors2 === 0;
-    }
-    validate62.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    function validate64(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate64.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.xs === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "xs" }, message: "must have required property 'xs'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        for (const key0 in data) {
-          if (!(key0 === "xs" || key0 === "sm" || key0 === "md" || key0 === "lg" || key0 === "xl" || key0 === "xxl")) {
-            const err1 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
-            if (vErrors === null) {
-              vErrors = [err1];
-            } else {
-              vErrors.push(err1);
-            }
-            errors2++;
-          }
-        }
-        if (data.xs !== void 0) {
-          let data0 = data.xs;
-          if (!(typeof data0 == "number" && (!(data0 % 1) && !isNaN(data0)) && isFinite(data0))) {
-            const err2 = { instancePath: instancePath + "/xs", schemaPath: "#/$defs/cols/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-          if (typeof data0 == "number" && isFinite(data0)) {
-            if (data0 > 12 || isNaN(data0)) {
-              const err3 = { instancePath: instancePath + "/xs", schemaPath: "#/$defs/cols/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err3];
-              } else {
-                vErrors.push(err3);
-              }
-              errors2++;
-            }
-            if (data0 < 0 || isNaN(data0)) {
-              const err4 = { instancePath: instancePath + "/xs", schemaPath: "#/$defs/cols/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err4];
-              } else {
-                vErrors.push(err4);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.sm !== void 0) {
-          let data1 = data.sm;
-          if (!(typeof data1 == "number" && (!(data1 % 1) && !isNaN(data1)) && isFinite(data1))) {
-            const err5 = { instancePath: instancePath + "/sm", schemaPath: "#/$defs/cols/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-          if (typeof data1 == "number" && isFinite(data1)) {
-            if (data1 > 12 || isNaN(data1)) {
-              const err6 = { instancePath: instancePath + "/sm", schemaPath: "#/$defs/cols/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err6];
-              } else {
-                vErrors.push(err6);
-              }
-              errors2++;
-            }
-            if (data1 < 0 || isNaN(data1)) {
-              const err7 = { instancePath: instancePath + "/sm", schemaPath: "#/$defs/cols/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err7];
-              } else {
-                vErrors.push(err7);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.md !== void 0) {
-          let data2 = data.md;
-          if (!(typeof data2 == "number" && (!(data2 % 1) && !isNaN(data2)) && isFinite(data2))) {
-            const err8 = { instancePath: instancePath + "/md", schemaPath: "#/$defs/cols/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err8];
-            } else {
-              vErrors.push(err8);
-            }
-            errors2++;
-          }
-          if (typeof data2 == "number" && isFinite(data2)) {
-            if (data2 > 12 || isNaN(data2)) {
-              const err9 = { instancePath: instancePath + "/md", schemaPath: "#/$defs/cols/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err9];
-              } else {
-                vErrors.push(err9);
-              }
-              errors2++;
-            }
-            if (data2 < 0 || isNaN(data2)) {
-              const err10 = { instancePath: instancePath + "/md", schemaPath: "#/$defs/cols/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err10];
-              } else {
-                vErrors.push(err10);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.lg !== void 0) {
-          let data3 = data.lg;
-          if (!(typeof data3 == "number" && (!(data3 % 1) && !isNaN(data3)) && isFinite(data3))) {
-            const err11 = { instancePath: instancePath + "/lg", schemaPath: "#/$defs/cols/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err11];
-            } else {
-              vErrors.push(err11);
-            }
-            errors2++;
-          }
-          if (typeof data3 == "number" && isFinite(data3)) {
-            if (data3 > 12 || isNaN(data3)) {
-              const err12 = { instancePath: instancePath + "/lg", schemaPath: "#/$defs/cols/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err12];
-              } else {
-                vErrors.push(err12);
-              }
-              errors2++;
-            }
-            if (data3 < 0 || isNaN(data3)) {
-              const err13 = { instancePath: instancePath + "/lg", schemaPath: "#/$defs/cols/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err13];
-              } else {
-                vErrors.push(err13);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.xl !== void 0) {
-          let data4 = data.xl;
-          if (!(typeof data4 == "number" && (!(data4 % 1) && !isNaN(data4)) && isFinite(data4))) {
-            const err14 = { instancePath: instancePath + "/xl", schemaPath: "#/$defs/cols/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err14];
-            } else {
-              vErrors.push(err14);
-            }
-            errors2++;
-          }
-          if (typeof data4 == "number" && isFinite(data4)) {
-            if (data4 > 12 || isNaN(data4)) {
-              const err15 = { instancePath: instancePath + "/xl", schemaPath: "#/$defs/cols/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err15];
-              } else {
-                vErrors.push(err15);
-              }
-              errors2++;
-            }
-            if (data4 < 0 || isNaN(data4)) {
-              const err16 = { instancePath: instancePath + "/xl", schemaPath: "#/$defs/cols/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err16];
-              } else {
-                vErrors.push(err16);
-              }
-              errors2++;
-            }
-          }
-        }
-        if (data.xxl !== void 0) {
-          let data5 = data.xxl;
-          if (!(typeof data5 == "number" && (!(data5 % 1) && !isNaN(data5)) && isFinite(data5))) {
-            const err17 = { instancePath: instancePath + "/xxl", schemaPath: "#/$defs/cols/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err17];
-            } else {
-              vErrors.push(err17);
-            }
-            errors2++;
-          }
-          if (typeof data5 == "number" && isFinite(data5)) {
-            if (data5 > 12 || isNaN(data5)) {
-              const err18 = { instancePath: instancePath + "/xxl", schemaPath: "#/$defs/cols/maximum", keyword: "maximum", params: { comparison: "<=", limit: 12 }, message: "must be <= 12" };
-              if (vErrors === null) {
-                vErrors = [err18];
-              } else {
-                vErrors.push(err18);
-              }
-              errors2++;
-            }
-            if (data5 < 0 || isNaN(data5)) {
-              const err19 = { instancePath: instancePath + "/xxl", schemaPath: "#/$defs/cols/minimum", keyword: "minimum", params: { comparison: ">=", limit: 0 }, message: "must be >= 0" };
-              if (vErrors === null) {
-                vErrors = [err19];
-              } else {
-                vErrors.push(err19);
-              }
-              errors2++;
-            }
-          }
-        }
-      } else {
-        const err20 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err20];
-        } else {
-          vErrors.push(err20);
-        }
-        errors2++;
-      }
-      validate64.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate64.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-    function validate66(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate66.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        var props0 = {};
-        for (const key0 in data) {
-          if (pattern2.test(key0)) {
-            let data0 = data[key0];
-            const _errs3 = errors2;
-            let valid2 = false;
-            let passing0 = null;
-            const _errs4 = errors2;
-            if (data0 && typeof data0 == "object" && !Array.isArray(data0)) {
-              if (data0.text === void 0) {
-                const err0 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/0/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
-                if (vErrors === null) {
-                  vErrors = [err0];
-                } else {
-                  vErrors.push(err0);
-                }
-                errors2++;
-              }
-              for (const key1 in data0) {
-                if (!(key1 === "text")) {
-                  const err1 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
-                  if (vErrors === null) {
-                    vErrors = [err1];
-                  } else {
-                    vErrors.push(err1);
-                  }
-                  errors2++;
-                }
-              }
-              if (data0.text !== void 0) {
-                if (typeof data0.text !== "string") {
-                  const err2 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1") + "/text", schemaPath: "#/$defs/slot/oneOf/0/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err2];
-                  } else {
-                    vErrors.push(err2);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err3 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err3];
-              } else {
-                vErrors.push(err3);
-              }
-              errors2++;
-            }
-            var _valid0 = _errs4 === errors2;
-            if (_valid0) {
-              valid2 = true;
-              passing0 = 0;
-            }
-            const _errs9 = errors2;
-            if (data0 && typeof data0 == "object" && !Array.isArray(data0)) {
-              if (data0.markdown === void 0) {
-                const err4 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/1/required", keyword: "required", params: { missingProperty: "markdown" }, message: "must have required property 'markdown'" };
-                if (vErrors === null) {
-                  vErrors = [err4];
-                } else {
-                  vErrors.push(err4);
-                }
-                errors2++;
-              }
-              for (const key2 in data0) {
-                if (!(key2 === "markdown")) {
-                  const err5 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key2 }, message: "must NOT have additional properties" };
-                  if (vErrors === null) {
-                    vErrors = [err5];
-                  } else {
-                    vErrors.push(err5);
-                  }
-                  errors2++;
-                }
-              }
-              if (data0.markdown !== void 0) {
-                if (typeof data0.markdown !== "string") {
-                  const err6 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1") + "/markdown", schemaPath: "#/$defs/slot/oneOf/1/properties/markdown/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err6];
-                  } else {
-                    vErrors.push(err6);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err7 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err7];
-              } else {
-                vErrors.push(err7);
-              }
-              errors2++;
-            }
-            var _valid0 = _errs9 === errors2;
-            if (_valid0 && valid2) {
-              valid2 = false;
-              passing0 = [passing0, 1];
-            } else {
-              if (_valid0) {
-                valid2 = true;
-                passing0 = 1;
-              }
-              const _errs14 = errors2;
-              if (data0 && typeof data0 == "object" && !Array.isArray(data0)) {
-                if (data0.name === void 0) {
-                  const err8 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/2/required", keyword: "required", params: { missingProperty: "name" }, message: "must have required property 'name'" };
-                  if (vErrors === null) {
-                    vErrors = [err8];
-                  } else {
-                    vErrors.push(err8);
-                  }
-                  errors2++;
-                }
-                for (const key3 in data0) {
-                  if (!(key3 === "name")) {
-                    const err9 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/2/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key3 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err9];
-                    } else {
-                      vErrors.push(err9);
-                    }
-                    errors2++;
-                  }
-                }
-                if (data0.name !== void 0) {
-                  if (typeof data0.name !== "string") {
-                    const err10 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1") + "/name", schemaPath: "#/$defs/slot/oneOf/2/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err10];
-                    } else {
-                      vErrors.push(err10);
-                    }
-                    errors2++;
-                  }
-                }
-              } else {
-                const err11 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf/2/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                if (vErrors === null) {
-                  vErrors = [err11];
-                } else {
-                  vErrors.push(err11);
-                }
-                errors2++;
-              }
-              var _valid0 = _errs14 === errors2;
-              if (_valid0 && valid2) {
-                valid2 = false;
-                passing0 = [passing0, 2];
-              } else {
-                if (_valid0) {
-                  valid2 = true;
-                  passing0 = 2;
-                }
-              }
-            }
-            if (!valid2) {
-              const err12 = { instancePath: instancePath + "/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/slot/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-              if (vErrors === null) {
-                vErrors = [err12];
-              } else {
-                vErrors.push(err12);
-              }
-              errors2++;
-            } else {
-              errors2 = _errs3;
-              if (vErrors !== null) {
-                if (_errs3) {
-                  vErrors.length = _errs3;
-                } else {
-                  vErrors = null;
-                }
-              }
-            }
-            props0[key0] = true;
-          }
-        }
-      } else {
-        const err13 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err13];
-        } else {
-          vErrors.push(err13);
-        }
-        errors2++;
-      }
-      validate66.errors = vErrors;
-      evaluated0.props = props0;
-      return errors2 === 0;
-    }
-    validate66.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    const schema77 = { "type": "object", "required": ["comp", "listEditMode", "listActions"], "properties": { "comp": { "const": "list" }, "title": { "type": "string" }, "listEditMode": { "type": "string", "enum": ["inline", "inline-single", "menu", "dialog"] }, "listActions": { "type": "array", "items": { "type": "string", "enum": ["add", "edit", "delete", "sort", "duplicate"] } }, "itemTitle": { "$ref": "#/$defs/expression" }, "itemSubtitle": { "$ref": "#/$defs/expression" }, "messages": { "type": "object", "additionalProperties": false, "properties": { "addItem": { "type": "string" }, "delete": { "type": "string" }, "edit": { "type": "string" }, "duplicate": { "type": "string" }, "sort": { "type": "string" } } } } };
-    function validate68(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate68.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.listEditMode === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "listEditMode" }, message: "must have required property 'listEditMode'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.listActions === void 0) {
-          const err2 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "listActions" }, message: "must have required property 'listActions'" };
-          if (vErrors === null) {
-            vErrors = [err2];
-          } else {
-            vErrors.push(err2);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("list" !== data.comp) {
-            const err3 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "list" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.title !== void 0) {
-          if (typeof data.title !== "string") {
-            const err4 = { instancePath: instancePath + "/title", schemaPath: "#/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.listEditMode !== void 0) {
-          let data2 = data.listEditMode;
-          if (typeof data2 !== "string") {
-            const err5 = { instancePath: instancePath + "/listEditMode", schemaPath: "#/properties/listEditMode/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-          if (!(data2 === "inline" || data2 === "inline-single" || data2 === "menu" || data2 === "dialog")) {
-            const err6 = { instancePath: instancePath + "/listEditMode", schemaPath: "#/properties/listEditMode/enum", keyword: "enum", params: { allowedValues: schema77.properties.listEditMode.enum }, message: "must be equal to one of the allowed values" };
-            if (vErrors === null) {
-              vErrors = [err6];
-            } else {
-              vErrors.push(err6);
-            }
-            errors2++;
-          }
-        }
-        if (data.listActions !== void 0) {
-          let data3 = data.listActions;
-          if (Array.isArray(data3)) {
-            const len0 = data3.length;
-            for (let i0 = 0; i0 < len0; i0++) {
-              let data4 = data3[i0];
-              if (typeof data4 !== "string") {
-                const err7 = { instancePath: instancePath + "/listActions/" + i0, schemaPath: "#/properties/listActions/items/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err7];
-                } else {
-                  vErrors.push(err7);
-                }
-                errors2++;
-              }
-              if (!(data4 === "add" || data4 === "edit" || data4 === "delete" || data4 === "sort" || data4 === "duplicate")) {
-                const err8 = { instancePath: instancePath + "/listActions/" + i0, schemaPath: "#/properties/listActions/items/enum", keyword: "enum", params: { allowedValues: schema77.properties.listActions.items.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err8];
-                } else {
-                  vErrors.push(err8);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err9 = { instancePath: instancePath + "/listActions", schemaPath: "#/properties/listActions/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-            if (vErrors === null) {
-              vErrors = [err9];
-            } else {
-              vErrors.push(err9);
-            }
-            errors2++;
-          }
-        }
-        if (data.itemTitle !== void 0) {
-          let data5 = data.itemTitle;
-          if (data5 && typeof data5 == "object" && !Array.isArray(data5)) {
-            if (data5.type === void 0) {
-              const err10 = { instancePath: instancePath + "/itemTitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err10];
-              } else {
-                vErrors.push(err10);
-              }
-              errors2++;
-            }
-            if (data5.expr === void 0) {
-              const err11 = { instancePath: instancePath + "/itemTitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err11];
-              } else {
-                vErrors.push(err11);
-              }
-              errors2++;
-            }
-            if (data5.pure === void 0) {
-              const err12 = { instancePath: instancePath + "/itemTitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err12];
-              } else {
-                vErrors.push(err12);
-              }
-              errors2++;
-            }
-            if (data5.type !== void 0) {
-              let data6 = data5.type;
-              if (typeof data6 !== "string") {
-                const err13 = { instancePath: instancePath + "/itemTitle/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err13];
-                } else {
-                  vErrors.push(err13);
-                }
-                errors2++;
-              }
-              if (!(data6 === "js-fn" || data6 === "js-eval" || data6 === "js-tpl")) {
-                const err14 = { instancePath: instancePath + "/itemTitle/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err14];
-                } else {
-                  vErrors.push(err14);
-                }
-                errors2++;
-              }
-            }
-            if (data5.expr !== void 0) {
-              if (typeof data5.expr !== "string") {
-                const err15 = { instancePath: instancePath + "/itemTitle/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err15];
-                } else {
-                  vErrors.push(err15);
-                }
-                errors2++;
-              }
-            }
-            if (data5.pure !== void 0) {
-              if (typeof data5.pure !== "boolean") {
-                const err16 = { instancePath: instancePath + "/itemTitle/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err16];
-                } else {
-                  vErrors.push(err16);
-                }
-                errors2++;
-              }
-            }
-            if (data5.ref !== void 0) {
-              let data9 = data5.ref;
-              if (!(typeof data9 == "number" && (!(data9 % 1) && !isNaN(data9)) && isFinite(data9))) {
-                const err17 = { instancePath: instancePath + "/itemTitle/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err17];
-                } else {
-                  vErrors.push(err17);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err18 = { instancePath: instancePath + "/itemTitle", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err18];
-            } else {
-              vErrors.push(err18);
-            }
-            errors2++;
-          }
-        }
-        if (data.itemSubtitle !== void 0) {
-          let data10 = data.itemSubtitle;
-          if (data10 && typeof data10 == "object" && !Array.isArray(data10)) {
-            if (data10.type === void 0) {
-              const err19 = { instancePath: instancePath + "/itemSubtitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err19];
-              } else {
-                vErrors.push(err19);
-              }
-              errors2++;
-            }
-            if (data10.expr === void 0) {
-              const err20 = { instancePath: instancePath + "/itemSubtitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err20];
-              } else {
-                vErrors.push(err20);
-              }
-              errors2++;
-            }
-            if (data10.pure === void 0) {
-              const err21 = { instancePath: instancePath + "/itemSubtitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err21];
-              } else {
-                vErrors.push(err21);
-              }
-              errors2++;
-            }
-            if (data10.type !== void 0) {
-              let data11 = data10.type;
-              if (typeof data11 !== "string") {
-                const err22 = { instancePath: instancePath + "/itemSubtitle/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err22];
-                } else {
-                  vErrors.push(err22);
-                }
-                errors2++;
-              }
-              if (!(data11 === "js-fn" || data11 === "js-eval" || data11 === "js-tpl")) {
-                const err23 = { instancePath: instancePath + "/itemSubtitle/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err23];
-                } else {
-                  vErrors.push(err23);
-                }
-                errors2++;
-              }
-            }
-            if (data10.expr !== void 0) {
-              if (typeof data10.expr !== "string") {
-                const err24 = { instancePath: instancePath + "/itemSubtitle/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err24];
-                } else {
-                  vErrors.push(err24);
-                }
-                errors2++;
-              }
-            }
-            if (data10.pure !== void 0) {
-              if (typeof data10.pure !== "boolean") {
-                const err25 = { instancePath: instancePath + "/itemSubtitle/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err25];
-                } else {
-                  vErrors.push(err25);
-                }
-                errors2++;
-              }
-            }
-            if (data10.ref !== void 0) {
-              let data14 = data10.ref;
-              if (!(typeof data14 == "number" && (!(data14 % 1) && !isNaN(data14)) && isFinite(data14))) {
-                const err26 = { instancePath: instancePath + "/itemSubtitle/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err26];
-                } else {
-                  vErrors.push(err26);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err27 = { instancePath: instancePath + "/itemSubtitle", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err27];
-            } else {
-              vErrors.push(err27);
-            }
-            errors2++;
-          }
-        }
-        if (data.messages !== void 0) {
-          let data15 = data.messages;
-          if (data15 && typeof data15 == "object" && !Array.isArray(data15)) {
-            for (const key0 in data15) {
-              if (!(key0 === "addItem" || key0 === "delete" || key0 === "edit" || key0 === "duplicate" || key0 === "sort")) {
-                const err28 = { instancePath: instancePath + "/messages", schemaPath: "#/properties/messages/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
-                if (vErrors === null) {
-                  vErrors = [err28];
-                } else {
-                  vErrors.push(err28);
-                }
-                errors2++;
-              }
-            }
-            if (data15.addItem !== void 0) {
-              if (typeof data15.addItem !== "string") {
-                const err29 = { instancePath: instancePath + "/messages/addItem", schemaPath: "#/properties/messages/properties/addItem/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err29];
-                } else {
-                  vErrors.push(err29);
-                }
-                errors2++;
-              }
-            }
-            if (data15.delete !== void 0) {
-              if (typeof data15.delete !== "string") {
-                const err30 = { instancePath: instancePath + "/messages/delete", schemaPath: "#/properties/messages/properties/delete/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err30];
-                } else {
-                  vErrors.push(err30);
-                }
-                errors2++;
-              }
-            }
-            if (data15.edit !== void 0) {
-              if (typeof data15.edit !== "string") {
-                const err31 = { instancePath: instancePath + "/messages/edit", schemaPath: "#/properties/messages/properties/edit/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err31];
-                } else {
-                  vErrors.push(err31);
-                }
-                errors2++;
-              }
-            }
-            if (data15.duplicate !== void 0) {
-              if (typeof data15.duplicate !== "string") {
-                const err32 = { instancePath: instancePath + "/messages/duplicate", schemaPath: "#/properties/messages/properties/duplicate/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err32];
-                } else {
-                  vErrors.push(err32);
-                }
-                errors2++;
-              }
-            }
-            if (data15.sort !== void 0) {
-              if (typeof data15.sort !== "string") {
-                const err33 = { instancePath: instancePath + "/messages/sort", schemaPath: "#/properties/messages/properties/sort/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err33];
-                } else {
-                  vErrors.push(err33);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err34 = { instancePath: instancePath + "/messages", schemaPath: "#/properties/messages/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err34];
-            } else {
-              vErrors.push(err34);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err35 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err35];
-        } else {
-          vErrors.push(err35);
-        }
-        errors2++;
-      }
-      validate68.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate68.evaluated = { "props": { "comp": true, "title": true, "listEditMode": true, "listActions": true, "itemTitle": true, "itemSubtitle": true, "messages": true }, "dynamicProps": false, "dynamicItems": false };
-    function validate70(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate70.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (Array.isArray(data)) {
-        const len0 = data.length;
-        for (let i0 = 0; i0 < len0; i0++) {
-          let data0 = data[i0];
-          if (data0 && typeof data0 == "object" && !Array.isArray(data0)) {
-            if (data0.title === void 0) {
-              const err0 = { instancePath: instancePath + "/" + i0, schemaPath: "#/$defs/select-item/required", keyword: "required", params: { missingProperty: "title" }, message: "must have required property 'title'" };
-              if (vErrors === null) {
-                vErrors = [err0];
-              } else {
-                vErrors.push(err0);
-              }
-              errors2++;
-            }
-            if (data0.key === void 0) {
-              const err1 = { instancePath: instancePath + "/" + i0, schemaPath: "#/$defs/select-item/required", keyword: "required", params: { missingProperty: "key" }, message: "must have required property 'key'" };
-              if (vErrors === null) {
-                vErrors = [err1];
-              } else {
-                vErrors.push(err1);
-              }
-              errors2++;
-            }
-            if (data0.value === void 0) {
-              const err2 = { instancePath: instancePath + "/" + i0, schemaPath: "#/$defs/select-item/required", keyword: "required", params: { missingProperty: "value" }, message: "must have required property 'value'" };
-              if (vErrors === null) {
-                vErrors = [err2];
-              } else {
-                vErrors.push(err2);
-              }
-              errors2++;
-            }
-            if (data0.title !== void 0) {
-              if (typeof data0.title !== "string") {
-                const err3 = { instancePath: instancePath + "/" + i0 + "/title", schemaPath: "#/$defs/select-item/properties/title/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err3];
-                } else {
-                  vErrors.push(err3);
-                }
-                errors2++;
-              }
-            }
-            if (data0.key !== void 0) {
-              if (typeof data0.key !== "string") {
-                const err4 = { instancePath: instancePath + "/" + i0 + "/key", schemaPath: "#/$defs/select-item/properties/key/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err4];
-                } else {
-                  vErrors.push(err4);
-                }
-                errors2++;
-              }
-            }
-            if (data0.icon !== void 0) {
-              if (typeof data0.icon !== "string") {
-                const err5 = { instancePath: instancePath + "/" + i0 + "/icon", schemaPath: "#/$defs/select-item/properties/icon/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err5];
-                } else {
-                  vErrors.push(err5);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err6 = { instancePath: instancePath + "/" + i0, schemaPath: "#/$defs/select-item/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err6];
-            } else {
-              vErrors.push(err6);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err7 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-        if (vErrors === null) {
-          vErrors = [err7];
-        } else {
-          vErrors.push(err7);
-        }
-        errors2++;
-      }
-      validate70.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate70.evaluated = { "items": true, "dynamicProps": false, "dynamicItems": false };
-    function validate73(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate73.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.url === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "url" }, message: "must have required property 'url'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.url !== void 0) {
-          let data0 = data.url;
-          if (data0 && typeof data0 == "object" && !Array.isArray(data0)) {
-            if (data0.type === void 0) {
-              const err1 = { instancePath: instancePath + "/url", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err1];
-              } else {
-                vErrors.push(err1);
-              }
-              errors2++;
-            }
-            if (data0.expr === void 0) {
-              const err2 = { instancePath: instancePath + "/url", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err2];
-              } else {
-                vErrors.push(err2);
-              }
-              errors2++;
-            }
-            if (data0.pure === void 0) {
-              const err3 = { instancePath: instancePath + "/url", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err3];
-              } else {
-                vErrors.push(err3);
-              }
-              errors2++;
-            }
-            if (data0.type !== void 0) {
-              let data1 = data0.type;
-              if (typeof data1 !== "string") {
-                const err4 = { instancePath: instancePath + "/url/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err4];
-                } else {
-                  vErrors.push(err4);
-                }
-                errors2++;
-              }
-              if (!(data1 === "js-fn" || data1 === "js-eval" || data1 === "js-tpl")) {
-                const err5 = { instancePath: instancePath + "/url/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err5];
-                } else {
-                  vErrors.push(err5);
-                }
-                errors2++;
-              }
-            }
-            if (data0.expr !== void 0) {
-              if (typeof data0.expr !== "string") {
-                const err6 = { instancePath: instancePath + "/url/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err6];
-                } else {
-                  vErrors.push(err6);
-                }
-                errors2++;
-              }
-            }
-            if (data0.pure !== void 0) {
-              if (typeof data0.pure !== "boolean") {
-                const err7 = { instancePath: instancePath + "/url/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err7];
-                } else {
-                  vErrors.push(err7);
-                }
-                errors2++;
-              }
-            }
-            if (data0.ref !== void 0) {
-              let data4 = data0.ref;
-              if (!(typeof data4 == "number" && (!(data4 % 1) && !isNaN(data4)) && isFinite(data4))) {
-                const err8 = { instancePath: instancePath + "/url/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err8];
-                } else {
-                  vErrors.push(err8);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err9 = { instancePath: instancePath + "/url", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err9];
-            } else {
-              vErrors.push(err9);
-            }
-            errors2++;
-          }
-        }
-        if (data.qSearchParam !== void 0) {
-          if (typeof data.qSearchParam !== "string") {
-            const err10 = { instancePath: instancePath + "/qSearchParam", schemaPath: "#/properties/qSearchParam/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err10];
-            } else {
-              vErrors.push(err10);
-            }
-            errors2++;
-          }
-        }
-        if (data.searchParams !== void 0) {
-          let data6 = data.searchParams;
-          if (data6 && typeof data6 == "object" && !Array.isArray(data6)) {
-            var props0 = {};
-            for (const key0 in data6) {
-              if (pattern2.test(key0)) {
-                let data7 = data6[key0];
-                if (data7 && typeof data7 == "object" && !Array.isArray(data7)) {
-                  if (data7.type === void 0) {
-                    const err11 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-                    if (vErrors === null) {
-                      vErrors = [err11];
-                    } else {
-                      vErrors.push(err11);
-                    }
-                    errors2++;
-                  }
-                  if (data7.expr === void 0) {
-                    const err12 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-                    if (vErrors === null) {
-                      vErrors = [err12];
-                    } else {
-                      vErrors.push(err12);
-                    }
-                    errors2++;
-                  }
-                  if (data7.pure === void 0) {
-                    const err13 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-                    if (vErrors === null) {
-                      vErrors = [err13];
-                    } else {
-                      vErrors.push(err13);
-                    }
-                    errors2++;
-                  }
-                  if (data7.type !== void 0) {
-                    let data8 = data7.type;
-                    if (typeof data8 !== "string") {
-                      const err14 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1") + "/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                      if (vErrors === null) {
-                        vErrors = [err14];
-                      } else {
-                        vErrors.push(err14);
-                      }
-                      errors2++;
-                    }
-                    if (!(data8 === "js-fn" || data8 === "js-eval" || data8 === "js-tpl")) {
-                      const err15 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1") + "/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                      if (vErrors === null) {
-                        vErrors = [err15];
-                      } else {
-                        vErrors.push(err15);
-                      }
-                      errors2++;
-                    }
-                  }
-                  if (data7.expr !== void 0) {
-                    if (typeof data7.expr !== "string") {
-                      const err16 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1") + "/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                      if (vErrors === null) {
-                        vErrors = [err16];
-                      } else {
-                        vErrors.push(err16);
-                      }
-                      errors2++;
-                    }
-                  }
-                  if (data7.pure !== void 0) {
-                    if (typeof data7.pure !== "boolean") {
-                      const err17 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1") + "/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                      if (vErrors === null) {
-                        vErrors = [err17];
-                      } else {
-                        vErrors.push(err17);
-                      }
-                      errors2++;
-                    }
-                  }
-                  if (data7.ref !== void 0) {
-                    let data11 = data7.ref;
-                    if (!(typeof data11 == "number" && (!(data11 % 1) && !isNaN(data11)) && isFinite(data11))) {
-                      const err18 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1") + "/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                      if (vErrors === null) {
-                        vErrors = [err18];
-                      } else {
-                        vErrors.push(err18);
-                      }
-                      errors2++;
-                    }
-                  }
-                } else {
-                  const err19 = { instancePath: instancePath + "/searchParams/" + key0.replace(/~/g, "~0").replace(/\//g, "~1"), schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                  if (vErrors === null) {
-                    vErrors = [err19];
-                  } else {
-                    vErrors.push(err19);
-                  }
-                  errors2++;
-                }
-                props0[key0] = true;
-              }
-            }
-          } else {
-            const err20 = { instancePath: instancePath + "/searchParams", schemaPath: "#/properties/searchParams/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err20];
-            } else {
-              vErrors.push(err20);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err21 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err21];
-        } else {
-          vErrors.push(err21);
-        }
-        errors2++;
-      }
-      validate73.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate73.evaluated = { "props": { "url": true, "qSearchParam": true, "searchParams": true }, "dynamicProps": false, "dynamicItems": false };
-    function validate72(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate72.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (!(data && typeof data == "object" && !Array.isArray(data))) {
-        const err0 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.returnObjects !== void 0) {
-          if (typeof data.returnObjects !== "boolean") {
-            const err1 = { instancePath: instancePath + "/returnObjects", schemaPath: "#/allOf/0/properties/returnObjects/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err1];
-            } else {
-              vErrors.push(err1);
-            }
-            errors2++;
-          }
-        }
-        if (data.itemsResults !== void 0) {
-          let data1 = data.itemsResults;
-          if (data1 && typeof data1 == "object" && !Array.isArray(data1)) {
-            if (data1.type === void 0) {
-              const err2 = { instancePath: instancePath + "/itemsResults", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err2];
-              } else {
-                vErrors.push(err2);
-              }
-              errors2++;
-            }
-            if (data1.expr === void 0) {
-              const err3 = { instancePath: instancePath + "/itemsResults", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err3];
-              } else {
-                vErrors.push(err3);
-              }
-              errors2++;
-            }
-            if (data1.pure === void 0) {
-              const err4 = { instancePath: instancePath + "/itemsResults", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err4];
-              } else {
-                vErrors.push(err4);
-              }
-              errors2++;
-            }
-            if (data1.type !== void 0) {
-              let data2 = data1.type;
-              if (typeof data2 !== "string") {
-                const err5 = { instancePath: instancePath + "/itemsResults/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err5];
-                } else {
-                  vErrors.push(err5);
-                }
-                errors2++;
-              }
-              if (!(data2 === "js-fn" || data2 === "js-eval" || data2 === "js-tpl")) {
-                const err6 = { instancePath: instancePath + "/itemsResults/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err6];
-                } else {
-                  vErrors.push(err6);
-                }
-                errors2++;
-              }
-            }
-            if (data1.expr !== void 0) {
-              if (typeof data1.expr !== "string") {
-                const err7 = { instancePath: instancePath + "/itemsResults/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err7];
-                } else {
-                  vErrors.push(err7);
-                }
-                errors2++;
-              }
-            }
-            if (data1.pure !== void 0) {
-              if (typeof data1.pure !== "boolean") {
-                const err8 = { instancePath: instancePath + "/itemsResults/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err8];
-                } else {
-                  vErrors.push(err8);
-                }
-                errors2++;
-              }
-            }
-            if (data1.ref !== void 0) {
-              let data5 = data1.ref;
-              if (!(typeof data5 == "number" && (!(data5 % 1) && !isNaN(data5)) && isFinite(data5))) {
-                const err9 = { instancePath: instancePath + "/itemsResults/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err9];
-                } else {
-                  vErrors.push(err9);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err10 = { instancePath: instancePath + "/itemsResults", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err10];
-            } else {
-              vErrors.push(err10);
-            }
-            errors2++;
-          }
-        }
-        if (data.itemTitle !== void 0) {
-          let data6 = data.itemTitle;
-          if (data6 && typeof data6 == "object" && !Array.isArray(data6)) {
-            if (data6.type === void 0) {
-              const err11 = { instancePath: instancePath + "/itemTitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err11];
-              } else {
-                vErrors.push(err11);
-              }
-              errors2++;
-            }
-            if (data6.expr === void 0) {
-              const err12 = { instancePath: instancePath + "/itemTitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err12];
-              } else {
-                vErrors.push(err12);
-              }
-              errors2++;
-            }
-            if (data6.pure === void 0) {
-              const err13 = { instancePath: instancePath + "/itemTitle", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err13];
-              } else {
-                vErrors.push(err13);
-              }
-              errors2++;
-            }
-            if (data6.type !== void 0) {
-              let data7 = data6.type;
-              if (typeof data7 !== "string") {
-                const err14 = { instancePath: instancePath + "/itemTitle/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err14];
-                } else {
-                  vErrors.push(err14);
-                }
-                errors2++;
-              }
-              if (!(data7 === "js-fn" || data7 === "js-eval" || data7 === "js-tpl")) {
-                const err15 = { instancePath: instancePath + "/itemTitle/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err15];
-                } else {
-                  vErrors.push(err15);
-                }
-                errors2++;
-              }
-            }
-            if (data6.expr !== void 0) {
-              if (typeof data6.expr !== "string") {
-                const err16 = { instancePath: instancePath + "/itemTitle/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err16];
-                } else {
-                  vErrors.push(err16);
-                }
-                errors2++;
-              }
-            }
-            if (data6.pure !== void 0) {
-              if (typeof data6.pure !== "boolean") {
-                const err17 = { instancePath: instancePath + "/itemTitle/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err17];
-                } else {
-                  vErrors.push(err17);
-                }
-                errors2++;
-              }
-            }
-            if (data6.ref !== void 0) {
-              let data10 = data6.ref;
-              if (!(typeof data10 == "number" && (!(data10 % 1) && !isNaN(data10)) && isFinite(data10))) {
-                const err18 = { instancePath: instancePath + "/itemTitle/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err18];
-                } else {
-                  vErrors.push(err18);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err19 = { instancePath: instancePath + "/itemTitle", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err19];
-            } else {
-              vErrors.push(err19);
-            }
-            errors2++;
-          }
-        }
-        if (data.itemKey !== void 0) {
-          let data11 = data.itemKey;
-          if (data11 && typeof data11 == "object" && !Array.isArray(data11)) {
-            if (data11.type === void 0) {
-              const err20 = { instancePath: instancePath + "/itemKey", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err20];
-              } else {
-                vErrors.push(err20);
-              }
-              errors2++;
-            }
-            if (data11.expr === void 0) {
-              const err21 = { instancePath: instancePath + "/itemKey", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err21];
-              } else {
-                vErrors.push(err21);
-              }
-              errors2++;
-            }
-            if (data11.pure === void 0) {
-              const err22 = { instancePath: instancePath + "/itemKey", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err22];
-              } else {
-                vErrors.push(err22);
-              }
-              errors2++;
-            }
-            if (data11.type !== void 0) {
-              let data12 = data11.type;
-              if (typeof data12 !== "string") {
-                const err23 = { instancePath: instancePath + "/itemKey/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err23];
-                } else {
-                  vErrors.push(err23);
-                }
-                errors2++;
-              }
-              if (!(data12 === "js-fn" || data12 === "js-eval" || data12 === "js-tpl")) {
-                const err24 = { instancePath: instancePath + "/itemKey/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err24];
-                } else {
-                  vErrors.push(err24);
-                }
-                errors2++;
-              }
-            }
-            if (data11.expr !== void 0) {
-              if (typeof data11.expr !== "string") {
-                const err25 = { instancePath: instancePath + "/itemKey/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err25];
-                } else {
-                  vErrors.push(err25);
-                }
-                errors2++;
-              }
-            }
-            if (data11.pure !== void 0) {
-              if (typeof data11.pure !== "boolean") {
-                const err26 = { instancePath: instancePath + "/itemKey/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err26];
-                } else {
-                  vErrors.push(err26);
-                }
-                errors2++;
-              }
-            }
-            if (data11.ref !== void 0) {
-              let data15 = data11.ref;
-              if (!(typeof data15 == "number" && (!(data15 % 1) && !isNaN(data15)) && isFinite(data15))) {
-                const err27 = { instancePath: instancePath + "/itemKey/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err27];
-                } else {
-                  vErrors.push(err27);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err28 = { instancePath: instancePath + "/itemKey", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err28];
-            } else {
-              vErrors.push(err28);
-            }
-            errors2++;
-          }
-        }
-        if (data.itemValue !== void 0) {
-          let data16 = data.itemValue;
-          if (data16 && typeof data16 == "object" && !Array.isArray(data16)) {
-            if (data16.type === void 0) {
-              const err29 = { instancePath: instancePath + "/itemValue", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err29];
-              } else {
-                vErrors.push(err29);
-              }
-              errors2++;
-            }
-            if (data16.expr === void 0) {
-              const err30 = { instancePath: instancePath + "/itemValue", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err30];
-              } else {
-                vErrors.push(err30);
-              }
-              errors2++;
-            }
-            if (data16.pure === void 0) {
-              const err31 = { instancePath: instancePath + "/itemValue", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err31];
-              } else {
-                vErrors.push(err31);
-              }
-              errors2++;
-            }
-            if (data16.type !== void 0) {
-              let data17 = data16.type;
-              if (typeof data17 !== "string") {
-                const err32 = { instancePath: instancePath + "/itemValue/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err32];
-                } else {
-                  vErrors.push(err32);
-                }
-                errors2++;
-              }
-              if (!(data17 === "js-fn" || data17 === "js-eval" || data17 === "js-tpl")) {
-                const err33 = { instancePath: instancePath + "/itemValue/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err33];
-                } else {
-                  vErrors.push(err33);
-                }
-                errors2++;
-              }
-            }
-            if (data16.expr !== void 0) {
-              if (typeof data16.expr !== "string") {
-                const err34 = { instancePath: instancePath + "/itemValue/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err34];
-                } else {
-                  vErrors.push(err34);
-                }
-                errors2++;
-              }
-            }
-            if (data16.pure !== void 0) {
-              if (typeof data16.pure !== "boolean") {
-                const err35 = { instancePath: instancePath + "/itemValue/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err35];
-                } else {
-                  vErrors.push(err35);
-                }
-                errors2++;
-              }
-            }
-            if (data16.ref !== void 0) {
-              let data20 = data16.ref;
-              if (!(typeof data20 == "number" && (!(data20 % 1) && !isNaN(data20)) && isFinite(data20))) {
-                const err36 = { instancePath: instancePath + "/itemValue/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err36];
-                } else {
-                  vErrors.push(err36);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err37 = { instancePath: instancePath + "/itemValue", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err37];
-            } else {
-              vErrors.push(err37);
-            }
-            errors2++;
-          }
-        }
-        if (data.itemIcon !== void 0) {
-          let data21 = data.itemIcon;
-          if (data21 && typeof data21 == "object" && !Array.isArray(data21)) {
-            if (data21.type === void 0) {
-              const err38 = { instancePath: instancePath + "/itemIcon", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err38];
-              } else {
-                vErrors.push(err38);
-              }
-              errors2++;
-            }
-            if (data21.expr === void 0) {
-              const err39 = { instancePath: instancePath + "/itemIcon", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err39];
-              } else {
-                vErrors.push(err39);
-              }
-              errors2++;
-            }
-            if (data21.pure === void 0) {
-              const err40 = { instancePath: instancePath + "/itemIcon", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err40];
-              } else {
-                vErrors.push(err40);
-              }
-              errors2++;
-            }
-            if (data21.type !== void 0) {
-              let data22 = data21.type;
-              if (typeof data22 !== "string") {
-                const err41 = { instancePath: instancePath + "/itemIcon/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err41];
-                } else {
-                  vErrors.push(err41);
-                }
-                errors2++;
-              }
-              if (!(data22 === "js-fn" || data22 === "js-eval" || data22 === "js-tpl")) {
-                const err42 = { instancePath: instancePath + "/itemIcon/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err42];
-                } else {
-                  vErrors.push(err42);
-                }
-                errors2++;
-              }
-            }
-            if (data21.expr !== void 0) {
-              if (typeof data21.expr !== "string") {
-                const err43 = { instancePath: instancePath + "/itemIcon/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err43];
-                } else {
-                  vErrors.push(err43);
-                }
-                errors2++;
-              }
-            }
-            if (data21.pure !== void 0) {
-              if (typeof data21.pure !== "boolean") {
-                const err44 = { instancePath: instancePath + "/itemIcon/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err44];
-                } else {
-                  vErrors.push(err44);
-                }
-                errors2++;
-              }
-            }
-            if (data21.ref !== void 0) {
-              let data25 = data21.ref;
-              if (!(typeof data25 == "number" && (!(data25 % 1) && !isNaN(data25)) && isFinite(data25))) {
-                const err45 = { instancePath: instancePath + "/itemIcon/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err45];
-                } else {
-                  vErrors.push(err45);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err46 = { instancePath: instancePath + "/itemIcon", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err46];
-            } else {
-              vErrors.push(err46);
-            }
-            errors2++;
-          }
-        }
-      }
-      const _errs60 = errors2;
-      let valid12 = false;
-      let passing0 = null;
-      const _errs61 = errors2;
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.type === void 0) {
-          const err47 = { instancePath, schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-          if (vErrors === null) {
-            vErrors = [err47];
-          } else {
-            vErrors.push(err47);
-          }
-          errors2++;
-        }
-        if (data.expr === void 0) {
-          const err48 = { instancePath, schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-          if (vErrors === null) {
-            vErrors = [err48];
-          } else {
-            vErrors.push(err48);
-          }
-          errors2++;
-        }
-        if (data.pure === void 0) {
-          const err49 = { instancePath, schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-          if (vErrors === null) {
-            vErrors = [err49];
-          } else {
-            vErrors.push(err49);
-          }
-          errors2++;
-        }
-        if (data.type !== void 0) {
-          let data26 = data.type;
-          if (typeof data26 !== "string") {
-            const err50 = { instancePath: instancePath + "/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err50];
-            } else {
-              vErrors.push(err50);
-            }
-            errors2++;
-          }
-          if (!(data26 === "js-fn" || data26 === "js-eval" || data26 === "js-tpl")) {
-            const err51 = { instancePath: instancePath + "/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-            if (vErrors === null) {
-              vErrors = [err51];
-            } else {
-              vErrors.push(err51);
-            }
-            errors2++;
-          }
-        }
-        if (data.expr !== void 0) {
-          if (typeof data.expr !== "string") {
-            const err52 = { instancePath: instancePath + "/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err52];
-            } else {
-              vErrors.push(err52);
-            }
-            errors2++;
-          }
-        }
-        if (data.pure !== void 0) {
-          if (typeof data.pure !== "boolean") {
-            const err53 = { instancePath: instancePath + "/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err53];
-            } else {
-              vErrors.push(err53);
-            }
-            errors2++;
-          }
-        }
-        if (data.ref !== void 0) {
-          let data29 = data.ref;
-          if (!(typeof data29 == "number" && (!(data29 % 1) && !isNaN(data29)) && isFinite(data29))) {
-            const err54 = { instancePath: instancePath + "/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-            if (vErrors === null) {
-              vErrors = [err54];
-            } else {
-              vErrors.push(err54);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err55 = { instancePath, schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err55];
-        } else {
-          vErrors.push(err55);
-        }
-        errors2++;
-      }
-      var _valid0 = _errs61 === errors2;
-      if (_valid0) {
-        valid12 = true;
-        passing0 = 0;
-        var props0 = {};
-        props0.type = true;
-        props0.expr = true;
-        props0.pure = true;
-        props0.ref = true;
-      }
-      const _errs72 = errors2;
-      if (!validate73(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate73.errors : vErrors.concat(validate73.errors);
-        errors2 = vErrors.length;
-      }
-      var _valid0 = _errs72 === errors2;
-      if (_valid0 && valid12) {
-        valid12 = false;
-        passing0 = [passing0, 1];
-      } else {
-        if (_valid0) {
-          valid12 = true;
-          passing0 = 1;
-          if (props0 !== true) {
-            props0 = props0 || {};
-            props0.url = true;
-            props0.qSearchParam = true;
-            props0.searchParams = true;
-          }
-        }
-      }
-      if (!valid12) {
-        const err56 = { instancePath, schemaPath: "#/allOf/1/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-        if (vErrors === null) {
-          vErrors = [err56];
-        } else {
-          vErrors.push(err56);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs60;
-        if (vErrors !== null) {
-          if (_errs60) {
-            vErrors.length = _errs60;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      if (props0 !== true) {
-        props0 = props0 || {};
-        props0.returnObjects = true;
-        props0.itemsResults = true;
-        props0.itemTitle = true;
-        props0.itemKey = true;
-        props0.itemValue = true;
-        props0.itemIcon = true;
-      }
-      validate72.errors = vErrors;
-      evaluated0.props = props0;
-      return errors2 === 0;
-    }
-    validate72.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    function validate69(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate69.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.label === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("combobox" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "combobox" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.label !== void 0) {
-          if (typeof data.label !== "string") {
-            const err3 = { instancePath: instancePath + "/label", schemaPath: "#/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.autofocus !== void 0) {
-          if (typeof data.autofocus !== "boolean") {
-            const err4 = { instancePath: instancePath + "/autofocus", schemaPath: "#/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.items !== void 0) {
-          if (!validate70(data.items, { instancePath: instancePath + "/items", parentData: data, parentDataProperty: "items", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate70.errors : vErrors.concat(validate70.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.getItems !== void 0) {
-          if (!validate72(data.getItems, { instancePath: instancePath + "/getItems", parentData: data, parentDataProperty: "getItems", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate72.errors : vErrors.concat(validate72.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.multiple !== void 0) {
-          if (typeof data.multiple !== "boolean") {
-            const err5 = { instancePath: instancePath + "/multiple", schemaPath: "#/properties/multiple/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err6 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err6];
-        } else {
-          vErrors.push(err6);
-        }
-        errors2++;
-      }
-      validate69.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate69.evaluated = { "props": { "comp": true, "label": true, "autofocus": true, "items": true, "getItems": true, "multiple": true }, "dynamicProps": false, "dynamicItems": false };
-    function validate76(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate76.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.label === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("number-combobox" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "number-combobox" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.label !== void 0) {
-          if (typeof data.label !== "string") {
-            const err3 = { instancePath: instancePath + "/label", schemaPath: "#/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.autofocus !== void 0) {
-          if (typeof data.autofocus !== "boolean") {
-            const err4 = { instancePath: instancePath + "/autofocus", schemaPath: "#/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.items !== void 0) {
-          if (!validate70(data.items, { instancePath: instancePath + "/items", parentData: data, parentDataProperty: "items", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate70.errors : vErrors.concat(validate70.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.getItems !== void 0) {
-          if (!validate72(data.getItems, { instancePath: instancePath + "/getItems", parentData: data, parentDataProperty: "getItems", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate72.errors : vErrors.concat(validate72.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.multiple !== void 0) {
-          if (typeof data.multiple !== "boolean") {
-            const err5 = { instancePath: instancePath + "/multiple", schemaPath: "#/properties/multiple/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-        }
-        if (data.step !== void 0) {
-          let data6 = data.step;
-          if (!(typeof data6 == "number" && isFinite(data6))) {
-            const err6 = { instancePath: instancePath + "/step", schemaPath: "#/properties/step/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-            if (vErrors === null) {
-              vErrors = [err6];
-            } else {
-              vErrors.push(err6);
-            }
-            errors2++;
-          }
-        }
-        if (data.min !== void 0) {
-          let data7 = data.min;
-          if (!(typeof data7 == "number" && isFinite(data7))) {
-            const err7 = { instancePath: instancePath + "/min", schemaPath: "#/properties/min/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-            if (vErrors === null) {
-              vErrors = [err7];
-            } else {
-              vErrors.push(err7);
-            }
-            errors2++;
-          }
-        }
-        if (data.max !== void 0) {
-          let data8 = data.max;
-          if (!(typeof data8 == "number" && isFinite(data8))) {
-            const err8 = { instancePath: instancePath + "/max", schemaPath: "#/properties/max/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-            if (vErrors === null) {
-              vErrors = [err8];
-            } else {
-              vErrors.push(err8);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err9 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err9];
-        } else {
-          vErrors.push(err9);
-        }
-        errors2++;
-      }
-      validate76.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate76.evaluated = { "props": { "comp": true, "label": true, "autofocus": true, "items": true, "getItems": true, "multiple": true, "step": true, "min": true, "max": true }, "dynamicProps": false, "dynamicItems": false };
-    function validate79(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate79.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.label === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("select" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "select" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.label !== void 0) {
-          if (typeof data.label !== "string") {
-            const err3 = { instancePath: instancePath + "/label", schemaPath: "#/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.autofocus !== void 0) {
-          if (typeof data.autofocus !== "boolean") {
-            const err4 = { instancePath: instancePath + "/autofocus", schemaPath: "#/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.items !== void 0) {
-          if (!validate70(data.items, { instancePath: instancePath + "/items", parentData: data, parentDataProperty: "items", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate70.errors : vErrors.concat(validate70.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.getItems !== void 0) {
-          if (!validate72(data.getItems, { instancePath: instancePath + "/getItems", parentData: data, parentDataProperty: "getItems", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate72.errors : vErrors.concat(validate72.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.multiple !== void 0) {
-          if (typeof data.multiple !== "boolean") {
-            const err5 = { instancePath: instancePath + "/multiple", schemaPath: "#/properties/multiple/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err6 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err6];
-        } else {
-          vErrors.push(err6);
-        }
-        errors2++;
-      }
-      validate79.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate79.evaluated = { "props": { "comp": true, "label": true, "autofocus": true, "items": true, "getItems": true, "multiple": true }, "dynamicProps": false, "dynamicItems": false };
-    function validate82(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate82.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.label === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("autocomplete" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "autocomplete" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.label !== void 0) {
-          if (typeof data.label !== "string") {
-            const err3 = { instancePath: instancePath + "/label", schemaPath: "#/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.autofocus !== void 0) {
-          if (typeof data.autofocus !== "boolean") {
-            const err4 = { instancePath: instancePath + "/autofocus", schemaPath: "#/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.items !== void 0) {
-          if (!validate70(data.items, { instancePath: instancePath + "/items", parentData: data, parentDataProperty: "items", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate70.errors : vErrors.concat(validate70.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.getItems !== void 0) {
-          if (!validate72(data.getItems, { instancePath: instancePath + "/getItems", parentData: data, parentDataProperty: "getItems", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate72.errors : vErrors.concat(validate72.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.multiple !== void 0) {
-          if (typeof data.multiple !== "boolean") {
-            const err5 = { instancePath: instancePath + "/multiple", schemaPath: "#/properties/multiple/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err5];
-            } else {
-              vErrors.push(err5);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err6 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err6];
-        } else {
-          vErrors.push(err6);
-        }
-        errors2++;
-      }
-      validate82.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate82.evaluated = { "props": { "comp": true, "label": true, "autofocus": true, "items": true, "getItems": true, "multiple": true }, "dynamicProps": false, "dynamicItems": false };
-    const schema96 = { "type": "object", "required": ["comp", "children"], "properties": { "comp": { "const": "section" }, "title": { "type": ["string", "null"] }, "subtitle": { "type": ["string", "null"] }, "children": { "$ref": "#/$defs/children" } } };
-    const schema98 = { "type": "object", "unevaluatedProperties": false, "required": ["key"], "properties": { "key": { "type": ["string", "integer"] }, "cols": { "$ref": "#/$defs/cols-obj" } }, "anyOf": [{}, { "$ref": "#/$defs/composite-comp-object" }] };
-    const wrapper4 = { validate: validate85 };
-    const schema100 = { "type": "object", "required": ["comp", "children"], "properties": { "comp": { "const": "tabs" }, "title": { "type": ["string", "null"] }, "subtitle": { "type": ["string", "null"] }, "children": { "$ref": "#/$defs/children" } } };
-    const wrapper1 = { validate: validate86 };
-    function validate89(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate89.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.children === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "children" }, message: "must have required property 'children'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("tabs" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "tabs" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.title !== void 0) {
-          let data1 = data.title;
-          if (typeof data1 !== "string" && data1 !== null) {
-            const err3 = { instancePath: instancePath + "/title", schemaPath: "#/properties/title/type", keyword: "type", params: { type: schema100.properties.title.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.subtitle !== void 0) {
-          let data2 = data.subtitle;
-          if (typeof data2 !== "string" && data2 !== null) {
-            const err4 = { instancePath: instancePath + "/subtitle", schemaPath: "#/properties/subtitle/type", keyword: "type", params: { type: schema100.properties.subtitle.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.children !== void 0) {
-          if (!wrapper1.validate(data.children, { instancePath: instancePath + "/children", parentData: data, parentDataProperty: "children", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? wrapper1.validate.errors : vErrors.concat(wrapper1.validate.errors);
-            errors2 = vErrors.length;
-          }
-        }
-      } else {
-        const err5 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err5];
-        } else {
-          vErrors.push(err5);
-        }
-        errors2++;
-      }
-      validate89.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate89.evaluated = { "props": { "comp": true, "title": true, "subtitle": true, "children": true }, "dynamicProps": false, "dynamicItems": false };
-    const schema101 = { "type": "object", "required": ["comp", "children"], "properties": { "comp": { "const": "vertical-tabs" }, "title": { "type": ["string", "null"] }, "subtitle": { "type": ["string", "null"] }, "children": { "$ref": "#/$defs/children" } } };
-    function validate90(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate90.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.children === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "children" }, message: "must have required property 'children'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("vertical-tabs" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "vertical-tabs" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.title !== void 0) {
-          let data1 = data.title;
-          if (typeof data1 !== "string" && data1 !== null) {
-            const err3 = { instancePath: instancePath + "/title", schemaPath: "#/properties/title/type", keyword: "type", params: { type: schema101.properties.title.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.subtitle !== void 0) {
-          let data2 = data.subtitle;
-          if (typeof data2 !== "string" && data2 !== null) {
-            const err4 = { instancePath: instancePath + "/subtitle", schemaPath: "#/properties/subtitle/type", keyword: "type", params: { type: schema101.properties.subtitle.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.children !== void 0) {
-          if (!wrapper1.validate(data.children, { instancePath: instancePath + "/children", parentData: data, parentDataProperty: "children", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? wrapper1.validate.errors : vErrors.concat(wrapper1.validate.errors);
-            errors2 = vErrors.length;
-          }
-        }
-      } else {
-        const err5 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err5];
-        } else {
-          vErrors.push(err5);
-        }
-        errors2++;
-      }
-      validate90.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate90.evaluated = { "props": { "comp": true, "title": true, "subtitle": true, "children": true }, "dynamicProps": false, "dynamicItems": false };
-    const schema102 = { "type": "object", "required": ["comp", "children"], "properties": { "comp": { "const": "expansion-panels" }, "title": { "type": ["string", "null"] }, "subtitle": { "type": ["string", "null"] }, "children": { "$ref": "#/$defs/children" } } };
-    function validate91(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate91.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.children === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "children" }, message: "must have required property 'children'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("expansion-panels" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "expansion-panels" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.title !== void 0) {
-          let data1 = data.title;
-          if (typeof data1 !== "string" && data1 !== null) {
-            const err3 = { instancePath: instancePath + "/title", schemaPath: "#/properties/title/type", keyword: "type", params: { type: schema102.properties.title.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.subtitle !== void 0) {
-          let data2 = data.subtitle;
-          if (typeof data2 !== "string" && data2 !== null) {
-            const err4 = { instancePath: instancePath + "/subtitle", schemaPath: "#/properties/subtitle/type", keyword: "type", params: { type: schema102.properties.subtitle.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.children !== void 0) {
-          if (!wrapper1.validate(data.children, { instancePath: instancePath + "/children", parentData: data, parentDataProperty: "children", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? wrapper1.validate.errors : vErrors.concat(wrapper1.validate.errors);
-            errors2 = vErrors.length;
-          }
-        }
-      } else {
-        const err5 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err5];
-        } else {
-          vErrors.push(err5);
-        }
-        errors2++;
-      }
-      validate91.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate91.evaluated = { "props": { "comp": true, "title": true, "subtitle": true, "children": true }, "dynamicProps": false, "dynamicItems": false };
-    function validate88(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate88.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        const tag0 = data.comp;
-        if (typeof tag0 == "string") {
-          if (tag0 === "section") {
-            if (!wrapper4.validate(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? wrapper4.validate.errors : vErrors.concat(wrapper4.validate.errors);
-              errors2 = vErrors.length;
-            } else {
-              var props0 = wrapper4.validate.evaluated.props;
-              var items0 = wrapper4.validate.evaluated.items;
-            }
-          } else if (tag0 === "tabs") {
-            if (!validate89(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate89.errors : vErrors.concat(validate89.errors);
-              errors2 = vErrors.length;
-            }
-            if (props0 !== true) {
-              props0 = props0 || {};
-              props0.comp = true;
-              props0.title = true;
-              props0.subtitle = true;
-              props0.children = true;
-            }
-          } else if (tag0 === "vertical-tabs") {
-            if (!validate90(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate90.errors : vErrors.concat(validate90.errors);
-              errors2 = vErrors.length;
-            }
-            if (props0 !== true) {
-              props0 = props0 || {};
-              props0.comp = true;
-              props0.title = true;
-              props0.subtitle = true;
-              props0.children = true;
-            }
-          } else if (tag0 === "expansion-panels") {
-            if (!validate91(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate91.errors : vErrors.concat(validate91.errors);
-              errors2 = vErrors.length;
-            }
-            if (props0 !== true) {
-              props0 = props0 || {};
-              props0.comp = true;
-              props0.title = true;
-              props0.subtitle = true;
-              props0.children = true;
-            }
-          } else {
-            const err0 = { instancePath, schemaPath: "#/discriminator", keyword: "discriminator", params: { error: "mapping", tag: "comp", tagValue: tag0 }, message: 'value of tag "comp" must be in oneOf' };
-            if (vErrors === null) {
-              vErrors = [err0];
-            } else {
-              vErrors.push(err0);
-            }
-            errors2++;
-          }
-        } else {
-          const err1 = { instancePath, schemaPath: "#/discriminator", keyword: "discriminator", params: { error: "tag", tag: "comp", tagValue: tag0 }, message: 'tag "comp" must be string' };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-      } else {
-        const err2 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err2];
-        } else {
-          vErrors.push(err2);
-        }
-        errors2++;
-      }
-      validate88.errors = vErrors;
-      evaluated0.props = props0;
-      evaluated0.items = items0;
-      return errors2 === 0;
-    }
-    validate88.evaluated = { "dynamicProps": true, "dynamicItems": true };
-    function validate87(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate87.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      const _errs1 = errors2;
-      let valid0 = false;
-      var _valid0 = true;
-      valid0 = valid0 || _valid0;
-      const _errs2 = errors2;
-      if (!validate88(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate88.errors : vErrors.concat(validate88.errors);
-        errors2 = vErrors.length;
-      } else {
-        var props0 = validate88.evaluated.props;
-        var items0 = validate88.evaluated.items;
-      }
-      var _valid0 = _errs2 === errors2;
-      valid0 = valid0 || _valid0;
-      if (!valid0) {
-        const err0 = { instancePath, schemaPath: "#/anyOf", keyword: "anyOf", params: {}, message: "must match a schema in anyOf" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs1;
-        if (vErrors !== null) {
-          if (_errs1) {
-            vErrors.length = _errs1;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.key === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "key" }, message: "must have required property 'key'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (props0 !== true) {
-          props0 = props0 || {};
-          props0.key = true;
-          props0.cols = true;
-        }
-        if (data.key !== void 0) {
-          let data0 = data.key;
-          if (typeof data0 !== "string" && !(typeof data0 == "number" && (!(data0 % 1) && !isNaN(data0)) && isFinite(data0))) {
-            const err2 = { instancePath: instancePath + "/key", schemaPath: "#/properties/key/type", keyword: "type", params: { type: schema98.properties.key.type }, message: "must be string,integer" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.cols !== void 0) {
-          if (!validate64(data.cols, { instancePath: instancePath + "/cols", parentData: data, parentDataProperty: "cols", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate64.errors : vErrors.concat(validate64.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (props0 !== true) {
-          for (const key0 in data) {
-            if (!props0 || !props0[key0]) {
-              const err3 = { instancePath, schemaPath: "#/unevaluatedProperties", keyword: "unevaluatedProperties", params: { unevaluatedProperty: key0 }, message: "must NOT have unevaluated properties" };
-              if (vErrors === null) {
-                vErrors = [err3];
-              } else {
-                vErrors.push(err3);
-              }
-              errors2++;
-            }
-          }
-        }
-      } else {
-        const err4 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err4];
-        } else {
-          vErrors.push(err4);
-        }
-        errors2++;
-      }
-      validate87.errors = vErrors;
-      evaluated0.items = items0;
-      return errors2 === 0;
-    }
-    validate87.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": true };
-    function validate86(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate86.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (Array.isArray(data)) {
-        const len0 = data.length;
-        for (let i0 = 0; i0 < len0; i0++) {
-          if (!validate87(data[i0], { instancePath: instancePath + "/" + i0, parentData: data, parentDataProperty: i0, rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate87.errors : vErrors.concat(validate87.errors);
-            errors2 = vErrors.length;
-          }
-        }
-      } else {
-        const err0 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      }
-      validate86.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate86.evaluated = { "items": true, "dynamicProps": false, "dynamicItems": false };
-    function validate85(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate85.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.children === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "children" }, message: "must have required property 'children'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("section" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "section" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.title !== void 0) {
-          let data1 = data.title;
-          if (typeof data1 !== "string" && data1 !== null) {
-            const err3 = { instancePath: instancePath + "/title", schemaPath: "#/properties/title/type", keyword: "type", params: { type: schema96.properties.title.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.subtitle !== void 0) {
-          let data2 = data.subtitle;
-          if (typeof data2 !== "string" && data2 !== null) {
-            const err4 = { instancePath: instancePath + "/subtitle", schemaPath: "#/properties/subtitle/type", keyword: "type", params: { type: schema96.properties.subtitle.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.children !== void 0) {
-          if (!validate86(data.children, { instancePath: instancePath + "/children", parentData: data, parentDataProperty: "children", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate86.errors : vErrors.concat(validate86.errors);
-            errors2 = vErrors.length;
-          }
-        }
-      } else {
-        const err5 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err5];
-        } else {
-          vErrors.push(err5);
-        }
-        errors2++;
-      }
-      validate85.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate85.evaluated = { "props": { "comp": true, "title": true, "subtitle": true, "children": true }, "dynamicProps": false, "dynamicItems": false };
-    const schema103 = { "type": "object", "required": ["comp", "children"], "properties": { "comp": { "const": "stepper" }, "title": { "type": ["string", "null"] }, "subtitle": { "type": ["string", "null"] }, "children": { "$ref": "#/$defs/children" } } };
-    function validate99(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate99.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        if (data.children === void 0) {
-          const err1 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "children" }, message: "must have required property 'children'" };
-          if (vErrors === null) {
-            vErrors = [err1];
-          } else {
-            vErrors.push(err1);
-          }
-          errors2++;
-        }
-        if (data.comp !== void 0) {
-          if ("stepper" !== data.comp) {
-            const err2 = { instancePath: instancePath + "/comp", schemaPath: "#/properties/comp/const", keyword: "const", params: { allowedValue: "stepper" }, message: "must be equal to constant" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-        if (data.title !== void 0) {
-          let data1 = data.title;
-          if (typeof data1 !== "string" && data1 !== null) {
-            const err3 = { instancePath: instancePath + "/title", schemaPath: "#/properties/title/type", keyword: "type", params: { type: schema103.properties.title.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err3];
-            } else {
-              vErrors.push(err3);
-            }
-            errors2++;
-          }
-        }
-        if (data.subtitle !== void 0) {
-          let data2 = data.subtitle;
-          if (typeof data2 !== "string" && data2 !== null) {
-            const err4 = { instancePath: instancePath + "/subtitle", schemaPath: "#/properties/subtitle/type", keyword: "type", params: { type: schema103.properties.subtitle.type }, message: "must be string,null" };
-            if (vErrors === null) {
-              vErrors = [err4];
-            } else {
-              vErrors.push(err4);
-            }
-            errors2++;
-          }
-        }
-        if (data.children !== void 0) {
-          if (!validate86(data.children, { instancePath: instancePath + "/children", parentData: data, parentDataProperty: "children", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate86.errors : vErrors.concat(validate86.errors);
-            errors2 = vErrors.length;
-          }
-        }
-      } else {
-        const err5 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err5];
-        } else {
-          vErrors.push(err5);
-        }
-        errors2++;
-      }
-      validate99.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate99.evaluated = { "props": { "comp": true, "title": true, "subtitle": true, "children": true }, "dynamicProps": false, "dynamicItems": false };
-    const formats0 = formats.fullFormats.date;
-    const formats4 = formats.fullFormats["date-time"];
-    const formats8 = formats.fullFormats.time;
-    function validate61(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate61.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.if !== void 0) {
-          let data0 = data.if;
-          if (data0 && typeof data0 == "object" && !Array.isArray(data0)) {
-            if (data0.type === void 0) {
-              const err0 = { instancePath: instancePath + "/if", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err0];
-              } else {
-                vErrors.push(err0);
-              }
-              errors2++;
-            }
-            if (data0.expr === void 0) {
-              const err1 = { instancePath: instancePath + "/if", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err1];
-              } else {
-                vErrors.push(err1);
-              }
-              errors2++;
-            }
-            if (data0.pure === void 0) {
-              const err2 = { instancePath: instancePath + "/if", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err2];
-              } else {
-                vErrors.push(err2);
-              }
-              errors2++;
-            }
-            if (data0.type !== void 0) {
-              let data1 = data0.type;
-              if (typeof data1 !== "string") {
-                const err3 = { instancePath: instancePath + "/if/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err3];
-                } else {
-                  vErrors.push(err3);
-                }
-                errors2++;
-              }
-              if (!(data1 === "js-fn" || data1 === "js-eval" || data1 === "js-tpl")) {
-                const err4 = { instancePath: instancePath + "/if/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err4];
-                } else {
-                  vErrors.push(err4);
-                }
-                errors2++;
-              }
-            }
-            if (data0.expr !== void 0) {
-              if (typeof data0.expr !== "string") {
-                const err5 = { instancePath: instancePath + "/if/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err5];
-                } else {
-                  vErrors.push(err5);
-                }
-                errors2++;
-              }
-            }
-            if (data0.pure !== void 0) {
-              if (typeof data0.pure !== "boolean") {
-                const err6 = { instancePath: instancePath + "/if/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err6];
-                } else {
-                  vErrors.push(err6);
-                }
-                errors2++;
-              }
-            }
-            if (data0.ref !== void 0) {
-              let data4 = data0.ref;
-              if (!(typeof data4 == "number" && (!(data4 % 1) && !isNaN(data4)) && isFinite(data4))) {
-                const err7 = { instancePath: instancePath + "/if/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err7];
-                } else {
-                  vErrors.push(err7);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err8 = { instancePath: instancePath + "/if", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err8];
-            } else {
-              vErrors.push(err8);
-            }
-            errors2++;
-          }
-        }
-        if (data.options !== void 0) {
-          if (!validate62(data.options, { instancePath: instancePath + "/options", parentData: data, parentDataProperty: "options", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate62.errors : vErrors.concat(validate62.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.getOptions !== void 0) {
-          let data6 = data.getOptions;
-          if (data6 && typeof data6 == "object" && !Array.isArray(data6)) {
-            if (data6.type === void 0) {
-              const err9 = { instancePath: instancePath + "/getOptions", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err9];
-              } else {
-                vErrors.push(err9);
-              }
-              errors2++;
-            }
-            if (data6.expr === void 0) {
-              const err10 = { instancePath: instancePath + "/getOptions", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err10];
-              } else {
-                vErrors.push(err10);
-              }
-              errors2++;
-            }
-            if (data6.pure === void 0) {
-              const err11 = { instancePath: instancePath + "/getOptions", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err11];
-              } else {
-                vErrors.push(err11);
-              }
-              errors2++;
-            }
-            if (data6.type !== void 0) {
-              let data7 = data6.type;
-              if (typeof data7 !== "string") {
-                const err12 = { instancePath: instancePath + "/getOptions/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err12];
-                } else {
-                  vErrors.push(err12);
-                }
-                errors2++;
-              }
-              if (!(data7 === "js-fn" || data7 === "js-eval" || data7 === "js-tpl")) {
-                const err13 = { instancePath: instancePath + "/getOptions/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err13];
-                } else {
-                  vErrors.push(err13);
-                }
-                errors2++;
-              }
-            }
-            if (data6.expr !== void 0) {
-              if (typeof data6.expr !== "string") {
-                const err14 = { instancePath: instancePath + "/getOptions/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err14];
-                } else {
-                  vErrors.push(err14);
-                }
-                errors2++;
-              }
-            }
-            if (data6.pure !== void 0) {
-              if (typeof data6.pure !== "boolean") {
-                const err15 = { instancePath: instancePath + "/getOptions/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err15];
-                } else {
-                  vErrors.push(err15);
-                }
-                errors2++;
-              }
-            }
-            if (data6.ref !== void 0) {
-              let data10 = data6.ref;
-              if (!(typeof data10 == "number" && (!(data10 % 1) && !isNaN(data10)) && isFinite(data10))) {
-                const err16 = { instancePath: instancePath + "/getOptions/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err16];
-                } else {
-                  vErrors.push(err16);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err17 = { instancePath: instancePath + "/getOptions", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err17];
-            } else {
-              vErrors.push(err17);
-            }
-            errors2++;
-          }
-        }
-        if (data.getDefaultData !== void 0) {
-          let data11 = data.getDefaultData;
-          if (data11 && typeof data11 == "object" && !Array.isArray(data11)) {
-            if (data11.type === void 0) {
-              const err18 = { instancePath: instancePath + "/getDefaultData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err18];
-              } else {
-                vErrors.push(err18);
-              }
-              errors2++;
-            }
-            if (data11.expr === void 0) {
-              const err19 = { instancePath: instancePath + "/getDefaultData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err19];
-              } else {
-                vErrors.push(err19);
-              }
-              errors2++;
-            }
-            if (data11.pure === void 0) {
-              const err20 = { instancePath: instancePath + "/getDefaultData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err20];
-              } else {
-                vErrors.push(err20);
-              }
-              errors2++;
-            }
-            if (data11.type !== void 0) {
-              let data12 = data11.type;
-              if (typeof data12 !== "string") {
-                const err21 = { instancePath: instancePath + "/getDefaultData/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err21];
-                } else {
-                  vErrors.push(err21);
-                }
-                errors2++;
-              }
-              if (!(data12 === "js-fn" || data12 === "js-eval" || data12 === "js-tpl")) {
-                const err22 = { instancePath: instancePath + "/getDefaultData/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err22];
-                } else {
-                  vErrors.push(err22);
-                }
-                errors2++;
-              }
-            }
-            if (data11.expr !== void 0) {
-              if (typeof data11.expr !== "string") {
-                const err23 = { instancePath: instancePath + "/getDefaultData/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err23];
-                } else {
-                  vErrors.push(err23);
-                }
-                errors2++;
-              }
-            }
-            if (data11.pure !== void 0) {
-              if (typeof data11.pure !== "boolean") {
-                const err24 = { instancePath: instancePath + "/getDefaultData/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err24];
-                } else {
-                  vErrors.push(err24);
-                }
-                errors2++;
-              }
-            }
-            if (data11.ref !== void 0) {
-              let data15 = data11.ref;
-              if (!(typeof data15 == "number" && (!(data15 % 1) && !isNaN(data15)) && isFinite(data15))) {
-                const err25 = { instancePath: instancePath + "/getDefaultData/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err25];
-                } else {
-                  vErrors.push(err25);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err26 = { instancePath: instancePath + "/getDefaultData", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err26];
-            } else {
-              vErrors.push(err26);
-            }
-            errors2++;
-          }
-        }
-        if (data.getConstData !== void 0) {
-          let data16 = data.getConstData;
-          if (data16 && typeof data16 == "object" && !Array.isArray(data16)) {
-            if (data16.type === void 0) {
-              const err27 = { instancePath: instancePath + "/getConstData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err27];
-              } else {
-                vErrors.push(err27);
-              }
-              errors2++;
-            }
-            if (data16.expr === void 0) {
-              const err28 = { instancePath: instancePath + "/getConstData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err28];
-              } else {
-                vErrors.push(err28);
-              }
-              errors2++;
-            }
-            if (data16.pure === void 0) {
-              const err29 = { instancePath: instancePath + "/getConstData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err29];
-              } else {
-                vErrors.push(err29);
-              }
-              errors2++;
-            }
-            if (data16.type !== void 0) {
-              let data17 = data16.type;
-              if (typeof data17 !== "string") {
-                const err30 = { instancePath: instancePath + "/getConstData/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err30];
-                } else {
-                  vErrors.push(err30);
-                }
-                errors2++;
-              }
-              if (!(data17 === "js-fn" || data17 === "js-eval" || data17 === "js-tpl")) {
-                const err31 = { instancePath: instancePath + "/getConstData/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err31];
-                } else {
-                  vErrors.push(err31);
-                }
-                errors2++;
-              }
-            }
-            if (data16.expr !== void 0) {
-              if (typeof data16.expr !== "string") {
-                const err32 = { instancePath: instancePath + "/getConstData/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err32];
-                } else {
-                  vErrors.push(err32);
-                }
-                errors2++;
-              }
-            }
-            if (data16.pure !== void 0) {
-              if (typeof data16.pure !== "boolean") {
-                const err33 = { instancePath: instancePath + "/getConstData/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err33];
-                } else {
-                  vErrors.push(err33);
-                }
-                errors2++;
-              }
-            }
-            if (data16.ref !== void 0) {
-              let data20 = data16.ref;
-              if (!(typeof data20 == "number" && (!(data20 % 1) && !isNaN(data20)) && isFinite(data20))) {
-                const err34 = { instancePath: instancePath + "/getConstData/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err34];
-                } else {
-                  vErrors.push(err34);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err35 = { instancePath: instancePath + "/getConstData", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err35];
-            } else {
-              vErrors.push(err35);
-            }
-            errors2++;
-          }
-        }
-        if (data.transformData !== void 0) {
-          let data21 = data.transformData;
-          if (data21 && typeof data21 == "object" && !Array.isArray(data21)) {
-            if (data21.type === void 0) {
-              const err36 = { instancePath: instancePath + "/transformData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err36];
-              } else {
-                vErrors.push(err36);
-              }
-              errors2++;
-            }
-            if (data21.expr === void 0) {
-              const err37 = { instancePath: instancePath + "/transformData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err37];
-              } else {
-                vErrors.push(err37);
-              }
-              errors2++;
-            }
-            if (data21.pure === void 0) {
-              const err38 = { instancePath: instancePath + "/transformData", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err38];
-              } else {
-                vErrors.push(err38);
-              }
-              errors2++;
-            }
-            if (data21.type !== void 0) {
-              let data22 = data21.type;
-              if (typeof data22 !== "string") {
-                const err39 = { instancePath: instancePath + "/transformData/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err39];
-                } else {
-                  vErrors.push(err39);
-                }
-                errors2++;
-              }
-              if (!(data22 === "js-fn" || data22 === "js-eval" || data22 === "js-tpl")) {
-                const err40 = { instancePath: instancePath + "/transformData/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err40];
-                } else {
-                  vErrors.push(err40);
-                }
-                errors2++;
-              }
-            }
-            if (data21.expr !== void 0) {
-              if (typeof data21.expr !== "string") {
-                const err41 = { instancePath: instancePath + "/transformData/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err41];
-                } else {
-                  vErrors.push(err41);
-                }
-                errors2++;
-              }
-            }
-            if (data21.pure !== void 0) {
-              if (typeof data21.pure !== "boolean") {
-                const err42 = { instancePath: instancePath + "/transformData/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err42];
-                } else {
-                  vErrors.push(err42);
-                }
-                errors2++;
-              }
-            }
-            if (data21.ref !== void 0) {
-              let data25 = data21.ref;
-              if (!(typeof data25 == "number" && (!(data25 % 1) && !isNaN(data25)) && isFinite(data25))) {
-                const err43 = { instancePath: instancePath + "/transformData/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err43];
-                } else {
-                  vErrors.push(err43);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err44 = { instancePath: instancePath + "/transformData", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err44];
-            } else {
-              vErrors.push(err44);
-            }
-            errors2++;
-          }
-        }
-        if (data.nullable !== void 0) {
-          if (typeof data.nullable !== "boolean") {
-            const err45 = { instancePath: instancePath + "/nullable", schemaPath: "#/allOf/0/properties/nullable/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-            if (vErrors === null) {
-              vErrors = [err45];
-            } else {
-              vErrors.push(err45);
-            }
-            errors2++;
-          }
-        }
-        if (data.help !== void 0) {
-          if (typeof data.help !== "string") {
-            const err46 = { instancePath: instancePath + "/help", schemaPath: "#/allOf/0/properties/help/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-            if (vErrors === null) {
-              vErrors = [err46];
-            } else {
-              vErrors.push(err46);
-            }
-            errors2++;
-          }
-        }
-        if (data.cols !== void 0) {
-          if (!validate64(data.cols, { instancePath: instancePath + "/cols", parentData: data, parentDataProperty: "cols", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate64.errors : vErrors.concat(validate64.errors);
-            errors2 = vErrors.length;
-          }
-        }
-        if (data.props !== void 0) {
-          let data29 = data.props;
-          if (data29 && typeof data29 == "object" && !Array.isArray(data29)) {
-            var props1 = {};
-            for (const key0 in data29) {
-              if (pattern2.test(key0)) {
-                props1[key0] = true;
-              }
-            }
-          } else {
-            const err47 = { instancePath: instancePath + "/props", schemaPath: "#/$defs/state-node-props-lib/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err47];
-            } else {
-              vErrors.push(err47);
-            }
-            errors2++;
-          }
-        }
-        if (data.getProps !== void 0) {
-          let data30 = data.getProps;
-          if (data30 && typeof data30 == "object" && !Array.isArray(data30)) {
-            if (data30.type === void 0) {
-              const err48 = { instancePath: instancePath + "/getProps", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "type" }, message: "must have required property 'type'" };
-              if (vErrors === null) {
-                vErrors = [err48];
-              } else {
-                vErrors.push(err48);
-              }
-              errors2++;
-            }
-            if (data30.expr === void 0) {
-              const err49 = { instancePath: instancePath + "/getProps", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "expr" }, message: "must have required property 'expr'" };
-              if (vErrors === null) {
-                vErrors = [err49];
-              } else {
-                vErrors.push(err49);
-              }
-              errors2++;
-            }
-            if (data30.pure === void 0) {
-              const err50 = { instancePath: instancePath + "/getProps", schemaPath: "#/$defs/expression/required", keyword: "required", params: { missingProperty: "pure" }, message: "must have required property 'pure'" };
-              if (vErrors === null) {
-                vErrors = [err50];
-              } else {
-                vErrors.push(err50);
-              }
-              errors2++;
-            }
-            if (data30.type !== void 0) {
-              let data31 = data30.type;
-              if (typeof data31 !== "string") {
-                const err51 = { instancePath: instancePath + "/getProps/type", schemaPath: "#/$defs/expression/properties/type/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err51];
-                } else {
-                  vErrors.push(err51);
-                }
-                errors2++;
-              }
-              if (!(data31 === "js-fn" || data31 === "js-eval" || data31 === "js-tpl")) {
-                const err52 = { instancePath: instancePath + "/getProps/type", schemaPath: "#/$defs/expression/properties/type/enum", keyword: "enum", params: { allowedValues: schema56.properties.type.enum }, message: "must be equal to one of the allowed values" };
-                if (vErrors === null) {
-                  vErrors = [err52];
-                } else {
-                  vErrors.push(err52);
-                }
-                errors2++;
-              }
-            }
-            if (data30.expr !== void 0) {
-              if (typeof data30.expr !== "string") {
-                const err53 = { instancePath: instancePath + "/getProps/expr", schemaPath: "#/$defs/expression/properties/expr/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                if (vErrors === null) {
-                  vErrors = [err53];
-                } else {
-                  vErrors.push(err53);
-                }
-                errors2++;
-              }
-            }
-            if (data30.pure !== void 0) {
-              if (typeof data30.pure !== "boolean") {
-                const err54 = { instancePath: instancePath + "/getProps/pure", schemaPath: "#/$defs/expression/properties/pure/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                if (vErrors === null) {
-                  vErrors = [err54];
-                } else {
-                  vErrors.push(err54);
-                }
-                errors2++;
-              }
-            }
-            if (data30.ref !== void 0) {
-              let data34 = data30.ref;
-              if (!(typeof data34 == "number" && (!(data34 % 1) && !isNaN(data34)) && isFinite(data34))) {
-                const err55 = { instancePath: instancePath + "/getProps/ref", schemaPath: "#/$defs/expression/properties/ref/type", keyword: "type", params: { type: "integer" }, message: "must be integer" };
-                if (vErrors === null) {
-                  vErrors = [err55];
-                } else {
-                  vErrors.push(err55);
-                }
-                errors2++;
-              }
-            }
-          } else {
-            const err56 = { instancePath: instancePath + "/getProps", schemaPath: "#/$defs/expression/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err56];
-            } else {
-              vErrors.push(err56);
-            }
-            errors2++;
-          }
-        }
-        if (data.slots !== void 0) {
-          let data35 = data.slots;
-          if (!(data35 && typeof data35 == "object" && !Array.isArray(data35))) {
-            const err57 = { instancePath: instancePath + "/slots", schemaPath: "#/allOf/0/properties/slots/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-            if (vErrors === null) {
-              vErrors = [err57];
-            } else {
-              vErrors.push(err57);
-            }
-            errors2++;
-          }
-          if (!validate66(data35, { instancePath: instancePath + "/slots", parentData: data, parentDataProperty: "slots", rootData, dynamicAnchors })) {
-            vErrors = vErrors === null ? validate66.errors : vErrors.concat(validate66.errors);
-            errors2 = vErrors.length;
-          } else {
-            var props2 = validate66.evaluated.props;
-          }
-          if (data35 && typeof data35 == "object" && !Array.isArray(data35)) {
-            if (data35.before !== void 0) {
-              let data36 = data35.before;
-              const _errs83 = errors2;
-              let valid19 = false;
-              let passing0 = null;
-              const _errs84 = errors2;
-              if (data36 && typeof data36 == "object" && !Array.isArray(data36)) {
-                if (data36.text === void 0) {
-                  const err58 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/0/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
-                  if (vErrors === null) {
-                    vErrors = [err58];
-                  } else {
-                    vErrors.push(err58);
-                  }
-                  errors2++;
-                }
-                for (const key1 in data36) {
-                  if (!(key1 === "text")) {
-                    const err59 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key1 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err59];
-                    } else {
-                      vErrors.push(err59);
-                    }
-                    errors2++;
-                  }
-                }
-                if (data36.text !== void 0) {
-                  if (typeof data36.text !== "string") {
-                    const err60 = { instancePath: instancePath + "/slots/before/text", schemaPath: "#/$defs/slot/oneOf/0/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err60];
-                    } else {
-                      vErrors.push(err60);
-                    }
-                    errors2++;
-                  }
-                }
-              } else {
-                const err61 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                if (vErrors === null) {
-                  vErrors = [err61];
-                } else {
-                  vErrors.push(err61);
-                }
-                errors2++;
-              }
-              var _valid0 = _errs84 === errors2;
-              if (_valid0) {
-                valid19 = true;
-                passing0 = 0;
-              }
-              const _errs89 = errors2;
-              if (data36 && typeof data36 == "object" && !Array.isArray(data36)) {
-                if (data36.markdown === void 0) {
-                  const err62 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/1/required", keyword: "required", params: { missingProperty: "markdown" }, message: "must have required property 'markdown'" };
-                  if (vErrors === null) {
-                    vErrors = [err62];
-                  } else {
-                    vErrors.push(err62);
-                  }
-                  errors2++;
-                }
-                for (const key2 in data36) {
-                  if (!(key2 === "markdown")) {
-                    const err63 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key2 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err63];
-                    } else {
-                      vErrors.push(err63);
-                    }
-                    errors2++;
-                  }
-                }
-                if (data36.markdown !== void 0) {
-                  if (typeof data36.markdown !== "string") {
-                    const err64 = { instancePath: instancePath + "/slots/before/markdown", schemaPath: "#/$defs/slot/oneOf/1/properties/markdown/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err64];
-                    } else {
-                      vErrors.push(err64);
-                    }
-                    errors2++;
-                  }
-                }
-              } else {
-                const err65 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                if (vErrors === null) {
-                  vErrors = [err65];
-                } else {
-                  vErrors.push(err65);
-                }
-                errors2++;
-              }
-              var _valid0 = _errs89 === errors2;
-              if (_valid0 && valid19) {
-                valid19 = false;
-                passing0 = [passing0, 1];
-              } else {
-                if (_valid0) {
-                  valid19 = true;
-                  passing0 = 1;
-                }
-                const _errs94 = errors2;
-                if (data36 && typeof data36 == "object" && !Array.isArray(data36)) {
-                  if (data36.name === void 0) {
-                    const err66 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/2/required", keyword: "required", params: { missingProperty: "name" }, message: "must have required property 'name'" };
-                    if (vErrors === null) {
-                      vErrors = [err66];
-                    } else {
-                      vErrors.push(err66);
-                    }
-                    errors2++;
-                  }
-                  for (const key3 in data36) {
-                    if (!(key3 === "name")) {
-                      const err67 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/2/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key3 }, message: "must NOT have additional properties" };
-                      if (vErrors === null) {
-                        vErrors = [err67];
-                      } else {
-                        vErrors.push(err67);
-                      }
-                      errors2++;
-                    }
-                  }
-                  if (data36.name !== void 0) {
-                    if (typeof data36.name !== "string") {
-                      const err68 = { instancePath: instancePath + "/slots/before/name", schemaPath: "#/$defs/slot/oneOf/2/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                      if (vErrors === null) {
-                        vErrors = [err68];
-                      } else {
-                        vErrors.push(err68);
-                      }
-                      errors2++;
-                    }
-                  }
-                } else {
-                  const err69 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf/2/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                  if (vErrors === null) {
-                    vErrors = [err69];
-                  } else {
-                    vErrors.push(err69);
-                  }
-                  errors2++;
-                }
-                var _valid0 = _errs94 === errors2;
-                if (_valid0 && valid19) {
-                  valid19 = false;
-                  passing0 = [passing0, 2];
-                } else {
-                  if (_valid0) {
-                    valid19 = true;
-                    passing0 = 2;
-                  }
-                }
-              }
-              if (!valid19) {
-                const err70 = { instancePath: instancePath + "/slots/before", schemaPath: "#/$defs/slot/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-                if (vErrors === null) {
-                  vErrors = [err70];
-                } else {
-                  vErrors.push(err70);
-                }
-                errors2++;
-              } else {
-                errors2 = _errs83;
-                if (vErrors !== null) {
-                  if (_errs83) {
-                    vErrors.length = _errs83;
-                  } else {
-                    vErrors = null;
-                  }
-                }
-              }
-            }
-            if (data35.after !== void 0) {
-              let data40 = data35.after;
-              const _errs101 = errors2;
-              let valid24 = false;
-              let passing1 = null;
-              const _errs102 = errors2;
-              if (data40 && typeof data40 == "object" && !Array.isArray(data40)) {
-                if (data40.text === void 0) {
-                  const err71 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/0/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
-                  if (vErrors === null) {
-                    vErrors = [err71];
-                  } else {
-                    vErrors.push(err71);
-                  }
-                  errors2++;
-                }
-                for (const key4 in data40) {
-                  if (!(key4 === "text")) {
-                    const err72 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key4 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err72];
-                    } else {
-                      vErrors.push(err72);
-                    }
-                    errors2++;
-                  }
-                }
-                if (data40.text !== void 0) {
-                  if (typeof data40.text !== "string") {
-                    const err73 = { instancePath: instancePath + "/slots/after/text", schemaPath: "#/$defs/slot/oneOf/0/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err73];
-                    } else {
-                      vErrors.push(err73);
-                    }
-                    errors2++;
-                  }
-                }
-              } else {
-                const err74 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                if (vErrors === null) {
-                  vErrors = [err74];
-                } else {
-                  vErrors.push(err74);
-                }
-                errors2++;
-              }
-              var _valid1 = _errs102 === errors2;
-              if (_valid1) {
-                valid24 = true;
-                passing1 = 0;
-              }
-              const _errs107 = errors2;
-              if (data40 && typeof data40 == "object" && !Array.isArray(data40)) {
-                if (data40.markdown === void 0) {
-                  const err75 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/1/required", keyword: "required", params: { missingProperty: "markdown" }, message: "must have required property 'markdown'" };
-                  if (vErrors === null) {
-                    vErrors = [err75];
-                  } else {
-                    vErrors.push(err75);
-                  }
-                  errors2++;
-                }
-                for (const key5 in data40) {
-                  if (!(key5 === "markdown")) {
-                    const err76 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key5 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err76];
-                    } else {
-                      vErrors.push(err76);
-                    }
-                    errors2++;
-                  }
-                }
-                if (data40.markdown !== void 0) {
-                  if (typeof data40.markdown !== "string") {
-                    const err77 = { instancePath: instancePath + "/slots/after/markdown", schemaPath: "#/$defs/slot/oneOf/1/properties/markdown/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err77];
-                    } else {
-                      vErrors.push(err77);
-                    }
-                    errors2++;
-                  }
-                }
-              } else {
-                const err78 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                if (vErrors === null) {
-                  vErrors = [err78];
-                } else {
-                  vErrors.push(err78);
-                }
-                errors2++;
-              }
-              var _valid1 = _errs107 === errors2;
-              if (_valid1 && valid24) {
-                valid24 = false;
-                passing1 = [passing1, 1];
-              } else {
-                if (_valid1) {
-                  valid24 = true;
-                  passing1 = 1;
-                }
-                const _errs112 = errors2;
-                if (data40 && typeof data40 == "object" && !Array.isArray(data40)) {
-                  if (data40.name === void 0) {
-                    const err79 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/2/required", keyword: "required", params: { missingProperty: "name" }, message: "must have required property 'name'" };
-                    if (vErrors === null) {
-                      vErrors = [err79];
-                    } else {
-                      vErrors.push(err79);
-                    }
-                    errors2++;
-                  }
-                  for (const key6 in data40) {
-                    if (!(key6 === "name")) {
-                      const err80 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/2/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key6 }, message: "must NOT have additional properties" };
-                      if (vErrors === null) {
-                        vErrors = [err80];
-                      } else {
-                        vErrors.push(err80);
-                      }
-                      errors2++;
-                    }
-                  }
-                  if (data40.name !== void 0) {
-                    if (typeof data40.name !== "string") {
-                      const err81 = { instancePath: instancePath + "/slots/after/name", schemaPath: "#/$defs/slot/oneOf/2/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                      if (vErrors === null) {
-                        vErrors = [err81];
-                      } else {
-                        vErrors.push(err81);
-                      }
-                      errors2++;
-                    }
-                  }
-                } else {
-                  const err82 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf/2/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                  if (vErrors === null) {
-                    vErrors = [err82];
-                  } else {
-                    vErrors.push(err82);
-                  }
-                  errors2++;
-                }
-                var _valid1 = _errs112 === errors2;
-                if (_valid1 && valid24) {
-                  valid24 = false;
-                  passing1 = [passing1, 2];
-                } else {
-                  if (_valid1) {
-                    valid24 = true;
-                    passing1 = 2;
-                  }
-                }
-              }
-              if (!valid24) {
-                const err83 = { instancePath: instancePath + "/slots/after", schemaPath: "#/$defs/slot/oneOf", keyword: "oneOf", params: { passingSchemas: passing1 }, message: "must match exactly one schema in oneOf" };
-                if (vErrors === null) {
-                  vErrors = [err83];
-                } else {
-                  vErrors.push(err83);
-                }
-                errors2++;
-              } else {
-                errors2 = _errs101;
-                if (vErrors !== null) {
-                  if (_errs101) {
-                    vErrors.length = _errs101;
-                  } else {
-                    vErrors = null;
-                  }
-                }
-              }
-            }
-            if (data35.component !== void 0) {
-              let data44 = data35.component;
-              const _errs119 = errors2;
-              let valid29 = false;
-              let passing2 = null;
-              const _errs120 = errors2;
-              if (data44 && typeof data44 == "object" && !Array.isArray(data44)) {
-                if (data44.text === void 0) {
-                  const err84 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/0/required", keyword: "required", params: { missingProperty: "text" }, message: "must have required property 'text'" };
-                  if (vErrors === null) {
-                    vErrors = [err84];
-                  } else {
-                    vErrors.push(err84);
-                  }
-                  errors2++;
-                }
-                for (const key7 in data44) {
-                  if (!(key7 === "text")) {
-                    const err85 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/0/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key7 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err85];
-                    } else {
-                      vErrors.push(err85);
-                    }
-                    errors2++;
-                  }
-                }
-                if (data44.text !== void 0) {
-                  if (typeof data44.text !== "string") {
-                    const err86 = { instancePath: instancePath + "/slots/component/text", schemaPath: "#/$defs/slot/oneOf/0/properties/text/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err86];
-                    } else {
-                      vErrors.push(err86);
-                    }
-                    errors2++;
-                  }
-                }
-              } else {
-                const err87 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/0/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                if (vErrors === null) {
-                  vErrors = [err87];
-                } else {
-                  vErrors.push(err87);
-                }
-                errors2++;
-              }
-              var _valid2 = _errs120 === errors2;
-              if (_valid2) {
-                valid29 = true;
-                passing2 = 0;
-              }
-              const _errs125 = errors2;
-              if (data44 && typeof data44 == "object" && !Array.isArray(data44)) {
-                if (data44.markdown === void 0) {
-                  const err88 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/1/required", keyword: "required", params: { missingProperty: "markdown" }, message: "must have required property 'markdown'" };
-                  if (vErrors === null) {
-                    vErrors = [err88];
-                  } else {
-                    vErrors.push(err88);
-                  }
-                  errors2++;
-                }
-                for (const key8 in data44) {
-                  if (!(key8 === "markdown")) {
-                    const err89 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/1/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key8 }, message: "must NOT have additional properties" };
-                    if (vErrors === null) {
-                      vErrors = [err89];
-                    } else {
-                      vErrors.push(err89);
-                    }
-                    errors2++;
-                  }
-                }
-                if (data44.markdown !== void 0) {
-                  if (typeof data44.markdown !== "string") {
-                    const err90 = { instancePath: instancePath + "/slots/component/markdown", schemaPath: "#/$defs/slot/oneOf/1/properties/markdown/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                    if (vErrors === null) {
-                      vErrors = [err90];
-                    } else {
-                      vErrors.push(err90);
-                    }
-                    errors2++;
-                  }
-                }
-              } else {
-                const err91 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/1/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                if (vErrors === null) {
-                  vErrors = [err91];
-                } else {
-                  vErrors.push(err91);
-                }
-                errors2++;
-              }
-              var _valid2 = _errs125 === errors2;
-              if (_valid2 && valid29) {
-                valid29 = false;
-                passing2 = [passing2, 1];
-              } else {
-                if (_valid2) {
-                  valid29 = true;
-                  passing2 = 1;
-                }
-                const _errs130 = errors2;
-                if (data44 && typeof data44 == "object" && !Array.isArray(data44)) {
-                  if (data44.name === void 0) {
-                    const err92 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/2/required", keyword: "required", params: { missingProperty: "name" }, message: "must have required property 'name'" };
-                    if (vErrors === null) {
-                      vErrors = [err92];
-                    } else {
-                      vErrors.push(err92);
-                    }
-                    errors2++;
-                  }
-                  for (const key9 in data44) {
-                    if (!(key9 === "name")) {
-                      const err93 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/2/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key9 }, message: "must NOT have additional properties" };
-                      if (vErrors === null) {
-                        vErrors = [err93];
-                      } else {
-                        vErrors.push(err93);
-                      }
-                      errors2++;
-                    }
-                  }
-                  if (data44.name !== void 0) {
-                    if (typeof data44.name !== "string") {
-                      const err94 = { instancePath: instancePath + "/slots/component/name", schemaPath: "#/$defs/slot/oneOf/2/properties/name/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                      if (vErrors === null) {
-                        vErrors = [err94];
-                      } else {
-                        vErrors.push(err94);
-                      }
-                      errors2++;
-                    }
-                  }
-                } else {
-                  const err95 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf/2/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-                  if (vErrors === null) {
-                    vErrors = [err95];
-                  } else {
-                    vErrors.push(err95);
-                  }
-                  errors2++;
-                }
-                var _valid2 = _errs130 === errors2;
-                if (_valid2 && valid29) {
-                  valid29 = false;
-                  passing2 = [passing2, 2];
-                } else {
-                  if (_valid2) {
-                    valid29 = true;
-                    passing2 = 2;
-                  }
-                }
-              }
-              if (!valid29) {
-                const err96 = { instancePath: instancePath + "/slots/component", schemaPath: "#/$defs/slot/oneOf", keyword: "oneOf", params: { passingSchemas: passing2 }, message: "must match exactly one schema in oneOf" };
-                if (vErrors === null) {
-                  vErrors = [err96];
-                } else {
-                  vErrors.push(err96);
-                }
-                errors2++;
-              } else {
-                errors2 = _errs119;
-                if (vErrors !== null) {
-                  if (_errs119) {
-                    vErrors.length = _errs119;
-                  } else {
-                    vErrors = null;
-                  }
-                }
-              }
-            }
-          }
-          if (props2 !== true) {
-            props2 = props2 || {};
-            props2.before = true;
-            props2.after = true;
-            props2.component = true;
-          }
-        }
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        const tag0 = data.comp;
-        if (typeof tag0 == "string") {
-          if (tag0 === "none") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err97 = { instancePath, schemaPath: "#/$defs/none/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err97];
-                } else {
-                  vErrors.push(err97);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("none" !== data.comp) {
-                  const err98 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/none/properties/comp/const", keyword: "const", params: { allowedValue: "none" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err98];
-                  } else {
-                    vErrors.push(err98);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err99 = { instancePath, schemaPath: "#/$defs/none/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err99];
-              } else {
-                vErrors.push(err99);
-              }
-              errors2++;
-            }
-            var props6 = {};
-            props6.comp = true;
-          } else if (tag0 === "list") {
-            if (!validate68(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate68.errors : vErrors.concat(validate68.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.title = true;
-              props6.listEditMode = true;
-              props6.listActions = true;
-              props6.itemTitle = true;
-              props6.itemSubtitle = true;
-              props6.messages = true;
-            }
-          } else if (tag0 === "text-field") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err100 = { instancePath, schemaPath: "#/$defs/text-field/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err100];
-                } else {
-                  vErrors.push(err100);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err101 = { instancePath, schemaPath: "#/$defs/text-field/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err101];
-                } else {
-                  vErrors.push(err101);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("text-field" !== data.comp) {
-                  const err102 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/text-field/properties/comp/const", keyword: "const", params: { allowedValue: "text-field" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err102];
-                  } else {
-                    vErrors.push(err102);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err103 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/text-field/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err103];
-                  } else {
-                    vErrors.push(err103);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.autofocus !== void 0) {
-                if (typeof data.autofocus !== "boolean") {
-                  const err104 = { instancePath: instancePath + "/autofocus", schemaPath: "#/$defs/text-field/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                  if (vErrors === null) {
-                    vErrors = [err104];
-                  } else {
-                    vErrors.push(err104);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err105 = { instancePath, schemaPath: "#/$defs/text-field/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err105];
-              } else {
-                vErrors.push(err105);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.autofocus = true;
-            }
-          } else if (tag0 === "number-field") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err106 = { instancePath, schemaPath: "#/$defs/number-field/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err106];
-                } else {
-                  vErrors.push(err106);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err107 = { instancePath, schemaPath: "#/$defs/number-field/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err107];
-                } else {
-                  vErrors.push(err107);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("number-field" !== data.comp) {
-                  const err108 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/number-field/properties/comp/const", keyword: "const", params: { allowedValue: "number-field" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err108];
-                  } else {
-                    vErrors.push(err108);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err109 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/number-field/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err109];
-                  } else {
-                    vErrors.push(err109);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.autofocus !== void 0) {
-                if (typeof data.autofocus !== "boolean") {
-                  const err110 = { instancePath: instancePath + "/autofocus", schemaPath: "#/$defs/number-field/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                  if (vErrors === null) {
-                    vErrors = [err110];
-                  } else {
-                    vErrors.push(err110);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.step !== void 0) {
-                let data55 = data.step;
-                if (!(typeof data55 == "number" && isFinite(data55))) {
-                  const err111 = { instancePath: instancePath + "/step", schemaPath: "#/$defs/number-field/properties/step/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-                  if (vErrors === null) {
-                    vErrors = [err111];
-                  } else {
-                    vErrors.push(err111);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.min !== void 0) {
-                let data56 = data.min;
-                if (!(typeof data56 == "number" && isFinite(data56))) {
-                  const err112 = { instancePath: instancePath + "/min", schemaPath: "#/$defs/number-field/properties/min/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-                  if (vErrors === null) {
-                    vErrors = [err112];
-                  } else {
-                    vErrors.push(err112);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.max !== void 0) {
-                let data57 = data.max;
-                if (!(typeof data57 == "number" && isFinite(data57))) {
-                  const err113 = { instancePath: instancePath + "/max", schemaPath: "#/$defs/number-field/properties/max/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-                  if (vErrors === null) {
-                    vErrors = [err113];
-                  } else {
-                    vErrors.push(err113);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err114 = { instancePath, schemaPath: "#/$defs/number-field/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err114];
-              } else {
-                vErrors.push(err114);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.autofocus = true;
-              props6.step = true;
-              props6.min = true;
-              props6.max = true;
-            }
-          } else if (tag0 === "textarea") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err115 = { instancePath, schemaPath: "#/$defs/textarea/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err115];
-                } else {
-                  vErrors.push(err115);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err116 = { instancePath, schemaPath: "#/$defs/textarea/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err116];
-                } else {
-                  vErrors.push(err116);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("textarea" !== data.comp) {
-                  const err117 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/textarea/properties/comp/const", keyword: "const", params: { allowedValue: "textarea" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err117];
-                  } else {
-                    vErrors.push(err117);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err118 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/textarea/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err118];
-                  } else {
-                    vErrors.push(err118);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.autofocus !== void 0) {
-                if (typeof data.autofocus !== "boolean") {
-                  const err119 = { instancePath: instancePath + "/autofocus", schemaPath: "#/$defs/textarea/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                  if (vErrors === null) {
-                    vErrors = [err119];
-                  } else {
-                    vErrors.push(err119);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err120 = { instancePath, schemaPath: "#/$defs/textarea/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err120];
-              } else {
-                vErrors.push(err120);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.autofocus = true;
-            }
-          } else if (tag0 === "markdown") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err121 = { instancePath, schemaPath: "#/$defs/markdown/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err121];
-                } else {
-                  vErrors.push(err121);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err122 = { instancePath, schemaPath: "#/$defs/markdown/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err122];
-                } else {
-                  vErrors.push(err122);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("markdown" !== data.comp) {
-                  const err123 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/markdown/properties/comp/const", keyword: "const", params: { allowedValue: "markdown" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err123];
-                  } else {
-                    vErrors.push(err123);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err124 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/markdown/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err124];
-                  } else {
-                    vErrors.push(err124);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.autofocus !== void 0) {
-                if (typeof data.autofocus !== "boolean") {
-                  const err125 = { instancePath: instancePath + "/autofocus", schemaPath: "#/$defs/markdown/properties/autofocus/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                  if (vErrors === null) {
-                    vErrors = [err125];
-                  } else {
-                    vErrors.push(err125);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err126 = { instancePath, schemaPath: "#/$defs/markdown/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err126];
-              } else {
-                vErrors.push(err126);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.autofocus = true;
-            }
-          } else if (tag0 === "checkbox") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err127 = { instancePath, schemaPath: "#/$defs/checkbox/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err127];
-                } else {
-                  vErrors.push(err127);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err128 = { instancePath, schemaPath: "#/$defs/checkbox/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err128];
-                } else {
-                  vErrors.push(err128);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("checkbox" !== data.comp) {
-                  const err129 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/checkbox/properties/comp/const", keyword: "const", params: { allowedValue: "checkbox" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err129];
-                  } else {
-                    vErrors.push(err129);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err130 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/checkbox/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err130];
-                  } else {
-                    vErrors.push(err130);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err131 = { instancePath, schemaPath: "#/$defs/checkbox/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err131];
-              } else {
-                vErrors.push(err131);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-            }
-          } else if (tag0 === "switch") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err132 = { instancePath, schemaPath: "#/$defs/switch/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err132];
-                } else {
-                  vErrors.push(err132);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err133 = { instancePath, schemaPath: "#/$defs/switch/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err133];
-                } else {
-                  vErrors.push(err133);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("switch" !== data.comp) {
-                  const err134 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/switch/properties/comp/const", keyword: "const", params: { allowedValue: "switch" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err134];
-                  } else {
-                    vErrors.push(err134);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err135 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/switch/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err135];
-                  } else {
-                    vErrors.push(err135);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err136 = { instancePath, schemaPath: "#/$defs/switch/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err136];
-              } else {
-                vErrors.push(err136);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-            }
-          } else if (tag0 === "slider") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err137 = { instancePath, schemaPath: "#/$defs/slider/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err137];
-                } else {
-                  vErrors.push(err137);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err138 = { instancePath, schemaPath: "#/$defs/slider/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err138];
-                } else {
-                  vErrors.push(err138);
-                }
-                errors2++;
-              }
-              if (data.min === void 0) {
-                const err139 = { instancePath, schemaPath: "#/$defs/slider/required", keyword: "required", params: { missingProperty: "min" }, message: "must have required property 'min'" };
-                if (vErrors === null) {
-                  vErrors = [err139];
-                } else {
-                  vErrors.push(err139);
-                }
-                errors2++;
-              }
-              if (data.max === void 0) {
-                const err140 = { instancePath, schemaPath: "#/$defs/slider/required", keyword: "required", params: { missingProperty: "max" }, message: "must have required property 'max'" };
-                if (vErrors === null) {
-                  vErrors = [err140];
-                } else {
-                  vErrors.push(err140);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("slider" !== data.comp) {
-                  const err141 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/slider/properties/comp/const", keyword: "const", params: { allowedValue: "slider" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err141];
-                  } else {
-                    vErrors.push(err141);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err142 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/slider/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err142];
-                  } else {
-                    vErrors.push(err142);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.step !== void 0) {
-                let data70 = data.step;
-                if (!(typeof data70 == "number" && isFinite(data70))) {
-                  const err143 = { instancePath: instancePath + "/step", schemaPath: "#/$defs/slider/properties/step/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-                  if (vErrors === null) {
-                    vErrors = [err143];
-                  } else {
-                    vErrors.push(err143);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.min !== void 0) {
-                let data71 = data.min;
-                if (!(typeof data71 == "number" && isFinite(data71))) {
-                  const err144 = { instancePath: instancePath + "/min", schemaPath: "#/$defs/slider/properties/min/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-                  if (vErrors === null) {
-                    vErrors = [err144];
-                  } else {
-                    vErrors.push(err144);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.max !== void 0) {
-                let data72 = data.max;
-                if (!(typeof data72 == "number" && isFinite(data72))) {
-                  const err145 = { instancePath: instancePath + "/max", schemaPath: "#/$defs/slider/properties/max/type", keyword: "type", params: { type: "number" }, message: "must be number" };
-                  if (vErrors === null) {
-                    vErrors = [err145];
-                  } else {
-                    vErrors.push(err145);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err146 = { instancePath, schemaPath: "#/$defs/slider/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err146];
-              } else {
-                vErrors.push(err146);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.step = true;
-              props6.min = true;
-              props6.max = true;
-            }
-          } else if (tag0 === "date-picker") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err147 = { instancePath, schemaPath: "#/$defs/date-picker/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err147];
-                } else {
-                  vErrors.push(err147);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err148 = { instancePath, schemaPath: "#/$defs/date-picker/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err148];
-                } else {
-                  vErrors.push(err148);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("date-picker" !== data.comp) {
-                  const err149 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/date-picker/properties/comp/const", keyword: "const", params: { allowedValue: "date-picker" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err149];
-                  } else {
-                    vErrors.push(err149);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err150 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/date-picker/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err150];
-                  } else {
-                    vErrors.push(err150);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.min !== void 0) {
-                let data75 = data.min;
-                if (typeof data75 === "string") {
-                  if (!formats0.validate(data75)) {
-                    const err151 = { instancePath: instancePath + "/min", schemaPath: "#/$defs/date-picker/properties/min/format", keyword: "format", params: { format: "date" }, message: 'must match format "date"' };
-                    if (vErrors === null) {
-                      vErrors = [err151];
-                    } else {
-                      vErrors.push(err151);
-                    }
-                    errors2++;
-                  }
-                } else {
-                  const err152 = { instancePath: instancePath + "/min", schemaPath: "#/$defs/date-picker/properties/min/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err152];
-                  } else {
-                    vErrors.push(err152);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.max !== void 0) {
-                let data76 = data.max;
-                if (typeof data76 === "string") {
-                  if (!formats0.validate(data76)) {
-                    const err153 = { instancePath: instancePath + "/max", schemaPath: "#/$defs/date-picker/properties/max/format", keyword: "format", params: { format: "date" }, message: 'must match format "date"' };
-                    if (vErrors === null) {
-                      vErrors = [err153];
-                    } else {
-                      vErrors.push(err153);
-                    }
-                    errors2++;
-                  }
-                } else {
-                  const err154 = { instancePath: instancePath + "/max", schemaPath: "#/$defs/date-picker/properties/max/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err154];
-                  } else {
-                    vErrors.push(err154);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.format !== void 0) {
-                let data77 = data.format;
-                if (typeof data77 !== "string") {
-                  const err155 = { instancePath: instancePath + "/format", schemaPath: "#/$defs/date-picker/properties/format/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err155];
-                  } else {
-                    vErrors.push(err155);
-                  }
-                  errors2++;
-                }
-                if (!(data77 === "date" || data77 === "date-time")) {
-                  const err156 = { instancePath: instancePath + "/format", schemaPath: "#/$defs/date-picker/properties/format/enum", keyword: "enum", params: { allowedValues: schema112.properties.format.enum }, message: "must be equal to one of the allowed values" };
-                  if (vErrors === null) {
-                    vErrors = [err156];
-                  } else {
-                    vErrors.push(err156);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err157 = { instancePath, schemaPath: "#/$defs/date-picker/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err157];
-              } else {
-                vErrors.push(err157);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.min = true;
-              props6.max = true;
-              props6.format = true;
-            }
-          } else if (tag0 === "date-time-picker") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err158 = { instancePath, schemaPath: "#/$defs/date-time-picker/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err158];
-                } else {
-                  vErrors.push(err158);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err159 = { instancePath, schemaPath: "#/$defs/date-time-picker/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err159];
-                } else {
-                  vErrors.push(err159);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("date-time-picker" !== data.comp) {
-                  const err160 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/date-time-picker/properties/comp/const", keyword: "const", params: { allowedValue: "date-time-picker" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err160];
-                  } else {
-                    vErrors.push(err160);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err161 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/date-time-picker/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err161];
-                  } else {
-                    vErrors.push(err161);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.min !== void 0) {
-                let data80 = data.min;
-                if (typeof data80 === "string") {
-                  if (!formats4.validate(data80)) {
-                    const err162 = { instancePath: instancePath + "/min", schemaPath: "#/$defs/date-time-picker/properties/min/format", keyword: "format", params: { format: "date-time" }, message: 'must match format "date-time"' };
-                    if (vErrors === null) {
-                      vErrors = [err162];
-                    } else {
-                      vErrors.push(err162);
-                    }
-                    errors2++;
-                  }
-                } else {
-                  const err163 = { instancePath: instancePath + "/min", schemaPath: "#/$defs/date-time-picker/properties/min/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err163];
-                  } else {
-                    vErrors.push(err163);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.max !== void 0) {
-                let data81 = data.max;
-                if (typeof data81 === "string") {
-                  if (!formats4.validate(data81)) {
-                    const err164 = { instancePath: instancePath + "/max", schemaPath: "#/$defs/date-time-picker/properties/max/format", keyword: "format", params: { format: "date-time" }, message: 'must match format "date-time"' };
-                    if (vErrors === null) {
-                      vErrors = [err164];
-                    } else {
-                      vErrors.push(err164);
-                    }
-                    errors2++;
-                  }
-                } else {
-                  const err165 = { instancePath: instancePath + "/max", schemaPath: "#/$defs/date-time-picker/properties/max/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err165];
-                  } else {
-                    vErrors.push(err165);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err166 = { instancePath, schemaPath: "#/$defs/date-time-picker/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err166];
-              } else {
-                vErrors.push(err166);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.min = true;
-              props6.max = true;
-            }
-          } else if (tag0 === "time-picker") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err167 = { instancePath, schemaPath: "#/$defs/time-picker/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err167];
-                } else {
-                  vErrors.push(err167);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err168 = { instancePath, schemaPath: "#/$defs/time-picker/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err168];
-                } else {
-                  vErrors.push(err168);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("time-picker" !== data.comp) {
-                  const err169 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/time-picker/properties/comp/const", keyword: "const", params: { allowedValue: "time-picker" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err169];
-                  } else {
-                    vErrors.push(err169);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err170 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/time-picker/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err170];
-                  } else {
-                    vErrors.push(err170);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.min !== void 0) {
-                let data84 = data.min;
-                if (typeof data84 === "string") {
-                  if (!formats8.validate(data84)) {
-                    const err171 = { instancePath: instancePath + "/min", schemaPath: "#/$defs/time-picker/properties/min/format", keyword: "format", params: { format: "time" }, message: 'must match format "time"' };
-                    if (vErrors === null) {
-                      vErrors = [err171];
-                    } else {
-                      vErrors.push(err171);
-                    }
-                    errors2++;
-                  }
-                } else {
-                  const err172 = { instancePath: instancePath + "/min", schemaPath: "#/$defs/time-picker/properties/min/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err172];
-                  } else {
-                    vErrors.push(err172);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.max !== void 0) {
-                let data85 = data.max;
-                if (typeof data85 === "string") {
-                  if (!formats8.validate(data85)) {
-                    const err173 = { instancePath: instancePath + "/max", schemaPath: "#/$defs/time-picker/properties/max/format", keyword: "format", params: { format: "time" }, message: 'must match format "time"' };
-                    if (vErrors === null) {
-                      vErrors = [err173];
-                    } else {
-                      vErrors.push(err173);
-                    }
-                    errors2++;
-                  }
-                } else {
-                  const err174 = { instancePath: instancePath + "/max", schemaPath: "#/$defs/time-picker/properties/max/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err174];
-                  } else {
-                    vErrors.push(err174);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err175 = { instancePath, schemaPath: "#/$defs/time-picker/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err175];
-              } else {
-                vErrors.push(err175);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.min = true;
-              props6.max = true;
-            }
-          } else if (tag0 === "color-picker") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err176 = { instancePath, schemaPath: "#/$defs/color-picker/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err176];
-                } else {
-                  vErrors.push(err176);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err177 = { instancePath, schemaPath: "#/$defs/color-picker/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err177];
-                } else {
-                  vErrors.push(err177);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("color-picker" !== data.comp) {
-                  const err178 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/color-picker/properties/comp/const", keyword: "const", params: { allowedValue: "color-picker" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err178];
-                  } else {
-                    vErrors.push(err178);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err179 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/color-picker/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err179];
-                  } else {
-                    vErrors.push(err179);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err180 = { instancePath, schemaPath: "#/$defs/color-picker/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err180];
-              } else {
-                vErrors.push(err180);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-            }
-          } else if (tag0 === "combobox") {
-            if (!validate69(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate69.errors : vErrors.concat(validate69.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.autofocus = true;
-              props6.items = true;
-              props6.getItems = true;
-              props6.multiple = true;
-            }
-          } else if (tag0 === "number-combobox") {
-            if (!validate76(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate76.errors : vErrors.concat(validate76.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.autofocus = true;
-              props6.items = true;
-              props6.getItems = true;
-              props6.multiple = true;
-              props6.step = true;
-              props6.min = true;
-              props6.max = true;
-            }
-          } else if (tag0 === "select") {
-            if (!validate79(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate79.errors : vErrors.concat(validate79.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.autofocus = true;
-              props6.items = true;
-              props6.getItems = true;
-              props6.multiple = true;
-            }
-          } else if (tag0 === "autocomplete") {
-            if (!validate82(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate82.errors : vErrors.concat(validate82.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.autofocus = true;
-              props6.items = true;
-              props6.getItems = true;
-              props6.multiple = true;
-            }
-          } else if (tag0 === "one-of-select") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err181 = { instancePath, schemaPath: "#/$defs/one-of-select/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err181];
-                } else {
-                  vErrors.push(err181);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err182 = { instancePath, schemaPath: "#/$defs/one-of-select/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err182];
-                } else {
-                  vErrors.push(err182);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("one-of-select" !== data.comp) {
-                  const err183 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/one-of-select/properties/comp/const", keyword: "const", params: { allowedValue: "one-of-select" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err183];
-                  } else {
-                    vErrors.push(err183);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err184 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/one-of-select/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err184];
-                  } else {
-                    vErrors.push(err184);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err185 = { instancePath, schemaPath: "#/$defs/one-of-select/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err185];
-              } else {
-                vErrors.push(err185);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-            }
-          } else if (tag0 === "section") {
-            if (!validate85(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate85.errors : vErrors.concat(validate85.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.title = true;
-              props6.subtitle = true;
-              props6.children = true;
-            }
-          } else if (tag0 === "tabs") {
-            if (!validate89(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate89.errors : vErrors.concat(validate89.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.title = true;
-              props6.subtitle = true;
-              props6.children = true;
-            }
-          } else if (tag0 === "vertical-tabs") {
-            if (!validate90(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate90.errors : vErrors.concat(validate90.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.title = true;
-              props6.subtitle = true;
-              props6.children = true;
-            }
-          } else if (tag0 === "expansion-panels") {
-            if (!validate91(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate91.errors : vErrors.concat(validate91.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.title = true;
-              props6.subtitle = true;
-              props6.children = true;
-            }
-          } else if (tag0 === "stepper") {
-            if (!validate99(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-              vErrors = vErrors === null ? validate99.errors : vErrors.concat(validate99.errors);
-              errors2 = vErrors.length;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.title = true;
-              props6.subtitle = true;
-              props6.children = true;
-            }
-          } else if (tag0 === "file-input") {
-            if (data && typeof data == "object" && !Array.isArray(data)) {
-              if (data.comp === void 0) {
-                const err186 = { instancePath, schemaPath: "#/$defs/file-input/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-                if (vErrors === null) {
-                  vErrors = [err186];
-                } else {
-                  vErrors.push(err186);
-                }
-                errors2++;
-              }
-              if (data.label === void 0) {
-                const err187 = { instancePath, schemaPath: "#/$defs/file-input/required", keyword: "required", params: { missingProperty: "label" }, message: "must have required property 'label'" };
-                if (vErrors === null) {
-                  vErrors = [err187];
-                } else {
-                  vErrors.push(err187);
-                }
-                errors2++;
-              }
-              if (data.comp !== void 0) {
-                if ("file-input" !== data.comp) {
-                  const err188 = { instancePath: instancePath + "/comp", schemaPath: "#/$defs/file-input/properties/comp/const", keyword: "const", params: { allowedValue: "file-input" }, message: "must be equal to constant" };
-                  if (vErrors === null) {
-                    vErrors = [err188];
-                  } else {
-                    vErrors.push(err188);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.label !== void 0) {
-                if (typeof data.label !== "string") {
-                  const err189 = { instancePath: instancePath + "/label", schemaPath: "#/$defs/file-input/properties/label/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err189];
-                  } else {
-                    vErrors.push(err189);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.accept !== void 0) {
-                if (typeof data.accept !== "string") {
-                  const err190 = { instancePath: instancePath + "/accept", schemaPath: "#/$defs/file-input/properties/accept/type", keyword: "type", params: { type: "string" }, message: "must be string" };
-                  if (vErrors === null) {
-                    vErrors = [err190];
-                  } else {
-                    vErrors.push(err190);
-                  }
-                  errors2++;
-                }
-              }
-              if (data.multiple !== void 0) {
-                if (typeof data.multiple !== "boolean") {
-                  const err191 = { instancePath: instancePath + "/multiple", schemaPath: "#/$defs/file-input/properties/multiple/type", keyword: "type", params: { type: "boolean" }, message: "must be boolean" };
-                  if (vErrors === null) {
-                    vErrors = [err191];
-                  } else {
-                    vErrors.push(err191);
-                  }
-                  errors2++;
-                }
-              }
-            } else {
-              const err192 = { instancePath, schemaPath: "#/$defs/file-input/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-              if (vErrors === null) {
-                vErrors = [err192];
-              } else {
-                vErrors.push(err192);
-              }
-              errors2++;
-            }
-            if (props6 !== true) {
-              props6 = props6 || {};
-              props6.comp = true;
-              props6.label = true;
-              props6.accept = true;
-              props6.multiple = true;
-            }
-          } else {
-            const err193 = { instancePath, schemaPath: "#/allOf/1/discriminator", keyword: "discriminator", params: { error: "mapping", tag: "comp", tagValue: tag0 }, message: 'value of tag "comp" must be in oneOf' };
-            if (vErrors === null) {
-              vErrors = [err193];
-            } else {
-              vErrors.push(err193);
-            }
-            errors2++;
-          }
-        } else {
-          const err194 = { instancePath, schemaPath: "#/allOf/1/discriminator", keyword: "discriminator", params: { error: "tag", tag: "comp", tagValue: tag0 }, message: 'tag "comp" must be string' };
-          if (vErrors === null) {
-            vErrors = [err194];
-          } else {
-            vErrors.push(err194);
-          }
-          errors2++;
-        }
-      }
-      if (props6 !== true) {
-        props6 = props6 || {};
-        props6.if = true;
-        props6.options = true;
-        props6.getOptions = true;
-        props6.defaultData = true;
-        props6.getDefaultData = true;
-        props6.constData = true;
-        props6.getConstData = true;
-        props6.transformData = true;
-        props6.nullable = true;
-        props6.help = true;
-        props6.cols = true;
-        props6.props = true;
-        props6.getProps = true;
-        props6.slots = true;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.comp === void 0) {
-          const err195 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "comp" }, message: "must have required property 'comp'" };
-          if (vErrors === null) {
-            vErrors = [err195];
-          } else {
-            vErrors.push(err195);
-          }
-          errors2++;
-        }
-        if (props6 !== true) {
-          for (const key10 in data) {
-            if (!props6 || !props6[key10]) {
-              const err196 = { instancePath, schemaPath: "#/unevaluatedProperties", keyword: "unevaluatedProperties", params: { unevaluatedProperty: key10 }, message: "must NOT have unevaluated properties" };
-              if (vErrors === null) {
-                vErrors = [err196];
-              } else {
-                vErrors.push(err196);
-              }
-              errors2++;
-            }
-          }
-        }
-      } else {
-        const err197 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err197];
-        } else {
-          vErrors.push(err197);
-        }
-        errors2++;
-      }
-      validate61.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate61.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-    function validate60(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate60.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      if (data && typeof data == "object" && !Array.isArray(data)) {
-        if (data.switch === void 0) {
-          const err0 = { instancePath, schemaPath: "#/required", keyword: "required", params: { missingProperty: "switch" }, message: "must have required property 'switch'" };
-          if (vErrors === null) {
-            vErrors = [err0];
-          } else {
-            vErrors.push(err0);
-          }
-          errors2++;
-        }
-        for (const key0 in data) {
-          if (!(key0 === "switch")) {
-            const err1 = { instancePath, schemaPath: "#/additionalProperties", keyword: "additionalProperties", params: { additionalProperty: key0 }, message: "must NOT have additional properties" };
-            if (vErrors === null) {
-              vErrors = [err1];
-            } else {
-              vErrors.push(err1);
-            }
-            errors2++;
-          }
-        }
-        if (data.switch !== void 0) {
-          let data0 = data.switch;
-          if (Array.isArray(data0)) {
-            const len0 = data0.length;
-            for (let i0 = 0; i0 < len0; i0++) {
-              if (!validate61(data0[i0], { instancePath: instancePath + "/switch/" + i0, parentData: data0, parentDataProperty: i0, rootData, dynamicAnchors })) {
-                vErrors = vErrors === null ? validate61.errors : vErrors.concat(validate61.errors);
-                errors2 = vErrors.length;
-              }
-            }
-          } else {
-            const err2 = { instancePath: instancePath + "/switch", schemaPath: "#/properties/switch/type", keyword: "type", params: { type: "array" }, message: "must be array" };
-            if (vErrors === null) {
-              vErrors = [err2];
-            } else {
-              vErrors.push(err2);
-            }
-            errors2++;
-          }
-        }
-      } else {
-        const err3 = { instancePath, schemaPath: "#/type", keyword: "type", params: { type: "object" }, message: "must be object" };
-        if (vErrors === null) {
-          vErrors = [err3];
-        } else {
-          vErrors.push(err3);
-        }
-        errors2++;
-      }
-      validate60.errors = vErrors;
-      return errors2 === 0;
-    }
-    validate60.evaluated = { "props": true, "dynamicProps": false, "dynamicItems": false };
-    function validate59(data, { instancePath = "", parentData, parentDataProperty, rootData = data, dynamicAnchors = {} } = {}) {
-      let vErrors = null;
-      let errors2 = 0;
-      const evaluated0 = validate59.evaluated;
-      if (evaluated0.dynamicProps) {
-        evaluated0.props = void 0;
-      }
-      if (evaluated0.dynamicItems) {
-        evaluated0.items = void 0;
-      }
-      const _errs0 = errors2;
-      let valid0 = false;
-      let passing0 = null;
-      const _errs1 = errors2;
-      if (!validate60(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate60.errors : vErrors.concat(validate60.errors);
-        errors2 = vErrors.length;
-      }
-      var _valid0 = _errs1 === errors2;
-      if (_valid0) {
-        valid0 = true;
-        passing0 = 0;
-        var props0 = true;
-      }
-      const _errs2 = errors2;
-      if (!validate61(data, { instancePath, parentData, parentDataProperty, rootData, dynamicAnchors })) {
-        vErrors = vErrors === null ? validate61.errors : vErrors.concat(validate61.errors);
-        errors2 = vErrors.length;
-      }
-      var _valid0 = _errs2 === errors2;
-      if (_valid0 && valid0) {
-        valid0 = false;
-        passing0 = [passing0, 1];
-      } else {
-        if (_valid0) {
-          valid0 = true;
-          passing0 = 1;
-          if (props0 !== true) {
-            props0 = true;
-          }
-        }
-      }
-      if (!valid0) {
-        const err0 = { instancePath, schemaPath: "#/oneOf", keyword: "oneOf", params: { passingSchemas: passing0 }, message: "must match exactly one schema in oneOf" };
-        if (vErrors === null) {
-          vErrors = [err0];
-        } else {
-          vErrors.push(err0);
-        }
-        errors2++;
-      } else {
-        errors2 = _errs0;
-        if (vErrors !== null) {
-          if (_errs0) {
-            vErrors.length = _errs0;
-          } else {
-            vErrors = null;
-          }
-        }
-      }
-      validate59.errors = vErrors;
-      evaluated0.props = props0;
-      return errors2 === 0;
-    }
-    validate59.evaluated = { "dynamicProps": true, "dynamicItems": false };
-    const validateNormalizedLayout = (
-      /** @type {any} */
-      validate59
-    );
-    function isSwitchStruct(layout) {
-      return typeof layout === "object" && "switch" in layout;
-    }
-    function childIsCompObject(child) {
-      return !!child.comp;
-    }
-    const compositeCompNames = ["section", "tabs", "vertical-tabs", "expansion-panels", "stepper"];
-    function isCompositeLayout(layout) {
-      return compositeCompNames.includes(layout.comp);
-    }
-    function isFileLayout(layout) {
-      return layout.comp === "file-input";
-    }
-    function isFocusableLayout(layout) {
-      return ["text-field", "number-field", "textarea", "select", "combobox", "number-combobox", "autocomplete", "markdown"].includes(layout.comp);
-    }
-    function isItemsLayout(layout) {
-      return layout.comp === "select" || layout.comp === "combobox" || layout.comp === "autocomplete";
-    }
-    function isGetItemsExpression(getItems) {
-      return !!getItems.expr;
-    }
-    function isGetItemsFetch(getItems) {
-      return !!getItems.url;
-    }
-    function isTextSlot(slot) {
-      return !!slot.text;
-    }
-    function isMarkdownSlot(slot) {
-      return !!slot.markdown;
-    }
-    function isNameSlot(slot) {
-      return !!slot.name;
-    }
-    function getDefaultChildren(schemaFragment) {
-      var _a2;
-      const { type: type2 } = getType(schemaFragment);
-      const children = [];
-      if (type2 === "object") {
-        if (schemaFragment.properties) {
-          for (const key of Object.keys(schemaFragment.properties)) {
-            children.push({ key });
-          }
-        }
-        if ((_a2 = schemaFragment.allOf) == null ? void 0 : _a2.length) {
-          for (let i2 = 0; i2 < schemaFragment.allOf.length; i2++) {
-            children.push({ key: `$allOf-${i2}` });
-          }
-        }
-        if (schemaFragment.oneOf) {
-          children.push({ key: "$oneOf" });
-        }
-      }
-      if (type2 === "array" && Array.isArray(schemaFragment.items)) {
-        for (let i2 = 0; i2 < schemaFragment.items.length; i2++) {
-          children.push({ key: i2 });
-        }
-      }
-      return children;
-    }
-    function getChildren(defaultChildren, partialChildren) {
-      if (!partialChildren)
-        return defaultChildren;
-      let compI = 0;
-      return partialChildren.map((partialChild) => {
-        if (typeof partialChild === "string") {
-          const matchingDefaultChild = defaultChildren.find((c) => c.key === partialChild);
-          if (!matchingDefaultChild)
-            throw new Error(`child unknown ${partialChild}`);
-          return matchingDefaultChild;
-        } else {
-          if (typeof partialChild.cols === "number")
-            partialChild.cols = { sm: partialChild.cols };
-          if (typeof partialChild.cols === "object" && partialChild.cols.xs === void 0)
-            partialChild.cols.xs = 12;
-          if (partialChild.key) {
-            const matchingDefaultChild = defaultChildren.find((c) => c.key === partialChild.key);
-            if (!matchingDefaultChild)
-              throw new Error(`child unknown ${partialChild.key}`);
-            return (
-              /** @type {Child} */
-              partialChild
-            );
-          } else {
-            const child = partialChild;
-            if (partialChild.children) {
-              if (!partialChild.comp)
-                child.comp = "section";
-              child.children = getChildren(defaultChildren, partialChild.children);
-            }
-            if (!("key" in partialChild)) {
-              child.key = `$comp-${compI}`;
-              compI++;
-            }
-            return (
-              /** @type {Child} */
-              child
-            );
-          }
-        }
-      });
-    }
-    function getDefaultComp(partial, schemaFragment, arrayChild) {
-      const { type: type2 } = getType(schemaFragment);
-      const hasSimpleType = ["string", "integer", "number"].includes(type2);
-      if (arrayChild === "oneOf")
-        return "one-of-select";
-      if (hasSimpleType && schemaFragment.enum)
-        return schemaFragment.enum.length > 20 ? "autocomplete" : "select";
-      if (hasSimpleType && schemaFragment.oneOf)
-        return schemaFragment.oneOf.length > 20 ? "autocomplete" : "select";
-      if (hasSimpleType && schemaFragment.examples)
-        return type2 === "string" ? "combobox" : "number-combobox";
-      if (hasSimpleType && schemaFragment.anyOf && schemaFragment.anyOf.length && Object.keys(schemaFragment.anyOf[schemaFragment.anyOf.length - 1]).length === 0) {
-        return type2 === "string" ? "combobox" : "number-combobox";
-      }
-      if (partial.items)
-        return partial.items.length > 20 ? "autocomplete" : "select";
-      if (partial.getItems) {
-        if (isPartialGetItemsFetch(partial.getItems)) {
-          if (partial.getItems.qSearchParam)
-            return "autocomplete";
-          if (typeof partial.getItems.url === "string" && partial.getItems.url.includes("{q}"))
-            return "autocomplete";
-        }
-        return "select";
-      }
-      if (type2 === "array" && schemaFragment.items) {
-        const hasSimpleTypeItems = ["string", "integer", "number"].includes(schemaFragment.items.type);
-        if (hasSimpleTypeItems && (schemaFragment.items.enum || schemaFragment.items.oneOf)) {
-          return (schemaFragment.items.enum || schemaFragment.items.oneOf).length > 20 ? "autocomplete" : "select";
-        }
-        if (hasSimpleTypeItems && schemaFragment.items.examples) {
-          return schemaFragment.items.type === "string" ? "combobox" : "number-combobox";
-        }
-        if (hasSimpleTypeItems && schemaFragment.items.anyOf && schemaFragment.items.anyOf.length && Object.keys(schemaFragment.items.anyOf[schemaFragment.items.anyOf.length - 1]).length === 0) {
-          return schemaFragment.items.type === "string" ? "combobox" : "number-combobox";
-        }
-        if (hasSimpleTypeItems && !schemaFragment.items.layout && !["date", "date-time", "time"].includes(schemaFragment.items.format)) {
-          return schemaFragment.items.type === "string" ? "combobox" : "number-combobox";
-        }
-      }
-      if (type2 === "object")
-        return "section";
-      if (type2 === "array") {
-        if (Array.isArray(schemaFragment.items))
-          return "section";
-        else
-          return "list";
-      }
-      if (type2 === "string") {
-        if (schemaFragment.format === "date")
-          return "date-picker";
-        if (schemaFragment.format === "date-time")
-          return "date-time-picker";
-        if (schemaFragment.format === "time")
-          return "time-picker";
-        return "text-field";
-      }
-      if (type2 === "integer" || type2 === "number")
-        return "number-field";
-      if (type2 === "boolean")
-        return "checkbox";
-      throw new Error("failed to calculate default component for schema fragment");
-    }
-    function getPartialCompObject(layoutKeyword) {
-      if (isPartialCompObject(layoutKeyword))
-        return { ...layoutKeyword };
-      else if (isComponentName(layoutKeyword))
-        return { comp: layoutKeyword };
-      else if (isPartialChildren(layoutKeyword))
-        return { children: layoutKeyword };
-      return {};
-    }
-    function normalizeExpression(expression, defaultType = "js-eval") {
-      if (typeof expression === "string")
-        return { type: defaultType, expr: expression, pure: true };
-      else
-        return { pure: true, type: defaultType, ...expression };
-    }
-    function getItemsFromSchema(schemaFragment) {
-      if (!schemaFragment)
-        return null;
-      const { type: type2 } = getType(schemaFragment);
-      const hasSimpleType = ["string", "integer", "number"].includes(type2);
-      if (schemaFragment.enum && hasSimpleType) {
-        return schemaFragment.enum.map((value) => ({ key: value + "", title: value + "", value }));
-      }
-      if (schemaFragment.examples && hasSimpleType) {
-        return schemaFragment.examples.map((value) => ({ key: value + "", title: value + "", value }));
-      }
-      if (schemaFragment.anyOf && hasSimpleType && schemaFragment.anyOf.length && Object.keys(schemaFragment.anyOf[schemaFragment.anyOf.length - 1]).length === 0) {
-        const nonEmptyAnyOf = schemaFragment.anyOf.slice(0, -1);
-        if (!nonEmptyAnyOf.find((oneOfItem) => !("const" in oneOfItem))) {
-          return nonEmptyAnyOf.map((anyOfItem) => ({
-            ...anyOfItem,
-            key: anyOfItem.const + "",
-            title: (anyOfItem.title ?? anyOfItem.const) + "",
-            value: anyOfItem.const
-          }));
-        }
-      }
-      if (schemaFragment.oneOf && hasSimpleType && !schemaFragment.oneOf.find((oneOfItem) => !("const" in oneOfItem))) {
-        return schemaFragment.oneOf.map((oneOfItem) => ({
-          ...oneOfItem,
-          key: oneOfItem.const + "",
-          title: (oneOfItem.title ?? oneOfItem.const) + "",
-          value: oneOfItem.const
-        }));
-      }
-      return null;
-    }
-    const getType = (schemaFragment) => {
-      if (Array.isArray(schemaFragment.type) && schemaFragment.type.length === 2 && schemaFragment.type.includes("null")) {
-        const type2 = schemaFragment.type.find((t) => t !== "null");
-        return { type: type2, nullable: true };
-      }
-      return { type: schemaFragment.type, nullable: false };
-    };
-    function getCompObject$1(layoutKeyword, schemaFragment, schemaPath, markdown, arrayChild) {
-      const errors2 = [];
-      const key = schemaPath.slice(schemaPath.lastIndexOf("/") + 1);
-      const { type: type2, nullable } = getType(schemaFragment);
-      if ("const" in schemaFragment)
-        return { normalized: { comp: "none" }, errors: errors2 };
-      if (!type2)
-        return { normalized: { comp: "none" }, errors: errors2 };
-      const partial = getPartialCompObject(layoutKeyword);
-      if (type2 === "array" && !schemaFragment.items && partial.comp !== "file-input") {
-        return { normalized: { comp: "none" }, errors: errors2 };
-      }
-      if (!partial.comp) {
-        try {
-          partial.comp = getDefaultComp(partial, schemaFragment, arrayChild);
-        } catch (err) {
-          errors2.push(err.message);
-          partial.comp = "none";
-        }
-      }
-      if (partial.comp === "none")
-        return { normalized: { comp: "none" }, errors: errors2 };
-      if (nullable)
-        partial.nullable = nullable;
-      if (compositeCompNames.includes(partial.comp)) {
-        partial.title = partial.title ?? schemaFragment.title ?? null;
-        partial.children = getChildren(getDefaultChildren(schemaFragment), partial.children);
-      } else if (partial.comp === "list") {
-        partial.title = partial.title ?? schemaFragment.title ?? key;
-        partial.listEditMode = partial.listEditMode ?? (schemaFragment.items.type === "object" ? "inline-single" : "inline");
-        partial.listActions = partial.listActions ?? ["add", "edit", "delete", "duplicate", "sort"];
-      } else {
-        partial.label = partial.label ?? schemaFragment.title ?? key;
-      }
-      if (["select", "autocomplete", "combobox"].includes(partial.comp) && !partial.items) {
-        let items2;
-        if (type2 === "array") {
-          items2 = getItemsFromSchema(schemaFragment.items);
-          partial.multiple = true;
-        } else {
-          items2 = getItemsFromSchema(schemaFragment);
-        }
-        if (items2) {
-          if (partial.getItems && isPartialGetItemsObj(partial.getItems)) {
-            partial.getItems.expr = JSON.stringify(items2);
-          } else {
-            partial.getItems = JSON.stringify(items2);
-          }
-        }
-      }
-      if (["combobox", "number-combobox", "file-input"].includes(partial.comp)) {
-        if (type2 === "array") {
-          partial.multiple = true;
-        }
-      }
-      if (partial.comp === "date-picker") {
-        if (schemaFragment.format === "date")
-          partial.format = "date";
-        if (schemaFragment.format === "date-time")
-          partial.format = "date-time";
-      }
-      if (["date-picker", "date-time-picker", "time-picker"].includes(partial.comp)) {
-        if ("formatMinimum" in schemaFragment)
-          partial.min = partial.min ?? schemaFragment.formatMinimum;
-        if ("formatMaximum" in schemaFragment)
-          partial.max = partial.max ?? schemaFragment.formatMaximum;
-      }
-      if (["number-field", "slider"].includes(partial.comp)) {
-        if (type2 === "integer")
-          partial.step = partial.step ?? 1;
-        if ("minimum" in schemaFragment)
-          partial.min = partial.min ?? schemaFragment.minimum;
-        if ("maximum" in schemaFragment)
-          partial.max = partial.max ?? schemaFragment.maximum;
-      }
-      if (partial.if)
-        partial.if = normalizeExpression(partial.if);
-      if (!partial.defaultData && schemaFragment.type === "string" && schemaPath.split("#").pop() === "") {
-        partial.defaultData = "";
-      }
-      if (partial.getOptions !== void 0)
-        partial.getOptions = normalizeExpression(partial.getOptions);
-      if (partial.getDefaultData !== void 0)
-        partial.getDefaultData = normalizeExpression(partial.getDefaultData);
-      if (partial.getConstData !== void 0)
-        partial.getConstData = normalizeExpression(partial.getConstData);
-      if (partial.transformData !== void 0)
-        partial.transformData = normalizeExpression(partial.transformData);
-      if (partial.getProps !== void 0)
-        partial.getProps = normalizeExpression(partial.getProps);
-      if (partial.getItems && isPartialGetItemsExpr(partial.getItems))
-        partial.getItems = normalizeExpression(partial.getItems);
-      if (partial.getItems && isPartialGetItemsObj(partial.getItems)) {
-        if (type2 === "object")
-          partial.getItems.returnObjects = true;
-        if (partial.getItems.itemTitle)
-          partial.getItems.itemTitle = normalizeExpression(partial.getItems.itemTitle);
-        if (partial.getItems.itemKey)
-          partial.getItems.itemKey = normalizeExpression(partial.getItems.itemKey);
-        if (partial.getItems.itemValue)
-          partial.getItems.itemValue = normalizeExpression(partial.getItems.itemValue);
-        if (partial.getItems.itemIcon)
-          partial.getItems.itemIcon = normalizeExpression(partial.getItems.itemIcon);
-        if (partial.getItems.itemsResults)
-          partial.getItems.itemsResults = normalizeExpression(partial.getItems.itemsResults);
-      }
-      if (partial.getItems && isPartialGetItemsFetch(partial.getItems)) {
-        partial.getItems.url = normalizeExpression(partial.getItems.url, "js-tpl");
-      }
-      if (partial.items) {
-        partial.items = partial.items.map((item) => {
-          if (["string", "integer", "number"].includes(typeof item)) {
-            return { title: item + "", key: item + "", value: item };
-          } else if (typeof item === "object") {
-            return {
-              key: (item.key ?? item.value) + "",
-              title: (item.title ?? item.key ?? item.value) + "",
-              value: item.value ?? item.key
-            };
-          } else {
-            throw new Error(`bad item for select: ${JSON.stringify(item)}`);
-          }
-        });
-      }
-      if (!partial.comp && (partial.items ?? partial.getItems)) {
-        partial.comp = "select";
-      }
-      if (partial.comp === "date-picker" && schemaFragment.format === "date-time") {
-        partial.format = "date-time";
-      }
-      if (partial.slots) {
-        for (const [name, slot] of Object.entries(partial.slots)) {
-          if (typeof slot === "string") {
-            if (["before", "after"].includes(name)) {
-              partial.slots[name] = { markdown: slot };
-            } else {
-              partial.slots[name] = { name: slot };
-            }
-          }
-          const slotObj = partial.slots[name];
-          if (isPartialSlotMarkdown(slotObj)) {
-            slotObj.markdown = markdown(slotObj.markdown).trim();
-          }
-        }
-      }
-      if (schemaFragment.description && !partial.help)
-        partial.help = schemaFragment.description;
-      if (partial.help)
-        partial.help = markdown(partial.help).trim();
-      if (typeof partial.cols === "number")
-        partial.cols = { xs: partial.cols };
-      if (typeof partial.cols === "object" && partial.cols.xs === void 0)
-        partial.cols.xs = 12;
-      return { normalized: (
-        /** @type {CompObject} */
-        partial
-      ), errors: errors2 };
-    }
-    function getNormalizedLayout(layoutKeyword, schemaFragment, schemaPath, markdown, arrayChild) {
-      if (isPartialSwitch(layoutKeyword)) {
-        const normalizedSwitchCases = [];
-        const errors2 = [];
-        const switchCases = [...layoutKeyword.switch];
-        if (!switchCases.find((s) => !s.if)) {
-          switchCases.push({});
-        }
-        for (let i2 = 0; i2 < switchCases.length; i2++) {
-          const switchCase = switchCases[i2];
-          const compObjectResult = getCompObject$1(switchCase, schemaFragment, schemaPath, markdown, arrayChild);
-          normalizedSwitchCases.push(compObjectResult.normalized);
-          for (const error2 of compObjectResult.errors)
-            errors2.push(`switch ${i2} - ${error2}`);
-        }
-        return { normalized: { switch: normalizedSwitchCases }, errors: [] };
-      } else {
-        return getCompObject$1(layoutKeyword, schemaFragment, schemaPath, markdown, arrayChild);
-      }
-    }
-    function matchValidationError(error2, fn) {
-      if (error2.keyword === "errorMessage") {
-        error2 = error2.params.errors[0];
-      }
-      return fn(error2);
-    }
-    function lighterValidationErrors(errors2) {
-      const compositeErrors = errors2.filter((e) => matchValidationError(e, (e2) => e2.keyword === "anyOf" || e2.keyword === "oneOf"));
-      for (const compositeError of compositeErrors) {
-        const explicitError = errors2.find((e) => matchValidationError(e, (e2) => e2.instancePath === compositeError.instancePath && e2.keyword !== "type"));
-        if (explicitError) {
-          errors2 = errors2.filter((e) => matchValidationError(e, (e2) => e2.instancePath !== compositeError.instancePath || e2.keyword !== "type"));
-        }
-      }
-      return errors2.map((e) => e.message ?? e.keyword);
-    }
-    function normalizeLayoutFragment(schemaFragment, schemaPath, markdown = (src) => src, arrayChild) {
-      let layoutKeyword;
-      if (arrayChild === "oneOf") {
-        layoutKeyword = schemaFragment.oneOfLayout ?? {};
-      } else {
-        layoutKeyword = schemaFragment.layout ?? {};
-      }
-      if (!validateLayoutKeyword(layoutKeyword)) {
-        console.error(`layout keyword validation errors at path ${schemaPath}`, layoutKeyword, validateLayoutKeyword.errors);
-        return {
-          layout: getNormalizedLayout({}, schemaFragment, schemaPath, markdown, arrayChild).normalized,
-          errors: lighterValidationErrors(validateLayoutKeyword.errors)
-        };
-      }
-      const normalizedLayout = getNormalizedLayout(layoutKeyword, schemaFragment, schemaPath, markdown, arrayChild);
-      if (!validateNormalizedLayout(normalizedLayout.normalized)) {
-        console.error(`normalized layout validation errors at path ${schemaPath}`, normalizedLayout, validateNormalizedLayout.errors);
-        return {
-          layout: getNormalizedLayout({}, schemaFragment, schemaPath, markdown, arrayChild).normalized,
-          errors: lighterValidationErrors(validateNormalizedLayout.errors)
-        };
-      }
-      return { layout: normalizedLayout.normalized, errors: [] };
-    }
-    function makeSkeletonNode(schema2, options, validates, validationErrors, normalizedLayouts, expressions, key, pointer, parentPointer, required2) {
-      var _a2, _b;
-      if (!schema2.type && schema2.properties)
-        schema2.type = "object";
-      schema2.errorMessage = schema2.errorMessage ?? {};
-      if (!normalizedLayouts[pointer]) {
-        const normalizationResult = normalizeLayoutFragment(
-          /** @type {import('@json-layout/vocabulary').SchemaFragment} */
-          schema2,
-          pointer,
-          options.markdown
-        );
-        normalizedLayouts[pointer] = normalizationResult.layout;
-        if (normalizationResult.errors.length) {
-          validationErrors[pointer.replace("_jl#", "/")] = normalizationResult.errors;
-        }
-      }
-      const normalizedLayout = normalizedLayouts[pointer];
-      let defaultData;
-      if ("default" in schema2)
-        defaultData = schema2.default;
-      else if (required2) {
-        if (schema2.type === "object")
-          defaultData = {};
-        if (schema2.type === "array")
-          defaultData = [];
-      }
-      let pure = true;
-      const pushExpression = (expressions2, expression) => {
-        if (!expression.pure)
-          pure = false;
-        const index = expressions2.findIndex((e) => e.type === expression.type && e.expr === expression.expr);
-        if (index !== -1) {
-          expression.ref = index;
-        } else {
-          expression.ref = expressions2.length;
-          expressions2.push(expression);
-        }
-      };
-      const compObjects = isSwitchStruct(normalizedLayout) ? normalizedLayout.switch : [normalizedLayout];
-      for (const compObject of compObjects) {
-        if (schema2.description && !compObject.help)
-          compObject.help = schema2.description;
-        if (compObject.if)
-          pushExpression(expressions, compObject.if);
-        if (schema2.const !== void 0 && compObject.constData === void 0)
-          compObject.constData = schema2.const;
-        if (compObject.constData !== void 0 && !compObject.getConstData)
-          compObject.getConstData = { type: "js-eval", expr: "layout.constData", pure: true };
-        if (compObject.getConstData)
-          pushExpression(expressions, compObject.getConstData);
-        if (defaultData !== void 0 && compObject.defaultData === void 0)
-          compObject.defaultData = defaultData;
-        if (compObject.defaultData !== void 0 && !compObject.getDefaultData)
-          compObject.getDefaultData = { type: "js-eval", expr: "layout.defaultData", pure: true };
-        if (compObject.getDefaultData)
-          pushExpression(expressions, compObject.getDefaultData);
-        if (compObject.options !== void 0 && !compObject.getOptions)
-          compObject.getOptions = { type: "js-eval", expr: "layout.options", pure: true };
-        if (compObject.getOptions)
-          pushExpression(expressions, compObject.getOptions);
-        if (compObject.transformData)
-          pushExpression(expressions, compObject.transformData);
-        if (isItemsLayout(compObject) && compObject.getItems) {
-          if (isGetItemsExpression(compObject.getItems))
-            pushExpression(expressions, compObject.getItems);
-          if (isGetItemsFetch(compObject.getItems))
-            pushExpression(expressions, compObject.getItems.url);
-          if (compObject.getItems.itemTitle)
-            pushExpression(expressions, compObject.getItems.itemTitle);
-          if (compObject.getItems.itemKey)
-            pushExpression(expressions, compObject.getItems.itemKey);
-          if (compObject.getItems.itemValue)
-            pushExpression(expressions, compObject.getItems.itemValue);
-          if (compObject.getItems.itemIcon)
-            pushExpression(expressions, compObject.getItems.itemIcon);
-          if (compObject.getItems.itemsResults)
-            pushExpression(expressions, compObject.getItems.itemsResults);
-        }
-      }
-      const node = { key: key ?? "", pointer, parentPointer, pure, propertyKeys: [] };
-      if (schema2.type === "object") {
-        if (schema2.properties) {
-          node.children = node.children ?? [];
-          for (const propertyKey of Object.keys(schema2.properties)) {
-            node.propertyKeys.push(propertyKey);
-            node.children.push(makeSkeletonNode(
-              schema2.properties[propertyKey],
-              options,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              propertyKey,
-              `${pointer}/properties/${propertyKey}`,
-              pointer,
-              (_a2 = schema2.required) == null ? void 0 : _a2.includes(propertyKey)
-            ));
-            if ((_b = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _b.includes(propertyKey)) {
-              schema2.errorMessage.required = schema2.errorMessage.required ?? {};
-              schema2.errorMessage.required[propertyKey] = options.messages.errorRequired;
-            }
-          }
-        }
-        if (schema2.allOf) {
-          node.children = node.children ?? [];
-          for (let i2 = 0; i2 < schema2.allOf.length; i2++) {
-            const allOfNode = makeSkeletonNode(
-              schema2.allOf[i2],
-              options,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              `$allOf-${i2}`,
-              `${pointer}/allOf/${i2}`,
-              pointer,
-              false
-            );
-            node.propertyKeys = node.propertyKeys.concat(allOfNode.propertyKeys);
-            node.children.push(allOfNode);
-          }
-        }
-        if (schema2.oneOf) {
-          const oneOfPointer = `${pointer}/oneOf`;
-          if (!normalizedLayouts[oneOfPointer]) {
-            const normalizationResult = normalizeLayoutFragment(schema2, oneOfPointer, options.markdown, "oneOf");
-            normalizedLayouts[oneOfPointer] = normalizationResult.layout;
-            if (normalizationResult.errors.length) {
-              validationErrors[oneOfPointer.replace("_jl#", "/")] = normalizationResult.errors;
-            }
-          }
-          const childrenTrees = [];
-          for (let i2 = 0; i2 < schema2.oneOf.length; i2++) {
-            if (!schema2.oneOf[i2].type)
-              schema2.oneOf[i2].type = schema2.type;
-            const title2 = schema2.oneOf[i2].title ?? `option ${i2}`;
-            delete schema2.oneOf[i2].title;
-            childrenTrees.push(makeSkeletonTree(
-              schema2.oneOf[i2],
-              options,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              `${oneOfPointer}/${i2}`,
-              title2
-            ));
-          }
-          node.children = node.children ?? [];
-          node.children.push({
-            key: "$oneOf",
-            pointer: `${pointer}/oneOf`,
-            parentPointer: pointer,
-            childrenTrees,
-            pure: childrenTrees[0].root.pure,
-            propertyKeys: []
-          });
-          schema2.errorMessage.oneOf = options.messages.errorOneOf;
-        }
-      }
-      if (schema2.type === "array" && schema2.items) {
-        if (Array.isArray(schema2.items)) {
-          node.children = schema2.items.map((itemSchema, i2) => {
-            return makeSkeletonNode(
-              itemSchema,
-              options,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              i2,
-              `${pointer}/items/${i2}`,
-              pointer,
-              true
-            );
-          });
-        } else {
-          node.childrenTrees = [
-            makeSkeletonTree(
-              schema2.items,
-              options,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              `${pointer}/items`,
-              schema2.items.title
-            )
-          ];
-        }
-      }
-      for (const child of node.children || [])
-        if (!child.pure)
-          node.pure = false;
-      for (const childTree of node.childrenTrees || [])
-        if (!childTree.root.pure)
-          node.pure = false;
-      return node;
-    }
-    function makeSkeletonTree(schema2, options, validates, validationErrors, normalizedLayouts, expressions, pointer, title2) {
-      const root = makeSkeletonNode(schema2, options, validates, validationErrors, normalizedLayouts, expressions, "", pointer, null, true);
-      validates.push(pointer);
-      return { title: title2, root };
-    }
-    const Ajv$1 = ajvModule.default;
-    const getJSONRef = (schemas, ref2, ajv2) => {
-      var _a2;
-      const [schemaId, pointer] = ref2.split("#");
-      schemas[schemaId] = schemas[schemaId] ?? ((_a2 = ajv2.getSchema(schemaId)) == null ? void 0 : _a2.schema);
-      if (!schemas[schemaId])
-        throw new Error(`reference not found ${schemaId}`);
-      const pointerParts = pointer.split("/").filter((p2) => !!p2);
-      const { value: fragment } = pointerParts.reduce((a, pointerPart) => {
-        a.path.push(pointerPart);
-        if (!(pointerPart in a.value))
-          throw new Error(`reference not found ${schemaId}#${a.path.join("/")}`);
-        a.value = a.value[pointerPart];
-        return a;
-      }, { path: ["/"], value: schemas[schemaId] });
-      return [fragment, schemaId];
-    };
-    const recurse = (schemas, schemaFragment, schemaId, ajv2, locale = "en") => {
-      for (const key of Object.keys(schemaFragment)) {
-        if (schemaFragment[key] && typeof schemaFragment[key] === "object") {
-          if ("$ref" in schemaFragment[key]) {
-            const fullRef = ajv2.opts.uriResolver.resolve(schemaId, schemaFragment[key].$ref).replace("~$locale~", locale);
-            const fullRefDefaultLocale = ajv2.opts.uriResolver.resolve(schemaId, schemaFragment[key].$ref).replace("~$locale~", "en");
-            let refFragment, refSchemaId;
-            try {
-              [refFragment, refSchemaId] = getJSONRef(schemas, fullRef, ajv2);
-            } catch (err) {
-              [refFragment, refSchemaId] = getJSONRef(schemas, fullRefDefaultLocale, ajv2);
-            }
-            if (typeof refFragment === "object" && !Array.isArray(refFragment)) {
-              schemaFragment[key] = { ...refFragment, ...schemaFragment[key] };
-              delete schemaFragment[key].$ref;
-            } else {
-              schemaFragment[key] = refFragment;
-            }
-            recurse(schemas, schemaFragment[key], refSchemaId, ajv2, locale);
-          } else {
-            recurse(schemas, schemaFragment[key], schemaId, ajv2, locale);
-          }
-        }
-      }
-      return schemaFragment;
-    };
-    function resolveRefs(schema2, ajv2, locale = "en") {
-      if (!schema2.$id)
-        throw new Error("missing schema id");
-      return recurse({ [schema2.$id]: schema2 }, schema2, schema2.$id, ajv2 ?? new Ajv$1(), locale);
-    }
-    function copyBuffer(cur) {
-      if (cur instanceof Buffer) {
-        return Buffer.from(cur);
-      }
-      return new cur.constructor(cur.buffer.slice(), cur.byteOffset, cur.length);
-    }
-    function rfdc() {
-      return clone2;
-      function cloneArray(a, fn) {
-        const keys2 = Object.keys(a);
-        const a2 = new Array(keys2.length);
-        for (let i2 = 0; i2 < keys2.length; i2++) {
-          const k = keys2[i2];
-          const cur = a[k];
-          if (typeof cur !== "object" || cur === null) {
-            a2[k] = cur;
-          } else if (cur instanceof Date) {
-            a2[k] = new Date(cur);
-          } else if (ArrayBuffer.isView(cur)) {
-            a2[k] = copyBuffer(cur);
-          } else {
-            a2[k] = fn(cur);
-          }
-        }
-        return a2;
-      }
-      function clone2(o2) {
-        if (typeof o2 !== "object" || o2 === null)
-          return o2;
-        if (o2 instanceof Date)
-          return new Date(o2);
-        if (Array.isArray(o2))
-          return cloneArray(o2, clone2);
-        if (o2 instanceof Map)
-          return new Map(cloneArray(Array.from(o2), clone2));
-        if (o2 instanceof Set)
-          return new Set(cloneArray(Array.from(o2), clone2));
-        const o22 = {};
-        for (const k in o2) {
-          if (Object.hasOwnProperty.call(o2, k) === false)
-            continue;
-          const cur = o2[k];
-          if (typeof cur !== "object" || cur === null) {
-            o22[k] = cur;
-          } else if (cur instanceof Date) {
-            o22[k] = new Date(cur);
-          } else if (cur instanceof Map) {
-            o22[k] = new Map(cloneArray(Array.from(cur), clone2));
-          } else if (cur instanceof Set) {
-            o22[k] = new Set(cloneArray(Array.from(cur), clone2));
-          } else if (ArrayBuffer.isView(cur)) {
-            o22[k] = copyBuffer(cur);
-          } else {
-            o22[k] = clone2(cur);
-          }
-        }
-        return o22;
-      }
-    }
-    const clone$1 = rfdc();
-    const Ajv = (
-      /** @type {typeof ajvModule.default} */
-      ajvModule
-    );
-    const ajvLocalize = (
-      /** @type {typeof ajvLocalizeModule.default} */
-      ajvLocalizeModule
-    );
-    const fillOptions$1 = (partialOptions) => {
-      let ajv2 = partialOptions.ajv;
-      if (!ajv2) {
-        const ajvOpts = { allErrors: true, strict: false };
-        if (partialOptions.ajvOptions)
-          Object.assign(ajvOpts, partialOptions.ajvOptions);
-        if (partialOptions.code)
-          ajvOpts.code = { source: true, esm: true, lines: true };
-        const newAjv = new Ajv(ajvOpts);
-        addFormats.default(newAjv);
-        ajvErrors.default(newAjv);
-        ajv2 = newAjv;
-      }
-      ajv2.addKeyword("layout");
-      let markdown = partialOptions.markdown;
-      if (!markdown) {
-        const markdownIt2 = new MarkdownIt(partialOptions.markdownItOptions ?? {});
-        markdown = markdownIt2.render.bind(markdownIt2);
-      }
-      const locale = partialOptions.locale || "en";
-      const messages = { ...i18n[locale] || i18n.en };
-      if (partialOptions.messages)
-        Object.assign(messages, partialOptions.messages);
-      return {
-        ajv: ajv2,
-        code: false,
-        markdown,
-        ...partialOptions,
-        locale,
-        messages
-      };
-    };
-    function compile(_schema, partialOptions = {}) {
-      const options = fillOptions$1(partialOptions);
-      const schema2 = (
-        /** @type {import('ajv').SchemaObject} */
-        clone$1(_schema)
-      );
-      schema2.$id = schema2.$id ?? "_jl";
-      resolveRefs(schema2, options.ajv, options.locale);
-      const validatePointers = [];
-      const normalizedLayouts = {};
-      const expressionsDefinitions = [];
-      const validationErrors = {};
-      const skeletonTree = makeSkeletonTree(
-        schema2,
-        options,
-        validatePointers,
-        validationErrors,
-        normalizedLayouts,
-        expressionsDefinitions,
-        `${schema2.$id}#`,
-        "main"
-      );
-      options.ajv.addSchema(schema2);
-      const uriResolver = options.ajv.opts.uriResolver;
-      const validates = {};
-      for (const pointer of validatePointers) {
-        const fullPointer = uriResolver.resolve(schema2.$id, pointer);
-        validates[pointer] = options.ajv.compile({ $ref: fullPointer });
-      }
-      const expressions = [];
-      for (const expression of expressionsDefinitions) {
-        const expressionsParams = expression.pure ? ["data", "options", "context", "display", "layout"] : ["data", "options", "context", "display", "layout", "parentData", "rootData"];
-        if (expression.type === "js-fn") {
-          expressions.push(
-            /** @type {CompiledExpression} */
-            new Function(...expressionsParams, expression.expr)
-          );
-        }
-        if (expression.type === "js-eval") {
-          expressions.push(
-            /** @type {CompiledExpression} */
-            new Function(...expressionsParams, "return (" + expression.expr + ")")
-          );
-        }
-        if (expression.type === "js-tpl") {
-          expressions.push(
-            /** @type {CompiledExpression} */
-            new Function(...expressionsParams, "return `" + expression.expr + "`")
-          );
-        }
-      }
-      return {
-        options,
-        schema: schema2,
-        skeletonTree,
-        validates,
-        validationErrors,
-        normalizedLayouts,
-        expressions,
-        locale: options.locale,
-        messages: options.messages,
-        // @ts-ignore
-        localizeErrors: ajvLocalize[options.locale] || ajvLocalize.en
-      };
-    }
-    function mittModule(n) {
-      return { all: n = n || /* @__PURE__ */ new Map(), on: function(t, e) {
-        var i2 = n.get(t);
-        i2 ? i2.push(e) : n.set(t, [e]);
-      }, off: function(t, e) {
-        var i2 = n.get(t);
-        i2 && (e ? i2.splice(i2.indexOf(e) >>> 0, 1) : n.set(t, []));
-      }, emit: function(t, e) {
-        var i2 = n.get(t);
-        i2 && i2.slice().map(function(n2) {
-          n2(e);
-        }), (i2 = n.get("*")) && i2.slice().map(function(n2) {
-          n2(t, e);
-        });
-      } };
-    }
-    var browser = { exports: {} };
-    var ms;
-    var hasRequiredMs;
-    function requireMs() {
-      if (hasRequiredMs)
-        return ms;
-      hasRequiredMs = 1;
-      var s = 1e3;
-      var m = s * 60;
-      var h2 = m * 60;
-      var d = h2 * 24;
-      var w = d * 7;
-      var y = d * 365.25;
-      ms = function(val, options) {
-        options = options || {};
-        var type2 = typeof val;
-        if (type2 === "string" && val.length > 0) {
-          return parse2(val);
-        } else if (type2 === "number" && isFinite(val)) {
-          return options.long ? fmtLong(val) : fmtShort(val);
-        }
-        throw new Error(
-          "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
-        );
-      };
-      function parse2(str2) {
-        str2 = String(str2);
-        if (str2.length > 100) {
-          return;
-        }
-        var match = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
-          str2
-        );
-        if (!match) {
-          return;
-        }
-        var n = parseFloat(match[1]);
-        var type2 = (match[2] || "ms").toLowerCase();
-        switch (type2) {
-          case "years":
-          case "year":
-          case "yrs":
-          case "yr":
-          case "y":
-            return n * y;
-          case "weeks":
-          case "week":
-          case "w":
-            return n * w;
-          case "days":
-          case "day":
-          case "d":
-            return n * d;
-          case "hours":
-          case "hour":
-          case "hrs":
-          case "hr":
-          case "h":
-            return n * h2;
-          case "minutes":
-          case "minute":
-          case "mins":
-          case "min":
-          case "m":
-            return n * m;
-          case "seconds":
-          case "second":
-          case "secs":
-          case "sec":
-          case "s":
-            return n * s;
-          case "milliseconds":
-          case "millisecond":
-          case "msecs":
-          case "msec":
-          case "ms":
-            return n;
-          default:
-            return void 0;
-        }
-      }
-      function fmtShort(ms2) {
-        var msAbs = Math.abs(ms2);
-        if (msAbs >= d) {
-          return Math.round(ms2 / d) + "d";
-        }
-        if (msAbs >= h2) {
-          return Math.round(ms2 / h2) + "h";
-        }
-        if (msAbs >= m) {
-          return Math.round(ms2 / m) + "m";
-        }
-        if (msAbs >= s) {
-          return Math.round(ms2 / s) + "s";
-        }
-        return ms2 + "ms";
-      }
-      function fmtLong(ms2) {
-        var msAbs = Math.abs(ms2);
-        if (msAbs >= d) {
-          return plural(ms2, msAbs, d, "day");
-        }
-        if (msAbs >= h2) {
-          return plural(ms2, msAbs, h2, "hour");
-        }
-        if (msAbs >= m) {
-          return plural(ms2, msAbs, m, "minute");
-        }
-        if (msAbs >= s) {
-          return plural(ms2, msAbs, s, "second");
-        }
-        return ms2 + " ms";
-      }
-      function plural(ms2, msAbs, n, name) {
-        var isPlural = msAbs >= n * 1.5;
-        return Math.round(ms2 / n) + " " + name + (isPlural ? "s" : "");
-      }
-      return ms;
-    }
-    function setup(env) {
-      createDebug.debug = createDebug;
-      createDebug.default = createDebug;
-      createDebug.coerce = coerce;
-      createDebug.disable = disable;
-      createDebug.enable = enable;
-      createDebug.enabled = enabled;
-      createDebug.humanize = requireMs();
-      createDebug.destroy = destroy;
-      Object.keys(env).forEach((key) => {
-        createDebug[key] = env[key];
-      });
-      createDebug.names = [];
-      createDebug.skips = [];
-      createDebug.formatters = {};
-      function selectColor(namespace) {
-        let hash = 0;
-        for (let i2 = 0; i2 < namespace.length; i2++) {
-          hash = (hash << 5) - hash + namespace.charCodeAt(i2);
-          hash |= 0;
-        }
-        return createDebug.colors[Math.abs(hash) % createDebug.colors.length];
-      }
-      createDebug.selectColor = selectColor;
-      function createDebug(namespace) {
-        let prevTime;
-        let enableOverride = null;
-        let namespacesCache;
-        let enabledCache;
-        function debug2(...args) {
-          if (!debug2.enabled) {
-            return;
-          }
-          const self2 = debug2;
-          const curr = Number(/* @__PURE__ */ new Date());
-          const ms2 = curr - (prevTime || curr);
-          self2.diff = ms2;
-          self2.prev = prevTime;
-          self2.curr = curr;
-          prevTime = curr;
-          args[0] = createDebug.coerce(args[0]);
-          if (typeof args[0] !== "string") {
-            args.unshift("%O");
-          }
-          let index = 0;
-          args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format2) => {
-            if (match === "%%") {
-              return "%";
-            }
-            index++;
-            const formatter = createDebug.formatters[format2];
-            if (typeof formatter === "function") {
-              const val = args[index];
-              match = formatter.call(self2, val);
-              args.splice(index, 1);
-              index--;
-            }
-            return match;
-          });
-          createDebug.formatArgs.call(self2, args);
-          const logFn = self2.log || createDebug.log;
-          logFn.apply(self2, args);
-        }
-        debug2.namespace = namespace;
-        debug2.useColors = createDebug.useColors();
-        debug2.color = createDebug.selectColor(namespace);
-        debug2.extend = extend2;
-        debug2.destroy = createDebug.destroy;
-        Object.defineProperty(debug2, "enabled", {
-          enumerable: true,
-          configurable: false,
-          get: () => {
-            if (enableOverride !== null) {
-              return enableOverride;
-            }
-            if (namespacesCache !== createDebug.namespaces) {
-              namespacesCache = createDebug.namespaces;
-              enabledCache = createDebug.enabled(namespace);
-            }
-            return enabledCache;
-          },
-          set: (v) => {
-            enableOverride = v;
-          }
-        });
-        if (typeof createDebug.init === "function") {
-          createDebug.init(debug2);
-        }
-        return debug2;
-      }
-      function extend2(namespace, delimiter2) {
-        const newDebug = createDebug(this.namespace + (typeof delimiter2 === "undefined" ? ":" : delimiter2) + namespace);
-        newDebug.log = this.log;
-        return newDebug;
-      }
-      function enable(namespaces) {
-        createDebug.save(namespaces);
-        createDebug.namespaces = namespaces;
-        createDebug.names = [];
-        createDebug.skips = [];
-        let i2;
-        const split = (typeof namespaces === "string" ? namespaces : "").split(/[\s,]+/);
-        const len = split.length;
-        for (i2 = 0; i2 < len; i2++) {
-          if (!split[i2]) {
-            continue;
-          }
-          namespaces = split[i2].replace(/\*/g, ".*?");
-          if (namespaces[0] === "-") {
-            createDebug.skips.push(new RegExp("^" + namespaces.slice(1) + "$"));
-          } else {
-            createDebug.names.push(new RegExp("^" + namespaces + "$"));
-          }
-        }
-      }
-      function disable() {
-        const namespaces = [
-          ...createDebug.names.map(toNamespace),
-          ...createDebug.skips.map(toNamespace).map((namespace) => "-" + namespace)
-        ].join(",");
-        createDebug.enable("");
-        return namespaces;
-      }
-      function enabled(name) {
-        if (name[name.length - 1] === "*") {
-          return true;
-        }
-        let i2;
-        let len;
-        for (i2 = 0, len = createDebug.skips.length; i2 < len; i2++) {
-          if (createDebug.skips[i2].test(name)) {
-            return false;
-          }
-        }
-        for (i2 = 0, len = createDebug.names.length; i2 < len; i2++) {
-          if (createDebug.names[i2].test(name)) {
-            return true;
-          }
-        }
-        return false;
-      }
-      function toNamespace(regexp) {
-        return regexp.toString().substring(2, regexp.toString().length - 2).replace(/\.\*\?$/, "*");
-      }
-      function coerce(val) {
-        if (val instanceof Error) {
-          return val.stack || val.message;
-        }
-        return val;
-      }
-      function destroy() {
-        console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.");
-      }
-      createDebug.enable(createDebug.load());
-      return createDebug;
-    }
-    var common = setup;
-    var define_process_env_default = {};
-    (function(module2, exports2) {
-      exports2.formatArgs = formatArgs;
-      exports2.save = save;
-      exports2.load = load2;
-      exports2.useColors = useColors;
-      exports2.storage = localstorage();
-      exports2.destroy = /* @__PURE__ */ (() => {
-        let warned = false;
-        return () => {
-          if (!warned) {
-            warned = true;
-            console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.");
-          }
-        };
-      })();
-      exports2.colors = [
-        "#0000CC",
-        "#0000FF",
-        "#0033CC",
-        "#0033FF",
-        "#0066CC",
-        "#0066FF",
-        "#0099CC",
-        "#0099FF",
-        "#00CC00",
-        "#00CC33",
-        "#00CC66",
-        "#00CC99",
-        "#00CCCC",
-        "#00CCFF",
-        "#3300CC",
-        "#3300FF",
-        "#3333CC",
-        "#3333FF",
-        "#3366CC",
-        "#3366FF",
-        "#3399CC",
-        "#3399FF",
-        "#33CC00",
-        "#33CC33",
-        "#33CC66",
-        "#33CC99",
-        "#33CCCC",
-        "#33CCFF",
-        "#6600CC",
-        "#6600FF",
-        "#6633CC",
-        "#6633FF",
-        "#66CC00",
-        "#66CC33",
-        "#9900CC",
-        "#9900FF",
-        "#9933CC",
-        "#9933FF",
-        "#99CC00",
-        "#99CC33",
-        "#CC0000",
-        "#CC0033",
-        "#CC0066",
-        "#CC0099",
-        "#CC00CC",
-        "#CC00FF",
-        "#CC3300",
-        "#CC3333",
-        "#CC3366",
-        "#CC3399",
-        "#CC33CC",
-        "#CC33FF",
-        "#CC6600",
-        "#CC6633",
-        "#CC9900",
-        "#CC9933",
-        "#CCCC00",
-        "#CCCC33",
-        "#FF0000",
-        "#FF0033",
-        "#FF0066",
-        "#FF0099",
-        "#FF00CC",
-        "#FF00FF",
-        "#FF3300",
-        "#FF3333",
-        "#FF3366",
-        "#FF3399",
-        "#FF33CC",
-        "#FF33FF",
-        "#FF6600",
-        "#FF6633",
-        "#FF9900",
-        "#FF9933",
-        "#FFCC00",
-        "#FFCC33"
-      ];
-      function useColors() {
-        if (typeof window !== "undefined" && window.process && (window.process.type === "renderer" || window.process.__nwjs)) {
-          return true;
-        }
-        if (typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-          return false;
-        }
-        return typeof document !== "undefined" && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance || // Is firebug? http://stackoverflow.com/a/398120/376773
-        typeof window !== "undefined" && window.console && (window.console.firebug || window.console.exception && window.console.table) || // Is firefox >= v31?
-        // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-        typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31 || // Double check webkit in userAgent just in case we are in a worker
-        typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
-      }
-      function formatArgs(args) {
-        args[0] = (this.useColors ? "%c" : "") + this.namespace + (this.useColors ? " %c" : " ") + args[0] + (this.useColors ? "%c " : " ") + "+" + module2.exports.humanize(this.diff);
-        if (!this.useColors) {
-          return;
-        }
-        const c = "color: " + this.color;
-        args.splice(1, 0, c, "color: inherit");
-        let index = 0;
-        let lastC = 0;
-        args[0].replace(/%[a-zA-Z%]/g, (match) => {
-          if (match === "%%") {
-            return;
-          }
-          index++;
-          if (match === "%c") {
-            lastC = index;
-          }
-        });
-        args.splice(lastC, 0, c);
-      }
-      exports2.log = console.debug || console.log || (() => {
-      });
-      function save(namespaces) {
-        try {
-          if (namespaces) {
-            exports2.storage.setItem("debug", namespaces);
-          } else {
-            exports2.storage.removeItem("debug");
-          }
-        } catch (error2) {
-        }
-      }
-      function load2() {
-        let r2;
-        try {
-          r2 = exports2.storage.getItem("debug");
-        } catch (error2) {
-        }
-        if (!r2 && typeof process !== "undefined" && "env" in process) {
-          r2 = define_process_env_default.DEBUG;
-        }
-        return r2;
-      }
-      function localstorage() {
-        try {
-          return localStorage;
-        } catch (error2) {
-        }
-      }
-      module2.exports = common(exports2);
-      const { formatters } = module2.exports;
-      formatters.j = function(v) {
-        try {
-          return JSON.stringify(v);
-        } catch (error2) {
-          return "[UnexpectedJSONParseError]: " + error2.message;
-        }
-      };
-    })(browser, browser.exports);
-    var browserExports = browser.exports;
-    const debug = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
     var NOTHING = Symbol.for("immer-nothing");
     var DRAFTABLE = Symbol.for("immer-draftable");
     var DRAFT_STATE = Symbol.for("immer-state");
@@ -73531,11 +66186,2789 @@ Reason: ${error2}`);
     immer.produceWithPatches.bind(
       immer
     );
-    immer.setAutoFreeze.bind(immer);
+    var setAutoFreeze = immer.setAutoFreeze.bind(immer);
     immer.setUseStrictShallowCopy.bind(immer);
     immer.applyPatches.bind(immer);
     immer.createDraft.bind(immer);
     immer.finishDraft.bind(immer);
+    const en = {
+      errorOneOf: "chose one",
+      errorRequired: "required information",
+      addItem: "Add item",
+      delete: "Delete",
+      edit: "Edit",
+      duplicate: "Duplicate",
+      sort: "Sort",
+      up: "Move up",
+      down: "Move down",
+      showHelp: "Show a help message",
+      mdeLink1: "[Link title",
+      mdeLink2: "](link url)",
+      mdeImg1: "![](",
+      mdeImg2: "image url)",
+      mdeTable1: "",
+      mdeTable2: "\n\n| Column 1 | Column 2 | ColoColumnnne 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n",
+      bold: "Bold",
+      italic: "Italic",
+      heading: "Title",
+      quote: "Quote",
+      unorderedList: "Unordered list",
+      orderedList: "Ordered list",
+      createLink: "Create a link",
+      insertImage: "Insert an image",
+      createTable: "Create a table",
+      preview: "Aperçu du rendu",
+      mdeGuide: "Documentation de la syntaxe",
+      undo: "Undo",
+      redo: "Redo"
+    };
+    const fr = {
+      errorOneOf: "choisissez une valeur",
+      errorRequired: "information obligatoire",
+      addItem: "Ajouter un élément",
+      delete: "Supprimer",
+      edit: "Éditer",
+      duplicate: "Dupliquer",
+      sort: "Trier",
+      up: "Décaler vers le haut",
+      down: "Décaler vers le bas",
+      showHelp: "Afficher un message d'aide",
+      mdeLink1: "[titre du lien",
+      mdeLink2: "](adresse du lien)",
+      mdeImg1: "![](",
+      mdeImg2: "adresse de l'image)",
+      mdeTable1: "",
+      mdeTable2: "\n\n| Colonne 1 | Colonne 2 | Colonne 3 |\n| -------- | -------- | -------- |\n| Texte     | Texte     | Texte     |\n\n",
+      bold: "Gras",
+      italic: "Italique",
+      heading: "Titre",
+      quote: "Citation",
+      unorderedList: "Liste à puce",
+      orderedList: "Liste numérotée",
+      createLink: "Créer un lien",
+      insertImage: "Insérer une image",
+      createTable: "Créer un tableau",
+      preview: "Preview",
+      mdeGuide: "Syntax documentation",
+      undo: "Défaire",
+      redo: "Refaire"
+    };
+    const i18n = {
+      en,
+      fr
+    };
+    const schema$1 = {
+      "$id": "https://json-layout.github.io/layout-keyword",
+      "$defs": {
+        "layout-keyword": {
+          "title": "layout keyword",
+          "errorMessage": {
+            "anyOf": "layout keyword must be a string with a valid component name, or a more complete object definition, or an array of children, or a switch structure"
+          },
+          "anyOf": [
+            {
+              "$ref": "#/$defs/comp-name"
+            },
+            {
+              "$ref": "#/$defs/partial-children"
+            },
+            {
+              "$ref": "#/$defs/partial-comp-object"
+            },
+            {
+              "$ref": "#/$defs/partial-switch"
+            }
+          ]
+        },
+        "partial-switch": {
+          "type": "object",
+          "required": [
+            "switch"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "switch": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/partial-comp-object"
+              }
+            }
+          }
+        },
+        "partial-comp-object": {
+          "title": "partial comp object",
+          "type": "object",
+          "properties": {
+            "comp": {
+              "$ref": "#/$defs/comp-name"
+            },
+            "help": {
+              "type": "string"
+            },
+            "children": {
+              "$ref": "#/$defs/partial-children"
+            },
+            "label": {
+              "type": "string"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subtitle": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "step": {
+              "type": "number"
+            },
+            "if": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/partial-select-item"
+              }
+            },
+            "getItems": {
+              "$ref": "#/$defs/partial-get-items"
+            },
+            "listEditMode": {
+              "type": "string",
+              "enum": [
+                "inline",
+                "inline-single",
+                "menu",
+                "dialog"
+              ]
+            },
+            "listActions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "add",
+                  "edit",
+                  "delete",
+                  "sort",
+                  "duplicate"
+                ]
+              }
+            },
+            "cols": {
+              "$ref": "#/$defs/partial-cols"
+            },
+            "props": {
+              "type": "object"
+            },
+            "getProps": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "slots": {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/$defs/partial-slot"
+                }
+              }
+            },
+            "options": {
+              "type": "object"
+            },
+            "getOptions": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "messages": {
+              "type": "object"
+            },
+            "defaultData": {},
+            "getDefaultData": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "constData": {},
+            "getConstData": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "transformData": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "autofocus": {
+              "type": "boolean"
+            },
+            "separator": {
+              "type": "string"
+            }
+          }
+        },
+        "comp-name": {
+          "title": "component name",
+          "type": "string"
+        },
+        "partial-child-ref": {
+          "type": "object",
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            },
+            "cols": {
+              "$ref": "#/$defs/partial-cols"
+            }
+          }
+        },
+        "partial-child-composite": {
+          "type": "object",
+          "required": [
+            "children"
+          ],
+          "properties": {
+            "comp": {
+              "type": "string"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subtitle": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "children": {
+              "$ref": "#/$defs/partial-children"
+            },
+            "cols": {
+              "$ref": "#/$defs/partial-cols"
+            }
+          }
+        },
+        "partial-child": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/partial-child-ref"
+            },
+            {
+              "$ref": "#/$defs/partial-child-composite"
+            }
+          ]
+        },
+        "partial-children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/partial-child"
+          }
+        },
+        "partial-expression": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/partial-expression-obj"
+            }
+          ]
+        },
+        "partial-expression-obj": {
+          "type": "object",
+          "required": [
+            "expr"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "js-fn",
+                "js-eval",
+                "js-tpl"
+              ]
+            },
+            "expr": {
+              "type": "string"
+            }
+          }
+        },
+        "partial-select-item": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "value": {}
+              }
+            }
+          ]
+        },
+        "partial-get-items": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/partial-get-items-obj"
+            }
+          ]
+        },
+        "partial-get-items-obj": {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "itemTitle": {
+                  "$ref": "#/$defs/partial-expression"
+                },
+                "itemKey": {
+                  "$ref": "#/$defs/partial-expression"
+                },
+                "itemValue": {
+                  "$ref": "#/$defs/partial-expression"
+                },
+                "itemIcon": {
+                  "$ref": "#/$defs/partial-expression"
+                },
+                "itemsResults": {
+                  "$ref": "#/$defs/partial-expression"
+                }
+              }
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "$ref": "#/$defs/partial-expression-obj"
+                },
+                {
+                  "$ref": "#/$defs/partial-get-items-fetch"
+                }
+              ]
+            }
+          ]
+        },
+        "partial-get-items-fetch": {
+          "type": "object",
+          "required": [
+            "url"
+          ],
+          "properties": {
+            "url": {
+              "$ref": "#/$defs/partial-expression"
+            }
+          }
+        },
+        "partial-cols": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            {
+              "$ref": "#/$defs/partial-cols-obj"
+            }
+          ]
+        },
+        "partial-cols-obj": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "xs": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "sm": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "md": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "lg": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "xl": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "xxl": {
+              "$ref": "#/$defs/partial-cols-number"
+            }
+          }
+        },
+        "partial-cols-number": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "partial-slot": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/partial-slot-text"
+            },
+            {
+              "$ref": "#/$defs/partial-slot-markdown"
+            },
+            {
+              "$ref": "#/$defs/partial-slot-name"
+            }
+          ]
+        },
+        "partial-slot-text": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "type": "string"
+            }
+          }
+        },
+        "partial-slot-markdown": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "markdown"
+          ],
+          "properties": {
+            "markdown": {
+              "type": "string"
+            }
+          }
+        },
+        "partial-slot-name": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    };
+    const schema = {
+      "$id": "https://json-layout.github.io/normalized-layout-keyword",
+      "$defs": {
+        "normalized-layout": {
+          "title": "normalized layout",
+          "type": "object",
+          "unevaluatedProperties": false,
+          "oneOf": [
+            {
+              "$ref": "#/$defs/switch-struct"
+            },
+            {
+              "$ref": "#/$defs/base-comp-object"
+            }
+          ]
+        },
+        "switch-struct": {
+          "type": "object",
+          "required": [
+            "switch"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "switch": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/base-comp-object"
+              }
+            }
+          }
+        },
+        "base-comp-object": {
+          "type": "object",
+          "required": [
+            "comp"
+          ],
+          "properties": {
+            "comp": {
+              "type": "string"
+            },
+            "if": {
+              "$ref": "#/$defs/expression"
+            },
+            "options": {
+              "$ref": "#/$defs/state-node-options-base"
+            },
+            "getOptions": {
+              "$ref": "#/$defs/expression"
+            },
+            "defaultData": {},
+            "getDefaultData": {
+              "$ref": "#/$defs/expression"
+            },
+            "constData": {},
+            "getConstData": {
+              "$ref": "#/$defs/expression"
+            },
+            "transformData": {
+              "$ref": "#/$defs/expression"
+            },
+            "nullable": {
+              "type": "boolean"
+            },
+            "help": {
+              "type": "string"
+            },
+            "cols": {
+              "$ref": "#/$defs/cols-obj"
+            },
+            "props": {
+              "$ref": "#/$defs/state-node-props-lib"
+            },
+            "getProps": {
+              "$ref": "#/$defs/expression"
+            },
+            "slots": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/$defs/state-node-slots-lib"
+                },
+                {
+                  "properties": {
+                    "before": {
+                      "$ref": "#/$defs/slot"
+                    },
+                    "after": {
+                      "$ref": "#/$defs/slot"
+                    },
+                    "component": {
+                      "$ref": "#/$defs/slot"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "composite-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "children",
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "subtitle": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "children": {
+                  "$ref": "#/$defs/children"
+                }
+              }
+            }
+          ]
+        },
+        "simple-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "focusable-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "autofocus": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "items-based-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "items": {
+                  "$ref": "#/$defs/select-items"
+                },
+                "getItems": {
+                  "$ref": "#/$defs/get-items"
+                },
+                "multiple": {
+                  "type": "boolean"
+                },
+                "separator": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "multiple-compat-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "multiple": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "child-ref": {
+          "type": "object",
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            },
+            "cols": {
+              "$ref": "#/$defs/cols-obj"
+            }
+          }
+        },
+        "child-composite": {
+          "type": "object",
+          "required": [
+            "key",
+            "children"
+          ],
+          "properties": {
+            "key": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            },
+            "cols": {
+              "$ref": "#/$defs/cols-obj"
+            },
+            "comp": {
+              "type": "string"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subtitle": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "children": {
+              "$ref": "#/$defs/children"
+            }
+          }
+        },
+        "child": {
+          "title": "Child",
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/child-ref"
+            },
+            {
+              "$ref": "#/$defs/child-composite"
+            }
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/child"
+          }
+        },
+        "select-items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/select-item"
+          }
+        },
+        "select-item": {
+          "type": "object",
+          "required": [
+            "title",
+            "key",
+            "value"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            },
+            "value": {},
+            "icon": {
+              "type": "string"
+            }
+          }
+        },
+        "get-items": {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "returnObjects": {
+                  "type": "boolean",
+                  "readOnly": true
+                },
+                "itemsResults": {
+                  "$ref": "#/$defs/expression"
+                },
+                "itemTitle": {
+                  "$ref": "#/$defs/expression"
+                },
+                "itemKey": {
+                  "$ref": "#/$defs/expression"
+                },
+                "itemValue": {
+                  "$ref": "#/$defs/expression"
+                },
+                "itemIcon": {
+                  "$ref": "#/$defs/expression"
+                }
+              }
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/expression"
+                },
+                {
+                  "$ref": "#/$defs/get-items-fetch"
+                }
+              ]
+            }
+          ]
+        },
+        "get-items-fetch": {
+          "type": "object",
+          "required": [
+            "url"
+          ],
+          "properties": {
+            "url": {
+              "$ref": "#/$defs/expression"
+            },
+            "qSearchParam": {
+              "type": "string"
+            },
+            "searchParams": {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/$defs/expression"
+                }
+              }
+            }
+          }
+        },
+        "expression": {
+          "type": "object",
+          "required": [
+            "type",
+            "expr",
+            "pure"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "js-fn",
+                "js-eval",
+                "js-tpl"
+              ]
+            },
+            "expr": {
+              "type": "string"
+            },
+            "pure": {
+              "type": "boolean"
+            },
+            "ref": {
+              "type": "integer",
+              "readOnly": true
+            }
+          }
+        },
+        "cols-obj": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "xs"
+          ],
+          "properties": {
+            "xs": {
+              "$ref": "#/$defs/cols",
+              "default": 12
+            },
+            "sm": {
+              "$ref": "#/$defs/cols"
+            },
+            "md": {
+              "$ref": "#/$defs/cols"
+            },
+            "lg": {
+              "$ref": "#/$defs/cols"
+            },
+            "xl": {
+              "$ref": "#/$defs/cols"
+            },
+            "xxl": {
+              "$ref": "#/$defs/cols"
+            }
+          }
+        },
+        "cols": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "slot": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "markdown"
+              ],
+              "properties": {
+                "markdown": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "state-node-options-base": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/$defs/state-node-options-base-lib"
+            },
+            {
+              "properties": {
+                "readOnly": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "summary": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "titleDepth": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 6,
+                  "default": 2
+                },
+                "density": {
+                  "type": "string",
+                  "enum": [
+                    "default",
+                    "comfortable",
+                    "compact"
+                  ],
+                  "default": "default"
+                },
+                "removeAdditional": {
+                  "description": "true is the same as 'unknown', false is the same as 'none'",
+                  "default": "error",
+                  "oneOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        "unknown",
+                        "error",
+                        "none"
+                      ]
+                    }
+                  ]
+                },
+                "validateOn": {
+                  "type": "string",
+                  "enum": [
+                    "input",
+                    "blur",
+                    "submit"
+                  ],
+                  "default": "input"
+                },
+                "updateOn": {
+                  "type": "string",
+                  "enum": [
+                    "input",
+                    "blur"
+                  ],
+                  "default": "input"
+                },
+                "debounceInputMs": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "default": 300
+                },
+                "initialValidation": {
+                  "type": "string",
+                  "enum": [
+                    "never",
+                    "always",
+                    "withData"
+                  ],
+                  "default": "withData"
+                },
+                "defaultOn": {
+                  "type": "string",
+                  "enum": [
+                    "missing",
+                    "empty",
+                    "never"
+                  ],
+                  "default": "empty"
+                },
+                "autofocus": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "readOnlyPropertiesMode": {
+                  "type": "string",
+                  "enum": [
+                    "remove",
+                    "hide",
+                    "show"
+                  ],
+                  "default": "show"
+                }
+              }
+            }
+          ]
+        },
+        "state-node-options-base-lib": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {}
+          }
+        },
+        "state-node-props-lib": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {}
+          }
+        },
+        "state-node-slots-lib": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/slot"
+            }
+          }
+        }
+      }
+    };
+    const standardComponents = [
+      {
+        name: "none"
+      },
+      {
+        name: "section",
+        composite: true
+      },
+      {
+        name: "tabs",
+        composite: true
+      },
+      {
+        name: "vertical-tabs",
+        composite: true
+      },
+      {
+        name: "expansion-panels",
+        composite: true
+      },
+      {
+        name: "stepper",
+        composite: true
+      },
+      {
+        name: "list",
+        schema: {
+          required: ["listEditMode", "listActions"],
+          properties: {
+            title: { type: "string" },
+            listEditMode: { type: "string", enum: ["inline", "inline-single", "menu", "dialog"] },
+            listActions: { type: "array", items: { type: "string", enum: ["add", "edit", "delete", "sort", "duplicate"] } },
+            itemTitle: { $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/expression" },
+            itemSubtitle: { $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/expression" },
+            messages: {
+              type: "object",
+              additionalProperties: false,
+              properties: {
+                addItem: { type: "string" },
+                delete: { type: "string" },
+                edit: { type: "string" },
+                duplicate: { type: "string" },
+                sort: { type: "string" }
+              }
+            }
+          }
+        }
+      },
+      {
+        name: "text-field",
+        shouldDebounce: true,
+        focusable: true,
+        emitsBlur: true
+      },
+      {
+        name: "textarea",
+        shouldDebounce: true,
+        focusable: true,
+        emitsBlur: true
+      },
+      {
+        name: "number-field",
+        shouldDebounce: true,
+        focusable: true,
+        emitsBlur: true,
+        schema: {
+          properties: {
+            step: { type: "number" },
+            min: { type: "number" },
+            max: { type: "number" }
+          }
+        }
+      },
+      {
+        name: "checkbox"
+      },
+      {
+        name: "switch"
+      },
+      {
+        name: "slider",
+        schema: {
+          properties: {
+            step: { type: "number" },
+            min: { type: "number" },
+            max: { type: "number" }
+          }
+        }
+      },
+      {
+        name: "date-picker",
+        schema: {
+          properties: {
+            min: { type: "string", format: "date" },
+            max: { type: "string", format: "date" },
+            format: { type: "string", enum: ["date", "date-time"], default: "date" }
+          }
+        }
+      },
+      {
+        name: "date-time-picker",
+        schema: {
+          properties: {
+            min: { type: "string", format: "date-time" },
+            max: { type: "string", format: "date-time" }
+          }
+        }
+      },
+      {
+        name: "time-picker",
+        schema: {
+          properties: {
+            min: { type: "string", format: "time" },
+            max: { type: "string", format: "time" }
+          }
+        }
+      },
+      {
+        name: "color-picker"
+      },
+      {
+        name: "select",
+        focusable: true,
+        itemsBased: true,
+        multipleCompat: true
+      },
+      {
+        name: "autocomplete",
+        focusable: true,
+        itemsBased: true,
+        multipleCompat: true
+      },
+      {
+        name: "combobox",
+        focusable: true,
+        itemsBased: true,
+        multipleCompat: true
+      },
+      {
+        name: "number-combobox",
+        focusable: true,
+        itemsBased: true,
+        multipleCompat: true,
+        schema: {
+          properties: {
+            step: { type: "number" },
+            min: { type: "number" },
+            max: { type: "number" }
+          }
+        }
+      },
+      {
+        name: "file-input",
+        focusable: true,
+        multipleCompat: true,
+        schema: {
+          properties: {
+            accept: { type: "string" }
+          }
+        }
+      },
+      {
+        name: "one-of-select"
+      }
+    ];
+    function getComponentSchema(component) {
+      const schema2 = {
+        type: "object",
+        title: component.name,
+        $id: `https://json-layout.github.io/component/${component.name}#`,
+        unevaluatedProperties: false,
+        allOf: [
+          { properties: { comp: { const: component.name } } },
+          { $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/base-comp-object" }
+        ]
+      };
+      if (component.composite) {
+        schema2.allOf.push({ $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/composite-comp-object" });
+      } else {
+        schema2.allOf.push({ $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/simple-comp-object" });
+      }
+      if (component.focusable) {
+        schema2.allOf.push({ $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/focusable-comp-object" });
+      }
+      if (component.itemsBased) {
+        schema2.allOf.push({ $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/items-based-comp-object" });
+      }
+      if (component.multipleCompat) {
+        schema2.allOf.push({ $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/multiple-compat-comp-object" });
+      }
+      if (component.schema) {
+        schema2.allOf.push(component.schema);
+      }
+      return schema2;
+    }
+    const Ajv$2 = (
+      /** @type {typeof ajvModule.default} */
+      ajvModule
+    );
+    const ajv = new Ajv$2({
+      code: {
+        source: true,
+        esm: true
+        // optimize: true
+      },
+      discriminator: true,
+      allowMatchingProperties: true,
+      allowUnionTypes: true,
+      allErrors: true
+    });
+    addFormats.default(ajv);
+    ajvErrors.default(ajv);
+    ajv.addSchema(schema$1);
+    ajv.addSchema(schema);
+    const componentsValidateCache = {};
+    function getComponentValidate(component) {
+      if (componentsValidateCache[component.name])
+        return componentsValidateCache[component.name];
+      const schema2 = getComponentSchema(component);
+      componentsValidateCache[component.name] = ajv.compile(schema2);
+      return componentsValidateCache[component.name];
+    }
+    const validateLayoutKeyword = (
+      /** @type {any} */
+      ajv.getSchema(schema$1.$id)
+    );
+    function isComponentName(layoutKeyword) {
+      return typeof layoutKeyword === "string";
+    }
+    function isPartialSwitch(layoutKeyword) {
+      return typeof layoutKeyword === "object" && "switch" in layoutKeyword;
+    }
+    function isPartialChildren(layoutKeyword) {
+      return Array.isArray(layoutKeyword);
+    }
+    function isPartialChildComposite(partialChild) {
+      return typeof partialChild !== "string" && "children" in partialChild;
+    }
+    function isPartialCompObject(layoutKeyword) {
+      return typeof layoutKeyword === "object" && !Array.isArray(layoutKeyword);
+    }
+    function isPartialGetItemsExpr(getItems) {
+      return typeof getItems === "string" || !!getItems.expr;
+    }
+    function isPartialGetItemsObj(getItems) {
+      return typeof getItems === "object";
+    }
+    function isPartialGetItemsFetch(getItems) {
+      return typeof getItems === "object" && !!getItems.url;
+    }
+    function isPartialSlotMarkdown(partialSlot) {
+      return typeof partialSlot == "object" && !!/** @type {PartialSlotMarkdown} */
+      partialSlot.markdown;
+    }
+    const validateNormalizedLayout = (
+      /** @type {any} */
+      ajv.getSchema(schema.$id)
+    );
+    function isSwitchStruct(layout) {
+      return typeof layout === "object" && "switch" in layout;
+    }
+    function childIsCompObject(child) {
+      return "comp" in child;
+    }
+    function isCompositeLayout(layout, components) {
+      var _a2;
+      return !!((_a2 = components[layout.comp]) == null ? void 0 : _a2.composite);
+    }
+    function isFocusableLayout(layout, components) {
+      var _a2;
+      return !!((_a2 = components[layout.comp]) == null ? void 0 : _a2.focusable);
+    }
+    function isItemsLayout(layout, components) {
+      var _a2;
+      return !!((_a2 = components[layout.comp]) == null ? void 0 : _a2.itemsBased);
+    }
+    function isGetItemsExpression(getItems) {
+      return !!getItems.expr;
+    }
+    function isGetItemsFetch(getItems) {
+      return !!getItems.url;
+    }
+    function isTextSlot(slot) {
+      return !!slot.text;
+    }
+    function isMarkdownSlot(slot) {
+      return !!slot.markdown;
+    }
+    function isNameSlot(slot) {
+      return !!slot.name;
+    }
+    function getDefaultChildren(schemaFragment) {
+      var _a2;
+      const { type: type2 } = getSchemaFragmentType(schemaFragment);
+      const children = [];
+      if (type2 === "object") {
+        if (schemaFragment.properties) {
+          for (const key of Object.keys(schemaFragment.properties)) {
+            children.push({ key });
+          }
+        }
+        if ((_a2 = schemaFragment.allOf) == null ? void 0 : _a2.length) {
+          for (let i2 = 0; i2 < schemaFragment.allOf.length; i2++) {
+            children.push({ key: `$allOf-${i2}` });
+          }
+        }
+        if (schemaFragment.oneOf) {
+          children.push({ key: "$oneOf" });
+        }
+      }
+      if (type2 === "array" && Array.isArray(schemaFragment.items)) {
+        for (let i2 = 0; i2 < schemaFragment.items.length; i2++) {
+          children.push({ key: i2 });
+        }
+      }
+      return children;
+    }
+    function getChildren(defaultChildren, partialChildren) {
+      if (!partialChildren)
+        return defaultChildren;
+      let compI = 0;
+      return partialChildren.map((partialChild) => {
+        if (typeof partialChild === "string") {
+          const matchingDefaultChild = defaultChildren.find((c) => c.key === partialChild);
+          if (!matchingDefaultChild)
+            throw new Error(`unknown child "${partialChild}"`);
+          return matchingDefaultChild;
+        } else {
+          if (typeof partialChild.cols === "number")
+            partialChild.cols = { sm: partialChild.cols };
+          if (typeof partialChild.cols === "object" && partialChild.cols.xs === void 0)
+            partialChild.cols.xs = 12;
+          if (partialChild.key) {
+            const matchingDefaultChild = defaultChildren.find((c) => c.key === partialChild.key);
+            if (!matchingDefaultChild)
+              throw new Error(`unknown child "${partialChild.key}"`);
+            return (
+              /** @type {Child} */
+              partialChild
+            );
+          } else {
+            const child = partialChild;
+            if (isPartialChildComposite(child)) {
+              if (!child.comp)
+                child.comp = "section";
+              child.children = getChildren(defaultChildren, child.children);
+            }
+            if (!("key" in partialChild)) {
+              child.key = `$comp-${compI}`;
+              compI++;
+            }
+            return (
+              /** @type {Child} */
+              child
+            );
+          }
+        }
+      });
+    }
+    function getDefaultComp(partial, schemaFragment, arrayChild) {
+      const { type: type2 } = getSchemaFragmentType(schemaFragment);
+      const hasSimpleType = type2 && ["string", "integer", "number"].includes(type2);
+      if (arrayChild === "oneOf")
+        return "one-of-select";
+      if (hasSimpleType && schemaFragment.enum)
+        return schemaFragment.enum.length > 20 ? "autocomplete" : "select";
+      if (hasSimpleType && schemaFragment.oneOf)
+        return schemaFragment.oneOf.length > 20 ? "autocomplete" : "select";
+      if (hasSimpleType && schemaFragment.examples)
+        return type2 === "string" ? "combobox" : "number-combobox";
+      if (hasSimpleType && schemaFragment.anyOf && schemaFragment.anyOf.length && Object.keys(schemaFragment.anyOf[schemaFragment.anyOf.length - 1]).length === 0) {
+        return type2 === "string" ? "combobox" : "number-combobox";
+      }
+      if (type2 === "string" && partial.separator)
+        return "combobox";
+      if (partial.items)
+        return partial.items.length > 20 ? "autocomplete" : "select";
+      if (partial.getItems) {
+        if (isPartialGetItemsFetch(partial.getItems)) {
+          if (partial.getItems.qSearchParam)
+            return "autocomplete";
+          if (typeof partial.getItems.url === "string" && partial.getItems.url.includes("{q}"))
+            return "autocomplete";
+        }
+        return "select";
+      }
+      if (type2 === "array" && schemaFragment.items) {
+        const hasSimpleTypeItems = ["string", "integer", "number"].includes(schemaFragment.items.type);
+        if (hasSimpleTypeItems && (schemaFragment.items.enum || schemaFragment.items.oneOf)) {
+          return (schemaFragment.items.enum || schemaFragment.items.oneOf).length > 20 ? "autocomplete" : "select";
+        }
+        if (hasSimpleTypeItems && schemaFragment.items.examples) {
+          return schemaFragment.items.type === "string" ? "combobox" : "number-combobox";
+        }
+        if (hasSimpleTypeItems && schemaFragment.items.anyOf && schemaFragment.items.anyOf.length && Object.keys(schemaFragment.items.anyOf[schemaFragment.items.anyOf.length - 1]).length === 0) {
+          return schemaFragment.items.type === "string" ? "combobox" : "number-combobox";
+        }
+        if (hasSimpleTypeItems && !schemaFragment.items.layout && !["date", "date-time", "time"].includes(schemaFragment.items.format)) {
+          return schemaFragment.items.type === "string" ? "combobox" : "number-combobox";
+        }
+      }
+      if (type2 === "object")
+        return "section";
+      if (type2 === "array") {
+        if (Array.isArray(schemaFragment.items))
+          return "section";
+        else
+          return "list";
+      }
+      if (type2 === "string") {
+        if (schemaFragment.format === "date")
+          return "date-picker";
+        if (schemaFragment.format === "date-time")
+          return "date-time-picker";
+        if (schemaFragment.format === "time")
+          return "time-picker";
+        return "text-field";
+      }
+      if (type2 === "integer" || type2 === "number")
+        return "number-field";
+      if (type2 === "boolean")
+        return "checkbox";
+      throw new Error("failed to calculate default component for schema fragment");
+    }
+    function getPartialCompObject(layoutKeyword) {
+      if (isPartialCompObject(layoutKeyword))
+        return { ...layoutKeyword };
+      else if (isComponentName(layoutKeyword))
+        return { comp: layoutKeyword };
+      else if (isPartialChildren(layoutKeyword))
+        return { children: layoutKeyword };
+      return {};
+    }
+    function normalizeExpression(expression, defaultType = "js-eval") {
+      if (typeof expression === "string")
+        return { type: defaultType, expr: expression, pure: true };
+      else
+        return { pure: true, type: defaultType, ...expression };
+    }
+    function getItemsFromSchema(schemaFragment) {
+      if (!schemaFragment)
+        return null;
+      const { type: type2 } = getSchemaFragmentType(schemaFragment);
+      const hasSimpleType = type2 && ["string", "integer", "number"].includes(type2);
+      if (schemaFragment.enum && hasSimpleType) {
+        return schemaFragment.enum.map((value) => ({ key: value + "", title: value + "", value }));
+      }
+      if (schemaFragment.examples && hasSimpleType) {
+        return schemaFragment.examples.map((value) => ({ key: value + "", title: value + "", value }));
+      }
+      if (schemaFragment.anyOf && hasSimpleType && schemaFragment.anyOf.length && Object.keys(schemaFragment.anyOf[schemaFragment.anyOf.length - 1]).length === 0) {
+        const nonEmptyAnyOf = schemaFragment.anyOf.slice(0, -1);
+        if (!nonEmptyAnyOf.find((oneOfItem) => !("const" in oneOfItem))) {
+          return nonEmptyAnyOf.map((anyOfItem) => ({
+            ...anyOfItem,
+            key: anyOfItem.const + "",
+            title: (anyOfItem.title ?? anyOfItem.const) + "",
+            value: anyOfItem.const
+          }));
+        }
+      }
+      if (schemaFragment.oneOf && hasSimpleType && !schemaFragment.oneOf.find((oneOfItem) => !("const" in oneOfItem))) {
+        return schemaFragment.oneOf.map((oneOfItem) => ({
+          ...oneOfItem,
+          key: oneOfItem.const + "",
+          title: (oneOfItem.title ?? oneOfItem.const) + "",
+          value: oneOfItem.const
+        }));
+      }
+      return null;
+    }
+    const getSchemaFragmentType = (schemaFragment) => {
+      if (Array.isArray(schemaFragment.type) && schemaFragment.type.length === 2 && schemaFragment.type.includes("null")) {
+        const type2 = schemaFragment.type.find((t) => t !== "null");
+        return { type: type2, nullable: true };
+      }
+      if (!schemaFragment.type && schemaFragment.properties) {
+        return { type: "object", nullable: false };
+      }
+      if (!schemaFragment.type) {
+        const combinationTypes = [];
+        for (const combinationKey of ["allOf", "anyOf", "oneOf"]) {
+          if (schemaFragment[combinationKey]) {
+            for (const subSchema of schemaFragment[combinationKey]) {
+              const { type: subType } = getSchemaFragmentType(subSchema);
+              if (subType && !combinationTypes.includes(subType))
+                combinationTypes.push(subType);
+            }
+          }
+        }
+        if (combinationTypes.length === 1)
+          return { type: combinationTypes[0], nullable: false };
+      }
+      return { type: schemaFragment.type, nullable: false };
+    };
+    function getCompObject$1(layoutKeyword, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild) {
+      const key = schemaPath.slice(schemaPath.lastIndexOf("/") + 1);
+      const { type: type2, nullable } = getSchemaFragmentType(schemaFragment);
+      if ("const" in schemaFragment)
+        return { comp: "none" };
+      if (!type2)
+        return { comp: "none" };
+      const partial = getPartialCompObject(layoutKeyword);
+      if (type2 === "array" && !schemaFragment.items && partial.comp !== "file-input") {
+        return { comp: "none" };
+      }
+      if (!partial.comp) {
+        partial.comp = getDefaultComp(partial, schemaFragment, arrayChild);
+      }
+      const component = components[partial.comp];
+      if (!component) {
+        throw new Error(`unknown component "${partial.comp}"`);
+      }
+      if (partial.comp === "none")
+        return { comp: "none" };
+      if (nullable)
+        partial.nullable = nullable;
+      if (component.composite) {
+        if (!("title" in partial))
+          partial.title = schemaFragment.title ?? null;
+        partial.children = getChildren(getDefaultChildren(schemaFragment), partial.children);
+      } else if (partial.comp === "list") {
+        if (!("title" in partial))
+          partial.title = schemaFragment.title ?? key;
+        partial.listEditMode = partial.listEditMode ?? (schemaFragment.items.type === "object" ? "inline-single" : "inline");
+        partial.listActions = partial.listActions ?? ["add", "edit", "delete", "duplicate", "sort"];
+      } else {
+        if (!("label" in partial))
+          partial.label = schemaFragment.title ?? key;
+      }
+      if (component.itemsBased && !partial.items) {
+        let items2;
+        if (type2 === "array") {
+          items2 = getItemsFromSchema(schemaFragment.items);
+        } else {
+          items2 = getItemsFromSchema(schemaFragment);
+        }
+        if (items2) {
+          if (partial.getItems && isPartialGetItemsObj(partial.getItems)) {
+            partial.getItems.expr = JSON.stringify(items2);
+          } else {
+            partial.getItems = JSON.stringify(items2);
+          }
+        }
+      }
+      if (component.multipleCompat) {
+        if (type2 === "array" || partial.separator) {
+          partial.multiple = true;
+        }
+      }
+      if (partial.comp === "date-picker") {
+        if (schemaFragment.format === "date")
+          partial.format = "date";
+        if (schemaFragment.format === "date-time")
+          partial.format = "date-time";
+      }
+      if (["date-picker", "date-time-picker", "time-picker"].includes(partial.comp)) {
+        if ("formatMinimum" in schemaFragment)
+          partial.min = partial.min ?? schemaFragment.formatMinimum;
+        if ("formatMaximum" in schemaFragment)
+          partial.max = partial.max ?? schemaFragment.formatMaximum;
+      }
+      if (["number-field", "slider"].includes(partial.comp)) {
+        if (type2 === "integer")
+          partial.step = partial.step ?? 1;
+        if ("minimum" in schemaFragment)
+          partial.min = partial.min ?? schemaFragment.minimum;
+        if ("maximum" in schemaFragment)
+          partial.max = partial.max ?? schemaFragment.maximum;
+      }
+      if (partial.if)
+        partial.if = normalizeExpression(partial.if);
+      if (!partial.defaultData && schemaFragment.type === "string" && schemaPath.split("#").pop() === "") {
+        partial.defaultData = "";
+      }
+      for (const optionKey of optionsKeys) {
+        if (optionKey in partial) {
+          partial.options = partial.options ?? {};
+          partial.options[optionKey] = partial[optionKey];
+          delete partial[optionKey];
+        }
+      }
+      if (schemaFragment.readOnly) {
+        partial.options = partial.options ?? {};
+        if (!("readOnly" in partial.options))
+          partial.options.readOnly = true;
+      }
+      if (partial.getOptions !== void 0)
+        partial.getOptions = normalizeExpression(partial.getOptions);
+      if (partial.getDefaultData !== void 0)
+        partial.getDefaultData = normalizeExpression(partial.getDefaultData);
+      if (partial.getConstData !== void 0)
+        partial.getConstData = normalizeExpression(partial.getConstData);
+      if (partial.transformData !== void 0)
+        partial.transformData = normalizeExpression(partial.transformData);
+      if (partial.getProps !== void 0)
+        partial.getProps = normalizeExpression(partial.getProps);
+      if (partial.getItems && isPartialGetItemsExpr(partial.getItems))
+        partial.getItems = normalizeExpression(partial.getItems);
+      if (partial.getItems && isPartialGetItemsObj(partial.getItems)) {
+        if (type2 === "object")
+          partial.getItems.returnObjects = true;
+        if (partial.getItems.itemTitle)
+          partial.getItems.itemTitle = normalizeExpression(partial.getItems.itemTitle);
+        if (partial.getItems.itemKey)
+          partial.getItems.itemKey = normalizeExpression(partial.getItems.itemKey);
+        if (partial.getItems.itemValue)
+          partial.getItems.itemValue = normalizeExpression(partial.getItems.itemValue);
+        if (partial.getItems.itemIcon)
+          partial.getItems.itemIcon = normalizeExpression(partial.getItems.itemIcon);
+        if (partial.getItems.itemsResults)
+          partial.getItems.itemsResults = normalizeExpression(partial.getItems.itemsResults);
+      }
+      if (partial.getItems && isPartialGetItemsFetch(partial.getItems)) {
+        partial.getItems.url = normalizeExpression(partial.getItems.url, "js-tpl");
+      }
+      if (partial.items) {
+        partial.items = partial.items.map((item) => {
+          if (["string", "integer", "number"].includes(typeof item)) {
+            return { title: item + "", key: item + "", value: item };
+          } else if (typeof item === "object") {
+            return {
+              key: (item.key ?? item.value) + "",
+              title: (item.title ?? item.key ?? item.value) + "",
+              value: item.value ?? item.key
+            };
+          } else {
+            throw new Error(`bad item for select: ${JSON.stringify(item)}`);
+          }
+        });
+      }
+      if (!partial.comp && (partial.items ?? partial.getItems)) {
+        partial.comp = "select";
+      }
+      if (partial.comp === "date-picker" && schemaFragment.format === "date-time") {
+        partial.format = "date-time";
+      }
+      if (partial.slots) {
+        for (const [name, slot] of Object.entries(partial.slots)) {
+          if (typeof slot === "string") {
+            if (["before", "after"].includes(name)) {
+              partial.slots[name] = { markdown: slot };
+            } else {
+              partial.slots[name] = { name: slot };
+            }
+          }
+          const slotObj = partial.slots[name];
+          if (isPartialSlotMarkdown(slotObj)) {
+            slotObj.markdown = markdown(slotObj.markdown).trim();
+          }
+        }
+      }
+      if (schemaFragment.description && !partial.help)
+        partial.help = schemaFragment.description;
+      if (partial.help)
+        partial.help = markdown(partial.help).trim();
+      if (typeof partial.cols === "number")
+        partial.cols = { xs: partial.cols };
+      if (typeof partial.cols === "object" && partial.cols.xs === void 0)
+        partial.cols.xs = 12;
+      const validateComponent = getComponentValidate(component);
+      if (!validateComponent(partial)) {
+        const error2 = new Error(`component "${component.name}" validation errors`);
+        error2.cause = lighterValidationErrors(validateComponent.errors);
+        throw error2;
+      }
+      return (
+        /** @type {BaseCompObject} */
+        partial
+      );
+    }
+    function getNormalizedLayout(layoutKeyword, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild) {
+      if (isPartialSwitch(layoutKeyword)) {
+        const normalizedSwitchCases = [];
+        const switchCases = [...layoutKeyword.switch];
+        if (!switchCases.find((s) => !s.if)) {
+          switchCases.push({});
+        }
+        for (let i2 = 0; i2 < switchCases.length; i2++) {
+          const switchCase = switchCases[i2];
+          const compObjectResult = getCompObject$1(switchCase, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild);
+          normalizedSwitchCases.push(compObjectResult);
+        }
+        return { switch: normalizedSwitchCases };
+      } else {
+        return getCompObject$1(layoutKeyword, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild);
+      }
+    }
+    function matchValidationError(error2, fn) {
+      if (error2.keyword === "errorMessage") {
+        error2 = error2.params.errors[0];
+      }
+      return fn(error2);
+    }
+    function lighterValidationErrors(errors2) {
+      if (!errors2)
+        return [];
+      const compositeErrors = errors2.filter((e) => matchValidationError(e, (e2) => e2.keyword === "anyOf" || e2.keyword === "oneOf"));
+      for (const compositeError of compositeErrors) {
+        const explicitError = errors2.find((e) => matchValidationError(e, (e2) => e2.instancePath === compositeError.instancePath && e2.keyword !== "type"));
+        if (explicitError) {
+          errors2 = errors2.filter((e) => matchValidationError(e, (e2) => e2.instancePath !== compositeError.instancePath || e2.keyword !== "type"));
+        }
+      }
+      const messages = [];
+      for (const error2 of errors2) {
+        let message = error2.message ?? error2.keyword;
+        if (error2.params)
+          message += " " + JSON.stringify(error2.params);
+        messages.push(message);
+      }
+      return messages;
+    }
+    const defaultOptionsKeys = ["readOnly", "summary", "titleDepth", "density", "removeAdditional", "validateOn", "updateOne", "debounceInputMs", "initialValidation", "defaultOn", "readOnlyPropertiesMode"];
+    function normalizeValidLayoutFragment(schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild) {
+      optionsKeys = optionsKeys ? optionsKeys.concat(defaultOptionsKeys) : defaultOptionsKeys;
+      let layoutKeyword;
+      if (arrayChild === "oneOf") {
+        layoutKeyword = schemaFragment.oneOfLayout ?? {};
+      } else {
+        layoutKeyword = schemaFragment.layout ?? {};
+      }
+      if (!validateLayoutKeyword(layoutKeyword)) {
+        const error2 = new Error("layout keyword validation errors at path");
+        error2.cause = lighterValidationErrors(validateLayoutKeyword.errors);
+        throw error2;
+      }
+      const normalizedLayout = getNormalizedLayout(layoutKeyword, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild);
+      if (!validateNormalizedLayout(normalizedLayout)) {
+        const error2 = new Error("normalized layout validation errors at path");
+        error2.cause = lighterValidationErrors(validateNormalizedLayout.errors);
+        throw error2;
+      }
+      return normalizedLayout;
+    }
+    function normalizeLayoutFragment(schemaFragment, schemaPath, components, markdown = (src) => src, optionsKeys, arrayChild) {
+      const errors2 = [];
+      try {
+        const layout = normalizeValidLayoutFragment(schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild);
+        return { layout, errors: errors2 };
+      } catch (err) {
+        try {
+          errors2.push(err.message);
+          if (err.cause && Array.isArray(err.cause))
+            errors2.push(...err.cause);
+          errors2.push("failed to normalize layout, use default component");
+          const layout = normalizeValidLayoutFragment({ ...schemaFragment, layout: {} }, schemaPath, components, markdown, optionsKeys, arrayChild);
+          return { layout, errors: errors2 };
+        } catch (err2) {
+          errors2.push(err2.message);
+          if (err2.cause && Array.isArray(err2.cause))
+            errors2.push(...err2.cause);
+          errors2.push("failed to produce default layout, hide this fragment");
+          return { layout: { comp: "none" }, errors: errors2 };
+        }
+      }
+    }
+    function makeSkeletonNode(schema2, options, validates, validationErrors, normalizedLayouts, expressions, key, pointer, parentPointer, required2) {
+      var _a2, _b;
+      const { type: type2, nullable } = getSchemaFragmentType(schema2);
+      schema2.errorMessage = schema2.errorMessage ?? {};
+      if (!normalizedLayouts[pointer]) {
+        const normalizationResult = normalizeLayoutFragment(
+          /** @type {import('@json-layout/vocabulary').SchemaFragment} */
+          schema2,
+          pointer,
+          options.components,
+          options.markdown,
+          options.optionsKeys
+        );
+        normalizedLayouts[pointer] = normalizationResult.layout;
+        if (normalizationResult.errors.length) {
+          validationErrors[pointer.replace("_jl#", "/")] = normalizationResult.errors;
+        }
+      }
+      const normalizedLayout = normalizedLayouts[pointer];
+      let defaultData;
+      if ("default" in schema2)
+        defaultData = schema2.default;
+      else if (required2) {
+        if (nullable)
+          defaultData = null;
+        else if (type2 === "object")
+          defaultData = {};
+        else if (type2 === "array")
+          defaultData = [];
+      }
+      let pure = true;
+      const pushExpression = (expressions2, expression) => {
+        if (!expression.pure)
+          pure = false;
+        const index = expressions2.findIndex((e) => e.type === expression.type && e.expr === expression.expr);
+        if (index !== -1) {
+          expression.ref = index;
+        } else {
+          expression.ref = expressions2.length;
+          expressions2.push(expression);
+        }
+      };
+      const compObjects = isSwitchStruct(normalizedLayout) ? normalizedLayout.switch : [normalizedLayout];
+      for (const compObject of compObjects) {
+        if (schema2.description && !compObject.help)
+          compObject.help = schema2.description;
+        if (compObject.if)
+          pushExpression(expressions, compObject.if);
+        if (schema2.const !== void 0 && compObject.constData === void 0)
+          compObject.constData = schema2.const;
+        if (compObject.constData !== void 0 && !compObject.getConstData)
+          compObject.getConstData = { type: "js-eval", expr: "layout.constData", pure: true };
+        if (compObject.getConstData)
+          pushExpression(expressions, compObject.getConstData);
+        if (defaultData !== void 0 && compObject.defaultData === void 0)
+          compObject.defaultData = defaultData;
+        if (compObject.defaultData !== void 0 && !compObject.getDefaultData)
+          compObject.getDefaultData = { type: "js-eval", expr: "layout.defaultData", pure: true };
+        if (compObject.getDefaultData)
+          pushExpression(expressions, compObject.getDefaultData);
+        if (compObject.options !== void 0 && !compObject.getOptions)
+          compObject.getOptions = { type: "js-eval", expr: "layout.options", pure: true };
+        if (compObject.getOptions)
+          pushExpression(expressions, compObject.getOptions);
+        if (compObject.props !== void 0 && !compObject.getProps)
+          compObject.getProps = { type: "js-eval", expr: "layout.props", pure: true };
+        if (compObject.getProps)
+          pushExpression(expressions, compObject.getProps);
+        if (compObject.transformData)
+          pushExpression(expressions, compObject.transformData);
+        if (isItemsLayout(compObject, options.components) && compObject.getItems) {
+          if (isGetItemsExpression(compObject.getItems))
+            pushExpression(expressions, compObject.getItems);
+          if (isGetItemsFetch(compObject.getItems))
+            pushExpression(expressions, compObject.getItems.url);
+          if (compObject.getItems.itemTitle)
+            pushExpression(expressions, compObject.getItems.itemTitle);
+          if (compObject.getItems.itemKey)
+            pushExpression(expressions, compObject.getItems.itemKey);
+          if (compObject.getItems.itemValue)
+            pushExpression(expressions, compObject.getItems.itemValue);
+          if (compObject.getItems.itemIcon)
+            pushExpression(expressions, compObject.getItems.itemIcon);
+          if (compObject.getItems.itemsResults)
+            pushExpression(expressions, compObject.getItems.itemsResults);
+        }
+      }
+      const node = { key: key ?? "", pointer, parentPointer, pure, propertyKeys: [], roPropertyKeys: [] };
+      if (type2 === "object") {
+        if (schema2.properties) {
+          node.children = node.children ?? [];
+          for (const propertyKey of Object.keys(schema2.properties)) {
+            node.propertyKeys.push(propertyKey);
+            if (schema2.properties[propertyKey].readOnly)
+              node.roPropertyKeys.push(propertyKey);
+            node.children.push(makeSkeletonNode(
+              schema2.properties[propertyKey],
+              options,
+              validates,
+              validationErrors,
+              normalizedLayouts,
+              expressions,
+              propertyKey,
+              `${pointer}/properties/${propertyKey}`,
+              pointer,
+              (_a2 = schema2.required) == null ? void 0 : _a2.includes(propertyKey)
+            ));
+            if ((_b = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _b.includes(propertyKey)) {
+              schema2.errorMessage.required = schema2.errorMessage.required ?? {};
+              schema2.errorMessage.required[propertyKey] = options.messages.errorRequired;
+            }
+          }
+        }
+        if (schema2.allOf) {
+          node.children = node.children ?? [];
+          for (let i2 = 0; i2 < schema2.allOf.length; i2++) {
+            const allOfNode = makeSkeletonNode(
+              schema2.allOf[i2],
+              options,
+              validates,
+              validationErrors,
+              normalizedLayouts,
+              expressions,
+              `$allOf-${i2}`,
+              `${pointer}/allOf/${i2}`,
+              pointer,
+              false
+            );
+            node.propertyKeys = node.propertyKeys.concat(allOfNode.propertyKeys);
+            node.roPropertyKeys = node.roPropertyKeys.concat(allOfNode.roPropertyKeys);
+            node.children.push(allOfNode);
+          }
+        }
+        if (schema2.oneOf) {
+          const oneOfPointer = `${pointer}/oneOf`;
+          if (!normalizedLayouts[oneOfPointer]) {
+            const normalizationResult = normalizeLayoutFragment(
+              schema2,
+              oneOfPointer,
+              options.components,
+              options.markdown,
+              options.optionsKeys,
+              "oneOf"
+            );
+            normalizedLayouts[oneOfPointer] = normalizationResult.layout;
+            if (normalizationResult.errors.length) {
+              validationErrors[oneOfPointer.replace("_jl#", "/")] = normalizationResult.errors;
+            }
+          }
+          const childrenTrees = [];
+          for (let i2 = 0; i2 < schema2.oneOf.length; i2++) {
+            if (!schema2.oneOf[i2].type)
+              schema2.oneOf[i2].type = type2;
+            const title2 = schema2.oneOf[i2].title ?? `option ${i2}`;
+            delete schema2.oneOf[i2].title;
+            childrenTrees.push(makeSkeletonTree(
+              schema2.oneOf[i2],
+              options,
+              validates,
+              validationErrors,
+              normalizedLayouts,
+              expressions,
+              `${oneOfPointer}/${i2}`,
+              title2
+            ));
+          }
+          node.children = node.children ?? [];
+          node.children.push({
+            key: "$oneOf",
+            pointer: `${pointer}/oneOf`,
+            parentPointer: pointer,
+            childrenTrees,
+            pure: childrenTrees[0].root.pure,
+            propertyKeys: [],
+            roPropertyKeys: []
+          });
+          schema2.errorMessage.oneOf = options.messages.errorOneOf;
+        }
+      }
+      if (type2 === "array" && schema2.items) {
+        if (Array.isArray(schema2.items)) {
+          node.children = schema2.items.map((itemSchema, i2) => {
+            return makeSkeletonNode(
+              itemSchema,
+              options,
+              validates,
+              validationErrors,
+              normalizedLayouts,
+              expressions,
+              i2,
+              `${pointer}/items/${i2}`,
+              pointer,
+              true
+            );
+          });
+        } else {
+          node.childrenTrees = [
+            makeSkeletonTree(
+              schema2.items,
+              options,
+              validates,
+              validationErrors,
+              normalizedLayouts,
+              expressions,
+              `${pointer}/items`,
+              schema2.items.title
+            )
+          ];
+        }
+      }
+      for (const child of node.children || [])
+        if (!child.pure)
+          node.pure = false;
+      for (const childTree of node.childrenTrees || [])
+        if (!childTree.root.pure)
+          node.pure = false;
+      return node;
+    }
+    function makeSkeletonTree(schema2, options, validates, validationErrors, normalizedLayouts, expressions, pointer, title2) {
+      const root = makeSkeletonNode(schema2, options, validates, validationErrors, normalizedLayouts, expressions, "", pointer, null, true);
+      validates.push(pointer);
+      return { title: title2, root };
+    }
+    const Ajv$1 = ajvModule.default;
+    const getJSONRef = (schemas, ref2, ajv2) => {
+      var _a2;
+      const [schemaId, pointer] = ref2.split("#");
+      schemas[schemaId] = schemas[schemaId] ?? ((_a2 = ajv2.getSchema(schemaId)) == null ? void 0 : _a2.schema);
+      if (!schemas[schemaId])
+        throw new Error(`reference not found ${schemaId}`);
+      const pointerParts = pointer.split("/").filter((p2) => !!p2);
+      const { value: fragment } = pointerParts.reduce((a, pointerPart) => {
+        a.path.push(pointerPart);
+        if (!(pointerPart in a.value))
+          throw new Error(`reference not found ${schemaId}#${a.path.join("/")}`);
+        a.value = a.value[pointerPart];
+        return a;
+      }, { path: ["/"], value: schemas[schemaId] });
+      return [fragment, schemaId];
+    };
+    const recurse = (schemas, schemaFragment, schemaId, ajv2, locale = "en") => {
+      for (const key of Object.keys(schemaFragment)) {
+        if (schemaFragment[key] && typeof schemaFragment[key] === "object") {
+          if ("$ref" in schemaFragment[key]) {
+            const fullRef = ajv2.opts.uriResolver.resolve(schemaId, schemaFragment[key].$ref).replace("~$locale~", locale);
+            const fullRefDefaultLocale = ajv2.opts.uriResolver.resolve(schemaId, schemaFragment[key].$ref).replace("~$locale~", "en");
+            let refFragment, refSchemaId;
+            try {
+              [refFragment, refSchemaId] = getJSONRef(schemas, fullRef, ajv2);
+            } catch (err) {
+              [refFragment, refSchemaId] = getJSONRef(schemas, fullRefDefaultLocale, ajv2);
+            }
+            if (typeof refFragment === "object" && !Array.isArray(refFragment)) {
+              schemaFragment[key] = { ...refFragment, ...schemaFragment[key] };
+              delete schemaFragment[key].$ref;
+            } else {
+              schemaFragment[key] = refFragment;
+            }
+            recurse(schemas, schemaFragment[key], refSchemaId, ajv2, locale);
+          } else {
+            recurse(schemas, schemaFragment[key], schemaId, ajv2, locale);
+          }
+        }
+      }
+      return schemaFragment;
+    };
+    function resolveRefs(schema2, ajv2, locale = "en") {
+      if (!schema2.$id)
+        throw new Error("missing schema id");
+      return recurse({ [schema2.$id]: schema2 }, schema2, schema2.$id, ajv2 ?? new Ajv$1(), locale);
+    }
+    function copyBuffer(cur) {
+      if (cur instanceof Buffer) {
+        return Buffer.from(cur);
+      }
+      return new cur.constructor(cur.buffer.slice(), cur.byteOffset, cur.length);
+    }
+    function rfdc() {
+      return clone2;
+      function cloneArray(a, fn) {
+        const keys2 = Object.keys(a);
+        const a2 = new Array(keys2.length);
+        for (let i2 = 0; i2 < keys2.length; i2++) {
+          const k = keys2[i2];
+          const cur = a[k];
+          if (typeof cur !== "object" || cur === null) {
+            a2[k] = cur;
+          } else if (cur instanceof Date) {
+            a2[k] = new Date(cur);
+          } else if (ArrayBuffer.isView(cur)) {
+            a2[k] = copyBuffer(cur);
+          } else {
+            a2[k] = fn(cur);
+          }
+        }
+        return a2;
+      }
+      function clone2(o2) {
+        if (typeof o2 !== "object" || o2 === null)
+          return o2;
+        if (o2 instanceof Date)
+          return new Date(o2);
+        if (Array.isArray(o2))
+          return cloneArray(o2, clone2);
+        if (o2 instanceof Map)
+          return new Map(cloneArray(Array.from(o2), clone2));
+        if (o2 instanceof Set)
+          return new Set(cloneArray(Array.from(o2), clone2));
+        const o22 = {};
+        for (const k in o2) {
+          if (Object.hasOwnProperty.call(o2, k) === false)
+            continue;
+          const cur = o2[k];
+          if (typeof cur !== "object" || cur === null) {
+            o22[k] = cur;
+          } else if (cur instanceof Date) {
+            o22[k] = new Date(cur);
+          } else if (cur instanceof Map) {
+            o22[k] = new Map(cloneArray(Array.from(cur), clone2));
+          } else if (cur instanceof Set) {
+            o22[k] = new Set(cloneArray(Array.from(cur), clone2));
+          } else if (ArrayBuffer.isView(cur)) {
+            o22[k] = copyBuffer(cur);
+          } else {
+            o22[k] = clone2(cur);
+          }
+        }
+        return o22;
+      }
+    }
+    const clone$1 = rfdc();
+    const Ajv = (
+      /** @type {typeof ajvModule.default} */
+      ajvModule
+    );
+    const ajvLocalize = (
+      /** @type {typeof ajvLocalizeModule.default} */
+      ajvLocalizeModule
+    );
+    const produceCompileOptions = produce((draft, newOptions) => {
+      for (const key of ["ajv", "ajvOptions", "code", "markdown", "markdownItOptions", "locale", "messages", "optionsKeys", "components"]) {
+        if (key in newOptions)
+          draft[key] = newOptions[key];
+        else
+          delete draft[key];
+      }
+    });
+    const fillOptions$1 = (partialOptions) => {
+      let ajv2 = partialOptions.ajv;
+      if (!ajv2) {
+        const ajvOpts = { allErrors: true, strict: false };
+        if (partialOptions.ajvOptions)
+          Object.assign(ajvOpts, partialOptions.ajvOptions);
+        if (partialOptions.code)
+          ajvOpts.code = { source: true, esm: true, lines: true };
+        const newAjv = new Ajv(ajvOpts);
+        addFormats.default(newAjv);
+        ajvErrors.default(newAjv);
+        ajv2 = newAjv;
+      }
+      ajv2.addKeyword("layout");
+      let markdown = partialOptions.markdown;
+      if (!markdown) {
+        const markdownIt2 = new MarkdownIt(partialOptions.markdownItOptions ?? {});
+        markdown = markdownIt2.render.bind(markdownIt2);
+      }
+      const locale = partialOptions.locale || "en";
+      const messages = { ...i18n[locale] || i18n.en };
+      if (partialOptions.messages)
+        Object.assign(messages, partialOptions.messages);
+      const components = standardComponents.reduce(
+        (acc, component) => {
+          acc[component.name] = component;
+          return acc;
+        },
+        /** @type {Record<string, import('@json-layout/vocabulary').ComponentInfo>} */
+        {}
+      );
+      if (partialOptions.components) {
+        for (const componentName of Object.keys(partialOptions.components)) {
+          components[componentName] = { ...partialOptions.components[componentName], name: componentName };
+        }
+        Object.assign(components, partialOptions.components);
+      }
+      return {
+        ajv: ajv2,
+        code: false,
+        markdown,
+        optionsKeys: [],
+        ...partialOptions,
+        locale,
+        messages,
+        components
+      };
+    };
+    function compile(_schema, partialOptions = {}) {
+      const options = fillOptions$1(partialOptions);
+      const schema2 = (
+        /** @type {import('ajv').SchemaObject} */
+        clone$1(_schema)
+      );
+      schema2.$id = schema2.$id ?? "_jl";
+      resolveRefs(schema2, options.ajv, options.locale);
+      const validatePointers = [];
+      const normalizedLayouts = {};
+      const expressionsDefinitions = [];
+      const validationErrors = {};
+      const skeletonTree = makeSkeletonTree(
+        schema2,
+        options,
+        validatePointers,
+        validationErrors,
+        normalizedLayouts,
+        expressionsDefinitions,
+        `${schema2.$id}#`,
+        "main"
+      );
+      options.ajv.addSchema(schema2);
+      const uriResolver = options.ajv.opts.uriResolver;
+      const validates = {};
+      for (const pointer of validatePointers) {
+        const fullPointer = uriResolver.resolve(schema2.$id, pointer);
+        validates[pointer] = options.ajv.compile({ $ref: fullPointer });
+      }
+      const expressions = [];
+      for (const expression of expressionsDefinitions) {
+        const expressionsParams = expression.pure ? ["data", "options", "context", "display", "layout"] : ["data", "options", "context", "display", "layout", "parentData", "rootData"];
+        if (expression.type === "js-fn") {
+          expressions.push(
+            /** @type {CompiledExpression} */
+            new Function(...expressionsParams, expression.expr)
+          );
+        }
+        if (expression.type === "js-eval") {
+          expressions.push(
+            /** @type {CompiledExpression} */
+            new Function(...expressionsParams, "return (" + expression.expr + ")")
+          );
+        }
+        if (expression.type === "js-tpl") {
+          expressions.push(
+            /** @type {CompiledExpression} */
+            new Function(...expressionsParams, "return `" + expression.expr + "`")
+          );
+        }
+      }
+      if (Object.keys(validationErrors).length) {
+        console.error("JSON layout encountered some validation errors:", validationErrors);
+      }
+      return {
+        options,
+        schema: schema2,
+        skeletonTree,
+        validates,
+        validationErrors,
+        normalizedLayouts,
+        expressions,
+        locale: options.locale,
+        messages: options.messages,
+        components: options.components,
+        // @ts-ignore
+        localizeErrors: ajvLocalize[options.locale] || ajvLocalize.en
+      };
+    }
+    function mittModule(n) {
+      return { all: n = n || /* @__PURE__ */ new Map(), on: function(t, e) {
+        var i2 = n.get(t);
+        i2 ? i2.push(e) : n.set(t, [e]);
+      }, off: function(t, e) {
+        var i2 = n.get(t);
+        i2 && (e ? i2.splice(i2.indexOf(e) >>> 0, 1) : n.set(t, []));
+      }, emit: function(t, e) {
+        var i2 = n.get(t);
+        i2 && i2.slice().map(function(n2) {
+          n2(e);
+        }), (i2 = n.get("*")) && i2.slice().map(function(n2) {
+          n2(t, e);
+        });
+      } };
+    }
+    var browser = { exports: {} };
+    var ms;
+    var hasRequiredMs;
+    function requireMs() {
+      if (hasRequiredMs)
+        return ms;
+      hasRequiredMs = 1;
+      var s = 1e3;
+      var m = s * 60;
+      var h2 = m * 60;
+      var d = h2 * 24;
+      var w = d * 7;
+      var y = d * 365.25;
+      ms = function(val, options) {
+        options = options || {};
+        var type2 = typeof val;
+        if (type2 === "string" && val.length > 0) {
+          return parse2(val);
+        } else if (type2 === "number" && isFinite(val)) {
+          return options.long ? fmtLong(val) : fmtShort(val);
+        }
+        throw new Error(
+          "val is not a non-empty string or a valid number. val=" + JSON.stringify(val)
+        );
+      };
+      function parse2(str2) {
+        str2 = String(str2);
+        if (str2.length > 100) {
+          return;
+        }
+        var match = /^(-?(?:\d+)?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
+          str2
+        );
+        if (!match) {
+          return;
+        }
+        var n = parseFloat(match[1]);
+        var type2 = (match[2] || "ms").toLowerCase();
+        switch (type2) {
+          case "years":
+          case "year":
+          case "yrs":
+          case "yr":
+          case "y":
+            return n * y;
+          case "weeks":
+          case "week":
+          case "w":
+            return n * w;
+          case "days":
+          case "day":
+          case "d":
+            return n * d;
+          case "hours":
+          case "hour":
+          case "hrs":
+          case "hr":
+          case "h":
+            return n * h2;
+          case "minutes":
+          case "minute":
+          case "mins":
+          case "min":
+          case "m":
+            return n * m;
+          case "seconds":
+          case "second":
+          case "secs":
+          case "sec":
+          case "s":
+            return n * s;
+          case "milliseconds":
+          case "millisecond":
+          case "msecs":
+          case "msec":
+          case "ms":
+            return n;
+          default:
+            return void 0;
+        }
+      }
+      function fmtShort(ms2) {
+        var msAbs = Math.abs(ms2);
+        if (msAbs >= d) {
+          return Math.round(ms2 / d) + "d";
+        }
+        if (msAbs >= h2) {
+          return Math.round(ms2 / h2) + "h";
+        }
+        if (msAbs >= m) {
+          return Math.round(ms2 / m) + "m";
+        }
+        if (msAbs >= s) {
+          return Math.round(ms2 / s) + "s";
+        }
+        return ms2 + "ms";
+      }
+      function fmtLong(ms2) {
+        var msAbs = Math.abs(ms2);
+        if (msAbs >= d) {
+          return plural(ms2, msAbs, d, "day");
+        }
+        if (msAbs >= h2) {
+          return plural(ms2, msAbs, h2, "hour");
+        }
+        if (msAbs >= m) {
+          return plural(ms2, msAbs, m, "minute");
+        }
+        if (msAbs >= s) {
+          return plural(ms2, msAbs, s, "second");
+        }
+        return ms2 + " ms";
+      }
+      function plural(ms2, msAbs, n, name) {
+        var isPlural = msAbs >= n * 1.5;
+        return Math.round(ms2 / n) + " " + name + (isPlural ? "s" : "");
+      }
+      return ms;
+    }
+    function setup(env) {
+      createDebug.debug = createDebug;
+      createDebug.default = createDebug;
+      createDebug.coerce = coerce;
+      createDebug.disable = disable;
+      createDebug.enable = enable;
+      createDebug.enabled = enabled;
+      createDebug.humanize = requireMs();
+      createDebug.destroy = destroy;
+      Object.keys(env).forEach((key) => {
+        createDebug[key] = env[key];
+      });
+      createDebug.names = [];
+      createDebug.skips = [];
+      createDebug.formatters = {};
+      function selectColor(namespace) {
+        let hash = 0;
+        for (let i2 = 0; i2 < namespace.length; i2++) {
+          hash = (hash << 5) - hash + namespace.charCodeAt(i2);
+          hash |= 0;
+        }
+        return createDebug.colors[Math.abs(hash) % createDebug.colors.length];
+      }
+      createDebug.selectColor = selectColor;
+      function createDebug(namespace) {
+        let prevTime;
+        let enableOverride = null;
+        let namespacesCache;
+        let enabledCache;
+        function debug2(...args) {
+          if (!debug2.enabled) {
+            return;
+          }
+          const self2 = debug2;
+          const curr = Number(/* @__PURE__ */ new Date());
+          const ms2 = curr - (prevTime || curr);
+          self2.diff = ms2;
+          self2.prev = prevTime;
+          self2.curr = curr;
+          prevTime = curr;
+          args[0] = createDebug.coerce(args[0]);
+          if (typeof args[0] !== "string") {
+            args.unshift("%O");
+          }
+          let index = 0;
+          args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format2) => {
+            if (match === "%%") {
+              return "%";
+            }
+            index++;
+            const formatter = createDebug.formatters[format2];
+            if (typeof formatter === "function") {
+              const val = args[index];
+              match = formatter.call(self2, val);
+              args.splice(index, 1);
+              index--;
+            }
+            return match;
+          });
+          createDebug.formatArgs.call(self2, args);
+          const logFn = self2.log || createDebug.log;
+          logFn.apply(self2, args);
+        }
+        debug2.namespace = namespace;
+        debug2.useColors = createDebug.useColors();
+        debug2.color = createDebug.selectColor(namespace);
+        debug2.extend = extend2;
+        debug2.destroy = createDebug.destroy;
+        Object.defineProperty(debug2, "enabled", {
+          enumerable: true,
+          configurable: false,
+          get: () => {
+            if (enableOverride !== null) {
+              return enableOverride;
+            }
+            if (namespacesCache !== createDebug.namespaces) {
+              namespacesCache = createDebug.namespaces;
+              enabledCache = createDebug.enabled(namespace);
+            }
+            return enabledCache;
+          },
+          set: (v) => {
+            enableOverride = v;
+          }
+        });
+        if (typeof createDebug.init === "function") {
+          createDebug.init(debug2);
+        }
+        return debug2;
+      }
+      function extend2(namespace, delimiter2) {
+        const newDebug = createDebug(this.namespace + (typeof delimiter2 === "undefined" ? ":" : delimiter2) + namespace);
+        newDebug.log = this.log;
+        return newDebug;
+      }
+      function enable(namespaces) {
+        createDebug.save(namespaces);
+        createDebug.namespaces = namespaces;
+        createDebug.names = [];
+        createDebug.skips = [];
+        let i2;
+        const split = (typeof namespaces === "string" ? namespaces : "").split(/[\s,]+/);
+        const len = split.length;
+        for (i2 = 0; i2 < len; i2++) {
+          if (!split[i2]) {
+            continue;
+          }
+          namespaces = split[i2].replace(/\*/g, ".*?");
+          if (namespaces[0] === "-") {
+            createDebug.skips.push(new RegExp("^" + namespaces.slice(1) + "$"));
+          } else {
+            createDebug.names.push(new RegExp("^" + namespaces + "$"));
+          }
+        }
+      }
+      function disable() {
+        const namespaces = [
+          ...createDebug.names.map(toNamespace),
+          ...createDebug.skips.map(toNamespace).map((namespace) => "-" + namespace)
+        ].join(",");
+        createDebug.enable("");
+        return namespaces;
+      }
+      function enabled(name) {
+        if (name[name.length - 1] === "*") {
+          return true;
+        }
+        let i2;
+        let len;
+        for (i2 = 0, len = createDebug.skips.length; i2 < len; i2++) {
+          if (createDebug.skips[i2].test(name)) {
+            return false;
+          }
+        }
+        for (i2 = 0, len = createDebug.names.length; i2 < len; i2++) {
+          if (createDebug.names[i2].test(name)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      function toNamespace(regexp) {
+        return regexp.toString().substring(2, regexp.toString().length - 2).replace(/\.\*\?$/, "*");
+      }
+      function coerce(val) {
+        if (val instanceof Error) {
+          return val.stack || val.message;
+        }
+        return val;
+      }
+      function destroy() {
+        console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.");
+      }
+      createDebug.enable(createDebug.load());
+      return createDebug;
+    }
+    var common = setup;
+    var define_process_env_default = {};
+    (function(module2, exports2) {
+      exports2.formatArgs = formatArgs;
+      exports2.save = save;
+      exports2.load = load2;
+      exports2.useColors = useColors;
+      exports2.storage = localstorage();
+      exports2.destroy = /* @__PURE__ */ (() => {
+        let warned = false;
+        return () => {
+          if (!warned) {
+            warned = true;
+            console.warn("Instance method `debug.destroy()` is deprecated and no longer does anything. It will be removed in the next major version of `debug`.");
+          }
+        };
+      })();
+      exports2.colors = [
+        "#0000CC",
+        "#0000FF",
+        "#0033CC",
+        "#0033FF",
+        "#0066CC",
+        "#0066FF",
+        "#0099CC",
+        "#0099FF",
+        "#00CC00",
+        "#00CC33",
+        "#00CC66",
+        "#00CC99",
+        "#00CCCC",
+        "#00CCFF",
+        "#3300CC",
+        "#3300FF",
+        "#3333CC",
+        "#3333FF",
+        "#3366CC",
+        "#3366FF",
+        "#3399CC",
+        "#3399FF",
+        "#33CC00",
+        "#33CC33",
+        "#33CC66",
+        "#33CC99",
+        "#33CCCC",
+        "#33CCFF",
+        "#6600CC",
+        "#6600FF",
+        "#6633CC",
+        "#6633FF",
+        "#66CC00",
+        "#66CC33",
+        "#9900CC",
+        "#9900FF",
+        "#9933CC",
+        "#9933FF",
+        "#99CC00",
+        "#99CC33",
+        "#CC0000",
+        "#CC0033",
+        "#CC0066",
+        "#CC0099",
+        "#CC00CC",
+        "#CC00FF",
+        "#CC3300",
+        "#CC3333",
+        "#CC3366",
+        "#CC3399",
+        "#CC33CC",
+        "#CC33FF",
+        "#CC6600",
+        "#CC6633",
+        "#CC9900",
+        "#CC9933",
+        "#CCCC00",
+        "#CCCC33",
+        "#FF0000",
+        "#FF0033",
+        "#FF0066",
+        "#FF0099",
+        "#FF00CC",
+        "#FF00FF",
+        "#FF3300",
+        "#FF3333",
+        "#FF3366",
+        "#FF3399",
+        "#FF33CC",
+        "#FF33FF",
+        "#FF6600",
+        "#FF6633",
+        "#FF9900",
+        "#FF9933",
+        "#FFCC00",
+        "#FFCC33"
+      ];
+      function useColors() {
+        if (typeof window !== "undefined" && window.process && (window.process.type === "renderer" || window.process.__nwjs)) {
+          return true;
+        }
+        if (typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
+          return false;
+        }
+        return typeof document !== "undefined" && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance || // Is firebug? http://stackoverflow.com/a/398120/376773
+        typeof window !== "undefined" && window.console && (window.console.firebug || window.console.exception && window.console.table) || // Is firefox >= v31?
+        // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
+        typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31 || // Double check webkit in userAgent just in case we are in a worker
+        typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
+      }
+      function formatArgs(args) {
+        args[0] = (this.useColors ? "%c" : "") + this.namespace + (this.useColors ? " %c" : " ") + args[0] + (this.useColors ? "%c " : " ") + "+" + module2.exports.humanize(this.diff);
+        if (!this.useColors) {
+          return;
+        }
+        const c = "color: " + this.color;
+        args.splice(1, 0, c, "color: inherit");
+        let index = 0;
+        let lastC = 0;
+        args[0].replace(/%[a-zA-Z%]/g, (match) => {
+          if (match === "%%") {
+            return;
+          }
+          index++;
+          if (match === "%c") {
+            lastC = index;
+          }
+        });
+        args.splice(lastC, 0, c);
+      }
+      exports2.log = console.debug || console.log || (() => {
+      });
+      function save(namespaces) {
+        try {
+          if (namespaces) {
+            exports2.storage.setItem("debug", namespaces);
+          } else {
+            exports2.storage.removeItem("debug");
+          }
+        } catch (error2) {
+        }
+      }
+      function load2() {
+        let r2;
+        try {
+          r2 = exports2.storage.getItem("debug");
+        } catch (error2) {
+        }
+        if (!r2 && typeof process !== "undefined" && "env" in process) {
+          r2 = define_process_env_default.DEBUG;
+        }
+        return r2;
+      }
+      function localstorage() {
+        try {
+          return localStorage;
+        } catch (error2) {
+        }
+      }
+      module2.exports = common(exports2);
+      const { formatters } = module2.exports;
+      formatters.j = function(v) {
+        try {
+          return JSON.stringify(v);
+        } catch (error2) {
+          return "[UnexpectedJSONParseError]: " + error2.message;
+        }
+      };
+    })(browser, browser.exports);
+    var browserExports = browser.exports;
+    const debug = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
     const names = ["xs", "sm", "md", "lg", "xl", "xxl"];
     const thresholds = {
       xs: 0,
@@ -73723,11 +69156,16 @@ Reason: ${error2}`);
     const produceStateNodeMessages = produce((draft, layoutMessages, options) => {
       Object.assign(draft, options.messages, layoutMessages);
     });
-    const produceStateNodeData = produce((draft, parentDataPath, children, additionalPropertiesErrors, propertyKeys) => {
+    const produceStateNodeData = produce((draft, parentDataPath, children, additionalPropertiesErrors, propertyKeys, removePropertyKeys) => {
       if (propertyKeys) {
         for (const key of Object.keys(draft)) {
           if (!propertyKeys.includes(key))
             delete draft[key];
+        }
+      }
+      if (removePropertyKeys) {
+        for (const key of removePropertyKeys) {
+          delete draft[key];
         }
       }
       if (children) {
@@ -73822,9 +69260,9 @@ Reason: ${error2}`);
       return { comp: "none" };
     };
     function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentData, validationState, reusedNode) {
-      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
       let cacheKey = null;
-      if (skeleton.pure && reusedNode) {
+      if (skeleton.pure && reusedNode && !reusedNode.error && !reusedNode.childError) {
         cacheKey = [parentOptions, compiledLayout, fullKey, skeleton, childDefinition, parentDisplay.width, validationState, context.activeItems, context.initial, data];
         if (context.cacheKeys[fullKey] && shallowEqualArray(context.cacheKeys[fullKey], cacheKey))
           return reusedNode;
@@ -73842,7 +69280,7 @@ Reason: ${error2}`);
         context.autofocusTarget = fullKey;
       }
       let children;
-      if (isCompositeLayout(layout)) {
+      if (isCompositeLayout(layout, compiledLayout.components)) {
         const objectData = (
           /** @type {Record<string, unknown>} */
           data ?? {}
@@ -73852,7 +69290,12 @@ Reason: ${error2}`);
         let focusChild2 = context.autofocusTarget === fullKey;
         for (let i2 = 0; i2 < layout.children.length; i2++) {
           const childLayout = layout.children[i2];
-          const childSkeleton = ((_a2 = skeleton.children) == null ? void 0 : _a2.find((c) => c.key === childLayout.key)) ?? skeleton;
+          if (["remove", "hide"].includes(options.readOnlyPropertiesMode) && ((_a2 = skeleton.roPropertyKeys) == null ? void 0 : _a2.includes(
+            /** @type {string} */
+            childLayout.key
+          )))
+            continue;
+          const childSkeleton = ((_b = skeleton.children) == null ? void 0 : _b.find((c) => c.key === childLayout.key)) ?? skeleton;
           const isSameData = typeof childLayout.key === "string" && childLayout.key.startsWith("$");
           const childFullKey = `${fullKey}/${childLayout.key}`;
           if (focusChild2)
@@ -73872,7 +69315,7 @@ Reason: ${error2}`);
             isSameData ? objectData : objectData[childLayout.key],
             objectData,
             validationState,
-            (_b = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _b[i2]
+            (_c = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _c[i2]
           );
           if (child.autofocus || child.autofocusChild !== void 0)
             focusChild2 = false;
@@ -73880,7 +69323,7 @@ Reason: ${error2}`);
         }
       }
       if (key === "$oneOf" && skeleton.childrenTrees) {
-        const activeChildTreeIndex = fullKey in context.activeItems ? context.activeItems[fullKey] : (_c = skeleton.childrenTrees) == null ? void 0 : _c.findIndex((childTree) => compiledLayout.validates[childTree.root.pointer](data));
+        const activeChildTreeIndex = fullKey in context.activeItems ? context.activeItems[fullKey] : (_d = skeleton.childrenTrees) == null ? void 0 : _d.findIndex((childTree) => compiledLayout.validates[childTree.root.pointer](data));
         if (activeChildTreeIndex !== -1) {
           context.activeItems = produce(context.activeItems, (draft) => {
             draft[fullKey] = activeChildTreeIndex;
@@ -73905,7 +69348,7 @@ Reason: ${error2}`);
               data,
               data,
               validationState,
-              (_d = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _d[0]
+              (_e = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _e[0]
             )
           ];
         }
@@ -73917,7 +69360,7 @@ Reason: ${error2}`);
         );
         const childSkeleton = (
           /** @type {import('../index.js').SkeletonNode} */
-          (_f = (_e = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _e[0]) == null ? void 0 : _f.root
+          (_g = (_f = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _f[0]) == null ? void 0 : _g.root
         );
         const listItemOptions = layout.listEditMode === "inline" ? options : produceReadonlyArrayItemOptions(options);
         children = [];
@@ -73942,17 +69385,17 @@ Reason: ${error2}`);
             itemData,
             arrayData,
             validationState,
-            (_g = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _g[0]
+            (_h = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _h[0]
           );
           if (child.autofocus || child.autofocusChild !== void 0)
             focusChild2 = false;
           children.push(child);
         }
       }
-      const error2 = ((_h = context.errors) == null ? void 0 : _h.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath))) ?? ((_i = context.errors) == null ? void 0 : _i.find((error3) => matchChildError(error3, skeleton, dataPath)));
+      const error2 = ((_i = context.errors) == null ? void 0 : _i.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath))) ?? ((_j = context.errors) == null ? void 0 : _j.find((error3) => matchChildError(error3, skeleton, dataPath)));
       if (layout.comp !== "none") {
         if (error2)
-          context.errors = (_j = context.errors) == null ? void 0 : _j.filter((error3) => !matchError(error3, skeleton, dataPath, parentDataPath) && !matchChildError(error3, skeleton, dataPath));
+          context.errors = (_k = context.errors) == null ? void 0 : _k.filter((error3) => !matchError(error3, skeleton, dataPath, parentDataPath) && !matchChildError(error3, skeleton, dataPath));
       }
       const validated = validationState.validatedForm || validationState.validatedChildren.includes(fullKey) || validationState.initialized === false && options.initialValidation === "always" || validationState.initialized === false && options.initialValidation === "withData" && !isDataEmpty(data);
       let nodeData = children ? produceStateNodeData(
@@ -73961,7 +69404,8 @@ Reason: ${error2}`);
         dataPath,
         children,
         context.additionalPropertiesErrors,
-        [true, "unknown"].includes(options.removeAdditional) ? skeleton.propertyKeys : void 0
+        [true, "unknown"].includes(options.removeAdditional) ? skeleton.propertyKeys : void 0,
+        options.readOnlyPropertiesMode === "remove" ? skeleton.roPropertyKeys : void 0
       ) : data;
       if (nodeData !== data) {
         if (Array.isArray(data) && Array.isArray(nodeData))
@@ -73994,7 +69438,7 @@ Reason: ${error2}`);
       if (layout.getProps) {
         props = evalExpression(compiledLayout.expressions, layout.getProps, nodeData, options, display, layout, context.rootData, parentData);
       }
-      const autofocus = isFocusableLayout(layout) && !options.readOnly && !options.summary && context.autofocusTarget === fullKey;
+      const autofocus = isFocusableLayout(layout, compiledLayout.components) && !options.readOnly && !options.summary && context.autofocusTarget === fullKey;
       const node = produceStateNode(
         reusedNode ?? /** @type {import('./types.js').StateNode} */
         {},
@@ -74082,7 +69526,7 @@ Reason: ${error2}`);
       {}, root, valid);
     }
     const isSection = (node) => !!node && node.layout.comp === "section";
-    const isItemsNode = (node) => !!node && isItemsLayout(node.layout);
+    const isItemsNode = (node, components) => !!node && isItemsLayout(node.layout, components);
     const logDataBinding = debug("jl:data-binding");
     const mitt = (
       /** @type {typeof mittModule.default} */
@@ -74101,9 +69545,12 @@ Reason: ${error2}`);
         titleDepth: 2,
         validateOn: "input",
         initialValidation: "withData",
+        updateOn: "input",
+        debounceInputMs: 300,
         defaultOn: "empty",
         removeAdditional: "error",
         autofocus: false,
+        readOnlyPropertiesMode: "show",
         ...partialOptions,
         messages
       };
@@ -74163,6 +69610,16 @@ Reason: ${error2}`);
         __publicField(this, "_data");
         /**
          * @private
+         * @type {unknown}
+         */
+        __publicField(this, "_previousData");
+        /**
+         * @private
+         * @type {boolean}
+         */
+        __publicField(this, "_dataWaitingForBlur", false);
+        /**
+         * @private
          * @type {CreateStateTreeContext}
          */
         // @ts-ignore
@@ -74193,6 +69650,11 @@ Reason: ${error2}`);
           const parentData = parentNode ? parentNode.data : null;
           return evalExpression(this.compiledLayout.expressions, expression, data, node.options, new Display(node.width), node.layout, parentData, this._data);
         });
+        /**
+         * @private
+         * @type {null | [StateNode, unknown, boolean, number | undefined, ReturnType<typeof setTimeout>]}
+         */
+        __publicField(this, "debouncedInput", null);
         /**
          * @type {Record<string, number>}
          */
@@ -74295,6 +69757,17 @@ Reason: ${error2}`);
         }
         logDataBinding("emit update event", this._data, this._stateTree);
         this.events.emit("update", this);
+        this.emitData();
+      }
+      /**
+       * @private
+       */
+      emitData() {
+        if (!this._dataWaitingForBlur && this._data !== this._previousData) {
+          logDataBinding("emit data event", this._data);
+          this.events.emit("data", this._data);
+          this._previousData = this._data;
+        }
       }
       /**
        * @private
@@ -74362,14 +69835,16 @@ Reason: ${error2}`);
         return this._lastCreateStateTreeContext.nodes.findIndex((node) => node.error && !node.validated) !== -1;
       }
       /**
+       * @private
        * @param {StateNode} node
        * @param {unknown} data
+       * @param {boolean} [validated]
        * @param {number} [activateKey]
        */
-      input(node, data, activateKey) {
+      applyInput(node, data, validated, activateKey) {
         logDataBinding("received input event from node", node, data);
         const transformedData = node.layout.transformData && this.evalNodeExpression(node, node.layout.transformData, data);
-        if (isFileLayout(node.layout)) {
+        if (node.layout.comp === "file-input") {
           if (transformedData) {
             data.toJSON = () => transformedData;
           } else if (data instanceof File) {
@@ -74384,7 +69859,7 @@ Reason: ${error2}`);
         } else if (transformedData) {
           data = transformedData;
         }
-        if (node.options.validateOn === "input" && !this.validationState.validatedChildren.includes(node.fullKey)) {
+        if (validated && !this.validationState.validatedChildren.includes(node.fullKey)) {
           this.validationState = { validatedChildren: this.validationState.validatedChildren.concat([node.fullKey]) };
         }
         if (activateKey !== void 0) {
@@ -74394,26 +69869,63 @@ Reason: ${error2}`);
           this._autofocusTarget = node.fullKey + "/" + activateKey;
         }
         if (node.parentFullKey === null) {
-          this.data = data;
-          this.events.emit("input", this.data);
+          this._data = data;
+          this.updateState();
           return;
         }
         const parentNode = this._lastCreateStateTreeContext.nodes.find((p2) => p2.fullKey === node.parentFullKey);
         if (!parentNode)
           throw new Error(`parent with key "${node.parentFullKey}" not found`);
         const newParentValue = producePatchedData(parentNode.data ?? (typeof node.key === "number" ? [] : {}), node, data);
-        this.input(parentNode, newParentValue);
+        this.applyInput(parentNode, newParentValue, validated);
         if (activateKey !== void 0) {
           this.handleAutofocus();
+        }
+      }
+      applyDebouncedInput() {
+        if (this.debouncedInput) {
+          clearTimeout(this.debouncedInput[3]);
+          this.applyInput(this.debouncedInput[0], this.debouncedInput[1], this.debouncedInput[2], this.debouncedInput[3]);
+          this.debouncedInput = null;
+        }
+      }
+      /**
+       * @param {StateNode} node
+       * @param {unknown} data
+       * @param {number} [activateKey]
+       */
+      input(node, data, activateKey) {
+        var _a2, _b;
+        if (this.debouncedInput) {
+          if (this.debouncedInput[0] === node)
+            clearTimeout(this.debouncedInput[4]);
+          else
+            this.applyDebouncedInput();
+        }
+        const emitsBlur = (_a2 = this.compiledLayout.components[node.layout.comp]) == null ? void 0 : _a2.emitsBlur;
+        if (node.options.updateOn === "blur" && emitsBlur) {
+          this._dataWaitingForBlur = true;
+        }
+        const validated = node.options.validateOn === "input" || node.options.validateOn === "blur" && !emitsBlur;
+        const shouldDebounce = (_b = this.compiledLayout.components[node.layout.comp]) == null ? void 0 : _b.shouldDebounce;
+        if (shouldDebounce && node.options.debounceInputMs) {
+          this.debouncedInput = [node, data, validated, activateKey, setTimeout(() => this.applyDebouncedInput(), node.options.debounceInputMs)];
+        } else {
+          this.applyInput(node, data, validated, activateKey);
         }
       }
       /**
        * @param {StateNode} node
        */
       blur(node) {
+        this.applyDebouncedInput();
         logDataBinding("received blur event from node", node);
         if ((node.options.validateOn === "input" || node.options.validateOn === "blur") && !this.validationState.validatedChildren.includes(node.fullKey)) {
           this.validationState = { validatedChildren: this.validationState.validatedChildren.concat([node.fullKey]) };
+        }
+        if (this._dataWaitingForBlur) {
+          this._dataWaitingForBlur = false;
+          this.emitData();
         }
       }
       /**
@@ -74435,8 +69947,9 @@ Reason: ${error2}`);
        */
       async getSourceItems(node, q = "") {
         var _a2;
-        if (!isItemsNode(node))
+        if (!isItemsNode(node, this._compiledLayout.components)) {
           throw new Error("node is not a component with an items list");
+        }
         if (node.layout.items)
           return [node.layout.items, false];
         let rawItems;
@@ -74576,7 +70089,7 @@ Reason: ${error2}`);
             if (typeof item === "object") {
               const filterKeys = keys2 || Object.keys(transformed);
               for (const key of filterKeys) {
-                const value = getPropertyFromItem(transformed, key, transformed);
+                const value = getPropertyFromItem(transformed, key);
                 const keyFilter = (_a2 = options == null ? void 0 : options.customKeyFilter) == null ? void 0 : _a2[key];
                 match = keyFilter ? keyFilter(value, query, item) : filter(value, query, item);
                 if (match !== -1 && match !== false) {
@@ -74751,6 +70264,8 @@ Reason: ${error2}`);
           }
           return filteredItems.value;
         });
+        const hasChips = computed(() => !!(props.chips || slots.chip));
+        const hasSelectionSlot = computed(() => hasChips.value || !!slots.selection);
         const selectedValues = computed(() => model.value.map((selection) => selection.props.value));
         const highlightFirst = computed(() => {
           var _a2;
@@ -74804,21 +70319,19 @@ Reason: ${error2}`);
           if (e.key === "ArrowDown" && highlightFirst.value) {
             (_a2 = listRef.value) == null ? void 0 : _a2.focus("next");
           }
+          if (["Backspace", "Delete"].includes(e.key)) {
+            if (!props.multiple && hasSelectionSlot.value && model.value.length > 0 && !search.value)
+              return select(model.value[0], false);
+            if (~selectionIndex.value) {
+              const originalSelectionIndex = selectionIndex.value;
+              select(model.value[selectionIndex.value], false);
+              selectionIndex.value = originalSelectionIndex >= length - 1 ? length - 2 : originalSelectionIndex;
+            } else if (e.key === "Backspace" && !search.value) {
+              selectionIndex.value = length - 1;
+            }
+          }
           if (!props.multiple)
             return;
-          if (["Backspace", "Delete"].includes(e.key)) {
-            if (selectionIndex.value < 0) {
-              if (e.key === "Backspace" && !search.value) {
-                selectionIndex.value = length - 1;
-              }
-              return;
-            }
-            const originalSelectionIndex = selectionIndex.value;
-            const selectedItem = model.value[selectionIndex.value];
-            if (selectedItem && !selectedItem.props.disabled)
-              select(selectedItem);
-            selectionIndex.value = originalSelectionIndex >= length - 1 ? length - 2 : originalSelectionIndex;
-          }
           if (e.key === "ArrowLeft") {
             if (selectionIndex.value < 0 && selectionStart > 0)
               return;
@@ -74867,33 +70380,35 @@ Reason: ${error2}`);
           listHasFocus.value = false;
         }
         function onUpdateModelValue(v) {
-          if (v == null || v === "" && !props.multiple)
+          if (v == null || v === "" && !props.multiple && !hasSelectionSlot.value)
             model.value = [];
         }
         const isSelecting = shallowRef(false);
         function select(item) {
-          if (item.props.disabled)
+          let set2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+          if (!item || item.props.disabled)
             return;
-          const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
-          const add2 = index === -1;
           if (props.multiple) {
-            if (add2) {
-              model.value = [...model.value, item];
-            } else {
-              const value = [...model.value];
+            const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
+            const add2 = set2 == null ? !~index : set2;
+            if (~index) {
+              const value = add2 ? [...model.value, item] : [...model.value];
               value.splice(index, 1);
               model.value = value;
+            } else if (add2) {
+              model.value = [...model.value, item];
             }
             if (props.clearOnSelect) {
               search.value = "";
             }
           } else {
+            const add2 = set2 !== false;
             model.value = add2 ? [item] : [];
-            isSelecting.value = true;
-            search.value = add2 ? item.title : "";
-            menu.value = false;
-            isPristine.value = true;
-            nextTick(() => isSelecting.value = false);
+            search.value = add2 && !hasSelectionSlot.value ? item.title : "";
+            nextTick(() => {
+              menu.value = false;
+              isPristine.value = true;
+            });
           }
         }
         watch(isFocused, (val, oldVal) => {
@@ -74902,7 +70417,7 @@ Reason: ${error2}`);
             return;
           if (val) {
             isSelecting.value = true;
-            search.value = props.multiple ? "" : String(((_a2 = model.value.at(-1)) == null ? void 0 : _a2.props.title) ?? "");
+            search.value = props.multiple || hasSelectionSlot.value ? "" : String(((_a2 = model.value.at(-1)) == null ? void 0 : _a2.props.title) ?? "");
             isPristine.value = true;
             nextTick(() => isSelecting.value = false);
           } else {
@@ -74937,18 +70452,14 @@ Reason: ${error2}`);
             });
           }
         });
-        watch(displayItems, (val, oldVal) => {
-          if (!isFocused.value)
+        watch(() => props.items, (newVal, oldVal) => {
+          if (menu.value)
             return;
-          if (!val.length && props.hideNoData) {
-            menu.value = false;
-          }
-          if (!oldVal.length && val.length) {
+          if (isFocused.value && !oldVal.length && newVal.length) {
             menu.value = true;
           }
         });
         useRender(() => {
-          const hasChips = !!(props.chips || slots.chip);
           const hasList = !!(!props.hideNoData || displayItems.value.length || slots["prepend-item"] || slots["append-item"] || slots["no-data"]);
           const isDirty = model.value.length > 0;
           const textFieldProps = VTextField.filterProps(props);
@@ -74966,7 +70477,7 @@ Reason: ${error2}`);
             "class": ["v-autocomplete", `v-autocomplete--${props.multiple ? "multiple" : "single"}`, {
               "v-autocomplete--active-menu": menu.value,
               "v-autocomplete--chips": !!props.chips,
-              "v-autocomplete--selection-slot": !!slots.selection,
+              "v-autocomplete--selection-slot": !!hasSelectionSlot.value,
               "v-autocomplete--selecting-index": selectionIndex.value > -1
             }, props.class],
             "style": props.style,
@@ -75024,13 +70535,15 @@ Reason: ${error2}`);
                         ref: itemRef,
                         key: index,
                         active: highlightFirst.value && index === 0 ? true : void 0,
-                        onClick: () => select(item)
+                        onClick: () => select(item, null)
                       });
                       return ((_a3 = slots.item) == null ? void 0 : _a3.call(slots, {
                         item,
                         index,
                         props: itemProps
-                      })) ?? createVNode(VListItem, itemProps, {
+                      })) ?? createVNode(VListItem, mergeProps(itemProps, {
+                        "role": "option"
+                      }), {
                         prepend: (_ref4) => {
                           let {
                             isSelected
@@ -75059,10 +70572,17 @@ Reason: ${error2}`);
               function onChipClose(e) {
                 e.stopPropagation();
                 e.preventDefault();
-                select(item);
+                select(item, false);
               }
               const slotProps = {
                 "onClick:close": onChipClose,
+                onKeydown(e) {
+                  if (e.key !== "Enter" && e.key !== " ")
+                    return;
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onChipClose(e);
+                },
                 onMousedown(e) {
                   e.preventDefault();
                   e.stopPropagation();
@@ -75070,8 +70590,8 @@ Reason: ${error2}`);
                 modelValue: true,
                 "onUpdate:modelValue": void 0
               };
-              const hasSlot = hasChips ? !!slots.chip : !!slots.selection;
-              const slotContent = hasSlot ? ensureValidVNode(hasChips ? slots.chip({
+              const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
+              const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
                 item,
                 index,
                 props: slotProps
@@ -75085,7 +70605,7 @@ Reason: ${error2}`);
                 "key": item.value,
                 "class": ["v-autocomplete__selection", index === selectionIndex.value && ["v-autocomplete__selection--selected", textColorClasses.value]],
                 "style": index === selectionIndex.value ? textColorStyles.value : {}
-              }, [hasChips ? !slots.chip ? createVNode(VChip, mergeProps({
+              }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
                 "key": "chip",
                 "closable": props.closableChips,
                 "size": "small",
@@ -76995,7 +72515,9 @@ Reason: ${error2}`);
           return props.multiple ? transformed : transformed[0] ?? null;
         });
         const form = useForm();
-        const _search = shallowRef(!props.multiple ? ((_a2 = model.value[0]) == null ? void 0 : _a2.title) ?? "" : "");
+        const hasChips = computed(() => !!(props.chips || slots.chip));
+        const hasSelectionSlot = computed(() => hasChips.value || !!slots.selection);
+        const _search = shallowRef(!props.multiple && !hasSelectionSlot.value ? ((_a2 = model.value[0]) == null ? void 0 : _a2.title) ?? "" : "");
         const search = computed({
           get: () => {
             return _search.value;
@@ -77003,7 +72525,7 @@ Reason: ${error2}`);
           set: (val) => {
             var _a3;
             _search.value = val ?? "";
-            if (!props.multiple) {
+            if (!props.multiple && !hasSelectionSlot.value) {
               model.value = [transformItem$1(props, val)];
             }
             if (val && props.multiple && ((_a3 = props.delimiters) == null ? void 0 : _a3.length)) {
@@ -77035,7 +72557,7 @@ Reason: ${error2}`);
         });
         watch(model, (value) => {
           var _a3;
-          if (!props.multiple) {
+          if (!props.multiple && !hasSelectionSlot.value) {
             _search.value = ((_a3 = value[0]) == null ? void 0 : _a3.title) ?? "";
           }
         });
@@ -77105,21 +72627,24 @@ Reason: ${error2}`);
           if (e.key === "ArrowDown" && highlightFirst.value) {
             (_a3 = listRef.value) == null ? void 0 : _a3.focus("next");
           }
+          if (e.key === "Enter" && search.value) {
+            select(transformItem$1(props, search.value));
+            if (hasSelectionSlot.value)
+              _search.value = "";
+          }
+          if (["Backspace", "Delete"].includes(e.key)) {
+            if (!props.multiple && hasSelectionSlot.value && model.value.length > 0 && !search.value)
+              return select(model.value[0], false);
+            if (~selectionIndex.value) {
+              const originalSelectionIndex = selectionIndex.value;
+              select(model.value[selectionIndex.value], false);
+              selectionIndex.value = originalSelectionIndex >= length - 1 ? length - 2 : originalSelectionIndex;
+            } else if (e.key === "Backspace" && !search.value) {
+              selectionIndex.value = length - 1;
+            }
+          }
           if (!props.multiple)
             return;
-          if (["Backspace", "Delete"].includes(e.key)) {
-            if (selectionIndex.value < 0) {
-              if (e.key === "Backspace" && !search.value) {
-                selectionIndex.value = length - 1;
-              }
-              return;
-            }
-            const originalSelectionIndex = selectionIndex.value;
-            const selectedItem = model.value[selectionIndex.value];
-            if (selectedItem && !selectedItem.props.disabled)
-              select(selectedItem, false);
-            selectionIndex.value = originalSelectionIndex >= length - 1 ? length - 2 : originalSelectionIndex;
-          }
           if (e.key === "ArrowLeft") {
             if (selectionIndex.value < 0 && selectionStart > 0)
               return;
@@ -77142,10 +72667,6 @@ Reason: ${error2}`);
               vTextFieldRef.value.setSelectionRange(0, 0);
             }
           }
-          if (e.key === "Enter" && search.value) {
-            select(transformItem$1(props, search.value));
-            search.value = "";
-          }
         }
         function onAfterLeave() {
           var _a3;
@@ -77156,6 +72677,8 @@ Reason: ${error2}`);
         }
         function select(item) {
           let set2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+          if (!item || item.props.disabled)
+            return;
           if (props.multiple) {
             const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
             const add2 = set2 == null ? !~index : set2;
@@ -77172,7 +72695,7 @@ Reason: ${error2}`);
           } else {
             const add2 = set2 !== false;
             model.value = add2 ? [item] : [];
-            _search.value = add2 ? item.title : "";
+            _search.value = add2 && !hasSelectionSlot.value ? item.title : "";
             nextTick(() => {
               menu.value = false;
               isPristine.value = true;
@@ -77189,7 +72712,7 @@ Reason: ${error2}`);
           listHasFocus.value = false;
         }
         function onUpdateModelValue(v) {
-          if (v == null || v === "" && !props.multiple)
+          if (v == null || v === "" && !props.multiple && !hasSelectionSlot.value)
             model.value = [];
         }
         watch(isFocused, (val, oldVal) => {
@@ -77204,8 +72727,25 @@ Reason: ${error2}`);
             return value === displayItems.value[0].value;
           })) {
             select(displayItems.value[0]);
-          } else if (props.multiple && search.value) {
-            select(transformItem$1(props, search.value));
+            return;
+          }
+          if (search.value) {
+            if (props.multiple) {
+              select(transformItem$1(props, search.value));
+              return;
+            }
+            if (!hasSelectionSlot.value)
+              return;
+            if (model.value.some((_ref3) => {
+              let {
+                title: title2
+              } = _ref3;
+              return title2 === search.value;
+            })) {
+              _search.value = "";
+            } else {
+              select(transformItem$1(props, search.value));
+            }
           }
         });
         watch(menu, () => {
@@ -77217,18 +72757,14 @@ Reason: ${error2}`);
             });
           }
         });
-        watch(displayItems, (val, oldVal) => {
-          if (!isFocused.value)
+        watch(() => props.items, (newVal, oldVal) => {
+          if (menu.value)
             return;
-          if (!val.length && props.hideNoData) {
-            menu.value = false;
-          }
-          if (!oldVal.length && val.length) {
+          if (isFocused.value && !oldVal.length && newVal.length) {
             menu.value = true;
           }
         });
         useRender(() => {
-          const hasChips = !!(props.chips || slots.chip);
           const hasList = !!(!props.hideNoData || displayItems.value.length || slots["prepend-item"] || slots["append-item"] || slots["no-data"]);
           const isDirty = model.value.length > 0;
           const textFieldProps = VTextField.filterProps(props);
@@ -77245,7 +72781,7 @@ Reason: ${error2}`);
             "class": ["v-combobox", {
               "v-combobox--active-menu": menu.value,
               "v-combobox--chips": !!props.chips,
-              "v-combobox--selection-slot": !!slots.selection,
+              "v-combobox--selection-slot": !!hasSelectionSlot.value,
               "v-combobox--selecting-index": selectionIndex.value > -1,
               [`v-combobox--${props.multiple ? "multiple" : "single"}`]: true
             }, props.class],
@@ -77293,13 +72829,13 @@ Reason: ${error2}`);
                     "renderless": true,
                     "items": displayItems.value
                   }, {
-                    default: (_ref3) => {
+                    default: (_ref4) => {
                       var _a4;
                       let {
                         item,
                         index,
                         itemRef
-                      } = _ref3;
+                      } = _ref4;
                       const itemProps = mergeProps(item.props, {
                         ref: itemRef,
                         key: index,
@@ -77310,11 +72846,13 @@ Reason: ${error2}`);
                         item,
                         index,
                         props: itemProps
-                      })) ?? createVNode(VListItem, itemProps, {
-                        prepend: (_ref4) => {
+                      })) ?? createVNode(VListItem, mergeProps(itemProps, {
+                        "role": "option"
+                      }), {
+                        prepend: (_ref5) => {
                           let {
                             isSelected
-                          } = _ref4;
+                          } = _ref5;
                           return createVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
                             "key": item.value,
                             "modelValue": isSelected,
@@ -77343,6 +72881,13 @@ Reason: ${error2}`);
               }
               const slotProps = {
                 "onClick:close": onChipClose,
+                onKeydown(e) {
+                  if (e.key !== "Enter" && e.key !== " ")
+                    return;
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onChipClose(e);
+                },
                 onMousedown(e) {
                   e.preventDefault();
                   e.stopPropagation();
@@ -77350,8 +72895,8 @@ Reason: ${error2}`);
                 modelValue: true,
                 "onUpdate:modelValue": void 0
               };
-              const hasSlot = hasChips ? !!slots.chip : !!slots.selection;
-              const slotContent = hasSlot ? ensureValidVNode(hasChips ? slots.chip({
+              const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
+              const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
                 item,
                 index,
                 props: slotProps
@@ -77365,7 +72910,7 @@ Reason: ${error2}`);
                 "key": item.value,
                 "class": ["v-combobox__selection", index === selectionIndex.value && ["v-combobox__selection--selected", textColorClasses.value]],
                 "style": index === selectionIndex.value ? textColorStyles.value : {}
-              }, [hasChips ? !slots.chip ? createVNode(VChip, mergeProps({
+              }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
                 "key": "chip",
                 "closable": props.closableChips,
                 "size": "small",
@@ -77609,6 +73154,10 @@ Reason: ${error2}`);
       weekdays: {
         type: Array,
         default: () => [0, 1, 2, 3, 4, 5, 6]
+      },
+      weeksInMonth: {
+        type: String,
+        default: "dynamic"
       }
     }, "calendar");
     function useCalendar(props) {
@@ -77638,7 +73187,7 @@ Reason: ${error2}`);
         const weeks = adapter.getWeekArray(month.value);
         const days = weeks.flat();
         const daysInMonth2 = 6 * 7;
-        if (days.length < daysInMonth2) {
+        if (props.weeksInMonth === "static" && days.length < daysInMonth2) {
           const lastDay = days[days.length - 1];
           let week = [];
           for (let day = 1; day <= daysInMonth2 - days.length; day++) {
@@ -77681,14 +73230,13 @@ Reason: ${error2}`);
         });
       }
       const daysInWeek = computed(() => {
-        const lastDay = adapter.startOfWeek(model.value);
+        const lastDay = adapter.startOfWeek(displayValue.value);
         const week = [];
         for (let day = 0; day <= 6; day++) {
           week.push(adapter.addDays(lastDay, day));
         }
-        const days = week;
         const today = adapter.date();
-        return genDays(days, today);
+        return genDays(week, today);
       });
       const daysInMonth = computed(() => {
         const days = weeksInMonth.value.flat();
@@ -77731,6 +73279,14 @@ Reason: ${error2}`);
       hideWeekdays: Boolean,
       multiple: [Boolean, Number, String],
       showWeek: Boolean,
+      transition: {
+        type: String,
+        default: "picker-transition"
+      },
+      reverseTransition: {
+        type: String,
+        default: "picker-reverse-transition"
+      },
       ...makeCalendarProps()
     }, "VDatePickerMonth");
     const VDatePickerMonth = genericComponent()({
@@ -77755,9 +73311,24 @@ Reason: ${error2}`);
         const adapter = useDate();
         const rangeStart = shallowRef();
         const rangeStop = shallowRef();
+        const isReverse = shallowRef(false);
+        const transition = computed(() => {
+          return !isReverse.value ? props.transition : props.reverseTransition;
+        });
+        if (props.multiple === "range" && model.value.length > 0) {
+          rangeStart.value = model.value[0];
+          if (model.value.length > 1) {
+            rangeStop.value = model.value[model.value.length - 1];
+          }
+        }
         const atMax = computed(() => {
           const max = ["number", "string"].includes(typeof props.multiple) ? Number(props.multiple) : Infinity;
           return model.value.length >= max;
+        });
+        watch(daysInMonth, (val, oldVal) => {
+          if (!oldVal)
+            return;
+          isReverse.value = adapter.isBefore(val[0].date, oldVal[0].date);
         });
         function onRangeClick(value) {
           const _value = adapter.startOfDay(value);
@@ -77765,17 +73336,17 @@ Reason: ${error2}`);
             rangeStart.value = _value;
             model.value = [rangeStart.value];
           } else if (!rangeStop.value) {
-            if (adapter.isSameDay(value, rangeStart.value)) {
+            if (adapter.isSameDay(_value, rangeStart.value)) {
               rangeStart.value = void 0;
               model.value = [];
               return;
-            } else if (adapter.isBefore(value, rangeStart.value)) {
-              rangeStop.value = rangeStart.value;
+            } else if (adapter.isBefore(_value, rangeStart.value)) {
+              rangeStop.value = adapter.endOfDay(rangeStart.value);
               rangeStart.value = _value;
             } else {
-              rangeStop.value = _value;
+              rangeStop.value = adapter.endOfDay(_value);
             }
-            const diff = adapter.getDiff(rangeStop.value, rangeStart.value);
+            const diff = adapter.getDiff(rangeStop.value, rangeStart.value, "days");
             const datesInRange = [rangeStart.value];
             for (let i2 = 1; i2 < diff; i2++) {
               const nextDate = adapter.addDays(rangeStart.value, i2);
@@ -77818,51 +73389,59 @@ Reason: ${error2}`);
           "class": "v-date-picker-month__day"
         }, [createTextVNode(" ")]), weekNumbers.value.map((week) => createVNode("div", {
           "class": ["v-date-picker-month__day", "v-date-picker-month__day--adjacent"]
-        }, [week]))]), createVNode("div", {
-          "ref": daysRef,
-          "class": "v-date-picker-month__days"
-        }, [!props.hideWeekdays && adapter.getWeekdays().map((weekDay) => createVNode("div", {
-          "class": ["v-date-picker-month__day", "v-date-picker-month__weekday"]
-        }, [weekDay])), daysInMonth.value.map((item, i2) => {
-          const slotProps = {
-            props: {
-              onClick: () => onClick(item.date)
-            },
-            item,
-            i: i2
-          };
-          if (atMax.value && !item.isSelected) {
-            item.isDisabled = true;
-          }
-          return createVNode("div", {
-            "class": ["v-date-picker-month__day", {
-              "v-date-picker-month__day--adjacent": item.isAdjacent,
-              "v-date-picker-month__day--hide-adjacent": item.isHidden,
-              "v-date-picker-month__day--selected": item.isSelected,
-              "v-date-picker-month__day--week-end": item.isWeekEnd,
-              "v-date-picker-month__day--week-start": item.isWeekStart
-            }],
-            "data-v-date": !item.isDisabled ? item.isoDate : void 0
-          }, [(props.showAdjacentMonths || !item.isAdjacent) && createVNode(VDefaultsProvider, {
-            "defaults": {
-              VBtn: {
-                class: "v-date-picker-month__day-btn",
-                color: (item.isSelected || item.isToday) && !item.isDisabled ? props.color : void 0,
-                disabled: item.isDisabled,
-                icon: true,
-                ripple: false,
-                text: item.localized,
-                variant: item.isDisabled ? item.isToday ? "outlined" : "text" : item.isToday && !item.isSelected ? "outlined" : "flat",
-                onClick: () => onClick(item.date)
+        }, [week]))]), createVNode(MaybeTransition, {
+          "name": transition.value
+        }, {
+          default: () => {
+            var _a2;
+            return [createVNode("div", {
+              "ref": daysRef,
+              "key": (_a2 = daysInMonth.value[0].date) == null ? void 0 : _a2.toString(),
+              "class": "v-date-picker-month__days"
+            }, [!props.hideWeekdays && adapter.getWeekdays().map((weekDay) => createVNode("div", {
+              "class": ["v-date-picker-month__day", "v-date-picker-month__weekday"]
+            }, [weekDay])), daysInMonth.value.map((item, i2) => {
+              const slotProps = {
+                props: {
+                  onClick: () => onClick(item.date)
+                },
+                item,
+                i: i2
+              };
+              if (atMax.value && !item.isSelected) {
+                item.isDisabled = true;
               }
-            }
-          }, {
-            default: () => {
-              var _a2;
-              return [((_a2 = slots.day) == null ? void 0 : _a2.call(slots, slotProps)) ?? createVNode(VBtn, slotProps.props, null)];
-            }
-          })]);
-        })])]);
+              return createVNode("div", {
+                "class": ["v-date-picker-month__day", {
+                  "v-date-picker-month__day--adjacent": item.isAdjacent,
+                  "v-date-picker-month__day--hide-adjacent": item.isHidden,
+                  "v-date-picker-month__day--selected": item.isSelected,
+                  "v-date-picker-month__day--week-end": item.isWeekEnd,
+                  "v-date-picker-month__day--week-start": item.isWeekStart
+                }],
+                "data-v-date": !item.isDisabled ? item.isoDate : void 0
+              }, [(props.showAdjacentMonths || !item.isAdjacent) && createVNode(VDefaultsProvider, {
+                "defaults": {
+                  VBtn: {
+                    class: "v-date-picker-month__day-btn",
+                    color: (item.isSelected || item.isToday) && !item.isDisabled ? props.color : void 0,
+                    disabled: item.isDisabled,
+                    icon: true,
+                    ripple: false,
+                    text: item.localized,
+                    variant: item.isDisabled ? item.isToday ? "outlined" : "text" : item.isToday && !item.isSelected ? "outlined" : "flat",
+                    onClick: () => onClick(item.date)
+                  }
+                }
+              }, {
+                default: () => {
+                  var _a3;
+                  return [((_a3 = slots.day) == null ? void 0 : _a3.call(slots, slotProps)) ?? createVNode(VBtn, slotProps.props, null)];
+                }
+              })]);
+            })])];
+          }
+        })]);
       }
     });
     const makeVDatePickerMonthsProps = propsFactory({
@@ -78111,7 +73690,9 @@ Reason: ${error2}`);
         default: "$vuetify.datePicker.header"
       },
       ...makeVDatePickerControlsProps(),
-      ...makeVDatePickerMonthProps(),
+      ...makeVDatePickerMonthProps({
+        weeksInMonth: "static"
+      }),
       ...omit$1(makeVDatePickerMonthsProps(), ["modelValue"]),
       ...omit$1(makeVDatePickerYearsProps(), ["modelValue"]),
       ...makeVPickerProps({
@@ -78149,10 +73730,17 @@ Reason: ${error2}`);
         const year = ref$1(Number(props.year ?? adapter.getYear(adapter.startOfYear(adapter.setMonth(internal.value, month.value)))));
         const isReversing = shallowRef(false);
         const header = computed(() => {
-          return props.multiple && model.value.length > 1 ? t("$vuetify.datePicker.itemsSelected", model.value.length) : model.value[0] && adapter.isValid(model.value[0]) ? adapter.format(model.value[0], "normalDateWithWeekday") : t(props.header);
+          if (props.multiple && model.value.length > 1) {
+            return t("$vuetify.datePicker.itemsSelected", model.value.length);
+          }
+          return model.value[0] && adapter.isValid(model.value[0]) ? adapter.format(adapter.date(model.value[0]), "normalDateWithWeekday") : t(props.header);
         });
         const text2 = computed(() => {
-          return adapter.format(adapter.date(new Date(year.value, month.value, 1)), "monthAndYear");
+          let date2 = adapter.date();
+          date2 = adapter.setDate(date2, 1);
+          date2 = adapter.setMonth(date2, month.value);
+          date2 = adapter.setYear(date2, year.value);
+          return adapter.format(date2, "monthAndYear");
         });
         const headerTransition = computed(() => `date-picker-header${isReversing.value ? "-reverse" : ""}-transition`);
         const minDate = computed(() => {
@@ -78224,8 +73812,18 @@ Reason: ${error2}`);
           emit2("update:year", value);
         }
         watch(model, (val, oldVal) => {
-          const before = adapter.date(wrapInArray(val)[0]);
-          const after = adapter.date(wrapInArray(oldVal)[0]);
+          const before = adapter.date(wrapInArray(oldVal)[oldVal.length - 1]);
+          const after = adapter.date(wrapInArray(val)[val.length - 1]);
+          const newMonth = adapter.getMonth(after);
+          const newYear = adapter.getYear(after);
+          if (newMonth !== month.value) {
+            month.value = newMonth;
+            onUpdateMonth(month.value);
+          }
+          if (newYear !== year.value) {
+            year.value = newYear;
+            onUpdateYear(year.value);
+          }
           isReversing.value = adapter.isBefore(before, after);
         });
         useRender(() => {
@@ -78324,6 +73922,7 @@ Reason: ${error2}`);
         type: String,
         default: "$vuetify.fileInput.counter"
       },
+      hideInput: Boolean,
       multiple: Boolean,
       showSize: {
         type: [Boolean, Number, String],
@@ -78336,8 +73935,8 @@ Reason: ${error2}`);
         prependIcon: "$file"
       }),
       modelValue: {
-        type: Array,
-        default: () => [],
+        type: [Array, Object],
+        default: (props) => props.multiple ? [] : null,
         validator: (val) => {
           return wrapInArray(val).every((v) => v != null && typeof v === "object");
         }
@@ -78365,7 +73964,7 @@ Reason: ${error2}`);
         const {
           t
         } = useLocale();
-        const model = useProxiedModel(props, "modelValue");
+        const model = useProxiedModel(props, "modelValue", props.modelValue, (val) => wrapInArray(val), (val) => props.multiple || Array.isArray(props.modelValue) ? val : val[0]);
         const {
           isFocused,
           focus,
@@ -78448,6 +74047,7 @@ Reason: ${error2}`);
             "onUpdate:modelValue": ($event) => model.value = $event,
             "class": ["v-file-input", {
               "v-file-input--chips": !!props.chips,
+              "v-file-input--hide": props.hideInput,
               "v-input--plain-underlined": isPlainOrUnderlined.value
             }, props.class],
             "style": props.style,
@@ -78513,17 +74113,15 @@ Reason: ${error2}`);
                     "onBlur": blur
                   }, slotProps, inputAttrs), null), createVNode("div", {
                     "class": fieldClass
-                  }, [!!((_a2 = model.value) == null ? void 0 : _a2.length) && (slots.selection ? slots.selection({
+                  }, [!!((_a2 = model.value) == null ? void 0 : _a2.length) && !props.hideInput && (slots.selection ? slots.selection({
                     fileNames: fileNames.value,
                     totalBytes: totalBytes.value,
                     totalBytesReadable: totalBytesReadable.value
                   }) : props.chips ? fileNames.value.map((text2) => createVNode(VChip, {
                     "key": text2,
                     "size": "small",
-                    "color": props.color
-                  }, {
-                    default: () => [text2]
-                  })) : fileNames.value.join(", "))])]);
+                    "text": text2
+                  }, null)) : fileNames.value.join(", "))])]);
                 }
               });
             },
@@ -78531,7 +74129,8 @@ Reason: ${error2}`);
               var _a2, _b;
               return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
                 "active": !!((_b = model.value) == null ? void 0 : _b.length),
-                "value": counterValue.value
+                "value": counterValue.value,
+                "disabled": props.disabled
               }, slots.counter)])]);
             } : void 0
           });
@@ -79047,6 +74646,8 @@ Reason: ${error2}`);
           const controlProps = VSelectionControl.filterProps(props);
           return createVNode(VInput, mergeProps({
             "class": ["v-switch", {
+              "v-switch--flat": props.flat
+            }, {
               "v-switch--inset": props.inset
             }, {
               "v-switch--indeterminate": indeterminate.value
@@ -79401,7 +75002,8 @@ Reason: ${error2}`);
               return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
                 "active": props.persistentCounter || isFocused.value,
                 "value": counterValue.value,
-                "max": max.value
+                "max": max.value,
+                "disabled": props.disabled
               }, slots.counter)])]);
             } : void 0
           });
@@ -79524,7 +75126,7 @@ Reason: ${error2}`);
             classes += " vjsf-dark";
           return classes;
         });
-        if (!props.statefulLayout.options.nodeComponents[props.modelValue.layout.comp]) {
+        if (props.modelValue.layout.comp !== "none" && !props.statefulLayout.options.nodeComponents[props.modelValue.layout.comp]) {
           console.error(`vjsf: missing component to render vjsf node "${props.modelValue.layout.comp}", maybe you forgot to register a component from a plugin ?`);
         }
         return (_ctx, _cache) => {
@@ -79738,11 +75340,19 @@ Reason: ${error2}`);
       };
     }
     const defaultOptions = {
-      errorAlertProps: { type: "error", variant: "tonal" },
       nodeComponents: {},
-      plugins: {}
+      plugins: [],
+      pluginsOptions: {}
     };
-    const getFullOptions = (options, form, width, slots, nodeComponents) => {
+    const getFullOptions = (options, form, width, slots, defaultNodeComponents) => {
+      const components = (options == null ? void 0 : options.components) ?? {};
+      const nodeComponents = { ...defaultNodeComponents, ...options == null ? void 0 : options.nodeComponents };
+      if (options == null ? void 0 : options.plugins) {
+        for (const plugin of options.plugins) {
+          components[plugin.info.name] = plugin.info;
+          nodeComponents[plugin.info.name] = plugin.nodeComponent;
+        }
+      }
       const fullOptions = {
         ...defaultOptions,
         readOnly: !!(form && (form.isDisabled.value || form.isReadonly.value)),
@@ -79750,149 +75360,15 @@ Reason: ${error2}`);
         context: (options == null ? void 0 : options.context) ? JSON.parse(JSON.stringify(options.context)) : {},
         width: Math.round(width ?? 0),
         vjsfSlots: { ...slots },
-        nodeComponents: { ...nodeComponents, ...options == null ? void 0 : options.nodeComponents }
+        components,
+        nodeComponents
       };
       return (
         /** @type import('../types.js').VjsfOptions */
         fullOptions
       );
     };
-    function moveArrayItem(array, fromIndex, toIndex) {
-      if (fromIndex === toIndex || fromIndex === -1 || toIndex === -1)
-        return array;
-      const newArray = [...array];
-      const element = newArray[fromIndex];
-      newArray.splice(fromIndex, 1);
-      newArray.splice(toIndex, 0, element);
-      return newArray;
-    }
-    const padTimeComponent = (val) => {
-      const s = "" + val;
-      return s.length === 1 ? "0" + s : s;
-    };
-    const getDateTimeParts = (date2) => {
-      return [`${date2.getFullYear()}-${padTimeComponent(date2.getMonth() + 1)}-${padTimeComponent(date2.getDate())}`, `${padTimeComponent(date2.getHours())}:${padTimeComponent(date2.getMinutes())}`];
-    };
-    const defaultProps = {
-      fieldProps: {},
-      fieldPropsCompact: {
-        density: "compact",
-        hideDetails: "auto"
-      },
-      fieldPropsComfortable: {
-        density: "comfortable"
-      },
-      fieldPropsReadOnly: { hideDetails: "auto", variant: "plain" },
-      fieldPropsSummary: { hideDetails: true },
-      textfieldProps: {},
-      textfieldPropsReadOnly: {},
-      textareaProps: {},
-      textareaPropsReadOnly: {},
-      // it is not very common to show an error below checkboxes and switches and without hide-details=auto they take a lot of space
-      checkboxProps: { hideDetails: "auto" },
-      checkboxPropsReadOnly: {},
-      switchProps: { hideDetails: "auto" },
-      switchPropsReadOnly: {}
-    };
-    function mergePropsLevels(propsLevels) {
-      const fullProps = { class: [] };
-      for (const propsLevel of propsLevels) {
-        if (propsLevel) {
-          for (const key of Object.keys(propsLevel)) {
-            if (key === "class") {
-              if (Array.isArray(propsLevel.class))
-                fullProps.class = fullProps.class.concat(propsLevel.class);
-              else
-                fullProps.class = [propsLevel.class];
-            } else {
-              fullProps[camelize(key)] = propsLevel[key];
-            }
-          }
-        }
-      }
-      return fullProps;
-    }
-    function getInputProps(node, statefulLayout, layoutPropsMap, isMainComp = true) {
-      const options = node.options;
-      const propsLevels = [defaultProps.fieldProps];
-      if (options.density === "comfortable")
-        propsLevels.push(defaultProps.fieldPropsComfortable);
-      if (options.density === "compact")
-        propsLevels.push(defaultProps.fieldPropsCompact);
-      if (node.options.readOnly)
-        propsLevels.push(defaultProps.fieldPropsReadOnly);
-      if (isMainComp) {
-        propsLevels.push(
-          /** @type Record<string, any> | undefined */
-          options[`${node.layout.comp}Props`]
-        );
-        if (node.options.readOnly)
-          propsLevels.push(
-            /** @type Record<string, any> | undefined */
-            options[`${node.layout.comp}PropsReadOnly`]
-          );
-        if (node.props)
-          propsLevels.push(node.props);
-      }
-      const fullProps = mergePropsLevels(propsLevels);
-      fullProps.label = node.layout.label;
-      if (node.error && node.validated) {
-        fullProps.errorMessages = node.error;
-      }
-      fullProps.modelValue = node.data;
-      if (node.options.readOnly) {
-        fullProps.disabled = true;
-        fullProps.class.push("vjsf-input--readonly");
-      }
-      if (node.autofocus) {
-        fullProps.class.push("vjsf-input--autofocus");
-      }
-      if (layoutPropsMap) {
-        for (const propMap2 of layoutPropsMap) {
-          if (typeof propMap2 === "string")
-            fullProps[propMap2] = node.layout[propMap2];
-          else
-            fullProps[propMap2[0]] = node.layout[propMap2[1]];
-        }
-      }
-      if (isMainComp) {
-        fullProps["onUpdate:modelValue"] = (value) => statefulLayout.input(node, value);
-        fullProps.onBlur = () => statefulLayout.blur(node);
-      }
-      return fullProps;
-    }
-    function getCompProps(node, comp2, isMainComp = true) {
-      const options = (
-        /** @type import('../types.js').VjsfOptions */
-        node.options
-      );
-      const propsLevels = [{ density: options.density }];
-      propsLevels.push(
-        /** @type Record<string, any> | undefined */
-        options[`${comp2}Props`]
-      );
-      if (node.options.readOnly)
-        propsLevels.push(
-          /** @type Record<string, any> | undefined */
-          options[`${comp2}PropsReadOnly`]
-        );
-      if (isMainComp)
-        propsLevels.push(node.layout.props);
-      const fullProps = mergePropsLevels(propsLevels);
-      if (isMainComp)
-        fullProps.modelValue = node.data;
-      return fullProps;
-    }
-    function getCompSlots(node, statefulLayout) {
-      if (!node.layout.slots)
-        return {};
-      const slots = {};
-      for (const [key, layoutSlot] of Object.entries(node.layout.slots)) {
-        slots[key] = () => h(_sfc_main$x, { layoutSlot, node, statefulLayout });
-      }
-      return slots;
-    }
-    const registeredNodeComponents = ref$1({});
+    setAutoFreeze(false);
     const emits = {
       /**
        * @arg {any} data
@@ -79930,20 +75406,28 @@ Reason: ${error2}`);
         });
       }
       const slots = useSlots();
-      const fullOptions = computed(() => getFullOptions(options.value, form, width.value, slots, { ...nodeComponents, ...toRaw(registeredNodeComponents.value) }));
+      const fullOptions = computed(() => getFullOptions(options.value, form, width.value, slots, { ...nodeComponents }));
+      const compileOptions = ref$1({});
+      watch(fullOptions, (newOptions) => {
+        if (precompiledLayout == null ? void 0 : precompiledLayout.value)
+          return;
+        const newCompileOptions = produceCompileOptions(compileOptions.value, newOptions);
+        console.log("compile options", newOptions, newCompileOptions);
+        if (newCompileOptions !== compileOptions.value)
+          compileOptions.value = newCompileOptions;
+      }, { immediate: true });
       const compiledLayout = computed(() => {
         if (precompiledLayout == null ? void 0 : precompiledLayout.value)
           return precompiledLayout == null ? void 0 : precompiledLayout.value;
         if (!compile2)
           throw new Error("compile function is not available");
-        const compiledLayout2 = compile2(schema2.value, fullOptions.value);
+        const compiledLayout2 = compile2(schema2.value, compileOptions.value);
         return compiledLayout2;
       });
       const onStatefulLayoutUpdate = () => {
         if (!statefulLayout.value)
           return;
         stateTree.value = statefulLayout.value.stateTree;
-        emit2("update:modelValue", statefulLayout.value.data);
         emit2("update:state", statefulLayout.value);
         if (form) {
           if (statefulLayout.value.valid)
@@ -79952,6 +75436,11 @@ Reason: ${error2}`);
             form.update("vjsf", null, []);
           else
             form.update("vjsf", false, []);
+        }
+      };
+      const onDataUpdate = () => {
+        if (statefulLayout.value && modelValue !== statefulLayout.value.data) {
+          emit2("update:modelValue", statefulLayout.value.data);
         }
       };
       const initStatefulLayout = () => {
@@ -79968,8 +75457,12 @@ Reason: ${error2}`);
         );
         statefulLayout.value = _statefulLayout;
         onStatefulLayoutUpdate();
+        onDataUpdate();
         _statefulLayout.events.on("update", () => {
           onStatefulLayoutUpdate();
+        });
+        _statefulLayout.events.on("data", () => {
+          onDataUpdate();
         });
         emit2("update:state", _statefulLayout);
         _statefulLayout.events.on("autofocus", () => {
@@ -79984,8 +75477,6 @@ Reason: ${error2}`);
         });
       };
       watch(fullOptions, (newOptions) => {
-        if (!(precompiledLayout == null ? void 0 : precompiledLayout.value))
-          return;
         if (statefulLayout.value) {
           statefulLayout.value.options = newOptions;
         } else {
@@ -80046,15 +75537,17 @@ Reason: ${error2}`);
               key: 1,
               class: normalizeClass(`text-subtitle mt-${titleDepthBase.value - __props.node.options.titleDepth}`)
             }, toDisplayString(__props.node.layout.subtitle), 3)) : createCommentVNode("", true),
-            __props.node.error && __props.node.validated ? (openBlock(), createBlock(unref(VAlert), mergeProps({ key: 2 }, __props.node.options.errorAlertProps, {
-              class: `mt-${titleDepthBase.value - __props.node.options.titleDepth}`,
+            __props.node.error && __props.node.validated ? (openBlock(), createBlock(unref(VAlert), {
+              key: 2,
+              type: "error",
+              class: normalizeClass(`mt-${titleDepthBase.value - __props.node.options.titleDepth}`),
               density: __props.node.options.density
-            }), {
+            }, {
               default: withCtx(() => [
                 createTextVNode(toDisplayString(__props.node.error), 1)
               ]),
               _: 1
-            }, 16, ["class", "density"])) : createCommentVNode("", true)
+            }, 8, ["class", "density"])) : createCommentVNode("", true)
           ], 2)) : createCommentVNode("", true);
         };
       }
@@ -80099,6 +75592,117 @@ Reason: ${error2}`);
         };
       }
     };
+    function moveArrayItem(array, fromIndex, toIndex) {
+      if (fromIndex === toIndex || fromIndex === -1 || toIndex === -1)
+        return array;
+      const newArray = [...array];
+      const element = newArray[fromIndex];
+      newArray.splice(fromIndex, 1);
+      newArray.splice(toIndex, 0, element);
+      return newArray;
+    }
+    const padTimeComponent = (val) => {
+      const s = "" + val;
+      return s.length === 1 ? "0" + s : s;
+    };
+    const getDateTimeParts = (date2) => {
+      return [`${date2.getFullYear()}-${padTimeComponent(date2.getMonth() + 1)}-${padTimeComponent(date2.getDate())}`, `${padTimeComponent(date2.getHours())}:${padTimeComponent(date2.getMinutes())}`];
+    };
+    const defaultProps = {
+      fieldPropsCompact: {
+        density: "compact",
+        hideDetails: "auto"
+      },
+      fieldPropsComfortable: {
+        density: "comfortable"
+      },
+      fieldPropsReadOnly: { hideDetails: "auto", variant: "plain" },
+      fieldPropsSummary: { hideDetails: true }
+    };
+    function mergePropsLevels(propsLevels) {
+      const fullProps = { class: [] };
+      for (const propsLevel of propsLevels) {
+        if (propsLevel) {
+          for (const key of Object.keys(propsLevel)) {
+            if (key === "class") {
+              if (Array.isArray(propsLevel.class))
+                fullProps.class = fullProps.class.concat(propsLevel.class);
+              else
+                fullProps.class = [propsLevel.class];
+            } else {
+              fullProps[camelize(key)] = propsLevel[key];
+            }
+          }
+        }
+      }
+      return fullProps;
+    }
+    function getInputProps(node, statefulLayout, layoutPropsMap, isMainComp = true) {
+      const options = node.options;
+      const propsLevels = [];
+      if (options.density === "comfortable")
+        propsLevels.push(defaultProps.fieldPropsComfortable);
+      if (options.density === "compact")
+        propsLevels.push(defaultProps.fieldPropsCompact);
+      if (node.options.readOnly)
+        propsLevels.push(defaultProps.fieldPropsReadOnly);
+      if (isMainComp && node.props)
+        propsLevels.push(node.props);
+      const fullProps = mergePropsLevels(propsLevels);
+      fullProps.label = node.layout.label;
+      if (node.error && node.validated) {
+        fullProps.errorMessages = node.error;
+      }
+      fullProps.modelValue = typeof node.data === "string" && node.layout.separator ? node.data.split(
+        /** @type {string} */
+        node.layout.separator
+      ) : node.data;
+      if (node.options.readOnly) {
+        fullProps.disabled = true;
+        fullProps.class.push("vjsf-input--readonly");
+      }
+      if (node.autofocus) {
+        fullProps.class.push("vjsf-input--autofocus");
+      }
+      if (layoutPropsMap) {
+        for (const propMap2 of layoutPropsMap) {
+          if (typeof propMap2 === "string")
+            fullProps[propMap2] = node.layout[propMap2];
+          else
+            fullProps[propMap2[0]] = node.layout[propMap2[1]];
+        }
+      }
+      if (isMainComp) {
+        fullProps["onUpdate:modelValue"] = (value) => {
+          return statefulLayout.input(node, Array.isArray(value) && node.layout.separator ? value.join(
+            /** @type {string} */
+            node.layout.separator
+          ) : value);
+        };
+        fullProps.onBlur = () => statefulLayout.blur(node);
+      }
+      return fullProps;
+    }
+    function getCompProps(node, isMainComp = true) {
+      const options = (
+        /** @type import('../types.js').VjsfOptions */
+        node.options
+      );
+      const propsLevels = [{ density: options.density }];
+      if (isMainComp)
+        propsLevels.push(node.layout.props);
+      const fullProps = mergePropsLevels(propsLevels);
+      return fullProps;
+    }
+    function getCompSlots(node, statefulLayout) {
+      if (!node.layout.slots)
+        return {};
+      const slots = {};
+      for (const [key, layoutSlot] of Object.entries(node.layout.slots)) {
+        slots[key] = () => h(_sfc_main$x, { layoutSlot, node, statefulLayout });
+      }
+      return slots;
+    }
     const _sfc_main$r = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
@@ -80165,7 +75769,12 @@ Reason: ${error2}`);
       },
       setup(__props) {
         const props = __props;
-        const fieldProps = computed(() => getInputProps(props.modelValue, props.statefulLayout));
+        const fieldProps = computed(() => {
+          const inputProps = getInputProps(props.modelValue, props.statefulLayout);
+          if (!("hideDetails" in inputProps))
+            inputProps.hideDetails = "auto";
+          return inputProps;
+        });
         return (_ctx, _cache) => {
           return openBlock(), createBlock(unref(VCheckbox), mergeProps(fieldProps.value, {
             "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value))
@@ -80189,9 +75798,12 @@ Reason: ${error2}`);
       },
       setup(__props) {
         const props = __props;
-        const fieldProps = computed(
-          () => getInputProps(props.modelValue, props.statefulLayout)
-        );
+        const fieldProps = computed(() => {
+          const inputProps = getInputProps(props.modelValue, props.statefulLayout);
+          if (!("hideDetails" in inputProps))
+            inputProps.hideDetails = "auto";
+          return inputProps;
+        });
         return (_ctx, _cache) => {
           return openBlock(), createBlock(unref(VSwitch), mergeProps(fieldProps.value, {
             "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value))
@@ -80281,7 +75893,7 @@ Reason: ${error2}`);
           return fieldProps2;
         });
         const menuProps = computed(() => {
-          const menuProps2 = getCompProps(props.modelValue, "menu", false);
+          const menuProps2 = getCompProps(props.modelValue);
           menuProps2.closeOnContentClick = false;
           menuProps2.disabled = true;
           return menuProps2;
@@ -80340,7 +75952,7 @@ Reason: ${error2}`);
         const props = __props;
         const vDate = useDate();
         const datePickerProps = computed(() => {
-          const datePickerProps2 = getCompProps(props.modelValue, "datePicker", true);
+          const datePickerProps2 = getCompProps(props.modelValue, true);
           datePickerProps2.hideActions = true;
           if (props.modelValue.data)
             datePickerProps2.modelValue = new Date(props.modelValue.data);
@@ -80406,7 +76018,8 @@ Reason: ${error2}`);
       setup(__props) {
         const props = __props;
         const colorPickerProps = computed(() => {
-          const colorPickerProps2 = getCompProps(props.modelValue, "colorPicker", true);
+          const colorPickerProps2 = getCompProps(props.modelValue, true);
+          colorPickerProps2.modelValue = props.modelValue.data;
           return colorPickerProps2;
         });
         return (_ctx, _cache) => {
@@ -81055,7 +76668,7 @@ Reason: ${error2}`);
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
             createVNode(_sfc_main$t, { node: __props.modelValue }, null, 8, ["node"]),
-            createVNode(unref(VExpansionPanels), null, {
+            createVNode(unref(VExpansionPanels), normalizeProps(guardReactiveProps(unref(getCompProps)(__props.modelValue, true))), {
               default: withCtx(() => [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child, i2) => {
                   return openBlock(), createBlock(unref(VExpansionPanel), {
@@ -81079,20 +76692,25 @@ Reason: ${error2}`);
                         ]),
                         _: 2
                       }, 1024),
-                      createVNode(unref(VContainer), { fluid: "" }, {
+                      createVNode(unref(VExpansionPanelText), null, {
                         default: withCtx(() => [
-                          createVNode(unref(VRow), null, {
+                          createVNode(unref(VContainer), { fluid: "" }, {
                             default: withCtx(() => [
-                              (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                return openBlock(), createBlock(_sfc_main$v, {
-                                  key: grandChild.fullKey,
-                                  "model-value": (
-                                    /** @type import('../../types.js').VjsfNode */
-                                    grandChild
-                                  ),
-                                  "stateful-layout": __props.statefulLayout
-                                }, null, 8, ["model-value", "stateful-layout"]);
-                              }), 128))
+                              createVNode(unref(VRow), null, {
+                                default: withCtx(() => [
+                                  (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
+                                    return openBlock(), createBlock(_sfc_main$v, {
+                                      key: grandChild.fullKey,
+                                      "model-value": (
+                                        /** @type import('../../types.js').VjsfNode */
+                                        grandChild
+                                      ),
+                                      "stateful-layout": __props.statefulLayout
+                                    }, null, 8, ["model-value", "stateful-layout"]);
+                                  }), 128))
+                                ]),
+                                _: 2
+                              }, 1024)
                             ]),
                             _: 2
                           }, 1024)
@@ -81105,7 +76723,7 @@ Reason: ${error2}`);
                 }), 128))
               ]),
               _: 1
-            })
+            }, 16)
           ], 64);
         };
       }
@@ -81334,6 +76952,11 @@ Reason: ${error2}`);
             return "comfortable";
           return props.modelValue.options.density;
         });
+        const pushEmptyItem = () => {
+          const newData = (props.modelValue.data ?? []).concat([void 0]);
+          props.statefulLayout.input(props.modelValue, newData);
+          props.statefulLayout.activateItem(props.modelValue, newData.length - 1);
+        };
         return (_ctx, _cache) => {
           return openBlock(), createBlock(unref(VSheet), { elevation: 1 }, {
             default: withCtx(() => [
@@ -81351,7 +76974,7 @@ Reason: ${error2}`);
                     return openBlock(), createElementBlock(Fragment, {
                       key: props.modelValue.children.findIndex((c) => c === child)
                     }, [
-                      createVNode(unref(VListItem), mergeProps(unref(itemBind)(childIndex), {
+                      createVNode(unref(VListItem), mergeProps({ ref_for: true }, unref(itemBind)(childIndex), {
                         density: __props.modelValue.options.density,
                         draggable: unref(draggable) === childIndex,
                         variant: editedItem.value === childIndex ? "outlined" : "flat",
@@ -81408,7 +77031,8 @@ Reason: ${error2}`);
                                     title: __props.modelValue.messages.sort,
                                     icon: "mdi-arrow-up-down",
                                     variant: "plain",
-                                    density: buttonDensity.value
+                                    density: buttonDensity.value,
+                                    ref_for: true
                                   }, unref(handleBind)(childIndex)), null, 16, ["title", "density"])
                                 ]),
                                 _: 2
@@ -81422,7 +77046,7 @@ Reason: ${error2}`);
                                     }
                                   }, {
                                     activator: withCtx(({ props: activatorProps }) => [
-                                      createVNode(unref(VBtn), mergeProps(activatorProps, {
+                                      createVNode(unref(VBtn), mergeProps({ ref_for: true }, activatorProps, {
                                         icon: "mdi-dots-vertical",
                                         variant: "plain",
                                         slim: "",
@@ -81506,7 +77130,7 @@ Reason: ${error2}`);
                       createVNode(unref(VBtn), {
                         color: "primary",
                         density: __props.modelValue.options.density,
-                        onClick: _cache[1] || (_cache[1] = ($event) => __props.statefulLayout.input(__props.modelValue, (__props.modelValue.data ?? []).concat([void 0])))
+                        onClick: pushEmptyItem
                       }, {
                         default: withCtx(() => [
                           createTextVNode(toDisplayString(__props.modelValue.messages.addItem), 1)

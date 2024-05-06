@@ -30114,7 +30114,7 @@
   font-style: normal;
   font-display: swap;
   font-weight: 400;
-  src: url(/everest-admin-panel/pr-173/assets/roboto-latin-ext-400-normal-OGy6Zcg4.woff2) format('woff2'), url(/everest-admin-panel/pr-173/assets/roboto-latin-ext-400-normal-AAQCGnn4.woff) format('woff');
+  src: url(/everest-admin-panel/pr-173/assets/roboto-latin-ext-400-normal-OGy6Zcg4.woff2) format('woff2'), url(/everest-admin-panel/pr-173/assets/roboto-latin-ext-400-normal-5aATcKHE.woff) format('woff');
   unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
 }
 
@@ -30200,7 +30200,6 @@ html {
   flex-direction: column;
   justify-content: space-between;
   max-width: 100%;
-  overflow: hidden;
   position: relative;
   transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transition-property: height, width, transform, max-width, left, right, top, bottom, box-shadow;
@@ -30248,6 +30247,9 @@ html {
   width: 100%;
 }
 
+.v-toolbar__content {
+  overflow: hidden;
+}
 .v-toolbar__content > .v-btn:first-child {
   margin-inline-start: 10px;
 }
@@ -30692,6 +30694,9 @@ html {
 .v-btn--slim {
   padding: 0 8px;
 }
+.v-btn--readonly {
+  pointer-events: none;
+}
 .v-btn--rounded {
   border-radius: 24px;
 }
@@ -30717,6 +30722,10 @@ html {
   position: absolute;
   top: 0;
   width: 100%;
+}
+.v-btn__loader > .v-progress-circular {
+  width: 1.5em;
+  height: 1.5em;
 }
 
 .v-btn__content,
@@ -30873,6 +30882,10 @@ html {
 .v-icon--clickable {
   cursor: pointer;
 }
+.v-icon--disabled {
+  pointer-events: none;
+  opacity: 0.38;
+}
 .v-icon--size-x-small {
   font-size: calc(var(--v-icon-size-multiplier) * 1em);
 }
@@ -31014,13 +31027,15 @@ html {
   border-radius: 9999px;
 }
 
-.v-progress-linear__background {
+.v-progress-linear__background,
+.v-progress-linear__buffer {
   background: currentColor;
   bottom: 0;
   left: 0;
   opacity: var(--v-border-opacity);
   position: absolute;
   top: 0;
+  width: 100%;
   transition-property: width, left, right;
   transition: inherit;
 }
@@ -31061,7 +31076,6 @@ html {
   right: auto;
   top: 0;
   width: auto;
-  will-change: left, right;
 }
 .v-progress-linear__indeterminate .long {
   animation-name: indeterminate-ltr;
@@ -31444,7 +31458,7 @@ html {
   word-wrap: break-word;
 }
 .v-card .v-card-title {
-  line-height: 2rem;
+  line-height: 1.6;
 }
 .v-card--density-comfortable .v-card-title {
   line-height: 1.75rem;
@@ -31466,7 +31480,7 @@ html {
   font-size: 0.875rem;
   font-weight: 400;
   letter-spacing: 0.0178571429em;
-  opacity: var(--v-medium-emphasis-opacity);
+  opacity: var(--v-card-subtitle-opacity, var(--v-medium-emphasis-opacity));
   overflow: hidden;
   padding: 0 1rem;
   text-overflow: ellipsis;
@@ -31474,7 +31488,7 @@ html {
   white-space: nowrap;
 }
 .v-card .v-card-subtitle {
-  line-height: 1.25rem;
+  line-height: 1.425;
 }
 .v-card--density-comfortable .v-card-subtitle {
   line-height: 1.125rem;
@@ -31491,11 +31505,12 @@ html {
   font-size: 0.875rem;
   font-weight: 400;
   letter-spacing: 0.0178571429em;
+  opacity: var(--v-card-text-opacity, 1);
   padding: 1rem;
   text-transform: none;
 }
 .v-card .v-card-text {
-  line-height: 1.25rem;
+  line-height: 1.425;
 }
 .v-card--density-comfortable .v-card-text {
   line-height: 1.2rem;
@@ -31626,6 +31641,12 @@ html {
 }
 .v-avatar--rounded {
   border-radius: 4px;
+}
+.v-avatar--start {
+  margin-inline-end: 8px;
+}
+.v-avatar--end {
+  margin-inline-start: 8px;
 }
 .v-avatar .v-img {
   height: 100%;
@@ -32516,6 +32537,9 @@ html {
 .v-list-item--active .v-list-item__append > .v-icon {
   opacity: 1;
 }
+.v-list-item--active:not(.v-list-item--link) .v-list-item__overlay {
+  opacity: calc(var(--v-activated-opacity) * var(--v-theme-overlay-multiplier));
+}
 .v-list-item--rounded {
   border-radius: 4px;
 }
@@ -32644,7 +32668,7 @@ html {
 .v-list-item-subtitle {
   -webkit-box-orient: vertical;
   display: -webkit-box;
-  opacity: var(--v-medium-emphasis-opacity);
+  opacity: var(--v-list-item-subtitle-opacity, var(--v-medium-emphasis-opacity));
   overflow: hidden;
   padding: 0;
   text-overflow: ellipsis;
@@ -32684,7 +32708,7 @@ html {
   font-size: 1rem;
   font-weight: 400;
   letter-spacing: 0.009375em;
-  line-height: 1.5rem;
+  line-height: 1.5;
   text-transform: none;
 }
 .v-list-item--nav .v-list-item-title {
@@ -32865,7 +32889,7 @@ html {
   align-self: stretch;
   border-width: 0 thin 0 0;
   display: inline-flex;
-  height: inherit;
+  height: 100%;
   margin-left: -1px;
   max-height: 100%;
   max-width: 0px;
@@ -32880,6 +32904,26 @@ html {
   margin-bottom: 8px;
   margin-top: 8px;
   max-height: calc(100% - 16px);
+}
+
+.v-divider__content {
+  padding: 0 16px;
+}
+.v-divider__wrapper--vertical .v-divider__content {
+  padding: 4px 0;
+}
+
+.v-divider__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.v-divider__wrapper--vertical {
+  flex-direction: column;
+  height: 100%;
+}
+.v-divider__wrapper--vertical .v-divider {
+  margin: 0 auto;
 }.v-main {
   flex: 1 0 auto;
   max-width: 100%;
@@ -32934,6 +32978,10 @@ html {
 .v-navigation-drawer--rounded {
   border-radius: 4px;
 }
+.v-navigation-drawer--top, .v-navigation-drawer--bottom {
+  max-height: -webkit-fill-available;
+  overflow-y: auto;
+}
 .v-navigation-drawer--top {
   top: 0;
   border-bottom-width: thin;
@@ -32957,7 +33005,7 @@ html {
 .v-navigation-drawer--floating {
   border: none;
 }
-.v-navigation-drawer--temporary {
+.v-navigation-drawer--temporary.v-navigation-drawer--active {
   box-shadow: 0px 8px 10px -5px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 16px 24px 2px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 6px 30px 5px var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12));
 }
 .v-navigation-drawer--sticky {
@@ -32984,7 +33032,7 @@ html {
   width: 100%;
   z-index: -1;
 }
-.v-navigation-drawer__img img {
+.v-navigation-drawer__img img:not(.v-img__img) {
   height: inherit;
   object-fit: cover;
   width: inherit;
@@ -33649,6 +33697,9 @@ html.v-overlay-scroll-blocked {
   border-width: 0;
   border-radius: 9999px;
 }
+.v-chip .v-icon {
+  --v-icon-size-multiplier: 0.8571428571;
+}
 .v-chip.v-chip--size-x-small {
   --v-chip-size: 0.625rem;
   --v-chip-height: 20px;
@@ -33899,11 +33950,11 @@ html.v-overlay-scroll-blocked {
 }
 
 .v-chip.v-chip--density-comfortable {
-  height: calc(var(--v-chip-height) + -8px);
+  height: calc(var(--v-chip-height) + -4px);
 }
 
 .v-chip.v-chip--density-compact {
-  height: calc(var(--v-chip-height) + -12px);
+  height: calc(var(--v-chip-height) + -8px);
 }
 
 .v-chip:hover > .v-chip__overlay {
@@ -33977,7 +34028,7 @@ html.v-overlay-scroll-blocked {
 .v-chip--link {
   cursor: pointer;
 }
-.v-chip--filter {
+.v-chip--link, .v-chip--filter {
   user-select: none;
 }
 .v-chip--label {
@@ -34090,13 +34141,26 @@ html.v-overlay-scroll-blocked {
   contain: content;
   display: flex;
   flex: 1 1 auto;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  scrollbar-color: rgba(0, 0, 0, 0);
+}
+.v-slide-group__container::-webkit-scrollbar {
+  display: none;
 }
 
+.v-slide-group--vertical {
+  max-height: inherit;
+}
 .v-slide-group--vertical,
 .v-slide-group--vertical .v-slide-group__container,
 .v-slide-group--vertical .v-slide-group__content {
   flex-direction: column;
+}
+.v-slide-group--vertical .v-slide-group__container {
+  overflow-x: hidden;
+  overflow-y: auto;
 }.v-menu > .v-overlay__content {
   display: flex;
   flex-direction: column;
@@ -34297,7 +34361,7 @@ html.v-overlay-scroll-blocked {
   box-shadow: none;
 }
 .v-field--rounded {
-  border-radius: 9999px;
+  border-radius: 24px;
 }
 .v-field.v-field--prepended {
   --v-field-padding-start: 6px;
@@ -34668,6 +34732,8 @@ textarea.v-field__input::placeholder {
 }
 .v-field--variant-outlined .v-field__loader {
   top: calc(100% - 3px);
+  width: calc(100% - 1px * 2);
+  left: 1px;
 }
 
 /* endregion */
@@ -37474,10 +37540,10 @@ progress {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .picker-transition-enter-from {
-  transform: translate(0, 100%);
+  transform: translate(100%, 0);
 }
 .picker-transition-leave-to {
-  transform: translate(0, -100%);
+  transform: translate(-100%, 0);
 }
 
 .picker-reverse-transition-enter-active {
@@ -37494,10 +37560,10 @@ progress {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 .picker-reverse-transition-enter-from {
-  transform: translate(0, -100%);
+  transform: translate(-100%, 0);
 }
 .picker-reverse-transition-leave-to {
-  transform: translate(0, 100%);
+  transform: translate(100%, 0);
 }
 
 .expand-transition-enter-active {
@@ -38126,6 +38192,10 @@ html.overflow-y-hidden {
   overflow: visible !important;
 }
 
+.overflow-scroll {
+  overflow: scroll !important;
+}
+
 .overflow-x-auto {
   overflow-x: auto !important;
 }
@@ -38134,12 +38204,20 @@ html.overflow-y-hidden {
   overflow-x: hidden !important;
 }
 
+.overflow-x-scroll {
+  overflow-x: scroll !important;
+}
+
 .overflow-y-auto {
   overflow-y: auto !important;
 }
 
 .overflow-y-hidden {
   overflow-y: hidden !important;
+}
+
+.overflow-y-scroll {
+  overflow-y: scroll !important;
 }
 
 .d-none {
@@ -41136,6 +41214,12 @@ html.overflow-y-hidden {
   border-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
 }
 
+.border-thin {
+  border-width: thin !important;
+  border-style: solid !important;
+  border-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+}
+
 .border-sm {
   border-width: 1px !important;
   border-style: solid !important;
@@ -41196,6 +41280,12 @@ html.overflow-y-hidden {
   border-block-start-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
 }
 
+.border-t-thin {
+  border-block-start-width: thin !important;
+  border-block-start-style: solid !important;
+  border-block-start-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+}
+
 .border-t-sm {
   border-block-start-width: 1px !important;
   border-block-start-style: solid !important;
@@ -41227,6 +41317,12 @@ html.overflow-y-hidden {
 }
 
 .border-e {
+  border-inline-end-width: thin !important;
+  border-inline-end-style: solid !important;
+  border-inline-end-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+}
+
+.border-e-thin {
   border-inline-end-width: thin !important;
   border-inline-end-style: solid !important;
   border-inline-end-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
@@ -41268,6 +41364,12 @@ html.overflow-y-hidden {
   border-block-end-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
 }
 
+.border-b-thin {
+  border-block-end-width: thin !important;
+  border-block-end-style: solid !important;
+  border-block-end-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+}
+
 .border-b-sm {
   border-block-end-width: 1px !important;
   border-block-end-style: solid !important;
@@ -41299,6 +41401,12 @@ html.overflow-y-hidden {
 }
 
 .border-s {
+  border-inline-start-width: thin !important;
+  border-inline-start-style: solid !important;
+  border-inline-start-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+}
+
+.border-s-thin {
   border-inline-start-width: thin !important;
   border-inline-start-style: solid !important;
   border-inline-start-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
@@ -41413,6 +41521,74 @@ html.overflow-y-hidden {
   word-break: break-word !important;
 }
 
+.opacity-hover {
+  opacity: var(--v-hover-opacity) !important;
+}
+
+.opacity-focus {
+  opacity: var(--v-focus-opacity) !important;
+}
+
+.opacity-selected {
+  opacity: var(--v-selected-opacity) !important;
+}
+
+.opacity-activated {
+  opacity: var(--v-activated-opacity) !important;
+}
+
+.opacity-pressed {
+  opacity: var(--v-pressed-opacity) !important;
+}
+
+.opacity-dragged {
+  opacity: var(--v-dragged-opacity) !important;
+}
+
+.opacity-0 {
+  opacity: 0 !important;
+}
+
+.opacity-10 {
+  opacity: 0.1 !important;
+}
+
+.opacity-20 {
+  opacity: 0.2 !important;
+}
+
+.opacity-30 {
+  opacity: 0.3 !important;
+}
+
+.opacity-40 {
+  opacity: 0.4 !important;
+}
+
+.opacity-50 {
+  opacity: 0.5 !important;
+}
+
+.opacity-60 {
+  opacity: 0.6 !important;
+}
+
+.opacity-70 {
+  opacity: 0.7 !important;
+}
+
+.opacity-80 {
+  opacity: 0.8 !important;
+}
+
+.opacity-90 {
+  opacity: 0.9 !important;
+}
+
+.opacity-100 {
+  opacity: 1 !important;
+}
+
 .text-high-emphasis {
   color: rgba(var(--v-theme-on-background), var(--v-high-emphasis-opacity)) !important;
 }
@@ -41434,7 +41610,7 @@ html.overflow-y-hidden {
 .text-h1 {
   font-size: 6rem !important;
   font-weight: 300;
-  line-height: 6rem;
+  line-height: 1;
   letter-spacing: -0.015625em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41443,7 +41619,7 @@ html.overflow-y-hidden {
 .text-h2 {
   font-size: 3.75rem !important;
   font-weight: 300;
-  line-height: 3.75rem;
+  line-height: 1;
   letter-spacing: -0.0083333333em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41452,7 +41628,7 @@ html.overflow-y-hidden {
 .text-h3 {
   font-size: 3rem !important;
   font-weight: 400;
-  line-height: 3.125rem;
+  line-height: 1.05;
   letter-spacing: normal !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41461,7 +41637,7 @@ html.overflow-y-hidden {
 .text-h4 {
   font-size: 2.125rem !important;
   font-weight: 400;
-  line-height: 2.5rem;
+  line-height: 1.175;
   letter-spacing: 0.0073529412em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41470,7 +41646,7 @@ html.overflow-y-hidden {
 .text-h5 {
   font-size: 1.5rem !important;
   font-weight: 400;
-  line-height: 2rem;
+  line-height: 1.333;
   letter-spacing: normal !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41479,7 +41655,7 @@ html.overflow-y-hidden {
 .text-h6 {
   font-size: 1.25rem !important;
   font-weight: 500;
-  line-height: 2rem;
+  line-height: 1.6;
   letter-spacing: 0.0125em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41488,7 +41664,7 @@ html.overflow-y-hidden {
 .text-subtitle-1 {
   font-size: 1rem !important;
   font-weight: normal;
-  line-height: 1.75rem;
+  line-height: 1.75;
   letter-spacing: 0.009375em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41497,7 +41673,7 @@ html.overflow-y-hidden {
 .text-subtitle-2 {
   font-size: 0.875rem !important;
   font-weight: 500;
-  line-height: 1.375rem;
+  line-height: 1.6;
   letter-spacing: 0.0071428571em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41506,7 +41682,7 @@ html.overflow-y-hidden {
 .text-body-1 {
   font-size: 1rem !important;
   font-weight: 400;
-  line-height: 1.5rem;
+  line-height: 1.5;
   letter-spacing: 0.03125em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41515,7 +41691,7 @@ html.overflow-y-hidden {
 .text-body-2 {
   font-size: 0.875rem !important;
   font-weight: 400;
-  line-height: 1.25rem;
+  line-height: 1.425;
   letter-spacing: 0.0178571429em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41524,7 +41700,7 @@ html.overflow-y-hidden {
 .text-button {
   font-size: 0.875rem !important;
   font-weight: 500;
-  line-height: 2.25rem;
+  line-height: 2.6;
   letter-spacing: 0.0892857143em !important;
   font-family: "Roboto", sans-serif;
   text-transform: uppercase !important;
@@ -41533,7 +41709,7 @@ html.overflow-y-hidden {
 .text-caption {
   font-size: 0.75rem !important;
   font-weight: 400;
-  line-height: 1.25rem;
+  line-height: 1.667;
   letter-spacing: 0.0333333333em !important;
   font-family: "Roboto", sans-serif;
   text-transform: none !important;
@@ -41542,7 +41718,7 @@ html.overflow-y-hidden {
 .text-overline {
   font-size: 0.75rem !important;
   font-weight: 500;
-  line-height: 2rem;
+  line-height: 2.667;
   letter-spacing: 0.1666666667em !important;
   font-family: "Roboto", sans-serif;
   text-transform: uppercase !important;
@@ -41614,6 +41790,22 @@ html.overflow-y-hidden {
 
 .position-sticky {
   position: sticky !important;
+}
+
+.top-0 {
+  top: 0 !important;
+}
+
+.right-0 {
+  right: 0 !important;
+}
+
+.bottom-0 {
+  bottom: 0 !important;
+}
+
+.left-0 {
+  left: 0 !important;
 }
 
 .cursor-auto {
@@ -43620,7 +43812,7 @@ html.overflow-y-hidden {
   .text-sm-h1 {
     font-size: 6rem !important;
     font-weight: 300;
-    line-height: 6rem;
+    line-height: 1;
     letter-spacing: -0.015625em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43628,7 +43820,7 @@ html.overflow-y-hidden {
   .text-sm-h2 {
     font-size: 3.75rem !important;
     font-weight: 300;
-    line-height: 3.75rem;
+    line-height: 1;
     letter-spacing: -0.0083333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43636,7 +43828,7 @@ html.overflow-y-hidden {
   .text-sm-h3 {
     font-size: 3rem !important;
     font-weight: 400;
-    line-height: 3.125rem;
+    line-height: 1.05;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43644,7 +43836,7 @@ html.overflow-y-hidden {
   .text-sm-h4 {
     font-size: 2.125rem !important;
     font-weight: 400;
-    line-height: 2.5rem;
+    line-height: 1.175;
     letter-spacing: 0.0073529412em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43652,7 +43844,7 @@ html.overflow-y-hidden {
   .text-sm-h5 {
     font-size: 1.5rem !important;
     font-weight: 400;
-    line-height: 2rem;
+    line-height: 1.333;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43660,7 +43852,7 @@ html.overflow-y-hidden {
   .text-sm-h6 {
     font-size: 1.25rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 1.6;
     letter-spacing: 0.0125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43668,7 +43860,7 @@ html.overflow-y-hidden {
   .text-sm-subtitle-1 {
     font-size: 1rem !important;
     font-weight: normal;
-    line-height: 1.75rem;
+    line-height: 1.75;
     letter-spacing: 0.009375em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43676,7 +43868,7 @@ html.overflow-y-hidden {
   .text-sm-subtitle-2 {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 1.375rem;
+    line-height: 1.6;
     letter-spacing: 0.0071428571em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43684,7 +43876,7 @@ html.overflow-y-hidden {
   .text-sm-body-1 {
     font-size: 1rem !important;
     font-weight: 400;
-    line-height: 1.5rem;
+    line-height: 1.5;
     letter-spacing: 0.03125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43692,7 +43884,7 @@ html.overflow-y-hidden {
   .text-sm-body-2 {
     font-size: 0.875rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.425;
     letter-spacing: 0.0178571429em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43700,7 +43892,7 @@ html.overflow-y-hidden {
   .text-sm-button {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 2.25rem;
+    line-height: 2.6;
     letter-spacing: 0.0892857143em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
@@ -43708,7 +43900,7 @@ html.overflow-y-hidden {
   .text-sm-caption {
     font-size: 0.75rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.667;
     letter-spacing: 0.0333333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -43716,10 +43908,55 @@ html.overflow-y-hidden {
   .text-sm-overline {
     font-size: 0.75rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 2.667;
     letter-spacing: 0.1666666667em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
+  }
+  .h-sm-auto {
+    height: auto !important;
+  }
+  .h-sm-screen {
+    height: 100vh !important;
+  }
+  .h-sm-0 {
+    height: 0 !important;
+  }
+  .h-sm-25 {
+    height: 25% !important;
+  }
+  .h-sm-50 {
+    height: 50% !important;
+  }
+  .h-sm-75 {
+    height: 75% !important;
+  }
+  .h-sm-100 {
+    height: 100% !important;
+  }
+  .w-sm-auto {
+    width: auto !important;
+  }
+  .w-sm-0 {
+    width: 0 !important;
+  }
+  .w-sm-25 {
+    width: 25% !important;
+  }
+  .w-sm-33 {
+    width: 33% !important;
+  }
+  .w-sm-50 {
+    width: 50% !important;
+  }
+  .w-sm-66 {
+    width: 66% !important;
+  }
+  .w-sm-75 {
+    width: 75% !important;
+  }
+  .w-sm-100 {
+    width: 100% !important;
   }
 }
 @media (min-width: 960px) {
@@ -45610,7 +45847,7 @@ html.overflow-y-hidden {
   .text-md-h1 {
     font-size: 6rem !important;
     font-weight: 300;
-    line-height: 6rem;
+    line-height: 1;
     letter-spacing: -0.015625em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45618,7 +45855,7 @@ html.overflow-y-hidden {
   .text-md-h2 {
     font-size: 3.75rem !important;
     font-weight: 300;
-    line-height: 3.75rem;
+    line-height: 1;
     letter-spacing: -0.0083333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45626,7 +45863,7 @@ html.overflow-y-hidden {
   .text-md-h3 {
     font-size: 3rem !important;
     font-weight: 400;
-    line-height: 3.125rem;
+    line-height: 1.05;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45634,7 +45871,7 @@ html.overflow-y-hidden {
   .text-md-h4 {
     font-size: 2.125rem !important;
     font-weight: 400;
-    line-height: 2.5rem;
+    line-height: 1.175;
     letter-spacing: 0.0073529412em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45642,7 +45879,7 @@ html.overflow-y-hidden {
   .text-md-h5 {
     font-size: 1.5rem !important;
     font-weight: 400;
-    line-height: 2rem;
+    line-height: 1.333;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45650,7 +45887,7 @@ html.overflow-y-hidden {
   .text-md-h6 {
     font-size: 1.25rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 1.6;
     letter-spacing: 0.0125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45658,7 +45895,7 @@ html.overflow-y-hidden {
   .text-md-subtitle-1 {
     font-size: 1rem !important;
     font-weight: normal;
-    line-height: 1.75rem;
+    line-height: 1.75;
     letter-spacing: 0.009375em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45666,7 +45903,7 @@ html.overflow-y-hidden {
   .text-md-subtitle-2 {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 1.375rem;
+    line-height: 1.6;
     letter-spacing: 0.0071428571em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45674,7 +45911,7 @@ html.overflow-y-hidden {
   .text-md-body-1 {
     font-size: 1rem !important;
     font-weight: 400;
-    line-height: 1.5rem;
+    line-height: 1.5;
     letter-spacing: 0.03125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45682,7 +45919,7 @@ html.overflow-y-hidden {
   .text-md-body-2 {
     font-size: 0.875rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.425;
     letter-spacing: 0.0178571429em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45690,7 +45927,7 @@ html.overflow-y-hidden {
   .text-md-button {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 2.25rem;
+    line-height: 2.6;
     letter-spacing: 0.0892857143em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
@@ -45698,7 +45935,7 @@ html.overflow-y-hidden {
   .text-md-caption {
     font-size: 0.75rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.667;
     letter-spacing: 0.0333333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -45706,10 +45943,55 @@ html.overflow-y-hidden {
   .text-md-overline {
     font-size: 0.75rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 2.667;
     letter-spacing: 0.1666666667em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
+  }
+  .h-md-auto {
+    height: auto !important;
+  }
+  .h-md-screen {
+    height: 100vh !important;
+  }
+  .h-md-0 {
+    height: 0 !important;
+  }
+  .h-md-25 {
+    height: 25% !important;
+  }
+  .h-md-50 {
+    height: 50% !important;
+  }
+  .h-md-75 {
+    height: 75% !important;
+  }
+  .h-md-100 {
+    height: 100% !important;
+  }
+  .w-md-auto {
+    width: auto !important;
+  }
+  .w-md-0 {
+    width: 0 !important;
+  }
+  .w-md-25 {
+    width: 25% !important;
+  }
+  .w-md-33 {
+    width: 33% !important;
+  }
+  .w-md-50 {
+    width: 50% !important;
+  }
+  .w-md-66 {
+    width: 66% !important;
+  }
+  .w-md-75 {
+    width: 75% !important;
+  }
+  .w-md-100 {
+    width: 100% !important;
   }
 }
 @media (min-width: 1280px) {
@@ -47600,7 +47882,7 @@ html.overflow-y-hidden {
   .text-lg-h1 {
     font-size: 6rem !important;
     font-weight: 300;
-    line-height: 6rem;
+    line-height: 1;
     letter-spacing: -0.015625em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47608,7 +47890,7 @@ html.overflow-y-hidden {
   .text-lg-h2 {
     font-size: 3.75rem !important;
     font-weight: 300;
-    line-height: 3.75rem;
+    line-height: 1;
     letter-spacing: -0.0083333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47616,7 +47898,7 @@ html.overflow-y-hidden {
   .text-lg-h3 {
     font-size: 3rem !important;
     font-weight: 400;
-    line-height: 3.125rem;
+    line-height: 1.05;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47624,7 +47906,7 @@ html.overflow-y-hidden {
   .text-lg-h4 {
     font-size: 2.125rem !important;
     font-weight: 400;
-    line-height: 2.5rem;
+    line-height: 1.175;
     letter-spacing: 0.0073529412em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47632,7 +47914,7 @@ html.overflow-y-hidden {
   .text-lg-h5 {
     font-size: 1.5rem !important;
     font-weight: 400;
-    line-height: 2rem;
+    line-height: 1.333;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47640,7 +47922,7 @@ html.overflow-y-hidden {
   .text-lg-h6 {
     font-size: 1.25rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 1.6;
     letter-spacing: 0.0125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47648,7 +47930,7 @@ html.overflow-y-hidden {
   .text-lg-subtitle-1 {
     font-size: 1rem !important;
     font-weight: normal;
-    line-height: 1.75rem;
+    line-height: 1.75;
     letter-spacing: 0.009375em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47656,7 +47938,7 @@ html.overflow-y-hidden {
   .text-lg-subtitle-2 {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 1.375rem;
+    line-height: 1.6;
     letter-spacing: 0.0071428571em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47664,7 +47946,7 @@ html.overflow-y-hidden {
   .text-lg-body-1 {
     font-size: 1rem !important;
     font-weight: 400;
-    line-height: 1.5rem;
+    line-height: 1.5;
     letter-spacing: 0.03125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47672,7 +47954,7 @@ html.overflow-y-hidden {
   .text-lg-body-2 {
     font-size: 0.875rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.425;
     letter-spacing: 0.0178571429em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47680,7 +47962,7 @@ html.overflow-y-hidden {
   .text-lg-button {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 2.25rem;
+    line-height: 2.6;
     letter-spacing: 0.0892857143em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
@@ -47688,7 +47970,7 @@ html.overflow-y-hidden {
   .text-lg-caption {
     font-size: 0.75rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.667;
     letter-spacing: 0.0333333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -47696,10 +47978,55 @@ html.overflow-y-hidden {
   .text-lg-overline {
     font-size: 0.75rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 2.667;
     letter-spacing: 0.1666666667em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
+  }
+  .h-lg-auto {
+    height: auto !important;
+  }
+  .h-lg-screen {
+    height: 100vh !important;
+  }
+  .h-lg-0 {
+    height: 0 !important;
+  }
+  .h-lg-25 {
+    height: 25% !important;
+  }
+  .h-lg-50 {
+    height: 50% !important;
+  }
+  .h-lg-75 {
+    height: 75% !important;
+  }
+  .h-lg-100 {
+    height: 100% !important;
+  }
+  .w-lg-auto {
+    width: auto !important;
+  }
+  .w-lg-0 {
+    width: 0 !important;
+  }
+  .w-lg-25 {
+    width: 25% !important;
+  }
+  .w-lg-33 {
+    width: 33% !important;
+  }
+  .w-lg-50 {
+    width: 50% !important;
+  }
+  .w-lg-66 {
+    width: 66% !important;
+  }
+  .w-lg-75 {
+    width: 75% !important;
+  }
+  .w-lg-100 {
+    width: 100% !important;
   }
 }
 @media (min-width: 1920px) {
@@ -49590,7 +49917,7 @@ html.overflow-y-hidden {
   .text-xl-h1 {
     font-size: 6rem !important;
     font-weight: 300;
-    line-height: 6rem;
+    line-height: 1;
     letter-spacing: -0.015625em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49598,7 +49925,7 @@ html.overflow-y-hidden {
   .text-xl-h2 {
     font-size: 3.75rem !important;
     font-weight: 300;
-    line-height: 3.75rem;
+    line-height: 1;
     letter-spacing: -0.0083333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49606,7 +49933,7 @@ html.overflow-y-hidden {
   .text-xl-h3 {
     font-size: 3rem !important;
     font-weight: 400;
-    line-height: 3.125rem;
+    line-height: 1.05;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49614,7 +49941,7 @@ html.overflow-y-hidden {
   .text-xl-h4 {
     font-size: 2.125rem !important;
     font-weight: 400;
-    line-height: 2.5rem;
+    line-height: 1.175;
     letter-spacing: 0.0073529412em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49622,7 +49949,7 @@ html.overflow-y-hidden {
   .text-xl-h5 {
     font-size: 1.5rem !important;
     font-weight: 400;
-    line-height: 2rem;
+    line-height: 1.333;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49630,7 +49957,7 @@ html.overflow-y-hidden {
   .text-xl-h6 {
     font-size: 1.25rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 1.6;
     letter-spacing: 0.0125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49638,7 +49965,7 @@ html.overflow-y-hidden {
   .text-xl-subtitle-1 {
     font-size: 1rem !important;
     font-weight: normal;
-    line-height: 1.75rem;
+    line-height: 1.75;
     letter-spacing: 0.009375em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49646,7 +49973,7 @@ html.overflow-y-hidden {
   .text-xl-subtitle-2 {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 1.375rem;
+    line-height: 1.6;
     letter-spacing: 0.0071428571em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49654,7 +49981,7 @@ html.overflow-y-hidden {
   .text-xl-body-1 {
     font-size: 1rem !important;
     font-weight: 400;
-    line-height: 1.5rem;
+    line-height: 1.5;
     letter-spacing: 0.03125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49662,7 +49989,7 @@ html.overflow-y-hidden {
   .text-xl-body-2 {
     font-size: 0.875rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.425;
     letter-spacing: 0.0178571429em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49670,7 +49997,7 @@ html.overflow-y-hidden {
   .text-xl-button {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 2.25rem;
+    line-height: 2.6;
     letter-spacing: 0.0892857143em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
@@ -49678,7 +50005,7 @@ html.overflow-y-hidden {
   .text-xl-caption {
     font-size: 0.75rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.667;
     letter-spacing: 0.0333333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -49686,10 +50013,55 @@ html.overflow-y-hidden {
   .text-xl-overline {
     font-size: 0.75rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 2.667;
     letter-spacing: 0.1666666667em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
+  }
+  .h-xl-auto {
+    height: auto !important;
+  }
+  .h-xl-screen {
+    height: 100vh !important;
+  }
+  .h-xl-0 {
+    height: 0 !important;
+  }
+  .h-xl-25 {
+    height: 25% !important;
+  }
+  .h-xl-50 {
+    height: 50% !important;
+  }
+  .h-xl-75 {
+    height: 75% !important;
+  }
+  .h-xl-100 {
+    height: 100% !important;
+  }
+  .w-xl-auto {
+    width: auto !important;
+  }
+  .w-xl-0 {
+    width: 0 !important;
+  }
+  .w-xl-25 {
+    width: 25% !important;
+  }
+  .w-xl-33 {
+    width: 33% !important;
+  }
+  .w-xl-50 {
+    width: 50% !important;
+  }
+  .w-xl-66 {
+    width: 66% !important;
+  }
+  .w-xl-75 {
+    width: 75% !important;
+  }
+  .w-xl-100 {
+    width: 100% !important;
   }
 }
 @media (min-width: 2560px) {
@@ -51580,7 +51952,7 @@ html.overflow-y-hidden {
   .text-xxl-h1 {
     font-size: 6rem !important;
     font-weight: 300;
-    line-height: 6rem;
+    line-height: 1;
     letter-spacing: -0.015625em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51588,7 +51960,7 @@ html.overflow-y-hidden {
   .text-xxl-h2 {
     font-size: 3.75rem !important;
     font-weight: 300;
-    line-height: 3.75rem;
+    line-height: 1;
     letter-spacing: -0.0083333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51596,7 +51968,7 @@ html.overflow-y-hidden {
   .text-xxl-h3 {
     font-size: 3rem !important;
     font-weight: 400;
-    line-height: 3.125rem;
+    line-height: 1.05;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51604,7 +51976,7 @@ html.overflow-y-hidden {
   .text-xxl-h4 {
     font-size: 2.125rem !important;
     font-weight: 400;
-    line-height: 2.5rem;
+    line-height: 1.175;
     letter-spacing: 0.0073529412em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51612,7 +51984,7 @@ html.overflow-y-hidden {
   .text-xxl-h5 {
     font-size: 1.5rem !important;
     font-weight: 400;
-    line-height: 2rem;
+    line-height: 1.333;
     letter-spacing: normal !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51620,7 +51992,7 @@ html.overflow-y-hidden {
   .text-xxl-h6 {
     font-size: 1.25rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 1.6;
     letter-spacing: 0.0125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51628,7 +52000,7 @@ html.overflow-y-hidden {
   .text-xxl-subtitle-1 {
     font-size: 1rem !important;
     font-weight: normal;
-    line-height: 1.75rem;
+    line-height: 1.75;
     letter-spacing: 0.009375em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51636,7 +52008,7 @@ html.overflow-y-hidden {
   .text-xxl-subtitle-2 {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 1.375rem;
+    line-height: 1.6;
     letter-spacing: 0.0071428571em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51644,7 +52016,7 @@ html.overflow-y-hidden {
   .text-xxl-body-1 {
     font-size: 1rem !important;
     font-weight: 400;
-    line-height: 1.5rem;
+    line-height: 1.5;
     letter-spacing: 0.03125em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51652,7 +52024,7 @@ html.overflow-y-hidden {
   .text-xxl-body-2 {
     font-size: 0.875rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.425;
     letter-spacing: 0.0178571429em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51660,7 +52032,7 @@ html.overflow-y-hidden {
   .text-xxl-button {
     font-size: 0.875rem !important;
     font-weight: 500;
-    line-height: 2.25rem;
+    line-height: 2.6;
     letter-spacing: 0.0892857143em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
@@ -51668,7 +52040,7 @@ html.overflow-y-hidden {
   .text-xxl-caption {
     font-size: 0.75rem !important;
     font-weight: 400;
-    line-height: 1.25rem;
+    line-height: 1.667;
     letter-spacing: 0.0333333333em !important;
     font-family: "Roboto", sans-serif;
     text-transform: none !important;
@@ -51676,10 +52048,55 @@ html.overflow-y-hidden {
   .text-xxl-overline {
     font-size: 0.75rem !important;
     font-weight: 500;
-    line-height: 2rem;
+    line-height: 2.667;
     letter-spacing: 0.1666666667em !important;
     font-family: "Roboto", sans-serif;
     text-transform: uppercase !important;
+  }
+  .h-xxl-auto {
+    height: auto !important;
+  }
+  .h-xxl-screen {
+    height: 100vh !important;
+  }
+  .h-xxl-0 {
+    height: 0 !important;
+  }
+  .h-xxl-25 {
+    height: 25% !important;
+  }
+  .h-xxl-50 {
+    height: 50% !important;
+  }
+  .h-xxl-75 {
+    height: 75% !important;
+  }
+  .h-xxl-100 {
+    height: 100% !important;
+  }
+  .w-xxl-auto {
+    width: auto !important;
+  }
+  .w-xxl-0 {
+    width: 0 !important;
+  }
+  .w-xxl-25 {
+    width: 25% !important;
+  }
+  .w-xxl-33 {
+    width: 33% !important;
+  }
+  .w-xxl-50 {
+    width: 50% !important;
+  }
+  .w-xxl-66 {
+    width: 66% !important;
+  }
+  .w-xxl-75 {
+    width: 75% !important;
+  }
+  .w-xxl-100 {
+    width: 100% !important;
   }
 }
 @media print {
@@ -51764,18 +52181,22 @@ html.overflow-y-hidden {
 }
 .v-dialog > .v-overlay__content > .v-card > .v-card-item,
 .v-dialog > .v-overlay__content > form > .v-card > .v-card-item {
-  padding: 14px 24px 0;
+  padding: 16px 24px;
 }
 .v-dialog > .v-overlay__content > .v-card > .v-card-item + .v-card-text,
 .v-dialog > .v-overlay__content > form > .v-card > .v-card-item + .v-card-text {
-  padding-top: 10px;
+  padding-top: 0;
 }
 .v-dialog > .v-overlay__content > .v-card > .v-card-text,
 .v-dialog > .v-overlay__content > form > .v-card > .v-card-text {
   font-size: inherit;
   letter-spacing: 0.03125em;
   line-height: inherit;
-  padding: 16px 24px 10px;
+  padding: 16px 24px 24px;
+}
+.v-dialog > .v-overlay__content > .v-card > .v-card-actions,
+.v-dialog > .v-overlay__content > form > .v-card > .v-card-actions {
+  justify-content: flex-end;
 }
 
 .v-dialog--fullscreen {
@@ -51818,6 +52239,35 @@ html.overflow-y-hidden {
 .v-dialog--scrollable > .v-overlay__content > form > .v-card > .v-card-text {
   backface-visibility: hidden;
   overflow-y: auto;
+}.v-tab.v-tab.v-btn {
+  height: var(--v-tabs-height);
+  border-radius: 0;
+  min-width: 90px;
+}
+.v-slide-group--horizontal .v-tab {
+  max-width: 360px;
+}
+.v-slide-group--vertical .v-tab {
+  justify-content: start;
+}
+
+.v-tab__slider {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: currentColor;
+  pointer-events: none;
+  opacity: 0;
+}
+.v-tab--selected .v-tab__slider {
+  opacity: 1;
+}
+.v-slide-group--vertical .v-tab__slider {
+  top: 0;
+  height: 100%;
+  width: 2px;
 }.v-tabs {
   display: flex;
   height: var(--v-tabs-height);
@@ -51884,35 +52334,6 @@ html.overflow-y-hidden {
   .v-tabs.v-slide-group--is-overflowing.v-slide-group--horizontal:not(.v-slide-group--has-affixes) .v-tab:last-child {
     margin-inline-end: 52px;
   }
-}.v-tab.v-tab.v-btn {
-  height: var(--v-tabs-height);
-  border-radius: 0;
-  min-width: 90px;
-}
-.v-slide-group--horizontal .v-tab {
-  max-width: 360px;
-}
-.v-slide-group--vertical .v-tab {
-  justify-content: start;
-}
-
-.v-tab__slider {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  height: 2px;
-  width: 100%;
-  background: currentColor;
-  pointer-events: none;
-  opacity: 0;
-}
-.v-tab--selected .v-tab__slider {
-  opacity: 1;
-}
-.v-slide-group--vertical .v-tab__slider {
-  top: 0;
-  height: 100%;
-  width: 2px;
 }.v-window {
   overflow: hidden;
 }
@@ -51951,6 +52372,7 @@ html.overflow-y-hidden {
 .v-window--show-arrows-on-hover:hover .v-window__right {
   transform: translateX(0);
 }
+
 .v-window-x-transition-enter-active, .v-window-x-transition-leave-active, .v-window-x-reverse-transition-enter-active, .v-window-x-reverse-transition-leave-active, .v-window-y-transition-enter-active, .v-window-y-transition-leave-active, .v-window-y-reverse-transition-enter-active, .v-window-y-reverse-transition-leave-active {
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
 }
@@ -52042,7 +52464,7 @@ html.overflow-y-hidden {
 }
 .v-sheet--rounded {
   border-radius: 4px;
-}.btn-container[data-v-c906de4b] {
+}.btn-container[data-v-a578a337] {
   display: flex;
   justify-content: end;
   width: 100%;
@@ -52090,15 +52512,15 @@ html.overflow-y-hidden {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
 }
-.v-expansion-panels--variant-accordion > :first-child {
+.v-expansion-panels--variant-accordion > :first-child:not(:last-child) {
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
-.v-expansion-panels--variant-accordion > :last-child {
+.v-expansion-panels--variant-accordion > :last-child:not(:first-child) {
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
 }
-.v-expansion-panels--variant-accordion > :last-child .v-expansion-panel-title--active {
+.v-expansion-panels--variant-accordion > :last-child:not(:first-child) .v-expansion-panel-title--active {
   border-bottom-left-radius: initial;
   border-bottom-right-radius: initial;
 }
@@ -52183,22 +52605,19 @@ html.overflow-y-hidden {
     opacity: calc(var(--v-focus-opacity) * var(--v-theme-overlay-multiplier));
   }
 }
-.v-expansion-panel-title--active > .v-expansion-panel-title__overlay, .v-expansion-panel-title[aria-haspopup=menu][aria-expanded=true] > .v-expansion-panel-title__overlay {
+.v-expansion-panel-title--focusable.v-expansion-panel-title--active .v-expansion-panel-title__overlay {
   opacity: calc(var(--v-activated-opacity) * var(--v-theme-overlay-multiplier));
 }
-.v-expansion-panel-title--active:hover > .v-expansion-panel-title__overlay, .v-expansion-panel-title[aria-haspopup=menu][aria-expanded=true]:hover > .v-expansion-panel-title__overlay {
+.v-expansion-panel-title--focusable.v-expansion-panel-title--active:hover .v-expansion-panel-title__overlay {
   opacity: calc((var(--v-activated-opacity) + var(--v-hover-opacity)) * var(--v-theme-overlay-multiplier));
 }
-.v-expansion-panel-title--active:focus-visible > .v-expansion-panel-title__overlay, .v-expansion-panel-title[aria-haspopup=menu][aria-expanded=true]:focus-visible > .v-expansion-panel-title__overlay {
+.v-expansion-panel-title--focusable.v-expansion-panel-title--active:focus-visible .v-expansion-panel-title__overlay {
   opacity: calc((var(--v-activated-opacity) + var(--v-focus-opacity)) * var(--v-theme-overlay-multiplier));
 }
 @supports not selector(:focus-visible) {
-  .v-expansion-panel-title--active:focus > .v-expansion-panel-title__overlay, .v-expansion-panel-title[aria-haspopup=menu][aria-expanded=true]:focus > .v-expansion-panel-title__overlay {
+  .v-expansion-panel-title--focusable.v-expansion-panel-title--active:focus .v-expansion-panel-title__overlay {
     opacity: calc((var(--v-activated-opacity) + var(--v-focus-opacity)) * var(--v-theme-overlay-multiplier));
   }
-}
-.v-expansion-panel-title--active::before {
-  opacity: 0.12;
 }
 
 .v-expansion-panel-title__overlay {
@@ -52319,7 +52738,7 @@ html.overflow-y-hidden {
 .v-autocomplete--selecting-index .v-field__input > input {
   caret-color: transparent;
 }
-.v-autocomplete--single.v-text-field .v-field--focused input {
+.v-autocomplete--single:not(.v-autocomplete--selection-slot).v-text-field input {
   flex: 1 1;
   position: absolute;
   left: 0;
@@ -52327,13 +52746,13 @@ html.overflow-y-hidden {
   width: 100%;
   padding-inline: inherit;
 }
-.v-autocomplete--single .v-field--active input {
+.v-autocomplete--single:not(.v-autocomplete--selection-slot) .v-field--active input {
   transition: none;
 }
-.v-autocomplete--single .v-field--dirty:not(.v-field--focused) input {
+.v-autocomplete--single:not(.v-autocomplete--selection-slot) .v-field--dirty:not(.v-field--focused) input {
   opacity: 0;
 }
-.v-autocomplete--single .v-field--focused .v-autocomplete__selection {
+.v-autocomplete--single:not(.v-autocomplete--selection-slot) .v-field--focused .v-autocomplete__selection {
   opacity: 0;
 }
 .v-autocomplete__menu-icon {
@@ -52440,6 +52859,7 @@ html.overflow-y-hidden {
   display: flex;
   flex: 1 0 auto;
   flex-direction: column;
+  padding-inline-end: 16px;
 }
 
 .v-color-picker-preview__dot {
@@ -52944,7 +53364,7 @@ html.overflow-y-hidden {
 .v-combobox--selecting-index .v-field__input > input {
   caret-color: transparent;
 }
-.v-combobox--single.v-text-field .v-field--focused input {
+.v-combobox--single:not(.v-combobox--selection-slot).v-text-field input {
   flex: 1 1;
   position: absolute;
   left: 0;
@@ -52952,13 +53372,13 @@ html.overflow-y-hidden {
   width: 100%;
   padding-inline: inherit;
 }
-.v-combobox--single .v-field--active input {
+.v-combobox--single:not(.v-combobox--selection-slot) .v-field--active input {
   transition: none;
 }
-.v-combobox--single .v-field--dirty:not(.v-field--focused) input {
+.v-combobox--single:not(.v-combobox--selection-slot) .v-field--dirty:not(.v-field--focused) input {
   opacity: 0;
 }
-.v-combobox--single .v-field--focused .v-combobox__selection {
+.v-combobox--single:not(.v-combobox--selection-slot) .v-field--focused .v-combobox__selection {
   opacity: 0;
 }
 .v-combobox__menu-icon {
@@ -53193,6 +53613,8 @@ html.overflow-y-hidden {
 
 .v-picker__body {
   grid-area: body;
+  overflow: hidden;
+  position: relative;
 }
 
 .v-picker__header {
@@ -53230,7 +53652,16 @@ html.overflow-y-hidden {
   padding-bottom: 16px;
   font-weight: 400;
   letter-spacing: 0.1666666667em;
-}.v-file-input--chips.v-input--density-compact .v-field--variant-solo .v-label.v-field-label--floating,
+}.v-file-input--hide.v-input .v-field,
+.v-file-input--hide.v-input .v-input__control,
+.v-file-input--hide.v-input .v-input__details {
+  display: none;
+}
+.v-file-input--hide.v-input .v-input__prepend {
+  grid-area: control;
+  margin: 0 auto;
+}
+.v-file-input--chips.v-input--density-compact .v-field--variant-solo .v-label.v-field-label--floating,
 .v-file-input--chips.v-input--density-compact .v-field--variant-solo-inverted .v-label.v-field-label--floating,
 .v-file-input--chips.v-input--density-compact .v-field--variant-filled .v-label.v-field-label--floating,
 .v-file-input--chips.v-input--density-compact .v-field--variant-solo-filled .v-label.v-field-label--floating {
@@ -53369,10 +53800,6 @@ html.overflow-y-hidden {
 }.v-switch .v-label {
   padding-inline-start: 10px;
 }
-.v-switch .v-switch__thumb {
-  background-color: rgb(var(--v-theme-surface-bright));
-  color: rgb(var(--v-theme-on-surface-bright));
-}
 
 .v-switch__loader {
   display: flex;
@@ -53427,6 +53854,8 @@ html.overflow-y-hidden {
 
 .v-switch__thumb {
   align-items: center;
+  background-color: rgb(var(--v-theme-surface-bright));
+  color: rgb(var(--v-theme-on-surface-bright));
   border-radius: 50%;
   display: flex;
   font-size: 0.75rem;
@@ -53437,13 +53866,19 @@ html.overflow-y-hidden {
   transition: 0.15s 0.05s transform cubic-bezier(0, 0, 0.2, 1), 0.2s color cubic-bezier(0.4, 0, 0.2, 1), 0.2s background-color cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+}
+.v-switch:not(.v-switch--inset) .v-switch__thumb {
   box-shadow: 0px 2px 4px -1px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 4px 5px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 1px 10px 0px var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12));
+}
+.v-switch.v-switch--flat:not(.v-switch--inset) .v-switch__thumb {
+  background: rgb(var(--v-theme-surface-variant));
+  color: rgb(var(--v-theme-on-surface-variant));
+  box-shadow: 0px 0px 0px 0px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 0px 0px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 0px 0px 0px var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12));
 }
 .v-switch--inset .v-switch__thumb {
   height: 24px;
   width: 24px;
   transform: scale(0.6666666667);
-  box-shadow: 0px 0px 0px 0px var(--v-shadow-key-umbra-opacity, rgba(0, 0, 0, 0.2)), 0px 0px 0px 0px var(--v-shadow-key-penumbra-opacity, rgba(0, 0, 0, 0.14)), 0px 0px 0px 0px var(--v-shadow-key-ambient-opacity, rgba(0, 0, 0, 0.12));
 }
 .v-switch--inset .v-switch__thumb--filled {
   transform: none;
@@ -53462,15 +53897,27 @@ html.overflow-y-hidden {
 .v-switch .v-selection-control__input {
   border-radius: 50%;
   transition: 0.2s transform cubic-bezier(0.4, 0, 0.2, 1);
-  transform: translateX(-10px);
   position: absolute;
 }
+.v-locale--is-ltr.v-switch .v-selection-control__input, .v-locale--is-ltr .v-switch .v-selection-control__input {
+  transform: translateX(-10px);
+}
+
+.v-locale--is-rtl.v-switch .v-selection-control__input, .v-locale--is-rtl .v-switch .v-selection-control__input {
+  transform: translateX(10px);
+}
+
 .v-switch .v-selection-control__input .v-icon {
   position: absolute;
 }
-.v-switch .v-selection-control--dirty .v-selection-control__input {
+.v-locale--is-ltr.v-switch .v-selection-control--dirty .v-selection-control__input, .v-locale--is-ltr .v-switch .v-selection-control--dirty .v-selection-control__input {
   transform: translateX(10px);
 }
+
+.v-locale--is-rtl.v-switch .v-selection-control--dirty .v-selection-control__input, .v-locale--is-rtl .v-switch .v-selection-control--dirty .v-selection-control__input {
+  transform: translateX(-10px);
+}
+
 .v-switch.v-switch--indeterminate .v-selection-control__input {
   transform: scale(0.8);
 }
@@ -53480,6 +53927,12 @@ html.overflow-y-hidden {
 }
 .v-switch.v-switch--inset .v-selection-control__wrapper {
   width: auto;
+}
+.v-switch.v-input--vertical .v-label {
+  min-width: max-content;
+}
+.v-switch.v-input--vertical .v-selection-control__wrapper {
+  transform: rotate(-90deg);
 }.v-textarea .v-field {
   --v-textarea-control-height: var(--v-input-control-height);
 }
@@ -53551,6 +54004,10 @@ html.overflow-y-hidden {
 
 .vjsf-text-field-menu .v-sheet.v-color-picker {
   overflow-x: hidden;
+}
+
+.vjsf-node-expansion-panels .v-expansion-panel-text__wrapper {
+  padding: 0;
 }
 
 .vjsf-list-item .v-list-item__append {
