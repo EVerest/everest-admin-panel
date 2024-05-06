@@ -37,7 +37,7 @@ jobs:
           commit-message: 'Deploying to gh-pages'
           target-folder: ${{ env.SUBDIR }}
       - name: Create Job Summary
-        uses: actions/github-script@v5
+        uses: actions/github-script@v7
         if: always()
         with:
           script: |
