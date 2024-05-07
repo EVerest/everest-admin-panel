@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-ze0Mdnyg.js"(exports, module) {
+  "assets/index--e_a9VOn.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -9912,7 +9912,7 @@ var require_index_001 = __commonJS({
       };
     }
     const makeComponentProps = propsFactory({
-      class: [String, Array],
+      class: [String, Array, Object],
       style: {
         type: [String, Array, Object],
         default: null
@@ -10387,6 +10387,22 @@ var require_index_001 = __commonJS({
       const divRight = divRect.right;
       const divBottom = divRect.bottom;
       return mouseX >= divLeft && mouseX <= divRight && mouseY >= divTop && mouseY <= divBottom;
+    }
+    function templateRef() {
+      const el2 = shallowRef();
+      const fn = (target2) => {
+        el2.value = target2;
+      };
+      Object.defineProperty(fn, "value", {
+        enumerable: true,
+        get: () => el2.value,
+        set: (val) => el2.value = val
+      });
+      Object.defineProperty(fn, "el", {
+        enumerable: true,
+        get: () => refElement(el2.value)
+      });
+      return fn;
     }
     const block$2 = ["top", "bottom"];
     const inline$1 = ["start", "end", "left", "right"];
@@ -11208,7 +11224,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     function useResizeObserver$1(callback) {
       let box = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : "content";
-      const resizeRef = ref$1();
+      const resizeRef = templateRef();
       const contentRect = ref$1();
       if (IN_BROWSER) {
         const observer = new ResizeObserver((entries) => {
@@ -11224,13 +11240,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         onBeforeUnmount(() => {
           observer.disconnect();
         });
-        watch(resizeRef, (newValue, oldValue) => {
+        watch(() => resizeRef.el, (newValue, oldValue) => {
           if (oldValue) {
-            observer.unobserve(refElement(oldValue));
+            observer.unobserve(oldValue);
             contentRect.value = void 0;
           }
           if (newValue)
-            observer.observe(refElement(newValue));
+            observer.observe(newValue);
         }, {
           flush: "post"
         });
@@ -12584,7 +12600,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     const makeVResponsiveProps = propsFactory({
       aspectRatio: [String, Number],
-      contentClass: String,
+      contentClass: null,
       inline: Boolean,
       ...makeComponentProps(),
       ...makeDimensionProps()
@@ -15756,7 +15772,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const makeDisplayProps = propsFactory({
       mobile: {
         type: Boolean,
-        default: null
+        default: false
       },
       mobileBreakpoint: [Number, String]
     }, "display");
@@ -16054,14 +16070,16 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         },
         in: (v, children, parents) => {
           let set2 = /* @__PURE__ */ new Set();
-          for (const id2 of v || []) {
-            set2 = strategy.activate({
-              id: id2,
-              value: true,
-              activated: new Set(set2),
-              children,
-              parents
-            });
+          if (v != null) {
+            for (const id2 of wrapInArray(v)) {
+              set2 = strategy.activate({
+                id: id2,
+                value: true,
+                activated: new Set(set2),
+                children,
+                parents
+              });
+            }
           }
           return set2;
         },
@@ -16090,8 +16108,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         },
         in: (v, children, parents) => {
           let set2 = /* @__PURE__ */ new Set();
-          if (v == null ? void 0 : v.length) {
-            set2 = parentStrategy.in(v.slice(0, 1), children, parents);
+          if (v != null) {
+            const arr = wrapInArray(v);
+            if (arr.length) {
+              set2 = parentStrategy.in(arr.slice(0, 1), children, parents);
+            }
           }
           return set2;
         },
@@ -16431,12 +16452,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const makeNestedProps = propsFactory({
       activatable: Boolean,
       selectable: Boolean,
-      activeStrategy: [String, Function],
-      selectStrategy: [String, Function],
+      activeStrategy: [String, Function, Object],
+      selectStrategy: [String, Function, Object],
       openStrategy: [String, Object],
-      opened: Array,
-      activated: Array,
-      selected: Array,
+      opened: null,
+      activated: null,
+      selected: null,
       mandatory: Boolean
     }, "nested");
     const useNested = (props) => {
@@ -16447,6 +16468,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const activeStrategy = computed(() => {
         if (typeof props.activeStrategy === "object")
           return props.activeStrategy;
+        if (typeof props.activeStrategy === "function")
+          return props.activeStrategy(props.mandatory);
         switch (props.activeStrategy) {
           case "leaf":
             return leafActiveStrategy(props.mandatory);
@@ -16462,6 +16485,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const selectStrategy = computed(() => {
         if (typeof props.selectStrategy === "object")
           return props.selectStrategy;
+        if (typeof props.selectStrategy === "function")
+          return props.selectStrategy(props.mandatory);
         switch (props.selectStrategy) {
           case "single-leaf":
             return leafSingleSelectStrategy(props.mandatory);
@@ -16792,7 +16817,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       appendIcon: IconValue,
       baseColor: String,
       disabled: Boolean,
-      lines: String,
+      lines: [Boolean, String],
       link: {
         type: Boolean,
         default: void 0
@@ -16910,9 +16935,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         function onClick(e) {
           var _a2;
           emit2("click", e);
-          if (isGroupActivator || !isClickable.value)
+          if (!isClickable.value)
             return;
           (_a2 = link2.navigate) == null ? void 0 : _a2.call(link2, e);
+          if (isGroupActivator)
+            return;
           if (root.activatable.value) {
             activate(!isActivated.value, e);
           } else if (root.selectable.value) {
@@ -18937,7 +18964,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       ...makeBorderProps(),
       ...makeComponentProps(),
       ...makeDelayProps(),
-      ...makeDisplayProps(),
+      ...makeDisplayProps({
+        mobile: null
+      }),
       ...makeElevationProps(),
       ...makeLayoutItemProps(),
       ...makeRoundedProps(),
@@ -19846,20 +19875,20 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }, {
         flush: "post"
       });
-      const activatorRef = ref$1();
+      const activatorRef = templateRef();
       watchEffect(() => {
         if (!activatorRef.value)
           return;
         nextTick(() => {
-          activatorEl.value = refElement(activatorRef.value);
+          activatorEl.value = activatorRef.el;
         });
       });
-      const targetRef = ref$1();
+      const targetRef = templateRef();
       const target2 = computed(() => {
         if (props.target === "cursor" && cursorTarget.value)
           return cursorTarget.value;
         if (targetRef.value)
-          return refElement(targetRef.value);
+          return targetRef.el;
         return getTarget(props.target, vm) || activatorEl.value;
       });
       const targetEl = computed(() => {
@@ -20158,10 +20187,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       disabled: Boolean,
       opacity: [Number, String],
       noClickAnimation: Boolean,
-      modelValue: {
-        type: Boolean,
-        default: null
-      },
+      modelValue: Boolean,
       persistent: Boolean,
       scrim: {
         type: [Boolean, String],
@@ -20204,7 +20230,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         } = _ref;
         const model = useProxiedModel(props, "modelValue");
         const isActive = computed({
-          get: () => Boolean(model.value),
+          get: () => model.value,
           set: (v) => {
             if (!(v && props.disabled))
               model.value = v;
@@ -24250,7 +24276,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const goTo = useGoTo();
         const goToOptions = computed(() => {
           return {
-            container: containerRef.value,
+            container: containerRef.el,
             duration: 200,
             easing: "easeOutQuart"
           };
@@ -24276,8 +24302,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 contentSize.value = contentRect.value[sizeProperty];
                 isOverflowing.value = containerSize.value + 1 < contentSize.value;
               }
-              if (firstSelectedIndex.value >= 0 && contentRef.value) {
-                const selectedElement = contentRef.value.children[lastSelectedIndex.value];
+              if (firstSelectedIndex.value >= 0 && contentRef.el) {
+                const selectedElement = contentRef.el.children[lastSelectedIndex.value];
                 scrollToChildren(selectedElement, props.centerActive);
               }
             });
@@ -24288,13 +24314,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           let target2 = 0;
           if (center) {
             target2 = calculateCenteredTarget({
-              containerElement: containerRef.value,
+              containerElement: containerRef.el,
               isHorizontal: isHorizontal.value,
               selectedElement: children
             });
           } else {
             target2 = calculateUpdatedTarget({
-              containerElement: containerRef.value,
+              containerElement: containerRef.el,
               isHorizontal: isHorizontal.value,
               isRtl: isRtl.value,
               selectedElement: children
@@ -24303,19 +24329,19 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           scrollToPosition2(target2);
         }
         function scrollToPosition2(newPosition) {
-          if (!IN_BROWSER || !containerRef.value)
+          if (!IN_BROWSER || !containerRef.el)
             return;
-          const offsetSize = getOffsetSize(isHorizontal.value, containerRef.value);
-          const scrollPosition = getScrollPosition(isHorizontal.value, isRtl.value, containerRef.value);
-          const scrollSize = getScrollSize(isHorizontal.value, containerRef.value);
+          const offsetSize = getOffsetSize(isHorizontal.value, containerRef.el);
+          const scrollPosition = getScrollPosition(isHorizontal.value, isRtl.value, containerRef.el);
+          const scrollSize = getScrollSize(isHorizontal.value, containerRef.el);
           if (scrollSize <= offsetSize || // Prevent scrolling by only a couple of pixels, which doesn't look smooth
           Math.abs(newPosition - scrollPosition) < 16)
             return;
-          if (isHorizontal.value && isRtl.value && containerRef.value) {
+          if (isHorizontal.value && isRtl.value && containerRef.el) {
             const {
               scrollWidth,
               offsetWidth: containerWidth
-            } = containerRef.value;
+            } = containerRef.el;
             newPosition = scrollWidth - containerWidth - newPosition;
           }
           if (isHorizontal.value) {
@@ -24333,10 +24359,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         function onFocusin(e) {
           isFocused.value = true;
-          if (!isOverflowing.value || !contentRef.value)
+          if (!isOverflowing.value || !contentRef.el)
             return;
           for (const el2 of e.composedPath()) {
-            for (const item of contentRef.value.children) {
+            for (const item of contentRef.el.children) {
               if (item === el2) {
                 scrollToChildren(item);
                 return;
@@ -24350,7 +24376,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         let ignoreFocusEvent = false;
         function onFocus(e) {
           var _a2;
-          if (!ignoreFocusEvent && !isFocused.value && !(e.relatedTarget && ((_a2 = contentRef.value) == null ? void 0 : _a2.contains(e.relatedTarget))))
+          if (!ignoreFocusEvent && !isFocused.value && !(e.relatedTarget && ((_a2 = contentRef.el) == null ? void 0 : _a2.contains(e.relatedTarget))))
             focus();
           ignoreFocusEvent = false;
         }
@@ -24358,7 +24384,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           ignoreFocusEvent = true;
         }
         function onKeydown(e) {
-          if (!contentRef.value)
+          if (!contentRef.el)
             return;
           function toFocus(location2) {
             e.preventDefault();
@@ -24385,24 +24411,24 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         function focus(location2) {
           var _a2, _b;
-          if (!contentRef.value)
+          if (!contentRef.el)
             return;
           let el2;
           if (!location2) {
-            const focusable = focusableChildren(contentRef.value);
+            const focusable = focusableChildren(contentRef.el);
             el2 = focusable[0];
           } else if (location2 === "next") {
-            el2 = (_a2 = contentRef.value.querySelector(":focus")) == null ? void 0 : _a2.nextElementSibling;
+            el2 = (_a2 = contentRef.el.querySelector(":focus")) == null ? void 0 : _a2.nextElementSibling;
             if (!el2)
               return focus("first");
           } else if (location2 === "prev") {
-            el2 = (_b = contentRef.value.querySelector(":focus")) == null ? void 0 : _b.previousElementSibling;
+            el2 = (_b = contentRef.el.querySelector(":focus")) == null ? void 0 : _b.previousElementSibling;
             if (!el2)
               return focus("last");
           } else if (location2 === "first") {
-            el2 = contentRef.value.firstElementChild;
+            el2 = contentRef.el.firstElementChild;
           } else if (location2 === "last") {
-            el2 = contentRef.value.lastElementChild;
+            el2 = contentRef.el.lastElementChild;
           }
           if (el2) {
             el2.focus({
@@ -24414,11 +24440,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const direction = isHorizontal.value && isRtl.value ? -1 : 1;
           const offsetStep = (location2 === "prev" ? -direction : direction) * containerSize.value;
           let newPosition = scrollOffset.value + offsetStep;
-          if (isHorizontal.value && isRtl.value && containerRef.value) {
+          if (isHorizontal.value && isRtl.value && containerRef.el) {
             const {
               scrollWidth,
               offsetWidth: containerWidth
-            } = containerRef.value;
+            } = containerRef.el;
             newPosition += scrollWidth - containerWidth;
           }
           scrollToPosition2(newPosition);
@@ -24449,8 +24475,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const hasNext = computed(() => {
           if (!containerRef.value)
             return false;
-          const scrollSize = getScrollSize(isHorizontal.value, containerRef.value);
-          const clientSize = getClientSize(isHorizontal.value, containerRef.value);
+          const scrollSize = getScrollSize(isHorizontal.value, containerRef.el);
+          const clientSize = getClientSize(isHorizontal.value, containerRef.el);
           const scrollSizeMax = scrollSize - clientSize;
           return scrollSizeMax - Math.abs(scrollOffset.value) > 1;
         });
@@ -38671,7 +38697,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.3";
+    const version$1 = "3.6.4";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -44436,7 +44462,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }, windowProps, {
             "modelValue": model.value,
             "onUpdate:modelValue": ($event) => model.value = $event,
-            "class": "v-tabs-window",
+            "class": ["v-tabs-window", props.class],
+            "style": props.style,
             "mandatory": false,
             "touch": false
           }), slots);
@@ -44618,6 +44645,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       },
       setup(props, _ref) {
         let {
+          attrs,
           slots
         } = _ref;
         const model = useProxiedModel(props, "modelValue");
@@ -44629,6 +44657,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           backgroundColorClasses,
           backgroundColorStyles
         } = useBackgroundColor(toRef(props, "bgColor"));
+        const {
+          scopeId
+        } = useScopeId();
         provideDefaults({
           VTab: {
             color: toRef(props, "color"),
@@ -44655,7 +44686,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, backgroundColorStyles.value, props.style],
             "role": "tablist",
             "symbol": VTabsSymbol
-          }), {
+          }, scopeId, attrs), {
             default: () => {
               var _a2;
               return [((_a2 = slots.default) == null ? void 0 : _a2.call(slots)) ?? items2.value.map((item) => {
@@ -44675,11 +44706,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 });
               })];
             }
-          }), hasWindow && createVNode(VTabsWindow, {
+          }), hasWindow && createVNode(VTabsWindow, mergeProps({
             "modelValue": model.value,
             "onUpdate:modelValue": ($event) => model.value = $event,
             "key": "tabs-window"
-          }, {
+          }, scopeId), {
             default: () => {
               var _a2;
               return [items2.value.map((item) => {
@@ -71723,7 +71754,8 @@ Reason: ${error2}`);
               select(displayItems.value[0]);
             }
             menu.value = false;
-            search.value = "";
+            if (props.multiple || hasSelectionSlot.value)
+              search.value = "";
             selectionIndex.value = -1;
           }
         });
@@ -72018,7 +72050,7 @@ Reason: ${error2}`);
           resizeRef
         } = useResizeObserver$1((entries) => {
           var _a2;
-          if (!((_a2 = resizeRef.value) == null ? void 0 : _a2.offsetParent))
+          if (!((_a2 = resizeRef.el) == null ? void 0 : _a2.offsetParent))
             return;
           const {
             width,
@@ -74846,11 +74878,11 @@ Reason: ${error2}`);
         watchEffect(() => {
           model.value = model.value ?? adapter.getYear(adapter.date());
         });
-        const yearRef = ref$1();
+        const yearRef = templateRef();
         onMounted(async () => {
           var _a2;
           await nextTick();
-          (_a2 = yearRef.value) == null ? void 0 : _a2.$el.scrollIntoView({
+          (_a2 = yearRef.el) == null ? void 0 : _a2.scrollIntoView({
             block: "center"
           });
         });
@@ -75255,7 +75287,7 @@ Reason: ${error2}`);
         const {
           t
         } = useLocale();
-        const model = useProxiedModel(props, "modelValue", props.modelValue, (val) => wrapInArray(val), (val) => props.multiple || Array.isArray(props.modelValue) ? val : val[0]);
+        const model = useProxiedModel(props, "modelValue", props.modelValue, (val) => wrapInArray(val), (val) => props.multiple || Array.isArray(props.modelValue) ? val : val[0] ?? null);
         const {
           isFocused,
           focus,
@@ -75709,7 +75741,8 @@ Reason: ${error2}`);
           }, windowProps, {
             "modelValue": model.value,
             "onUpdate:modelValue": ($event) => model.value = $event,
-            "class": "v-stepper-window",
+            "class": ["v-stepper-window", props.class],
+            "style": props.style,
             "mandatory": false,
             "touch": false
           }), slots);
@@ -75732,7 +75765,8 @@ Reason: ${error2}`);
           return createVNode(VWindowItem, mergeProps({
             "_as": "VStepperWindowItem"
           }, windowItemProps, {
-            "class": "v-stepper-window-item"
+            "class": ["v-stepper-window-item", props.class],
+            "style": props.style
           }), slots);
         });
         return {};
