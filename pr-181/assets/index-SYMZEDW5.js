@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index--e_a9VOn.js"(exports, module) {
+  "assets/index-SYMZEDW5.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -20752,7 +20752,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
     /**
-      * vee-validate v4.12.7
+      * vee-validate v4.12.8
       * (c) 2024 Abdelrahman Awad
       * @license MIT
       */
@@ -21701,7 +21701,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         bails,
         label,
         type: type2,
-        validate: validator.value && !isTyped ? validate$1$1 : void 0,
+        validate: validator.value ? validate$1$1 : void 0,
         schema: isTyped ? rules2 : void 0
       });
       const errorMessage = computed(() => errors2.value[0]);
