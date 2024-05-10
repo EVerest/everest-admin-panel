@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-SYMZEDW5.js"(exports, module) {
+  "assets/index-H1fbZBfl.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -13667,6 +13667,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const isSelected = computed(() => {
         return group.isSelected(id2);
       });
+      const isFirst = computed(() => {
+        return group.items.value[0].id === id2;
+      });
+      const isLast = computed(() => {
+        return group.items.value[group.items.value.length - 1].id === id2;
+      });
       const selectedClass = computed(() => isSelected.value && [group.selectedClass.value, props.selectedClass]);
       watch(isSelected, (value2) => {
         vm.emit("group:selected", {
@@ -13678,6 +13684,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return {
         id: id2,
         isSelected,
+        isFirst,
+        isLast,
         toggle: () => group.select(id2, !isSelected.value),
         select: (value2) => group.select(id2, value2),
         selectedClass,
@@ -38697,7 +38705,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.4";
+    const version$1 = "3.6.5";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -52205,7 +52213,9 @@ Reason: ${error2}`);
             }
           });
         });
-        return {};
+        return {
+          groupItem
+        };
       }
     });
     const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
@@ -52231,7 +52241,10 @@ Reason: ${error2}`);
         let {
           slots
         } = _ref;
-        useGroup(props, VExpansionPanelSymbol);
+        const {
+          next: next2,
+          prev
+        } = useGroup(props, VExpansionPanelSymbol);
         const {
           themeClasses
         } = provideTheme(props);
@@ -52258,8 +52271,19 @@ Reason: ${error2}`);
             "v-expansion-panels--tile": props.tile
           }, themeClasses.value, variantClass.value, props.class],
           "style": props.style
-        }, slots));
-        return {};
+        }, {
+          default: () => {
+            var _a2;
+            return [(_a2 = slots.default) == null ? void 0 : _a2.call(slots, {
+              prev,
+              next: next2
+            })];
+          }
+        }));
+        return {
+          next: next2,
+          prev
+        };
       }
     });
     function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
@@ -75399,7 +75423,7 @@ Reason: ${error2}`);
               }, fieldProps, {
                 "id": id2.value,
                 "active": isActive.value || isDirty.value,
-                "dirty": isDirty.value,
+                "dirty": isDirty.value || props.dirty,
                 "disabled": isDisabled.value,
                 "focused": isFocused.value,
                 "error": isValid2.value === false
@@ -75599,7 +75623,7 @@ Reason: ${error2}`);
       }
     });
     const VStepperHeader = createSimpleFunctional("v-stepper-header");
-    const makeVStepperItemProps = propsFactory({
+    const makeStepperItemProps = propsFactory({
       color: String,
       title: String,
       subtitle: String,
@@ -75626,7 +75650,10 @@ Reason: ${error2}`);
       rules: {
         type: Array,
         default: () => []
-      },
+      }
+    }, "StepperItem");
+    const makeVStepperItemProps = propsFactory({
+      ...makeStepperItemProps(),
       ...makeGroupItemProps()
     }, "VStepperItem");
     const VStepperItem = genericComponent()({
@@ -75645,6 +75672,7 @@ Reason: ${error2}`);
         const group = useGroupItem(props, VStepperSymbol, true);
         const step = computed(() => (group == null ? void 0 : group.value.value) ?? props.value);
         const isValid2 = computed(() => props.rules.every((handler) => handler() === true));
+        const isClickable = computed(() => !props.disabled && props.editable);
         const canEdit = computed(() => !props.disabled && props.editable);
         const hasError = computed(() => props.error || !isValid2.value);
         const hasCompleted = computed(() => props.complete || props.rules.length > 0 && isValid2.value);
@@ -75653,7 +75681,7 @@ Reason: ${error2}`);
             return props.errorIcon;
           if (hasCompleted.value)
             return props.completeIcon;
-          if (props.editable)
+          if (group.isSelected.value && props.editable)
             return props.editIcon;
           return props.icon;
         });
@@ -75682,7 +75710,7 @@ Reason: ${error2}`);
             }, group == null ? void 0 : group.selectedClass.value],
             "disabled": !props.editable,
             "onClick": onClick
-          }, [createVNode(VAvatar, {
+          }, [isClickable.value && genOverlays(true, "v-stepper-item"), createVNode(VAvatar, {
             "key": "stepper-avatar",
             "class": "v-stepper-item__avatar",
             "color": hasColor ? props.color : void 0,
@@ -75773,7 +75801,7 @@ Reason: ${error2}`);
       }
     });
     const VStepperSymbol = Symbol.for("vuetify:v-stepper");
-    const makeVStepperProps = propsFactory({
+    const makeStepperProps = propsFactory({
       altLabels: Boolean,
       bgColor: String,
       editable: Boolean,
@@ -75792,7 +75820,10 @@ Reason: ${error2}`);
       },
       mobile: Boolean,
       nonLinear: Boolean,
-      flat: Boolean,
+      flat: Boolean
+    }, "Stepper");
+    const makeVStepperProps = propsFactory({
+      ...makeStepperProps(),
       ...makeGroupProps({
         mandatory: "force",
         selectedClass: "v-stepper-item--selected"
@@ -75876,12 +75907,18 @@ Reason: ${error2}`);
               return [hasHeader && createVNode(VStepperHeader, {
                 "key": "stepper-header"
               }, {
-                default: () => [items2.value.map((item, index) => createVNode(Fragment, null, [!!index && createVNode(VDivider, null, null), createVNode(VStepperItem, item, {
-                  default: slots[`header-item.${item.value}`] ?? slots.header,
-                  icon: slots.icon,
-                  title: slots.title,
-                  subtitle: slots.subtitle
-                })]))]
+                default: () => [items2.value.map((_ref2, index) => {
+                  let {
+                    raw,
+                    ...item
+                  } = _ref2;
+                  return createVNode(Fragment, null, [!!index && createVNode(VDivider, null, null), createVNode(VStepperItem, item, {
+                    default: slots[`header-item.${item.value}`] ?? slots.header,
+                    icon: slots.icon,
+                    title: slots.title,
+                    subtitle: slots.subtitle
+                  })]);
+                })]
               }), hasWindow && createVNode(VStepperWindow, {
                 "key": "stepper-window"
               }, {

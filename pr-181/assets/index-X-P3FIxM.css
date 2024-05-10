@@ -54028,11 +54028,41 @@ html.overflow-y-hidden {
   align-self: stretch;
   display: inline-flex;
   flex: none;
+  outline: none;
   opacity: var(--v-medium-emphasis-opacity);
   padding: 1.5rem;
+  position: relative;
   transition-duration: 0.2s;
   transition-property: opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.v-stepper-item:hover > .v-stepper-item__overlay {
+  opacity: calc(var(--v-hover-opacity) * var(--v-theme-overlay-multiplier));
+}
+.v-stepper-item:focus-visible > .v-stepper-item__overlay {
+  opacity: calc(var(--v-focus-opacity) * var(--v-theme-overlay-multiplier));
+}
+@supports not selector(:focus-visible) {
+  .v-stepper-item:focus > .v-stepper-item__overlay {
+    opacity: calc(var(--v-focus-opacity) * var(--v-theme-overlay-multiplier));
+  }
+}
+.v-stepper-item--active > .v-stepper-item__overlay, .v-stepper-item[aria-haspopup=menu][aria-expanded=true] > .v-stepper-item__overlay {
+  opacity: calc(var(--v-activated-opacity) * var(--v-theme-overlay-multiplier));
+}
+.v-stepper-item--active:hover > .v-stepper-item__overlay, .v-stepper-item[aria-haspopup=menu][aria-expanded=true]:hover > .v-stepper-item__overlay {
+  opacity: calc((var(--v-activated-opacity) + var(--v-hover-opacity)) * var(--v-theme-overlay-multiplier));
+}
+.v-stepper-item--active:focus-visible > .v-stepper-item__overlay, .v-stepper-item[aria-haspopup=menu][aria-expanded=true]:focus-visible > .v-stepper-item__overlay {
+  opacity: calc((var(--v-activated-opacity) + var(--v-focus-opacity)) * var(--v-theme-overlay-multiplier));
+}
+@supports not selector(:focus-visible) {
+  .v-stepper-item--active:focus > .v-stepper-item__overlay, .v-stepper-item[aria-haspopup=menu][aria-expanded=true]:focus > .v-stepper-item__overlay {
+    opacity: calc((var(--v-activated-opacity) + var(--v-focus-opacity)) * var(--v-theme-overlay-multiplier));
+  }
+}
+.v-stepper--non-linear .v-stepper-item {
+  opacity: var(--v-high-emphasis-opacity);
 }
 .v-stepper-item--selected {
   opacity: 1;
@@ -54089,6 +54119,23 @@ html.overflow-y-hidden {
 }
 .v-stepper--mobile .v-stepper-item__subtitle {
   display: none;
+}
+
+.v-stepper-item__overlay {
+  background-color: currentColor;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.v-stepper-item__overlay,
+.v-stepper-item__underlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }.v-switch .v-label {
   padding-inline-start: 10px;
 }
