@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-sFFkXsGE.js"(exports, module) {
+  "assets/index-AWk6ZlOR.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -24244,7 +24244,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         validator: (v) => typeof v === "boolean" || ["always", "desktop", "mobile"].includes(v)
       },
       ...makeComponentProps(),
-      ...makeDisplayProps(),
+      ...makeDisplayProps({
+        mobile: null
+      }),
       ...makeTagProps(),
       ...makeGroupProps({
         selectedClass: "v-slide-group-item--active"
@@ -24908,7 +24910,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           },
           closeParents(e) {
             setTimeout(() => {
-              if (!openChildren.value && (e == null || e && !isClickInsideElement(e, overlay.value.contentEl))) {
+              if (!openChildren.value && !props.persistent && (e == null || e && !isClickInsideElement(e, overlay.value.contentEl))) {
                 isActive.value = false;
                 parent == null ? void 0 : parent.closeParents();
               }
@@ -24947,6 +24949,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (props.disabled)
             return;
           if (e.key === "Tab" || e.key === "Enter" && !props.closeOnContentClick) {
+            if (e.key === "Enter" && e.target instanceof HTMLTextAreaElement)
+              return;
             if (e.key === "Enter")
               e.preventDefault();
             const nextElement = getNextElement(focusableChildren((_a2 = overlay.value) == null ? void 0 : _a2.contentEl, false), e.shiftKey ? "prev" : "next", (el2) => el2.tabIndex >= 0);
@@ -26128,7 +26132,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         let keyboardLookupLastTime;
         const displayItems = computed(() => {
           if (props.hideSelected) {
-            return items2.value.filter((item) => !model.value.some((s) => s === item));
+            return items2.value.filter((item) => !model.value.some((s) => props.valueComparator(s, item)));
           }
           return items2.value;
         });
@@ -38705,7 +38709,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.5";
+    const version$1 = "3.6.6";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -75987,6 +75991,7 @@ Reason: ${error2}`);
           blur
         } = useFocus(props);
         const control = ref$1();
+        const isForcedColorsModeActive = IN_BROWSER && window.matchMedia("(forced-colors: active)").matches;
         const loaderColor = computed(() => {
           return typeof props.loading === "string" && props.loading !== "" ? props.loading : props.color;
         });
@@ -76056,7 +76061,7 @@ Reason: ${error2}`);
                     backgroundColorStyles
                   } = _ref3;
                   return createVNode("div", {
-                    "class": ["v-switch__track", ...backgroundColorClasses.value],
+                    "class": ["v-switch__track", !isForcedColorsModeActive ? backgroundColorClasses.value : void 0],
                     "style": backgroundColorStyles.value,
                     "onClick": onTrackClick
                   }, [slots["track-true"] && createVNode("div", {
@@ -76077,7 +76082,7 @@ Reason: ${error2}`);
                   return createVNode(Fragment, null, [inputNode, createVNode("div", {
                     "class": ["v-switch__thumb", {
                       "v-switch__thumb--filled": icon || props.loading
-                    }, props.inset ? void 0 : backgroundColorClasses.value],
+                    }, props.inset || isForcedColorsModeActive ? void 0 : backgroundColorClasses.value],
                     "style": props.inset ? void 0 : backgroundColorStyles.value
                   }, [slots.thumb ? createVNode(VDefaultsProvider, {
                     "defaults": {
