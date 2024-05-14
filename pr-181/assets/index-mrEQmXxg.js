@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-H1fbZBfl.js"(exports, module) {
+  "assets/index-mrEQmXxg.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -39930,7 +39930,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       result.compiledTypeMap = compileMap(result.compiledImplicit, result.compiledExplicit);
       return result;
     };
-    var schema$2 = Schema$1;
+    var schema$4 = Schema$1;
     var str = new type$9("tag:yaml.org,2002:str", {
       kind: "scalar",
       construct: function(data) {
@@ -39949,7 +39949,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return data !== null ? data : {};
       }
     });
-    var failsafe = new schema$2({
+    var failsafe = new schema$4({
       explicit: [
         str,
         seq,
@@ -42278,7 +42278,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
     }
     var Type$2 = type$9;
-    var Schema = schema$2;
+    var Schema = schema$4;
     var FAILSAFE_SCHEMA = failsafe;
     var JSON_SCHEMA = json$1;
     var CORE_SCHEMA = core$5;
@@ -45166,7 +45166,7 @@ Reason: ${error2}`);
       }, 8, ["model-value", "onClick:outside"]);
     }
     const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$3]]);
-    var ajv$1 = { exports: {} };
+    var ajv$2 = { exports: {} };
     var core$3 = {};
     var validate = {};
     var boolSchema = {};
@@ -51668,9 +51668,9 @@ Reason: ${error2}`);
       Object.defineProperty(exports2, "MissingRefError", { enumerable: true, get: function() {
         return ref_error_12.default;
       } });
-    })(ajv$1, ajv$1.exports);
-    var ajvExports = ajv$1.exports;
-    const Ajv$3 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
+    })(ajv$2, ajv$2.exports);
+    var ajvExports = ajv$2.exports;
+    const Ajv$4 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
     function urlToPublicAsset(filePath) {
       let base2 = "/everest-admin-panel/pr-181";
       if (!base2.endsWith("/")) {
@@ -51755,7 +51755,7 @@ Reason: ${error2}`);
           }
         }
         async function validateConfigContent(content2) {
-          const ajv2 = new Ajv$3();
+          const ajv2 = new Ajv$4();
           const schema2 = await getConfigJsonSchema();
           const validate2 = ajv2.compile(schema2);
           const valid = validate2(content2);
@@ -67603,7 +67603,7 @@ Reason: ${error2}`);
       en,
       fr
     };
-    const schema$1 = {
+    const schema$3 = {
       "$id": "https://json-layout.github.io/layout-keyword",
       "$defs": {
         "layout-keyword": {
@@ -68020,7 +68020,7 @@ Reason: ${error2}`);
         }
       }
     };
-    const schema = {
+    const schema$2 = {
       "$id": "https://json-layout.github.io/normalized-layout-keyword",
       "$defs": {
         "normalized-layout": {
@@ -68829,11 +68829,11 @@ Reason: ${error2}`);
       }
       return schema2;
     }
-    const Ajv$2 = (
+    const Ajv$3 = (
       /** @type {typeof ajvModule.default} */
       ajvModule
     );
-    const ajv = new Ajv$2({
+    const ajv$1 = new Ajv$3({
       code: {
         source: true,
         esm: true
@@ -68844,21 +68844,21 @@ Reason: ${error2}`);
       allowUnionTypes: true,
       allErrors: true
     });
-    addFormats.default(ajv);
-    ajvErrors.default(ajv);
-    ajv.addSchema(schema$1);
-    ajv.addSchema(schema);
+    addFormats.default(ajv$1);
+    ajvErrors.default(ajv$1);
+    ajv$1.addSchema(schema$3);
+    ajv$1.addSchema(schema$2);
     const componentsValidateCache = {};
     function getComponentValidate(component) {
       if (componentsValidateCache[component.name])
         return componentsValidateCache[component.name];
       const schema2 = getComponentSchema(component);
-      componentsValidateCache[component.name] = ajv.compile(schema2);
+      componentsValidateCache[component.name] = ajv$1.compile(schema2);
       return componentsValidateCache[component.name];
     }
     const validateLayoutKeyword = (
       /** @type {any} */
-      ajv.getSchema(schema$1.$id)
+      ajv$1.getSchema(schema$3.$id)
     );
     function isComponentName(layoutKeyword) {
       return typeof layoutKeyword === "string";
@@ -68890,7 +68890,7 @@ Reason: ${error2}`);
     }
     const validateNormalizedLayout = (
       /** @type {any} */
-      ajv.getSchema(schema.$id)
+      ajv$1.getSchema(schema$2.$id)
     );
     function isSwitchStruct(layout) {
       return typeof layout === "object" && "switch" in layout;
@@ -68915,15 +68915,6 @@ Reason: ${error2}`);
     }
     function isGetItemsFetch(getItems) {
       return !!getItems.url;
-    }
-    function isTextSlot(slot) {
-      return !!slot.text;
-    }
-    function isMarkdownSlot(slot) {
-      return !!slot.markdown;
-    }
-    function isNameSlot(slot) {
-      return !!slot.name;
     }
     function getDefaultChildren(schemaFragment) {
       var _a2;
@@ -69614,7 +69605,7 @@ Reason: ${error2}`);
       validates.push(pointer);
       return { title: title2, root };
     }
-    const Ajv$1 = ajvModule.default;
+    const Ajv$2 = ajvModule.default;
     const getJSONRef = (schemas, ref2, ajv2) => {
       var _a2;
       const [schemaId, pointer] = ref2.split("#");
@@ -69660,7 +69651,7 @@ Reason: ${error2}`);
     function resolveRefs(schema2, ajv2, locale = "en") {
       if (!schema2.$id)
         throw new Error("missing schema id");
-      return recurse({ [schema2.$id]: schema2 }, schema2, schema2.$id, ajv2 ?? new Ajv$1(), locale);
+      return recurse({ [schema2.$id]: schema2 }, schema2, schema2.$id, ajv2 ?? new Ajv$2(), locale);
     }
     function copyBuffer(cur) {
       if (cur instanceof Buffer) {
@@ -69722,7 +69713,7 @@ Reason: ${error2}`);
       }
     }
     const clone$1 = rfdc();
-    const Ajv = (
+    const Ajv$1 = (
       /** @type {typeof ajvModule.default} */
       ajvModule
     );
@@ -69746,7 +69737,7 @@ Reason: ${error2}`);
           Object.assign(ajvOpts, partialOptions.ajvOptions);
         if (partialOptions.code)
           ajvOpts.code = { source: true, esm: true, lines: true };
-        const newAjv = new Ajv(ajvOpts);
+        const newAjv = new Ajv$1(ajvOpts);
         addFormats.default(newAjv);
         ajvErrors.default(newAjv);
         ajv2 = newAjv;
@@ -76373,6 +76364,1067 @@ Reason: ${error2}`);
         return forwardRefs({}, vInputRef, vFieldRef, textareaRef);
       }
     });
+    const schema$1 = {
+      "$id": "https://json-layout.github.io/layout-keyword",
+      "$defs": {
+        "layout-keyword": {
+          "title": "layout keyword",
+          "errorMessage": {
+            "anyOf": "layout keyword must be a string with a valid component name, or a more complete object definition, or an array of children, or a switch structure"
+          },
+          "anyOf": [
+            {
+              "$ref": "#/$defs/comp-name"
+            },
+            {
+              "$ref": "#/$defs/partial-children"
+            },
+            {
+              "$ref": "#/$defs/partial-comp-object"
+            },
+            {
+              "$ref": "#/$defs/partial-switch"
+            }
+          ]
+        },
+        "partial-switch": {
+          "type": "object",
+          "required": [
+            "switch"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "switch": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/partial-comp-object"
+              }
+            }
+          }
+        },
+        "partial-comp-object": {
+          "title": "partial comp object",
+          "type": "object",
+          "properties": {
+            "comp": {
+              "$ref": "#/$defs/comp-name"
+            },
+            "help": {
+              "type": "string"
+            },
+            "children": {
+              "$ref": "#/$defs/partial-children"
+            },
+            "label": {
+              "type": "string"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subtitle": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "step": {
+              "type": "number"
+            },
+            "if": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/partial-select-item"
+              }
+            },
+            "getItems": {
+              "$ref": "#/$defs/partial-get-items"
+            },
+            "listEditMode": {
+              "type": "string",
+              "enum": [
+                "inline",
+                "inline-single",
+                "menu",
+                "dialog"
+              ]
+            },
+            "listActions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "add",
+                  "edit",
+                  "delete",
+                  "sort",
+                  "duplicate"
+                ]
+              }
+            },
+            "cols": {
+              "$ref": "#/$defs/partial-cols"
+            },
+            "props": {
+              "type": "object"
+            },
+            "getProps": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "slots": {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/$defs/partial-slot"
+                }
+              }
+            },
+            "options": {
+              "type": "object"
+            },
+            "getOptions": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "messages": {
+              "type": "object"
+            },
+            "defaultData": {},
+            "getDefaultData": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "constData": {},
+            "getConstData": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "transformData": {
+              "$ref": "#/$defs/partial-expression"
+            },
+            "autofocus": {
+              "type": "boolean"
+            },
+            "separator": {
+              "type": "string"
+            }
+          }
+        },
+        "comp-name": {
+          "title": "component name",
+          "type": "string"
+        },
+        "partial-child-ref": {
+          "type": "object",
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            },
+            "cols": {
+              "$ref": "#/$defs/partial-cols"
+            }
+          }
+        },
+        "partial-child-composite": {
+          "type": "object",
+          "required": [
+            "children"
+          ],
+          "properties": {
+            "comp": {
+              "type": "string"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subtitle": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "children": {
+              "$ref": "#/$defs/partial-children"
+            },
+            "cols": {
+              "$ref": "#/$defs/partial-cols"
+            }
+          }
+        },
+        "partial-child": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/partial-child-ref"
+            },
+            {
+              "$ref": "#/$defs/partial-child-composite"
+            }
+          ]
+        },
+        "partial-children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/partial-child"
+          }
+        },
+        "partial-expression": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/partial-expression-obj"
+            }
+          ]
+        },
+        "partial-expression-obj": {
+          "type": "object",
+          "required": [
+            "expr"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "js-fn",
+                "js-eval",
+                "js-tpl"
+              ]
+            },
+            "expr": {
+              "type": "string"
+            }
+          }
+        },
+        "partial-select-item": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "value": {}
+              }
+            }
+          ]
+        },
+        "partial-get-items": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/partial-get-items-obj"
+            }
+          ]
+        },
+        "partial-get-items-obj": {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "itemTitle": {
+                  "$ref": "#/$defs/partial-expression"
+                },
+                "itemKey": {
+                  "$ref": "#/$defs/partial-expression"
+                },
+                "itemValue": {
+                  "$ref": "#/$defs/partial-expression"
+                },
+                "itemIcon": {
+                  "$ref": "#/$defs/partial-expression"
+                },
+                "itemsResults": {
+                  "$ref": "#/$defs/partial-expression"
+                }
+              }
+            },
+            {
+              "anyOf": [
+                {
+                  "type": "object"
+                },
+                {
+                  "$ref": "#/$defs/partial-expression-obj"
+                },
+                {
+                  "$ref": "#/$defs/partial-get-items-fetch"
+                }
+              ]
+            }
+          ]
+        },
+        "partial-get-items-fetch": {
+          "type": "object",
+          "required": [
+            "url"
+          ],
+          "properties": {
+            "url": {
+              "$ref": "#/$defs/partial-expression"
+            }
+          }
+        },
+        "partial-cols": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            {
+              "$ref": "#/$defs/partial-cols-obj"
+            }
+          ]
+        },
+        "partial-cols-obj": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "xs": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "sm": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "md": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "lg": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "xl": {
+              "$ref": "#/$defs/partial-cols-number"
+            },
+            "xxl": {
+              "$ref": "#/$defs/partial-cols-number"
+            }
+          }
+        },
+        "partial-cols-number": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "partial-slot": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/$defs/partial-slot-text"
+            },
+            {
+              "$ref": "#/$defs/partial-slot-markdown"
+            },
+            {
+              "$ref": "#/$defs/partial-slot-name"
+            }
+          ]
+        },
+        "partial-slot-text": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "type": "string"
+            }
+          }
+        },
+        "partial-slot-markdown": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "markdown"
+          ],
+          "properties": {
+            "markdown": {
+              "type": "string"
+            }
+          }
+        },
+        "partial-slot-name": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name"
+          ],
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    };
+    const schema = {
+      "$id": "https://json-layout.github.io/normalized-layout-keyword",
+      "$defs": {
+        "normalized-layout": {
+          "title": "normalized layout",
+          "type": "object",
+          "unevaluatedProperties": false,
+          "oneOf": [
+            {
+              "$ref": "#/$defs/switch-struct"
+            },
+            {
+              "$ref": "#/$defs/base-comp-object"
+            }
+          ]
+        },
+        "switch-struct": {
+          "type": "object",
+          "required": [
+            "switch"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "switch": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/base-comp-object"
+              }
+            }
+          }
+        },
+        "base-comp-object": {
+          "type": "object",
+          "required": [
+            "comp"
+          ],
+          "properties": {
+            "comp": {
+              "type": "string"
+            },
+            "if": {
+              "$ref": "#/$defs/expression"
+            },
+            "options": {
+              "$ref": "#/$defs/state-node-options-base"
+            },
+            "getOptions": {
+              "$ref": "#/$defs/expression"
+            },
+            "defaultData": {},
+            "getDefaultData": {
+              "$ref": "#/$defs/expression"
+            },
+            "constData": {},
+            "getConstData": {
+              "$ref": "#/$defs/expression"
+            },
+            "transformData": {
+              "$ref": "#/$defs/expression"
+            },
+            "nullable": {
+              "type": "boolean"
+            },
+            "help": {
+              "type": "string"
+            },
+            "cols": {
+              "$ref": "#/$defs/cols-obj"
+            },
+            "props": {
+              "$ref": "#/$defs/state-node-props-lib"
+            },
+            "getProps": {
+              "$ref": "#/$defs/expression"
+            },
+            "slots": {
+              "type": "object",
+              "allOf": [
+                {
+                  "$ref": "#/$defs/state-node-slots-lib"
+                },
+                {
+                  "properties": {
+                    "before": {
+                      "$ref": "#/$defs/slot"
+                    },
+                    "after": {
+                      "$ref": "#/$defs/slot"
+                    },
+                    "component": {
+                      "$ref": "#/$defs/slot"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "composite-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "children",
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "subtitle": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "children": {
+                  "$ref": "#/$defs/children"
+                }
+              }
+            }
+          ]
+        },
+        "simple-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "focusable-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string"
+                },
+                "autofocus": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "items-based-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "items": {
+                  "$ref": "#/$defs/select-items"
+                },
+                "getItems": {
+                  "$ref": "#/$defs/get-items"
+                },
+                "multiple": {
+                  "type": "boolean"
+                },
+                "separator": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "multiple-compat-comp-object": {
+          "allOf": [
+            {
+              "$ref": "#/$defs/base-comp-object"
+            },
+            {
+              "type": "object",
+              "required": [
+                "comp"
+              ],
+              "properties": {
+                "comp": {
+                  "type": "string"
+                },
+                "multiple": {
+                  "type": "boolean"
+                }
+              }
+            }
+          ]
+        },
+        "child-ref": {
+          "type": "object",
+          "required": [
+            "key"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "key": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            },
+            "cols": {
+              "$ref": "#/$defs/cols-obj"
+            }
+          }
+        },
+        "child-composite": {
+          "type": "object",
+          "required": [
+            "key",
+            "children"
+          ],
+          "properties": {
+            "key": {
+              "type": [
+                "string",
+                "integer"
+              ]
+            },
+            "cols": {
+              "$ref": "#/$defs/cols-obj"
+            },
+            "comp": {
+              "type": "string"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subtitle": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "children": {
+              "$ref": "#/$defs/children"
+            }
+          }
+        },
+        "child": {
+          "title": "Child",
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/child-ref"
+            },
+            {
+              "$ref": "#/$defs/child-composite"
+            }
+          ]
+        },
+        "children": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/child"
+          }
+        },
+        "select-items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/select-item"
+          }
+        },
+        "select-item": {
+          "type": "object",
+          "required": [
+            "title",
+            "key",
+            "value"
+          ],
+          "properties": {
+            "title": {
+              "type": "string"
+            },
+            "key": {
+              "type": "string"
+            },
+            "value": {},
+            "icon": {
+              "type": "string"
+            }
+          }
+        },
+        "get-items": {
+          "type": "object",
+          "allOf": [
+            {
+              "properties": {
+                "returnObjects": {
+                  "type": "boolean",
+                  "readOnly": true
+                },
+                "itemsResults": {
+                  "$ref": "#/$defs/expression"
+                },
+                "itemTitle": {
+                  "$ref": "#/$defs/expression"
+                },
+                "itemKey": {
+                  "$ref": "#/$defs/expression"
+                },
+                "itemValue": {
+                  "$ref": "#/$defs/expression"
+                },
+                "itemIcon": {
+                  "$ref": "#/$defs/expression"
+                }
+              }
+            },
+            {
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/expression"
+                },
+                {
+                  "$ref": "#/$defs/get-items-fetch"
+                }
+              ]
+            }
+          ]
+        },
+        "get-items-fetch": {
+          "type": "object",
+          "required": [
+            "url"
+          ],
+          "properties": {
+            "url": {
+              "$ref": "#/$defs/expression"
+            },
+            "qSearchParam": {
+              "type": "string"
+            },
+            "searchParams": {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/$defs/expression"
+                }
+              }
+            }
+          }
+        },
+        "expression": {
+          "type": "object",
+          "required": [
+            "type",
+            "expr",
+            "pure"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "js-fn",
+                "js-eval",
+                "js-tpl"
+              ]
+            },
+            "expr": {
+              "type": "string"
+            },
+            "pure": {
+              "type": "boolean"
+            },
+            "ref": {
+              "type": "integer",
+              "readOnly": true
+            }
+          }
+        },
+        "cols-obj": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "xs"
+          ],
+          "properties": {
+            "xs": {
+              "$ref": "#/$defs/cols",
+              "default": 12
+            },
+            "sm": {
+              "$ref": "#/$defs/cols"
+            },
+            "md": {
+              "$ref": "#/$defs/cols"
+            },
+            "lg": {
+              "$ref": "#/$defs/cols"
+            },
+            "xl": {
+              "$ref": "#/$defs/cols"
+            },
+            "xxl": {
+              "$ref": "#/$defs/cols"
+            }
+          }
+        },
+        "cols": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 12
+        },
+        "slot": {
+          "oneOf": [
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "markdown"
+              ],
+              "properties": {
+                "markdown": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
+        },
+        "state-node-options-base": {
+          "type": "object",
+          "allOf": [
+            {
+              "$ref": "#/$defs/state-node-options-base-lib"
+            },
+            {
+              "properties": {
+                "readOnly": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "summary": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "titleDepth": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 6,
+                  "default": 2
+                },
+                "density": {
+                  "type": "string",
+                  "enum": [
+                    "default",
+                    "comfortable",
+                    "compact"
+                  ],
+                  "default": "default"
+                },
+                "removeAdditional": {
+                  "description": "true is the same as 'unknown', false is the same as 'none'",
+                  "default": "error",
+                  "oneOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "string",
+                      "enum": [
+                        "unknown",
+                        "error",
+                        "none"
+                      ]
+                    }
+                  ]
+                },
+                "validateOn": {
+                  "type": "string",
+                  "enum": [
+                    "input",
+                    "blur",
+                    "submit"
+                  ],
+                  "default": "input"
+                },
+                "updateOn": {
+                  "type": "string",
+                  "enum": [
+                    "input",
+                    "blur"
+                  ],
+                  "default": "input"
+                },
+                "debounceInputMs": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "default": 300
+                },
+                "initialValidation": {
+                  "type": "string",
+                  "enum": [
+                    "never",
+                    "always",
+                    "withData"
+                  ],
+                  "default": "withData"
+                },
+                "defaultOn": {
+                  "type": "string",
+                  "enum": [
+                    "missing",
+                    "empty",
+                    "never"
+                  ],
+                  "default": "empty"
+                },
+                "autofocus": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "readOnlyPropertiesMode": {
+                  "type": "string",
+                  "enum": [
+                    "remove",
+                    "hide",
+                    "show"
+                  ],
+                  "default": "show"
+                }
+              }
+            }
+          ]
+        },
+        "state-node-options-base-lib": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {}
+          }
+        },
+        "state-node-props-lib": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {}
+          }
+        },
+        "state-node-slots-lib": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/slot"
+            }
+          }
+        }
+      }
+    };
+    const Ajv = (
+      /** @type {typeof ajvModule.default} */
+      ajvModule
+    );
+    const ajv = new Ajv({
+      code: {
+        source: true,
+        esm: true
+        // optimize: true
+      },
+      discriminator: true,
+      allowMatchingProperties: true,
+      allowUnionTypes: true,
+      allErrors: true
+    });
+    addFormats.default(ajv);
+    ajvErrors.default(ajv);
+    ajv.addSchema(schema$1);
+    ajv.addSchema(schema);
+    ajv.getSchema(schema$1.$id);
+    ajv.getSchema(schema.$id);
+    function isTextSlot(slot) {
+      return !!slot.text;
+    }
+    function isMarkdownSlot(slot) {
+      return !!slot.markdown;
+    }
+    function isNameSlot(slot) {
+      return !!slot.name;
+    }
     const _sfc_main$x = {
       props: {
         layoutSlot: {
