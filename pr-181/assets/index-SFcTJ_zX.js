@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-AWk6ZlOR.js"(exports, module) {
+  "assets/index-SFcTJ_zX.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -70582,7 +70582,9 @@ Reason: ${error2}`);
       return false;
     };
     const matchChildError = (error2, skeleton, dataPath, parentDataPath) => {
-      if (error2.instancePath.startsWith(dataPath) && !(typeof skeleton.key === "string" && skeleton.key.startsWith("$allOf")))
+      if (!error2.schemaPath.startsWith(skeleton.pointer))
+        return false;
+      if (error2.instancePath.startsWith(dataPath))
         return true;
       return false;
     };
@@ -70611,7 +70613,7 @@ Reason: ${error2}`);
       return { comp: "none" };
     };
     function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentData, validationState, reusedNode) {
-      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
+      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
       let cacheKey = null;
       if (skeleton.pure && reusedNode && !reusedNode.error && !reusedNode.childError) {
         cacheKey = [parentOptions, compiledLayout, fullKey, skeleton, childDefinition, parentDisplay.width, validationState, context.activeItems, context.initial, data];
@@ -70676,6 +70678,15 @@ Reason: ${error2}`);
       if (key === "$oneOf" && skeleton.childrenTrees) {
         const activeChildTreeIndex = fullKey in context.activeItems ? context.activeItems[fullKey] : (_d = skeleton.childrenTrees) == null ? void 0 : _d.findIndex((childTree) => compiledLayout.validates[childTree.root.pointer](data));
         if (activeChildTreeIndex !== -1) {
+          context.errors = (_e = context.errors) == null ? void 0 : _e.filter((error3) => {
+            var _a3, _b2;
+            const originalError = ((_b2 = (_a3 = error3.params) == null ? void 0 : _a3.errors) == null ? void 0 : _b2[0]) ?? error3;
+            if (originalError.schemaPath === skeleton.pointer && originalError.keyword === "oneOf")
+              return false;
+            if (originalError.schemaPath.startsWith(skeleton.pointer) && !originalError.schemaPath.startsWith(skeleton.pointer + "/" + activeChildTreeIndex))
+              return false;
+            return true;
+          });
           context.activeItems = produce(context.activeItems, (draft) => {
             draft[fullKey] = activeChildTreeIndex;
           });
@@ -70699,7 +70710,7 @@ Reason: ${error2}`);
               data,
               data,
               validationState,
-              (_e = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _e[0]
+              (_f = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _f[0]
             )
           ];
         }
@@ -70711,7 +70722,7 @@ Reason: ${error2}`);
         );
         const childSkeleton = (
           /** @type {import('../index.js').SkeletonNode} */
-          (_g = (_f = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _f[0]) == null ? void 0 : _g.root
+          (_h = (_g = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _g[0]) == null ? void 0 : _h.root
         );
         const listItemOptions = layout.listEditMode === "inline" ? options : produceReadonlyArrayItemOptions(options);
         children = [];
@@ -70736,17 +70747,23 @@ Reason: ${error2}`);
             itemData,
             arrayData,
             validationState,
-            (_h = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _h[0]
+            (_i = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _i[0]
           );
           if (child.autofocus || child.autofocusChild !== void 0)
             focusChild2 = false;
           children.push(child);
         }
       }
-      const error2 = ((_i = context.errors) == null ? void 0 : _i.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath))) ?? ((_j = context.errors) == null ? void 0 : _j.find((error3) => matchChildError(error3, skeleton, dataPath)));
+      let error2 = (_j = context.errors) == null ? void 0 : _j.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath));
+      if (!error2) {
+        error2 = (_k = context.errors) == null ? void 0 : _k.find((error3) => matchChildError(error3, skeleton, dataPath));
+      }
       if (layout.comp !== "none") {
-        if (error2)
-          context.errors = (_k = context.errors) == null ? void 0 : _k.filter((error3) => !matchError(error3, skeleton, dataPath, parentDataPath) && !matchChildError(error3, skeleton, dataPath));
+        if (error2) {
+          context.errors = (_l = context.errors) == null ? void 0 : _l.filter((error3) => {
+            return !matchError(error3, skeleton, dataPath, parentDataPath) && !matchChildError(error3, skeleton, dataPath);
+          });
+        }
       }
       const validated = validationState.validatedForm || validationState.validatedChildren.includes(fullKey) || validationState.initialized === false && options.initialValidation === "always" || validationState.initialized === false && options.initialValidation === "withData" && !isDataEmpty(data);
       let nodeData = children ? produceStateNodeData(
