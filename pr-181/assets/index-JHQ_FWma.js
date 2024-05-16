@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-hcxLhavz.js"(exports, module) {
+  "assets/index-JHQ_FWma.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -70549,11 +70549,11 @@ Reason: ${error2}`);
               delete draft[child.key];
             else
               draft[child.key] = child.data;
-            if (Array.isArray(draft)) {
-              while (draft.length && draft[draft.length - 1] === void 0) {
-                draft.pop();
-              }
-            }
+          }
+        }
+        if (Array.isArray(draft)) {
+          while (draft.length && draft[draft.length - 1] === void 0) {
+            draft.pop();
           }
         }
       }
@@ -70636,8 +70636,9 @@ Reason: ${error2}`);
       let cacheKey = null;
       if (skeleton.pure && reusedNode && !reusedNode.error && !reusedNode.childError) {
         cacheKey = [parentOptions, compiledLayout, fullKey, skeleton, childDefinition, parentDisplay.width, validationState, context.activeItems, context.initial, data];
-        if (context.cacheKeys[fullKey] && shallowEqualArray(context.cacheKeys[fullKey], cacheKey))
+        if (context.cacheKeys[fullKey] && shallowEqualArray(context.cacheKeys[fullKey], cacheKey)) {
           return reusedNode;
+        }
       }
       const normalizedLayout = childDefinition && childIsCompObject(childDefinition) ? childDefinition : compiledLayout.normalizedLayouts[skeleton.pointer];
       const layout = getCompObject(normalizedLayout, parentOptions, compiledLayout, parentDisplay, data, context.rootData, parentData);
@@ -70766,7 +70767,7 @@ Reason: ${error2}`);
             itemData,
             arrayData,
             validationState,
-            (_i = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _i[0]
+            (_i = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _i[i2]
           );
           if (child.autofocus || child.autofocusChild !== void 0)
             focusChild2 = false;
@@ -76473,14 +76474,17 @@ Reason: ${error2}`);
           return openBlock(), createElementBlock("div", _hoisted_1$3, [
             createVNode(unref(VSlideXReverseTransition), null, {
               default: withCtx(() => [
-                withDirectives(createVNode(unref(VAlert), { color: "info" }, {
+                withDirectives(createVNode(unref(VAlert), {
+                  color: "info",
+                  density: __props.node.options.density
+                }, {
                   default: withCtx(() => [
                     createBaseVNode("div", {
                       innerHTML: __props.node.layout.help
                     }, null, 8, _hoisted_2$2)
                   ]),
                   _: 1
-                }, 512), [
+                }, 8, ["density"]), [
                   [vShow, show.value]
                 ])
               ]),
@@ -76488,12 +76492,13 @@ Reason: ${error2}`);
             }),
             createVNode(unref(VBtn), {
               color: "info",
-              class: "vjsf-help-message-toggle",
+              class: normalizeClass(`vjsf-help-message-toggle vjsf-help-message-toggle-${__props.node.options.density}`),
               icon: show.value ? "mdi-close-circle" : "mdi-information",
               density: "compact",
+              size: __props.node.options.density !== "default" ? "small" : "default",
               title: show.value ? "" : __props.node.messages.showHelp,
               onClick: _cache[0] || (_cache[0] = ($event) => show.value = !show.value)
-            }, null, 8, ["icon", "title"])
+            }, null, 8, ["class", "icon", "size", "title"])
           ]);
         };
       }
@@ -76534,7 +76539,8 @@ Reason: ${error2}`);
           console.error(`vjsf: missing component to render vjsf node "${props.modelValue.layout.comp}", maybe you forgot to register a component from a plugin ?`);
         }
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VCol), {
+          return __props.modelValue.layout.comp !== "none" ? (openBlock(), createBlock(unref(VCol), {
+            key: 0,
             cols: __props.modelValue.cols,
             class: normalizeClass(nodeClasses.value)
           }, {
@@ -76548,7 +76554,7 @@ Reason: ${error2}`);
                   "stateful-layout": __props.statefulLayout,
                   class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
                 }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true),
-                __props.modelValue.layout.help ? (openBlock(), createBlock(_sfc_main$w, {
+                __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$w, {
                   key: 1,
                   node: __props.modelValue,
                   class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
@@ -76558,11 +76564,11 @@ Reason: ${error2}`);
                   "layout-slot": (_d = __props.modelValue.layout.slots) == null ? void 0 : _d.component,
                   node: __props.modelValue,
                   "stateful-layout": __props.statefulLayout
-                }, null, 8, ["layout-slot", "node", "stateful-layout"])) : __props.modelValue.layout.comp !== "none" ? (openBlock(), createBlock(resolveDynamicComponent(props.statefulLayout.options.nodeComponents[__props.modelValue.layout.comp]), {
+                }, null, 8, ["layout-slot", "node", "stateful-layout"])) : (openBlock(), createBlock(resolveDynamicComponent(props.statefulLayout.options.nodeComponents[__props.modelValue.layout.comp]), {
                   key: 3,
                   "model-value": __props.modelValue,
                   "stateful-layout": __props.statefulLayout
-                }, null, 8, ["model-value", "stateful-layout"])) : createCommentVNode("", true),
+                }, null, 8, ["model-value", "stateful-layout"])),
                 ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$x, {
                   key: "after",
                   "layout-slot": (_f = __props.modelValue.layout.slots) == null ? void 0 : _f.after,
@@ -76573,7 +76579,7 @@ Reason: ${error2}`);
               ];
             }),
             _: 1
-          }, 8, ["cols", "class"]);
+          }, 8, ["cols", "class"])) : createCommentVNode("", true);
         };
       }
     };
@@ -77706,42 +77712,40 @@ Reason: ${error2}`);
             return;
           props.statefulLayout.activateItem(props.modelValue, props.modelValue.skeleton.childrenTrees.indexOf(childTree));
         };
+        const fieldProps = computed(() => {
+          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
+          fieldProps2.modelValue = activeChildTree.value;
+          fieldProps2["onUpdate:modelValue"] = onChange;
+          fieldProps2.returnObject = true;
+          fieldProps2.items = props.modelValue.skeleton.childrenTrees;
+          fieldProps2.itemTitle = "title";
+          return fieldProps2;
+        });
         return (_ctx, _cache) => {
-          var _a2;
-          return openBlock(), createElementBlock(Fragment, null, [
-            __props.modelValue.skeleton.childrenTrees ? (openBlock(), createBlock(unref(VSelect), {
-              key: 0,
-              modelValue: activeChildTree.value,
-              "onUpdate:modelValue": [
-                _cache[0] || (_cache[0] = ($event) => activeChildTree.value = $event),
-                onChange
-              ],
-              items: __props.modelValue.skeleton.childrenTrees,
-              "item-title": "title",
-              "return-object": "",
-              label: __props.modelValue.layout.label,
-              "error-messages": __props.modelValue.validated ? __props.modelValue.error : null,
-              density: __props.modelValue.options.density
-            }, null, 8, ["modelValue", "items", "label", "error-messages", "density"])) : createCommentVNode("", true),
-            ((_a2 = __props.modelValue.children) == null ? void 0 : _a2[0]) ? (openBlock(), createBlock(unref(VRow), { key: 1 }, {
-              default: withCtx(() => {
-                var _a3, _b;
-                return [
-                  (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)((_a3 = __props.modelValue.children) == null ? void 0 : _a3[0]) ? (_b = __props.modelValue.children) == null ? void 0 : _b[0].children : __props.modelValue.children, (grandChild) => {
-                    return openBlock(), createBlock(_sfc_main$v, {
-                      key: grandChild.fullKey,
-                      "model-value": (
-                        /** @type import('../../types.js').VjsfNode */
-                        grandChild
-                      ),
-                      "stateful-layout": __props.statefulLayout
-                    }, null, 8, ["model-value", "stateful-layout"]);
-                  }), 128))
-                ];
-              }),
-              _: 1
-            })) : createCommentVNode("", true)
-          ], 64);
+          return openBlock(), createBlock(unref(VRow), null, {
+            default: withCtx(() => {
+              var _a2, _b, _c;
+              return [
+                __props.modelValue.skeleton.childrenTrees ? (openBlock(), createBlock(unref(VCol), { key: 0 }, {
+                  default: withCtx(() => [
+                    createVNode(unref(VSelect), normalizeProps(guardReactiveProps(fieldProps.value)), null, 16)
+                  ]),
+                  _: 1
+                })) : createCommentVNode("", true),
+                ((_a2 = __props.modelValue.children) == null ? void 0 : _a2[0]) ? (openBlock(true), createElementBlock(Fragment, { key: 1 }, renderList(unref(isSection)((_b = __props.modelValue.children) == null ? void 0 : _b[0]) ? (_c = __props.modelValue.children) == null ? void 0 : _c[0].children : __props.modelValue.children, (grandChild) => {
+                  return openBlock(), createBlock(_sfc_main$v, {
+                    key: grandChild.fullKey,
+                    "model-value": (
+                      /** @type import('../../types.js').VjsfNode */
+                      grandChild
+                    ),
+                    "stateful-layout": __props.statefulLayout
+                  }, null, 8, ["model-value", "stateful-layout"]);
+                }), 128)) : createCommentVNode("", true)
+              ];
+            }),
+            _: 1
+          });
         };
       }
     };
@@ -78294,6 +78298,7 @@ Reason: ${error2}`);
           dragging.value = itemIndex;
         },
         onDragend: () => {
+          hovered.value = itemIndex;
           dragging.value = -1;
           callback();
         }
@@ -78333,6 +78338,7 @@ Reason: ${error2}`);
       },
       setup(__props) {
         const props = __props;
+        const theme = useTheme();
         const { activeDnd, sortableArray, draggable, hovered, dragging, itemBind, handleBind } = useDnd(props.modelValue.children, () => {
           props.statefulLayout.input(props.modelValue, sortableArray.value.map((child) => child.data));
         });
@@ -78363,8 +78369,29 @@ Reason: ${error2}`);
           props.statefulLayout.input(props.modelValue, newData);
           props.statefulLayout.activateItem(props.modelValue, newData.length - 1);
         };
+        const deleteItem = (childIndex) => {
+          const newData = [...props.modelValue.data.slice(0, childIndex), ...props.modelValue.data.slice(childIndex + 1)];
+          props.statefulLayout.input(props.modelValue, newData);
+          menuOpened.value = -1;
+        };
+        const duplicateItem = (child, childIndex) => {
+          const newData = [...props.modelValue.data.slice(0, childIndex), clone$1(child.data), ...props.modelValue.data.slice(childIndex)];
+          props.statefulLayout.input(props.modelValue, newData);
+          props.statefulLayout.activateItem(props.modelValue, childIndex + 1);
+          menuOpened.value = -1;
+        };
+        const itemBorderColor = computed(() => (child, childIndex) => {
+          if (editedItem.value === childIndex)
+            return theme.current.value.colors.primary;
+          if (child.validated && (child.error || child.childError))
+            return theme.current.value.colors.error;
+          return "transparent";
+        });
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VSheet), { elevation: 1 }, {
+          return openBlock(), createBlock(unref(VSheet), {
+            elevation: 2,
+            rounded: ""
+          }, {
             default: withCtx(() => [
               createVNode(unref(VList), {
                 density: __props.modelValue.options.density
@@ -78383,7 +78410,8 @@ Reason: ${error2}`);
                       createVNode(unref(VListItem), mergeProps({ ref_for: true }, unref(itemBind)(childIndex), {
                         density: __props.modelValue.options.density,
                         draggable: unref(draggable) === childIndex,
-                        variant: editedItem.value === childIndex ? "outlined" : "flat",
+                        variant: "flat",
+                        style: `border: 1px solid ${itemBorderColor.value(child, childIndex)}`,
                         class: "pa-1 vjsf-list-item"
                       }), createSlots({
                         default: withCtx(() => [
@@ -78405,128 +78433,140 @@ Reason: ${error2}`);
                         ]),
                         _: 2
                       }, [
-                        activeItem.value === childIndex ? {
+                        !__props.modelValue.options.readOnly && __props.modelValue.layout.listActions.length ? {
                           name: "append",
                           fn: withCtx(() => [
                             createBaseVNode("div", null, [
-                              __props.modelValue.layout.listActions.includes("edit") && __props.modelValue.layout.listEditMode === "inline-single" ? (openBlock(), createBlock(unref(VListItemAction), { key: 0 }, {
+                              activeItem.value !== childIndex ? (openBlock(), createBlock(unref(VListItemAction), { key: 0 }, {
                                 default: withCtx(() => [
-                                  editedItem.value !== childIndex ? (openBlock(), createBlock(unref(VBtn), {
-                                    key: 0,
-                                    title: __props.modelValue.messages.edit,
-                                    icon: "mdi-pencil",
+                                  createVNode(unref(VBtn), {
+                                    style: { "visibility": "hidden" },
                                     variant: "text",
-                                    color: "primary",
                                     density: buttonDensity.value,
-                                    onClick: ($event) => __props.statefulLayout.activateItem(__props.modelValue, childIndex)
-                                  }, null, 8, ["title", "density", "onClick"])) : (openBlock(), createBlock(unref(VBtn), {
-                                    key: 1,
-                                    title: __props.modelValue.messages.edit,
-                                    icon: "mdi-pencil",
-                                    variant: "flat",
-                                    color: "primary",
-                                    density: buttonDensity.value,
-                                    onClick: _cache[0] || (_cache[0] = ($event) => __props.statefulLayout.deactivateItem(__props.modelValue))
-                                  }, null, 8, ["title", "density"]))
+                                    icon: "mdi-pencil"
+                                  }, null, 8, ["density"])
                                 ]),
-                                _: 2
-                              }, 1024)) : createCommentVNode("", true),
-                              editedItem.value === void 0 && __props.modelValue.layout.listActions.includes("sort") && unref(activeDnd) ? (openBlock(), createBlock(unref(VListItemAction), { key: 1 }, {
-                                default: withCtx(() => [
-                                  createVNode(unref(VBtn), mergeProps({
-                                    title: __props.modelValue.messages.sort,
-                                    icon: "mdi-arrow-up-down",
-                                    variant: "plain",
-                                    density: buttonDensity.value,
-                                    ref_for: true
-                                  }, unref(handleBind)(childIndex)), null, 16, ["title", "density"])
-                                ]),
-                                _: 2
-                              }, 1024)) : createCommentVNode("", true),
-                              editedItem.value === void 0 && (__props.modelValue.layout.listActions.includes("delete") || __props.modelValue.layout.listActions.includes("duplicate") || __props.modelValue.layout.listActions.includes("sort")) ? (openBlock(), createBlock(unref(VListItemAction), { key: 2 }, {
-                                default: withCtx(() => [
-                                  createVNode(unref(VMenu), {
-                                    location: "bottom end",
-                                    "onUpdate:modelValue": (value) => {
-                                      menuOpened.value = value ? childIndex : -1;
-                                    }
-                                  }, {
-                                    activator: withCtx(({ props: activatorProps }) => [
-                                      createVNode(unref(VBtn), mergeProps({ ref_for: true }, activatorProps, {
-                                        icon: "mdi-dots-vertical",
-                                        variant: "plain",
-                                        slim: "",
-                                        density: buttonDensity.value
-                                      }), null, 16, ["density"])
-                                    ]),
-                                    default: withCtx(() => [
-                                      createVNode(unref(VList), {
-                                        density: __props.modelValue.options.density
-                                      }, {
-                                        default: withCtx(() => [
-                                          __props.modelValue.layout.listActions.includes("delete") ? (openBlock(), createBlock(unref(VListItem), {
-                                            key: 0,
-                                            "base-color": "warning",
-                                            onClick: ($event) => __props.statefulLayout.input(__props.modelValue, [...__props.modelValue.data.slice(0, childIndex), ...__props.modelValue.data.slice(childIndex + 1)])
-                                          }, {
-                                            prepend: withCtx(() => [
-                                              createVNode(unref(VIcon), { icon: "mdi-delete" })
-                                            ]),
-                                            default: withCtx(() => [
-                                              createTextVNode(" " + toDisplayString(__props.modelValue.messages.delete), 1)
-                                            ]),
-                                            _: 2
-                                          }, 1032, ["onClick"])) : createCommentVNode("", true),
-                                          __props.modelValue.layout.listActions.includes("duplicate") ? (openBlock(), createBlock(unref(VListItem), {
-                                            key: 1,
-                                            onClick: ($event) => __props.statefulLayout.input(__props.modelValue, [...__props.modelValue.data.slice(0, childIndex), unref(clone$1)(child.data), ...__props.modelValue.data.slice(childIndex)])
-                                          }, {
-                                            prepend: withCtx(() => [
-                                              createVNode(unref(VIcon), { icon: "mdi-content-duplicate" })
-                                            ]),
-                                            default: withCtx(() => [
-                                              createTextVNode(" " + toDisplayString(__props.modelValue.messages.duplicate), 1)
-                                            ]),
-                                            _: 2
-                                          }, 1032, ["onClick"])) : createCommentVNode("", true),
-                                          __props.modelValue.layout.listActions.includes("sort") ? (openBlock(), createBlock(unref(VListItem), {
-                                            key: 2,
-                                            onClick: ($event) => __props.statefulLayout.input(__props.modelValue, unref(moveArrayItem)(__props.modelValue.data, childIndex, childIndex - 1))
-                                          }, {
-                                            prepend: withCtx(() => [
-                                              createVNode(unref(VIcon), { icon: "mdi-arrow-up" })
-                                            ]),
-                                            default: withCtx(() => [
-                                              createTextVNode(" " + toDisplayString(__props.modelValue.messages.up), 1)
-                                            ]),
-                                            _: 2
-                                          }, 1032, ["onClick"])) : createCommentVNode("", true),
-                                          __props.modelValue.layout.listActions.includes("sort") ? (openBlock(), createBlock(unref(VListItem), {
-                                            key: 3,
-                                            onClick: ($event) => __props.statefulLayout.input(__props.modelValue, unref(moveArrayItem)(__props.modelValue.data, childIndex, childIndex + 1))
-                                          }, {
-                                            prepend: withCtx(() => [
-                                              createVNode(unref(VIcon), { icon: "mdi-arrow-down" })
-                                            ]),
-                                            default: withCtx(() => [
-                                              createTextVNode(" " + toDisplayString(__props.modelValue.messages.down), 1)
-                                            ]),
-                                            _: 2
-                                          }, 1032, ["onClick"])) : createCommentVNode("", true)
-                                        ]),
-                                        _: 2
-                                      }, 1032, ["density"])
-                                    ]),
-                                    _: 2
-                                  }, 1032, ["onUpdate:modelValue"])
-                                ]),
-                                _: 2
-                              }, 1024)) : createCommentVNode("", true)
+                                _: 1
+                              })) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                                __props.modelValue.layout.listActions.includes("edit") && __props.modelValue.layout.listEditMode === "inline-single" ? (openBlock(), createBlock(unref(VListItemAction), { key: 0 }, {
+                                  default: withCtx(() => [
+                                    editedItem.value !== childIndex ? (openBlock(), createBlock(unref(VBtn), {
+                                      key: 0,
+                                      title: __props.modelValue.messages.edit,
+                                      icon: "mdi-pencil",
+                                      variant: "text",
+                                      color: "primary",
+                                      density: buttonDensity.value,
+                                      onClick: ($event) => __props.statefulLayout.activateItem(__props.modelValue, childIndex)
+                                    }, null, 8, ["title", "density", "onClick"])) : (openBlock(), createBlock(unref(VBtn), {
+                                      key: 1,
+                                      title: __props.modelValue.messages.edit,
+                                      icon: "mdi-close",
+                                      variant: "flat",
+                                      color: "primary",
+                                      density: buttonDensity.value,
+                                      onClick: _cache[0] || (_cache[0] = ($event) => __props.statefulLayout.deactivateItem(__props.modelValue))
+                                    }, null, 8, ["title", "density"]))
+                                  ]),
+                                  _: 2
+                                }, 1024)) : createCommentVNode("", true),
+                                editedItem.value === void 0 && __props.modelValue.layout.listActions.includes("sort") && unref(activeDnd) ? (openBlock(), createBlock(unref(VListItemAction), { key: 1 }, {
+                                  default: withCtx(() => [
+                                    createVNode(unref(VBtn), mergeProps({
+                                      title: __props.modelValue.messages.sort,
+                                      icon: "mdi-arrow-up-down",
+                                      variant: "plain",
+                                      density: buttonDensity.value,
+                                      ref_for: true
+                                    }, unref(handleBind)(childIndex)), null, 16, ["title", "density"])
+                                  ]),
+                                  _: 2
+                                }, 1024)) : createCommentVNode("", true),
+                                editedItem.value === void 0 && (__props.modelValue.layout.listActions.includes("delete") || __props.modelValue.layout.listActions.includes("duplicate") || __props.modelValue.layout.listActions.includes("sort")) ? (openBlock(), createBlock(unref(VListItemAction), { key: 2 }, {
+                                  default: withCtx(() => [
+                                    createVNode(unref(VMenu), {
+                                      location: "bottom end",
+                                      "onUpdate:modelValue": (value) => {
+                                        menuOpened.value = value ? childIndex : -1;
+                                      }
+                                    }, {
+                                      activator: withCtx(({ props: activatorProps }) => [
+                                        createVNode(unref(VBtn), mergeProps({ ref_for: true }, activatorProps, {
+                                          icon: "mdi-dots-vertical",
+                                          variant: "plain",
+                                          slim: "",
+                                          density: buttonDensity.value
+                                        }), null, 16, ["density"])
+                                      ]),
+                                      default: withCtx(() => [
+                                        createVNode(unref(VList), {
+                                          density: __props.modelValue.options.density
+                                        }, {
+                                          default: withCtx(() => [
+                                            __props.modelValue.layout.listActions.includes("delete") ? (openBlock(), createBlock(unref(VListItem), {
+                                              key: 0,
+                                              "base-color": "warning",
+                                              onClick: ($event) => deleteItem(childIndex)
+                                            }, {
+                                              prepend: withCtx(() => [
+                                                createVNode(unref(VIcon), { icon: "mdi-delete" })
+                                              ]),
+                                              default: withCtx(() => [
+                                                createTextVNode(" " + toDisplayString(__props.modelValue.messages.delete), 1)
+                                              ]),
+                                              _: 2
+                                            }, 1032, ["onClick"])) : createCommentVNode("", true),
+                                            __props.modelValue.layout.listActions.includes("duplicate") ? (openBlock(), createBlock(unref(VListItem), {
+                                              key: 1,
+                                              onClick: ($event) => duplicateItem(child, childIndex)
+                                            }, {
+                                              prepend: withCtx(() => [
+                                                createVNode(unref(VIcon), { icon: "mdi-content-duplicate" })
+                                              ]),
+                                              default: withCtx(() => [
+                                                createTextVNode(" " + toDisplayString(__props.modelValue.messages.duplicate), 1)
+                                              ]),
+                                              _: 2
+                                            }, 1032, ["onClick"])) : createCommentVNode("", true),
+                                            __props.modelValue.layout.listActions.includes("sort") ? (openBlock(), createBlock(unref(VListItem), {
+                                              key: 2,
+                                              onClick: ($event) => __props.statefulLayout.input(__props.modelValue, unref(moveArrayItem)(__props.modelValue.data, childIndex, childIndex - 1))
+                                            }, {
+                                              prepend: withCtx(() => [
+                                                createVNode(unref(VIcon), { icon: "mdi-arrow-up" })
+                                              ]),
+                                              default: withCtx(() => [
+                                                createTextVNode(" " + toDisplayString(__props.modelValue.messages.up), 1)
+                                              ]),
+                                              _: 2
+                                            }, 1032, ["onClick"])) : createCommentVNode("", true),
+                                            __props.modelValue.layout.listActions.includes("sort") ? (openBlock(), createBlock(unref(VListItem), {
+                                              key: 3,
+                                              onClick: ($event) => __props.statefulLayout.input(__props.modelValue, unref(moveArrayItem)(__props.modelValue.data, childIndex, childIndex + 1))
+                                            }, {
+                                              prepend: withCtx(() => [
+                                                createVNode(unref(VIcon), { icon: "mdi-arrow-down" })
+                                              ]),
+                                              default: withCtx(() => [
+                                                createTextVNode(" " + toDisplayString(__props.modelValue.messages.down), 1)
+                                              ]),
+                                              _: 2
+                                            }, 1032, ["onClick"])) : createCommentVNode("", true)
+                                          ]),
+                                          _: 2
+                                        }, 1032, ["density"])
+                                      ]),
+                                      _: 2
+                                    }, 1032, ["onUpdate:modelValue"])
+                                  ]),
+                                  _: 2
+                                }, 1024)) : createCommentVNode("", true)
+                              ], 64))
                             ])
                           ]),
                           key: "0"
                         } : void 0
-                      ]), 1040, ["density", "draggable", "variant"]),
+                      ]), 1040, ["density", "draggable", "style"]),
                       childIndex < __props.modelValue.children.length - 1 ? (openBlock(), createBlock(unref(VDivider), { key: 0 })) : createCommentVNode("", true)
                     ], 64);
                   }), 128)),

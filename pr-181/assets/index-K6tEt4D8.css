@@ -54106,6 +54106,14 @@ html.overflow-y-hidden {
   right: -4px;
   z-index: 1;
 }
+.vjsf-help-message-toggle-comfortable {
+  top: -4px;
+  right: -4px;
+}
+.vjsf-help-message-toggle-compact {
+  top: -4px;
+  right: -4px;
+}
 /* override vuetify styles to manage readOnly fields more usable than the default disabled fields */
 .vjsf-input--readonly.v-input--disabled.v-text-field  .v-field--disabled input {
   pointer-events: auto;
