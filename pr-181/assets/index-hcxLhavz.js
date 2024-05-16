@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-SFcTJ_zX.js"(exports, module) {
+  "assets/index-hcxLhavz.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -27250,7 +27250,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       exports2.glob = typeof commonjsGlobal !== "undefined" ? commonjsGlobal : typeof window !== "undefined" ? window : typeof WorkerGlobalScope !== "undefined" ? self : {};
       exports2.Konva = {
         _global: exports2.glob,
-        version: "9.3.6",
+        version: "9.3.8",
         isBrowser: detectBrowser(),
         isUnminified: /param/.test((function(param) {
         }).toString()),
@@ -27272,6 +27272,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _mouseDblClickPointerId: null,
         _touchDblClickPointerId: null,
         _pointerDblClickPointerId: null,
+        _fixTextRendering: false,
         pixelRatio: typeof window !== "undefined" && window.devicePixelRatio || 1,
         dragDistance: 3,
         angleDeg: true,
@@ -31190,6 +31191,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             DragAndDrop_12.DD.justDragged = false;
             Global_12.Konva["_" + eventType + "ListenClick"] = true;
             if (!shape || !shape.isListening()) {
+              this[eventType + "ClickStartShape"] = void 0;
               return;
             }
             if (Global_12.Konva.capturePointerEventsEnabled) {
@@ -32981,7 +32983,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const Shape_1$f = Shape;
     const Global_1$g = Global;
     const Validators_1$u = Validators;
-    const Global_2$2 = Global;
+    const Global_2$3 = Global;
     class Arc extends Shape_1$f.Shape {
       _sceneFunc(context) {
         var angle2 = Global_1$g.Konva.getAngle(this.angle()), clockwise = this.clockwise();
@@ -33028,7 +33030,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     Arc.prototype._centroid = true;
     Arc.prototype.className = "Arc";
     Arc.prototype._attrsAffectingSize = ["innerRadius", "outerRadius"];
-    (0, Global_2$2._registerNode)(Arc);
+    (0, Global_2$3._registerNode)(Arc);
     Factory_1$v.Factory.addGetterSetter(Arc, "innerRadius", 0, (0, Validators_1$u.getNumberValidator)());
     Factory_1$v.Factory.addGetterSetter(Arc, "outerRadius", 0, (0, Validators_1$u.getNumberValidator)());
     Factory_1$v.Factory.addGetterSetter(Arc, "angle", 0, (0, Validators_1$u.getNumberValidator)());
@@ -35348,8 +35350,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const Util_1$5 = Util;
     const Factory_1$i = Factory;
     const Shape_1$3 = Shape;
-    const Validators_1$i = Validators;
     const Global_1$3 = Global;
+    const Validators_1$i = Validators;
+    const Global_2$2 = Global;
     function stringToArray(string) {
       return Array.from(string);
     }
@@ -35421,15 +35424,20 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         var padding = this.padding(), fontSize = this.fontSize(), lineHeightPx = this.lineHeight() * fontSize, verticalAlign = this.verticalAlign(), direction = this.direction(), alignY = 0, align = this.align(), totalWidth = this.getWidth(), letterSpacing = this.letterSpacing(), fill = this.fill(), textDecoration = this.textDecoration(), shouldUnderline = textDecoration.indexOf("underline") !== -1, shouldLineThrough = textDecoration.indexOf("line-through") !== -1, n;
         direction = direction === INHERIT ? context.direction : direction;
-        var translateY = 0;
         var translateY = lineHeightPx / 2;
+        var baseline = MIDDLE;
+        if (Global_1$3.Konva._fixTextRendering) {
+          var metrics = this.measureSize("M");
+          baseline = "alphabetic";
+          translateY = (metrics.fontBoundingBoxAscent - metrics.fontBoundingBoxDescent) / 2 + lineHeightPx / 2;
+        }
         var lineTranslateX = 0;
         var lineTranslateY = 0;
         if (direction === RTL) {
           context.setAttr("direction", direction);
         }
         context.setAttr("font", this._getContextFont());
-        context.setAttr("textBaseline", MIDDLE);
+        context.setAttr("textBaseline", baseline);
         context.setAttr("textAlign", LEFT);
         if (verticalAlign === MIDDLE) {
           alignY = (this.getHeight() - textArrLen * lineHeightPx - padding * 2) / 2;
@@ -35538,6 +35546,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         metrics = _context.measureText(text2);
         _context.restore();
         return {
+          actualBoundingBoxAscent: metrics.actualBoundingBoxAscent,
+          actualBoundingBoxDescent: metrics.actualBoundingBoxDescent,
+          actualBoundingBoxLeft: metrics.actualBoundingBoxLeft,
+          actualBoundingBoxRight: metrics.actualBoundingBoxRight,
+          alphabeticBaseline: metrics.alphabeticBaseline,
+          emHeightAscent: metrics.emHeightAscent,
+          emHeightDescent: metrics.emHeightDescent,
+          fontBoundingBoxAscent: metrics.fontBoundingBoxAscent,
+          fontBoundingBoxDescent: metrics.fontBoundingBoxDescent,
+          hangingBaseline: metrics.hangingBaseline,
+          ideographicBaseline: metrics.ideographicBaseline,
           width: metrics.width,
           height: fontSize
         };
@@ -35684,7 +35703,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       "lineHeight",
       "letterSpacing"
     ];
-    (0, Global_1$3._registerNode)(Text);
+    (0, Global_2$2._registerNode)(Text);
     Factory_1$i.Factory.overWriteSetter(Text, "width", (0, Validators_1$i.getNumberOrAutoValidator)());
     Factory_1$i.Factory.overWriteSetter(Text, "height", (0, Validators_1$i.getNumberOrAutoValidator)());
     Factory_1$i.Factory.addGetterSetter(Text, "direction", INHERIT);
