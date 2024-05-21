@@ -30742,10 +30742,16 @@ html {
   grid-area: prepend;
   margin-inline: calc(var(--v-btn-height) / -9) calc(var(--v-btn-height) / 4.5);
 }
+.v-btn--slim .v-btn__prepend {
+  margin-inline-start: 0;
+}
 
 .v-btn__append {
   grid-area: append;
   margin-inline: calc(var(--v-btn-height) / 4.5) calc(var(--v-btn-height) / -9);
+}
+.v-btn--slim .v-btn__append {
+  margin-inline-end: 0;
 }
 
 .v-btn__content {
@@ -32897,7 +32903,7 @@ html {
   align-self: stretch;
   border-width: 0 thin 0 0;
   display: inline-flex;
-  height: 100%;
+  height: auto;
   margin-left: -1px;
   max-height: 100%;
   max-width: 0px;
@@ -32916,6 +32922,7 @@ html {
 
 .v-divider__content {
   padding: 0 16px;
+  text-wrap: nowrap;
 }
 .v-divider__wrapper--vertical .v-divider__content {
   padding: 4px 0;
@@ -34260,6 +34267,7 @@ html.v-overlay-scroll-blocked {
   transition-duration: 150ms;
 }/* region INPUT */
 .v-field {
+  --v-theme-overlay-multiplier: 1;
   display: grid;
   grid-template-areas: "prepend-inner field clear append-inner";
   grid-template-columns: min-content minmax(0, 1fr) min-content min-content;

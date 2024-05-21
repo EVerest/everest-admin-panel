@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-jODeL80I.js"(exports, module) {
+  "assets/index-Kv3zYIqG.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -10228,6 +10228,8 @@ var require_index_001 = __commonJS({
         return [];
       if (Array.isArray(vnode)) {
         return vnode.map((child) => findChildrenWithProvide(key, child)).flat(1);
+      } else if (vnode.suspense) {
+        return findChildrenWithProvide(key, vnode.ssContent);
       } else if (Array.isArray(vnode.children)) {
         return vnode.children.map((child) => findChildrenWithProvide(key, child)).flat(1);
       } else if (vnode.component) {
@@ -11029,12 +11031,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       });
       const _props = new Proxy(props, {
         get(target2, prop2) {
-          var _a2, _b, _c, _d;
+          var _a2, _b, _c, _d, _e, _f, _g;
           const propValue = Reflect.get(target2, prop2);
           if (prop2 === "class" || prop2 === "style") {
             return [(_a2 = componentDefaults.value) == null ? void 0 : _a2[prop2], propValue].filter((v) => v != null);
           } else if (typeof prop2 === "string" && !propIsDefined(vm.vnode, prop2)) {
-            return ((_b = componentDefaults.value) == null ? void 0 : _b[prop2]) ?? ((_d = (_c = defaults2.value) == null ? void 0 : _c.global) == null ? void 0 : _d[prop2]) ?? propValue;
+            return ((_b = componentDefaults.value) == null ? void 0 : _b[prop2]) !== void 0 ? (_c = componentDefaults.value) == null ? void 0 : _c[prop2] : ((_e = (_d = defaults2.value) == null ? void 0 : _d.global) == null ? void 0 : _e[prop2]) !== void 0 ? (_g = (_f = defaults2.value) == null ? void 0 : _f.global) == null ? void 0 : _g[prop2] : propValue;
           }
           return propValue;
         }
@@ -12576,14 +12578,28 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       width: [Number, String]
     }, "dimension");
     function useDimension(props) {
-      const dimensionStyles = computed(() => ({
-        height: convertToUnit(props.height),
-        maxHeight: convertToUnit(props.maxHeight),
-        maxWidth: convertToUnit(props.maxWidth),
-        minHeight: convertToUnit(props.minHeight),
-        minWidth: convertToUnit(props.minWidth),
-        width: convertToUnit(props.width)
-      }));
+      const dimensionStyles = computed(() => {
+        const styles = {};
+        const height = convertToUnit(props.height);
+        const maxHeight = convertToUnit(props.maxHeight);
+        const maxWidth = convertToUnit(props.maxWidth);
+        const minHeight = convertToUnit(props.minHeight);
+        const minWidth = convertToUnit(props.minWidth);
+        const width = convertToUnit(props.width);
+        if (height != null)
+          styles.height = height;
+        if (maxHeight != null)
+          styles.maxHeight = maxHeight;
+        if (maxWidth != null)
+          styles.maxWidth = maxWidth;
+        if (minHeight != null)
+          styles.minHeight = minHeight;
+        if (minWidth != null)
+          styles.minWidth = minWidth;
+        if (width != null)
+          styles.width = width;
+        return styles;
+      });
       return {
         dimensionStyles
       };
@@ -17276,7 +17292,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 }) : createVNode(VListItem, listItemProps, slotsWithItem);
               },
               default: () => createVNode(VListChildren, {
-                "items": children
+                "items": children,
+                "returnObject": props.returnObject
               }, slots)
             }) : slots.item ? slots.item({
               props: itemProps
@@ -38732,7 +38749,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.6";
+    const version$1 = "3.6.7";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -71705,7 +71722,7 @@ Reason: ${error2}`);
           if (["Escape"].includes(e.key)) {
             menu.value = false;
           }
-          if (highlightFirst.value && ["Enter", "Tab"].includes(e.key)) {
+          if (highlightFirst.value && e.key === "Enter") {
             select(displayItems.value[0]);
           }
           if (e.key === "ArrowDown" && highlightFirst.value) {
@@ -72032,7 +72049,8 @@ Reason: ${error2}`);
                 "onMousedown": onMousedownMenuIcon,
                 "onClick": noop$1,
                 "aria-label": t(label.value),
-                "title": t(label.value)
+                "title": t(label.value),
+                "tabindex": "-1"
               }, null) : void 0]);
             }
           });
@@ -74011,8 +74029,8 @@ Reason: ${error2}`);
           if (["Escape"].includes(e.key)) {
             menu.value = false;
           }
-          if (["Enter", "Escape", "Tab"].includes(e.key)) {
-            if (highlightFirst.value && ["Enter", "Tab"].includes(e.key)) {
+          if (["Enter", "Escape"].includes(e.key)) {
+            if (highlightFirst.value && e.key === "Enter") {
               select(filteredItems.value[0]);
             }
             isPristine.value = true;
@@ -74337,7 +74355,8 @@ Reason: ${error2}`);
                 "onMousedown": onMousedownMenuIcon,
                 "onClick": noop$1,
                 "aria-label": t(label.value),
-                "title": t(label.value)
+                "title": t(label.value),
+                "tabindex": "-1"
               }, null) : void 0]);
             }
           });
@@ -74840,7 +74859,10 @@ Reason: ${error2}`);
     const makeVDatePickerMonthsProps = propsFactory({
       color: String,
       height: [String, Number],
-      modelValue: Number
+      min: null,
+      max: null,
+      modelValue: Number,
+      year: Number
     }, "VDatePickerMonths");
     const VDatePickerMonths = genericComponent()({
       name: "VDatePickerMonths",
@@ -74857,10 +74879,15 @@ Reason: ${error2}`);
         const model = useProxiedModel(props, "modelValue");
         const months = computed(() => {
           let date2 = adapter.startOfYear(adapter.date());
+          if (props.year) {
+            date2 = adapter.setYear(date2, props.year);
+          }
           return createRange(12).map((i2) => {
             const text2 = adapter.format(date2, "monthShort");
+            const isDisabled = !!(props.min && adapter.isAfter(adapter.startOfMonth(adapter.date(props.min)), date2) || props.max && adapter.isAfter(date2, adapter.startOfMonth(adapter.date(props.max))));
             date2 = adapter.getNextMonth(date2);
             return {
+              isDisabled,
               text: text2,
               value: i2
             };
@@ -74881,6 +74908,7 @@ Reason: ${error2}`);
           const btnProps = {
             active: model.value === i2,
             color: model.value === i2 ? props.color : void 0,
+            disabled: month.isDisabled,
             rounded: true,
             text: month.text,
             variant: model.value === month.value ? "flat" : "text",
@@ -75277,7 +75305,8 @@ Reason: ${error2}`);
                 "modelValue": month.value,
                 "onUpdate:modelValue": [($event) => month.value = $event, onUpdateMonth],
                 "min": minDate.value,
-                "max": maxDate.value
+                "max": maxDate.value,
+                "year": year.value
               }), null) : viewMode.value === "year" ? createVNode(VDatePickerYears, mergeProps({
                 "key": "date-picker-years"
               }, datePickerYearsProps, {
