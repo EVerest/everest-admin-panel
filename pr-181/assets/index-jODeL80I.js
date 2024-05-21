@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-JHQ_FWma.js"(exports, module) {
+  "assets/index-jODeL80I.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -27250,7 +27250,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       exports2.glob = typeof commonjsGlobal !== "undefined" ? commonjsGlobal : typeof window !== "undefined" ? window : typeof WorkerGlobalScope !== "undefined" ? self : {};
       exports2.Konva = {
         _global: exports2.glob,
-        version: "9.3.8",
+        version: "9.3.9",
         isBrowser: detectBrowser(),
         isUnminified: /param/.test((function(param) {
         }).toString()),
@@ -35458,11 +35458,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (shouldUnderline) {
             context.save();
             context.beginPath();
-            context.moveTo(lineTranslateX, translateY + lineTranslateY + Math.round(fontSize / 2));
+            let yOffset = Global_1$3.Konva._fixTextRendering ? Math.round(fontSize / 4) : Math.round(fontSize / 2);
+            const x2 = lineTranslateX;
+            const y = translateY + lineTranslateY + yOffset;
+            context.moveTo(x2, y);
             spacesNumber = text2.split(" ").length - 1;
             oneWord = spacesNumber === 0;
             lineWidth = align === JUSTIFY && !lastLine ? totalWidth - padding * 2 : width;
-            context.lineTo(lineTranslateX + Math.round(lineWidth), translateY + lineTranslateY + Math.round(fontSize / 2));
+            context.lineTo(x2 + Math.round(lineWidth), y);
             context.lineWidth = fontSize / 15;
             const gradient = this._getLinearGradient();
             context.strokeStyle = gradient || fill;
@@ -35472,11 +35475,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (shouldLineThrough) {
             context.save();
             context.beginPath();
-            context.moveTo(lineTranslateX, translateY + lineTranslateY);
+            let yOffset = Global_1$3.Konva._fixTextRendering ? -Math.round(fontSize / 4) : 0;
+            context.moveTo(lineTranslateX, translateY + lineTranslateY + yOffset);
             spacesNumber = text2.split(" ").length - 1;
             oneWord = spacesNumber === 0;
             lineWidth = align === JUSTIFY && lastLine && !oneWord ? totalWidth - padding * 2 : width;
-            context.lineTo(lineTranslateX + Math.round(lineWidth), translateY + lineTranslateY);
+            context.lineTo(lineTranslateX + Math.round(lineWidth), translateY + lineTranslateY + yOffset);
             context.lineWidth = fontSize / 15;
             const gradient = this._getLinearGradient();
             context.strokeStyle = gradient || fill;
