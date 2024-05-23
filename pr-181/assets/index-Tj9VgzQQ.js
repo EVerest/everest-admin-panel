@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-Kv3zYIqG.js"(exports, module) {
+  "assets/index-Tj9VgzQQ.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -27267,7 +27267,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       exports2.glob = typeof commonjsGlobal !== "undefined" ? commonjsGlobal : typeof window !== "undefined" ? window : typeof WorkerGlobalScope !== "undefined" ? self : {};
       exports2.Konva = {
         _global: exports2.glob,
-        version: "9.3.9",
+        version: "9.3.11",
         isBrowser: detectBrowser(),
         isUnminified: /param/.test((function(param) {
         }).toString()),
@@ -31506,6 +31506,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       Stage2.prototype.nodeType = STAGE2;
       (0, Global_22._registerNode)(Stage2);
       Factory_12.Factory.addGetterSetter(Stage2, "container");
+      if (Global_12.Konva.isBrowser) {
+        document.addEventListener("visibilitychange", () => {
+          exports2.stages.forEach((stage) => {
+            stage.batchDraw();
+          });
+        });
+      }
     })(Stage);
     var Layer$1 = {};
     var Shape = {};
