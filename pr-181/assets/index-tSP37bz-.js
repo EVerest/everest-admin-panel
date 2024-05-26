@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-Tj9VgzQQ.js"(exports, module) {
+  "assets/index-tSP37bz-.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -49856,7 +49856,7 @@ Reason: ${error2}`);
     var ref = {};
     Object.defineProperty(ref, "__esModule", { value: true });
     ref.callRef = ref.getValidate = void 0;
-    const ref_error_1 = ref_error;
+    const ref_error_1$1 = ref_error;
     const code_1$8 = code$1;
     const codegen_1$p = codegen;
     const names_1$4 = names$2;
@@ -49873,7 +49873,7 @@ Reason: ${error2}`);
           return callRootRef();
         const schOrEnv = compile_1$2.resolveRef.call(self2, root, baseId, $ref);
         if (schOrEnv === void 0)
-          throw new ref_error_1.default(it2.opts.uriResolver, baseId, $ref);
+          throw new ref_error_1$1.default(it2.opts.uriResolver, baseId, $ref);
         if (schOrEnv instanceof compile_1$2.SchemaEnv)
           return callValidate(schOrEnv);
         return inlineRefSchema(schOrEnv);
@@ -51318,6 +51318,7 @@ Reason: ${error2}`);
     const codegen_1$4 = codegen;
     const types_1 = types;
     const compile_1$1 = compile$2;
+    const ref_error_1 = ref_error;
     const util_1$4 = util;
     const error$3 = {
       message: ({ params: { discrError, tagName } }) => discrError === types_1.DiscrError.Tag ? `tag "${tagName}" must be string` : `value of tag "${tagName}" must be in oneOf`,
@@ -51370,9 +51371,12 @@ Reason: ${error2}`);
           for (let i2 = 0; i2 < oneOf2.length; i2++) {
             let sch = oneOf2[i2];
             if ((sch === null || sch === void 0 ? void 0 : sch.$ref) && !(0, util_1$4.schemaHasRulesButRef)(sch, it2.self.RULES)) {
-              sch = compile_1$1.resolveRef.call(it2.self, it2.schemaEnv.root, it2.baseId, sch === null || sch === void 0 ? void 0 : sch.$ref);
+              const ref2 = sch.$ref;
+              sch = compile_1$1.resolveRef.call(it2.self, it2.schemaEnv.root, it2.baseId, ref2);
               if (sch instanceof compile_1$1.SchemaEnv)
                 sch = sch.schema;
+              if (sch === void 0)
+                throw new ref_error_1.default(it2.opts.uriResolver, it2.baseId, ref2);
             }
             const propSch = (_a2 = sch === null || sch === void 0 ? void 0 : sch.properties) === null || _a2 === void 0 ? void 0 : _a2[tagName];
             if (typeof propSch != "object") {
