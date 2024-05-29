@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-tSP37bz-.js"(exports, module) {
+  "assets/index-CfZsZJbG.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -10965,6 +10965,44 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const whiteContrast = Math.abs(APCAcontrast(parseColor(16777215), parseColor(color)));
       return whiteContrast > Math.min(blackContrast, 50) ? "#fff" : "#000";
     }
+    function getCurrentInstance(name, message) {
+      const vm = getCurrentInstance$1();
+      if (!vm) {
+        throw new Error(`[Vuetify] ${name} ${message || "must be called from inside a setup function"}`);
+      }
+      return vm;
+    }
+    function getCurrentInstanceName() {
+      let name = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "composables";
+      const vm = getCurrentInstance(name).type;
+      return toKebabCase((vm == null ? void 0 : vm.aliasName) || (vm == null ? void 0 : vm.name));
+    }
+    let _uid = 0;
+    let _map = /* @__PURE__ */ new WeakMap();
+    function getUid() {
+      const vm = getCurrentInstance("getUid");
+      if (_map.has(vm))
+        return _map.get(vm);
+      else {
+        const uid2 = _uid++;
+        _map.set(vm, uid2);
+        return uid2;
+      }
+    }
+    getUid.reset = () => {
+      _uid = 0;
+      _map = /* @__PURE__ */ new WeakMap();
+    };
+    function injectSelf(key) {
+      let vm = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : getCurrentInstance("injectSelf");
+      const {
+        provides
+      } = vm;
+      if (provides && key in provides) {
+        return provides[key];
+      }
+      return void 0;
+    }
     const DefaultsSymbol = Symbol.for("vuetify:defaults");
     function createDefaults(options) {
       return ref$1(options);
@@ -11139,34 +11177,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const standardEasing = "cubic-bezier(0.4, 0, 0.2, 1)";
     const deceleratedEasing = "cubic-bezier(0.0, 0, 0.2, 1)";
     const acceleratedEasing = "cubic-bezier(0.4, 0, 1, 1)";
-    function getCurrentInstance(name, message) {
-      const vm = getCurrentInstance$1();
-      if (!vm) {
-        throw new Error(`[Vuetify] ${name} ${message || "must be called from inside a setup function"}`);
-      }
-      return vm;
-    }
-    function getCurrentInstanceName() {
-      let name = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : "composables";
-      const vm = getCurrentInstance(name).type;
-      return toKebabCase((vm == null ? void 0 : vm.aliasName) || (vm == null ? void 0 : vm.name));
-    }
-    let _uid = 0;
-    let _map = /* @__PURE__ */ new WeakMap();
-    function getUid() {
-      const vm = getCurrentInstance("getUid");
-      if (_map.has(vm))
-        return _map.get(vm);
-      else {
-        const uid2 = _uid++;
-        _map.set(vm, uid2);
-        return uid2;
-      }
-    }
-    getUid.reset = () => {
-      _uid = 0;
-      _map = /* @__PURE__ */ new WeakMap();
-    };
     function getScrollParent(el2) {
       let includeHidden = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : false;
       while (el2) {
@@ -11200,16 +11210,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return false;
       const style = window.getComputedStyle(el2);
       return ["scroll", "auto"].includes(style.overflowY);
-    }
-    function injectSelf(key) {
-      let vm = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : getCurrentInstance("injectSelf");
-      const {
-        provides
-      } = vm;
-      if (provides && key in provides) {
-        return provides[key];
-      }
-      return void 0;
     }
     function isFixedPosition(el2) {
       while (el2) {
@@ -16748,6 +16748,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           isBooted
         } = useSsrBoot();
         function onClick(e) {
+          e.stopPropagation();
           open(!isOpen.value, e);
         }
         const activatorProps = computed(() => ({
@@ -17102,6 +17103,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }), [[resolveDirective("ripple"), isClickable.value && props.ripple]]);
         });
         return {
+          activate,
+          isActivated,
           isGroupActivator,
           isSelected,
           list: list2,
@@ -17178,7 +17181,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const dividerStyles = computed(() => {
           const styles = {};
           if (props.length) {
-            styles[props.vertical ? "maxHeight" : "maxWidth"] = convertToUnit(props.length);
+            styles[props.vertical ? "height" : "width"] = convertToUnit(props.length);
           }
           if (props.thickness) {
             styles[props.vertical ? "borderRightWidth" : "borderTopWidth"] = convertToUnit(props.thickness);
@@ -17440,6 +17443,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       },
       slim: Boolean,
       nav: Boolean,
+      "onClick:open": EventProp(),
+      "onClick:select": EventProp(),
       ...makeNestedProps({
         selectStrategy: "single-leaf",
         openStrategy: "list"
@@ -23447,8 +23452,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           e.stopPropagation();
         }
         function onInput(e) {
-          if (!isInteractive.value)
+          if (!isInteractive.value) {
+            if (input.value) {
+              input.value.checked = model.value;
+            }
             return;
+          }
           if (props.readonly && group) {
             nextTick(() => group.forceUpdate());
           }
@@ -38756,7 +38765,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.7";
+    const version$1 = "3.6.8";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -44756,12 +44765,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                   "key": item.text,
                   "value": item.value
                 }), {
-                  default: () => {
+                  default: slots[`tab.${item.value}`] ? () => {
                     var _a4;
                     return (_a4 = slots[`tab.${item.value}`]) == null ? void 0 : _a4.call(slots, {
                       item
                     });
-                  }
+                  } : void 0
                 });
               })];
             }
@@ -52088,6 +52097,7 @@ Reason: ${error2}`);
         }
       }
     });
+    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
     const makeVExpansionPanelTextProps = propsFactory({
       ...makeComponentProps(),
       ...makeLazyProps()
@@ -52273,7 +52283,6 @@ Reason: ${error2}`);
         };
       }
     });
-    const VExpansionPanelSymbol = Symbol.for("vuetify:v-expansion-panel");
     const allowedVariants = ["default", "accordion", "inset", "popout"];
     const makeVExpansionPanelsProps = propsFactory({
       flat: Boolean,
@@ -71505,7 +71514,7 @@ Reason: ${error2}`);
           const customMatches = {};
           const defaultMatches = {};
           let match = -1;
-          if (query && !(options == null ? void 0 : options.noFilter)) {
+          if ((query || customFiltersLength > 0) && !(options == null ? void 0 : options.noFilter)) {
             if (typeof item === "object") {
               const filterKeys = keys2 || Object.keys(transformed);
               for (const key of filterKeys) {
@@ -72834,6 +72843,7 @@ Reason: ${error2}`);
         type: [Boolean, Object],
         default: true
       },
+      name: String,
       ...makeComponentProps()
     }, "VSliderThumb");
     const VSliderThumb = genericComponent()({
@@ -72935,6 +72945,7 @@ Reason: ${error2}`);
             }, props.style],
             "role": "slider",
             "tabindex": disabled.value ? -1 : 0,
+            "aria-label": props.name,
             "aria-valuemin": props.min,
             "aria-valuemax": props.max,
             "aria-valuenow": props.modelValue,
@@ -73217,7 +73228,8 @@ Reason: ${error2}`);
                 "elevation": props.elevation,
                 "onFocus": focus,
                 "onBlur": blur,
-                "ripple": props.ripple
+                "ripple": props.ripple,
+                "name": props.name
               }, {
                 "thumb-label": slots["thumb-label"]
               })]);
@@ -74755,6 +74767,9 @@ Reason: ${error2}`);
         });
         function onRangeClick(value) {
           const _value = adapter.startOfDay(value);
+          if (model.value.length === 0) {
+            rangeStart.value = void 0;
+          }
           if (!rangeStart.value) {
             rangeStart.value = _value;
             model.value = [rangeStart.value];
@@ -75627,6 +75642,7 @@ Reason: ${error2}`);
         return forwardRefs(form, formRef);
       }
     });
+    const VStepperSymbol = Symbol.for("vuetify:v-stepper");
     const makeVStepperActionsProps = propsFactory({
       color: String,
       disabled: {
@@ -75821,7 +75837,6 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const VStepperSymbol$1 = Symbol.for("vuetify:v-stepper");
     const makeVStepperWindowProps = propsFactory({
       ...omit$1(makeVWindowProps(), ["continuous", "nextIcon", "prevIcon", "showArrows", "touch", "mandatory"])
     }, "VStepperWindow");
@@ -75835,7 +75850,7 @@ Reason: ${error2}`);
         let {
           slots
         } = _ref;
-        const group = inject$1(VStepperSymbol$1, null);
+        const group = inject$1(VStepperSymbol, null);
         const _model = useProxiedModel(props, "modelValue");
         const model = computed({
           get() {
@@ -75886,11 +75901,13 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const VStepperSymbol = Symbol.for("vuetify:v-stepper");
     const makeStepperProps = propsFactory({
       altLabels: Boolean,
       bgColor: String,
+      completeIcon: String,
+      editIcon: String,
       editable: Boolean,
+      errorIcon: String,
       hideActions: Boolean,
       items: {
         type: Array,
@@ -75904,9 +75921,9 @@ Reason: ${error2}`);
         type: String,
         default: "value"
       },
-      mobile: Boolean,
       nonLinear: Boolean,
-      flat: Boolean
+      flat: Boolean,
+      ...makeDisplayProps()
     }, "Stepper");
     const makeVStepperProps = propsFactory({
       ...makeStepperProps(),
@@ -75934,6 +75951,13 @@ Reason: ${error2}`);
           selected
         } = useGroup(props, VStepperSymbol);
         const {
+          displayClasses,
+          mobile
+        } = useDisplay(props);
+        const {
+          completeIcon,
+          editIcon,
+          errorIcon,
           color,
           editable,
           prevText,
@@ -75963,6 +75987,9 @@ Reason: ${error2}`);
         provideDefaults({
           VStepperItem: {
             editable,
+            errorIcon,
+            completeIcon,
+            editIcon,
             prevText,
             nextText
           },
@@ -75984,8 +76011,8 @@ Reason: ${error2}`);
               "v-stepper--alt-labels": props.altLabels,
               "v-stepper--flat": props.flat,
               "v-stepper--non-linear": props.nonLinear,
-              "v-stepper--mobile": props.mobile
-            }, props.class],
+              "v-stepper--mobile": mobile.value
+            }, displayClasses.value, props.class],
             "style": props.style
           }), {
             default: () => {
