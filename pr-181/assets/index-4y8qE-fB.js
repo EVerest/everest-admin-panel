@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-CfZsZJbG.js"(exports, module) {
+  "assets/index-4y8qE-fB.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -20782,7 +20782,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
     /**
-      * vee-validate v4.12.8
+      * vee-validate v4.13.0
       * (c) 2024 Abdelrahman Awad
       * @license MIT
       */
@@ -21337,17 +21337,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         formData: (options === null || options === void 0 ? void 0 : options.values) || {}
       };
       const result = await _validate(field, value);
-      const errors2 = result.errors;
-      return {
-        errors: errors2,
-        valid: !errors2.length
-      };
+      return Object.assign(Object.assign({}, result), { valid: !result.errors.length });
     }
     async function _validate(field, value) {
-      if (isTypedSchema(field.rules) || isYupValidator(field.rules)) {
-        return validateFieldWithTypedSchema(value, field.rules);
+      const rules2 = field.rules;
+      if (isTypedSchema(rules2) || isYupValidator(rules2)) {
+        return validateFieldWithTypedSchema(value, Object.assign(Object.assign({}, field), { rules: rules2 }));
       }
-      if (isCallable(field.rules) || Array.isArray(field.rules)) {
+      if (isCallable(rules2) || Array.isArray(rules2)) {
         const ctx = {
           field: field.label || field.name,
           name: field.name,
@@ -21355,7 +21352,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           form: field.formData,
           value
         };
-        const pipeline = Array.isArray(field.rules) ? field.rules : [field.rules];
+        const pipeline = Array.isArray(rules2) ? rules2 : [rules2];
         const length2 = pipeline.length;
         const errors22 = [];
         for (let i2 = 0; i2 < length2; i2++) {
@@ -21381,7 +21378,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           errors: errors22
         };
       }
-      const normalizedContext = Object.assign(Object.assign({}, field), { rules: normalizeRules(field.rules) });
+      const normalizedContext = Object.assign(Object.assign({}, field), { rules: normalizeRules(rules2) });
       const errors2 = [];
       const rulesKeys = Object.keys(normalizedContext.rules);
       const length = rulesKeys.length;
@@ -21410,10 +21407,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function yupToTypedSchema(yupSchema) {
       const schema2 = {
         __type: "VVTypedSchema",
-        async parse(values) {
+        async parse(values, context) {
           var _a2;
           try {
-            const output = await yupSchema.validate(values, { abortEarly: false });
+            const output = await yupSchema.validate(values, { abortEarly: false, context: (context === null || context === void 0 ? void 0 : context.formData) || {} });
             return {
               output,
               errors: []
@@ -21439,9 +21436,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
       return schema2;
     }
-    async function validateFieldWithTypedSchema(value, schema2) {
-      const typedSchema = isTypedSchema(schema2) ? schema2 : yupToTypedSchema(schema2);
-      const result = await typedSchema.parse(value);
+    async function validateFieldWithTypedSchema(value, context) {
+      const typedSchema = isTypedSchema(context.rules) ? context.rules : yupToTypedSchema(context.rules);
+      const result = await typedSchema.parse(value, { formData: context.formData });
       const messages = [];
       for (const error2 of result.errors) {
         if (error2.errors.length) {
@@ -21449,6 +21446,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
       }
       return {
+        value: result.value,
         errors: messages
       };
     }
@@ -21517,7 +21515,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         valid: !validationResult.errors.length,
         results,
         errors: errors2,
-        values: validationResult.value
+        values: validationResult.value,
+        source: "schema"
       };
     }
     async function validateObjectSchema(schema2, values, opts) {
@@ -21550,7 +21549,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return {
         valid: isAllValid,
         results,
-        errors: errors2
+        errors: errors2,
+        source: "schema"
       };
     }
     let ID_COUNTER = 0;
@@ -22242,9 +22242,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
           setFieldError(pathState, fieldResult.errors);
           return validation2;
-        }, { valid: formResult.valid, results: {}, errors: {} });
+        }, {
+          valid: formResult.valid,
+          results: {},
+          errors: {},
+          source: formResult.source
+        });
         if (formResult.values) {
           results.values = formResult.values;
+          results.source = formResult.source;
         }
         keysOf(results.results).forEach((path) => {
           var _a22;
@@ -22311,7 +22317,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 const controlled = klona(controlledValues.value);
                 let submittedValues = onlyControlled ? controlled : values;
                 if (result.values) {
-                  submittedValues = result.values;
+                  submittedValues = result.source === "schema" ? result.values : Object.assign({}, submittedValues, result.values);
                 }
                 return fn(submittedValues, {
                   evt: e,
@@ -22531,7 +22537,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         let newValues = klona((resetState === null || resetState === void 0 ? void 0 : resetState.values) ? resetState.values : originalInitialValues.value);
         newValues = (opts2 === null || opts2 === void 0 ? void 0 : opts2.force) ? newValues : merge$1(originalInitialValues.value, newValues);
         newValues = isTypedSchema(schema2) && isCallable(schema2.cast) ? schema2.cast(newValues) : newValues;
-        setInitialValues(newValues);
+        setInitialValues(newValues, { force: opts2 === null || opts2 === void 0 ? void 0 : opts2.force });
         mutateAllPathState((state) => {
           var _a22;
           state.__flags.pendingReset = true;
@@ -22564,25 +22570,31 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             return Promise.resolve({
               key: state.path,
               valid: true,
-              errors: []
+              errors: [],
+              value: void 0
             });
           }
           return state.validate(opts2).then((result) => {
             return {
               key: state.path,
               valid: result.valid,
-              errors: result.errors
+              errors: result.errors,
+              value: result.value
             };
           });
         }));
         isValidating.value = false;
         const results = {};
         const errors22 = {};
+        const values = {};
         for (const validation2 of validations) {
           results[validation2.key] = {
             valid: validation2.valid,
             errors: validation2.errors
           };
+          if (validation2.value) {
+            setInPath(values, validation2.key, validation2.value);
+          }
           if (validation2.errors.length) {
             errors22[validation2.key] = validation2.errors[0];
           }
@@ -22590,7 +22602,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {
           valid: validations.every((r2) => r2.valid),
           results,
-          errors: errors22
+          errors: errors22,
+          values,
+          source: "fields"
         };
       }
       async function validateField(path, opts2) {
@@ -22628,7 +22642,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       async function _validateSchema() {
         const schemaValue = unref(schema2);
         if (!schemaValue) {
-          return { valid: true, results: {}, errors: {} };
+          return { valid: true, results: {}, errors: {}, source: "none" };
         }
         isValidating.value = true;
         const formResult = isYupValidator(schemaValue) || isTypedSchema(schemaValue) ? await validateTypedSchema(schemaValue, formValues) : await validateObjectSchema(schemaValue, formValues, {
@@ -22790,10 +22804,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const values = resolveInitialValues(opts);
       const initialValues = ref$1(values);
       const originalInitialValues = ref$1(klona(values));
-      function setInitialValues(values2, updateFields = false) {
-        initialValues.value = merge$1(klona(initialValues.value) || {}, klona(values2));
-        originalInitialValues.value = merge$1(klona(originalInitialValues.value) || {}, klona(values2));
-        if (!updateFields) {
+      function setInitialValues(values2, opts2) {
+        if (opts2 === null || opts2 === void 0 ? void 0 : opts2.force) {
+          initialValues.value = klona(values2);
+          originalInitialValues.value = klona(values2);
+        } else {
+          initialValues.value = merge$1(klona(initialValues.value) || {}, klona(values2));
+          originalInitialValues.value = merge$1(klona(originalInitialValues.value) || {}, klona(values2));
+        }
+        if (!(opts2 === null || opts2 === void 0 ? void 0 : opts2.updateFields)) {
           return;
         }
         pathsState.value.forEach((state) => {
