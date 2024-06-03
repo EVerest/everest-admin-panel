@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-xjAIy5Zm.js"(exports, module) {
+  "assets/index-n9n9IgLn.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -2374,8 +2374,8 @@ var require_index_001 = __commonJS({
         const res = (
           // local registration
           // check instance[type] first which is resolved for options API
-          resolve$2(instance[type2] || Component[type2], name) || // global registration
-          resolve$2(instance.appContext[type2], name)
+          resolve$3(instance[type2] || Component[type2], name) || // global registration
+          resolve$3(instance.appContext[type2], name)
         );
         if (!res && maybeSelfReference) {
           return Component;
@@ -2383,7 +2383,7 @@ var require_index_001 = __commonJS({
         return res;
       }
     }
-    function resolve$2(registry, name) {
+    function resolve$3(registry, name) {
       return registry && (registry[name] || registry[camelize(name)] || registry[capitalize(camelize(name))]);
     }
     const isSuspense = (type2) => type2.__isSuspense;
@@ -43327,7 +43327,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         this.html = html;
       }
     }
-    const escape = escapeHTML;
+    const escape$1 = escapeHTML;
     const inherit = inherit$1;
     const NO_MATCH = Symbol("nomatch");
     const MAX_KEYWORD_HITS = 7;
@@ -43700,7 +43700,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (err.message && err.message.includes("Illegal")) {
             return {
               language: languageName,
-              value: escape(codeToHighlight),
+              value: escape$1(codeToHighlight),
               illegal: true,
               relevance: 0,
               _illegalBy: {
@@ -43715,7 +43715,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           } else if (SAFE_MODE) {
             return {
               language: languageName,
-              value: escape(codeToHighlight),
+              value: escape$1(codeToHighlight),
               illegal: false,
               relevance: 0,
               errorRaised: err,
@@ -43729,7 +43729,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       function justTextHighlightResult(code2) {
         const result = {
-          value: escape(code2),
+          value: escape$1(code2),
           illegal: false,
           relevance: 0,
           _top: PLAINTEXT_LANGUAGE,
@@ -47179,7 +47179,7 @@ Reason: ${error2}`);
       subschema2.jtdMetadata = jtdMetadata;
     }
     subschema.extendSubschemaMode = extendSubschemaMode;
-    var resolve$1 = {};
+    var resolve$2 = {};
     var fastDeepEqual = function equal2(a, b) {
       if (a === b)
         return true;
@@ -47301,10 +47301,10 @@ Reason: ${error2}`);
       return str2.replace(/~/g, "~0").replace(/\//g, "~1");
     }
     var jsonSchemaTraverseExports = jsonSchemaTraverse.exports;
-    Object.defineProperty(resolve$1, "__esModule", { value: true });
-    resolve$1.getSchemaRefs = resolve$1.resolveUrl = resolve$1.normalizeId = resolve$1._getFullPath = resolve$1.getFullPath = resolve$1.inlineRef = void 0;
+    Object.defineProperty(resolve$2, "__esModule", { value: true });
+    resolve$2.getSchemaRefs = resolve$2.resolveUrl = resolve$2.normalizeId = resolve$2._getFullPath = resolve$2.getFullPath = resolve$2.inlineRef = void 0;
     const util_1$q = util;
-    const equal$2 = fastDeepEqual;
+    const equal$3 = fastDeepEqual;
     const traverse = jsonSchemaTraverseExports;
     const SIMPLE_INLINED = /* @__PURE__ */ new Set([
       "type",
@@ -47333,7 +47333,7 @@ Reason: ${error2}`);
         return false;
       return countKeys(schema2) <= limit2;
     }
-    resolve$1.inlineRef = inlineRef;
+    resolve$2.inlineRef = inlineRef;
     const REF_KEYWORDS = /* @__PURE__ */ new Set([
       "$ref",
       "$recursiveRef",
@@ -47375,22 +47375,22 @@ Reason: ${error2}`);
       const p2 = resolver.parse(id2);
       return _getFullPath(resolver, p2);
     }
-    resolve$1.getFullPath = getFullPath;
+    resolve$2.getFullPath = getFullPath;
     function _getFullPath(resolver, p2) {
       const serialized = resolver.serialize(p2);
       return serialized.split("#")[0] + "#";
     }
-    resolve$1._getFullPath = _getFullPath;
+    resolve$2._getFullPath = _getFullPath;
     const TRAILING_SLASH_HASH = /#\/?$/;
     function normalizeId(id2) {
       return id2 ? id2.replace(TRAILING_SLASH_HASH, "") : "";
     }
-    resolve$1.normalizeId = normalizeId;
+    resolve$2.normalizeId = normalizeId;
     function resolveUrl(resolver, baseId, id2) {
       id2 = normalizeId(id2);
       return resolver.resolve(baseId, id2);
     }
-    resolve$1.resolveUrl = resolveUrl;
+    resolve$2.resolveUrl = resolveUrl;
     const ANCHOR = /^[a-z_][-a-z0-9._]*$/i;
     function getSchemaRefs(schema2, baseId) {
       if (typeof schema2 == "boolean")
@@ -47442,14 +47442,14 @@ Reason: ${error2}`);
       });
       return localRefs;
       function checkAmbiguosRef(sch1, sch2, ref2) {
-        if (sch2 !== void 0 && !equal$2(sch1, sch2))
+        if (sch2 !== void 0 && !equal$3(sch1, sch2))
           throw ambiguos(ref2);
       }
       function ambiguos(ref2) {
         return new Error(`reference "${ref2}" resolves to more than one schema`);
       }
     }
-    resolve$1.getSchemaRefs = getSchemaRefs;
+    resolve$2.getSchemaRefs = getSchemaRefs;
     Object.defineProperty(validate, "__esModule", { value: true });
     validate.getData = validate.KeywordCxt = validate.validateFunctionCode = void 0;
     const boolSchema_1 = boolSchema;
@@ -47461,7 +47461,7 @@ Reason: ${error2}`);
     const subschema_1 = subschema;
     const codegen_1$r = codegen;
     const names_1$6 = names$2;
-    const resolve_1$2 = resolve$1;
+    const resolve_1$2 = resolve$2;
     const util_1$p = util;
     const errors_1 = errors$1;
     function validateFunctionCode(it2) {
@@ -47962,7 +47962,7 @@ Reason: ${error2}`);
     validation_error.default = ValidationError;
     var ref_error = {};
     Object.defineProperty(ref_error, "__esModule", { value: true });
-    const resolve_1$1 = resolve$1;
+    const resolve_1$1 = resolve$2;
     class MissingRefError extends Error {
       constructor(resolver, baseId, ref2, msg) {
         super(msg || `can't resolve reference ${ref2} from id ${baseId}`);
@@ -47977,7 +47977,7 @@ Reason: ${error2}`);
     const codegen_1$q = codegen;
     const validation_error_1 = validation_error;
     const names_1$5 = names$2;
-    const resolve_1 = resolve$1;
+    const resolve_1 = resolve$2;
     const util_1$o = util;
     const validate_1$1 = validate;
     class SchemaEnv {
@@ -48092,7 +48092,7 @@ Reason: ${error2}`);
       const schOrFunc = root.refs[ref2];
       if (schOrFunc)
         return schOrFunc;
-      let _sch = resolve.call(this, root, ref2);
+      let _sch = resolve$1.call(this, root, ref2);
       if (_sch === void 0) {
         const schema2 = (_a2 = root.localRefs) === null || _a2 === void 0 ? void 0 : _a2[ref2];
         const { schemaId } = this.opts;
@@ -48119,7 +48119,7 @@ Reason: ${error2}`);
     function sameSchemaEnv(s1, s2) {
       return s1.schema === s2.schema && s1.root === s2.root && s1.baseId === s2.baseId;
     }
-    function resolve(root, ref2) {
+    function resolve$1(root, ref2) {
       let sch;
       while (typeof (sch = this.refs[ref2]) == "string")
         ref2 = sch;
@@ -48218,1050 +48218,662 @@ Reason: ${error2}`);
       additionalProperties: additionalProperties$1
     };
     var uri$1 = {};
-    var uri_all = { exports: {} };
-    /** @license URI.js v4.4.1 (c) 2011 Gary Court. License: http://github.com/garycourt/uri-js */
-    (function(module2, exports2) {
-      (function(global2, factory) {
-        factory(exports2);
-      })(commonjsGlobal, function(exports3) {
-        function merge2() {
-          for (var _len = arguments.length, sets = Array(_len), _key = 0; _key < _len; _key++) {
-            sets[_key] = arguments[_key];
-          }
-          if (sets.length > 1) {
-            sets[0] = sets[0].slice(0, -1);
-            var xl = sets.length - 1;
-            for (var x2 = 1; x2 < xl; ++x2) {
-              sets[x2] = sets[x2].slice(1, -1);
+    var fastUri$1 = { exports: {} };
+    const __viteBrowserExternal = {};
+    const __viteBrowserExternal$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+      __proto__: null,
+      default: __viteBrowserExternal
+    }, Symbol.toStringTag, { value: "Module" }));
+    const require$$0$2 = /* @__PURE__ */ getAugmentedNamespace(__viteBrowserExternal$1);
+    const HEX$1 = {
+      0: 0,
+      1: 1,
+      2: 2,
+      3: 3,
+      4: 4,
+      5: 5,
+      6: 6,
+      7: 7,
+      8: 8,
+      9: 9,
+      a: 10,
+      A: 10,
+      b: 11,
+      B: 11,
+      c: 12,
+      C: 12,
+      d: 13,
+      D: 13,
+      e: 14,
+      E: 14,
+      f: 15,
+      F: 15
+    };
+    var scopedChars = {
+      HEX: HEX$1
+    };
+    const { HEX } = scopedChars;
+    function normalizeIPv4$1(host) {
+      if (findToken(host, ".") < 3) {
+        return { host, isIPV4: false };
+      }
+      const matches = host.match(/^(\b[01]?\d{1,2}|\b2[0-4]\d|\b25[0-5])(\.([01]?\d{1,2}|2[0-4]\d|25[0-5])){3}$/u) || [];
+      const [address] = matches;
+      if (address) {
+        return { host: stripLeadingZeros(address, "."), isIPV4: true };
+      } else {
+        return { host, isIPV4: false };
+      }
+    }
+    function stringToHexStripped(input) {
+      let acc = "";
+      let strip = true;
+      for (const c of input) {
+        if (c !== "0" && strip === true)
+          strip = false;
+        if (HEX[c] === void 0)
+          return void 0;
+        if (!strip)
+          acc += c;
+      }
+      return acc;
+    }
+    function getIPV6(input) {
+      let tokenCount = 0;
+      const output = { error: false, address: "", zone: "" };
+      const address = [];
+      const buffer = [];
+      let isZone = false;
+      let endipv6Encountered = false;
+      let endIpv6 = false;
+      function consume() {
+        if (buffer.length) {
+          if (isZone === false) {
+            const hex2 = stringToHexStripped(buffer.join(""));
+            if (hex2 !== void 0) {
+              address.push(hex2);
+            } else {
+              output.error = true;
+              return false;
             }
-            sets[xl] = sets[xl].slice(1);
-            return sets.join("");
+          }
+          buffer.length = 0;
+        }
+        return true;
+      }
+      for (let i2 = 0; i2 < input.length; i2++) {
+        const cursor = input[i2];
+        if (cursor === "[" || cursor === "]") {
+          continue;
+        }
+        if (cursor === ":") {
+          if (endipv6Encountered === true) {
+            endIpv6 = true;
+          }
+          if (!consume()) {
+            break;
+          }
+          tokenCount++;
+          address.push(":");
+          if (tokenCount > 7) {
+            output.error = true;
+            break;
+          }
+          if (i2 - 1 >= 0 && input[i2 - 1] === ":") {
+            endipv6Encountered = true;
+          }
+          continue;
+        } else if (cursor === "%") {
+          if (!consume()) {
+            break;
+          }
+          isZone = true;
+        } else {
+          buffer.push(cursor);
+          continue;
+        }
+      }
+      if (buffer.length) {
+        if (isZone) {
+          output.zone = buffer.join("");
+        } else if (endIpv6) {
+          address.push(buffer.join(""));
+        } else {
+          address.push(stringToHexStripped(buffer.join("")));
+        }
+      }
+      output.address = address.join("");
+      return output;
+    }
+    function normalizeIPv6$1(host, opts = {}) {
+      if (findToken(host, ":") < 2) {
+        return { host, isIPV6: false };
+      }
+      const ipv6 = getIPV6(host);
+      if (!ipv6.error) {
+        let newHost = ipv6.address;
+        let escapedHost = ipv6.address;
+        if (ipv6.zone) {
+          newHost += "%" + ipv6.zone;
+          escapedHost += "%25" + ipv6.zone;
+        }
+        return { host: newHost, escapedHost, isIPV6: true };
+      } else {
+        return { host, isIPV6: false };
+      }
+    }
+    function stripLeadingZeros(str2, token2) {
+      let out = "";
+      let skip = true;
+      const l = str2.length;
+      for (let i2 = 0; i2 < l; i2++) {
+        const c = str2[i2];
+        if (c === "0" && skip) {
+          if (i2 + 1 <= l && str2[i2 + 1] === token2 || i2 + 1 === l) {
+            out += c;
+            skip = false;
+          }
+        } else {
+          if (c === token2) {
+            skip = true;
           } else {
-            return sets[0];
+            skip = false;
           }
+          out += c;
         }
-        function subexp(str2) {
-          return "(?:" + str2 + ")";
-        }
-        function typeOf(o2) {
-          return o2 === void 0 ? "undefined" : o2 === null ? "null" : Object.prototype.toString.call(o2).split(" ").pop().split("]").shift().toLowerCase();
-        }
-        function toUpperCase(str2) {
-          return str2.toUpperCase();
-        }
-        function toArray2(obj) {
-          return obj !== void 0 && obj !== null ? obj instanceof Array ? obj : typeof obj.length !== "number" || obj.split || obj.setInterval || obj.call ? [obj] : Array.prototype.slice.call(obj) : [];
-        }
-        function assign2(target2, source2) {
-          var obj = target2;
-          if (source2) {
-            for (var key in source2) {
-              obj[key] = source2[key];
-            }
-          }
-          return obj;
-        }
-        function buildExps(isIRI) {
-          var ALPHA$$ = "[A-Za-z]", DIGIT$$ = "[0-9]", HEXDIG$$2 = merge2(DIGIT$$, "[A-Fa-f]"), PCT_ENCODED$2 = subexp(subexp("%[EFef]" + HEXDIG$$2 + "%" + HEXDIG$$2 + HEXDIG$$2 + "%" + HEXDIG$$2 + HEXDIG$$2) + "|" + subexp("%[89A-Fa-f]" + HEXDIG$$2 + "%" + HEXDIG$$2 + HEXDIG$$2) + "|" + subexp("%" + HEXDIG$$2 + HEXDIG$$2)), GEN_DELIMS$$ = "[\\:\\/\\?\\#\\[\\]\\@]", SUB_DELIMS$$ = "[\\!\\$\\&\\'\\(\\)\\*\\+\\,\\;\\=]", RESERVED$$ = merge2(GEN_DELIMS$$, SUB_DELIMS$$), UCSCHAR$$ = isIRI ? "[\\xA0-\\u200D\\u2010-\\u2029\\u202F-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]" : "[]", IPRIVATE$$ = isIRI ? "[\\uE000-\\uF8FF]" : "[]", UNRESERVED$$2 = merge2(ALPHA$$, DIGIT$$, "[\\-\\.\\_\\~]", UCSCHAR$$);
-          subexp(ALPHA$$ + merge2(ALPHA$$, DIGIT$$, "[\\+\\-\\.]") + "*");
-          subexp(subexp(PCT_ENCODED$2 + "|" + merge2(UNRESERVED$$2, SUB_DELIMS$$, "[\\:]")) + "*");
-          var DEC_OCTET_RELAXED$ = subexp(subexp("25[0-5]") + "|" + subexp("2[0-4]" + DIGIT$$) + "|" + subexp("1" + DIGIT$$ + DIGIT$$) + "|" + subexp("0?[1-9]" + DIGIT$$) + "|0?0?" + DIGIT$$), IPV4ADDRESS$ = subexp(DEC_OCTET_RELAXED$ + "\\." + DEC_OCTET_RELAXED$ + "\\." + DEC_OCTET_RELAXED$ + "\\." + DEC_OCTET_RELAXED$), H16$ = subexp(HEXDIG$$2 + "{1,4}"), LS32$ = subexp(subexp(H16$ + "\\:" + H16$) + "|" + IPV4ADDRESS$), IPV6ADDRESS1$ = subexp(subexp(H16$ + "\\:") + "{6}" + LS32$), IPV6ADDRESS2$ = subexp("\\:\\:" + subexp(H16$ + "\\:") + "{5}" + LS32$), IPV6ADDRESS3$ = subexp(subexp(H16$) + "?\\:\\:" + subexp(H16$ + "\\:") + "{4}" + LS32$), IPV6ADDRESS4$ = subexp(subexp(subexp(H16$ + "\\:") + "{0,1}" + H16$) + "?\\:\\:" + subexp(H16$ + "\\:") + "{3}" + LS32$), IPV6ADDRESS5$ = subexp(subexp(subexp(H16$ + "\\:") + "{0,2}" + H16$) + "?\\:\\:" + subexp(H16$ + "\\:") + "{2}" + LS32$), IPV6ADDRESS6$ = subexp(subexp(subexp(H16$ + "\\:") + "{0,3}" + H16$) + "?\\:\\:" + H16$ + "\\:" + LS32$), IPV6ADDRESS7$ = subexp(subexp(subexp(H16$ + "\\:") + "{0,4}" + H16$) + "?\\:\\:" + LS32$), IPV6ADDRESS8$ = subexp(subexp(subexp(H16$ + "\\:") + "{0,5}" + H16$) + "?\\:\\:" + H16$), IPV6ADDRESS9$ = subexp(subexp(subexp(H16$ + "\\:") + "{0,6}" + H16$) + "?\\:\\:"), IPV6ADDRESS$ = subexp([IPV6ADDRESS1$, IPV6ADDRESS2$, IPV6ADDRESS3$, IPV6ADDRESS4$, IPV6ADDRESS5$, IPV6ADDRESS6$, IPV6ADDRESS7$, IPV6ADDRESS8$, IPV6ADDRESS9$].join("|")), ZONEID$ = subexp(subexp(UNRESERVED$$2 + "|" + PCT_ENCODED$2) + "+");
-          subexp("[vV]" + HEXDIG$$2 + "+\\." + merge2(UNRESERVED$$2, SUB_DELIMS$$, "[\\:]") + "+");
-          subexp(subexp(PCT_ENCODED$2 + "|" + merge2(UNRESERVED$$2, SUB_DELIMS$$)) + "*");
-          var PCHAR$ = subexp(PCT_ENCODED$2 + "|" + merge2(UNRESERVED$$2, SUB_DELIMS$$, "[\\:\\@]"));
-          subexp(subexp(PCT_ENCODED$2 + "|" + merge2(UNRESERVED$$2, SUB_DELIMS$$, "[\\@]")) + "+");
-          subexp(subexp(PCHAR$ + "|" + merge2("[\\/\\?]", IPRIVATE$$)) + "*");
-          return {
-            NOT_SCHEME: new RegExp(merge2("[^]", ALPHA$$, DIGIT$$, "[\\+\\-\\.]"), "g"),
-            NOT_USERINFO: new RegExp(merge2("[^\\%\\:]", UNRESERVED$$2, SUB_DELIMS$$), "g"),
-            NOT_HOST: new RegExp(merge2("[^\\%\\[\\]\\:]", UNRESERVED$$2, SUB_DELIMS$$), "g"),
-            NOT_PATH: new RegExp(merge2("[^\\%\\/\\:\\@]", UNRESERVED$$2, SUB_DELIMS$$), "g"),
-            NOT_PATH_NOSCHEME: new RegExp(merge2("[^\\%\\/\\@]", UNRESERVED$$2, SUB_DELIMS$$), "g"),
-            NOT_QUERY: new RegExp(merge2("[^\\%]", UNRESERVED$$2, SUB_DELIMS$$, "[\\:\\@\\/\\?]", IPRIVATE$$), "g"),
-            NOT_FRAGMENT: new RegExp(merge2("[^\\%]", UNRESERVED$$2, SUB_DELIMS$$, "[\\:\\@\\/\\?]"), "g"),
-            ESCAPE: new RegExp(merge2("[^]", UNRESERVED$$2, SUB_DELIMS$$), "g"),
-            UNRESERVED: new RegExp(UNRESERVED$$2, "g"),
-            OTHER_CHARS: new RegExp(merge2("[^\\%]", UNRESERVED$$2, RESERVED$$), "g"),
-            PCT_ENCODED: new RegExp(PCT_ENCODED$2, "g"),
-            IPV4ADDRESS: new RegExp("^(" + IPV4ADDRESS$ + ")$"),
-            IPV6ADDRESS: new RegExp("^\\[?(" + IPV6ADDRESS$ + ")" + subexp(subexp("\\%25|\\%(?!" + HEXDIG$$2 + "{2})") + "(" + ZONEID$ + ")") + "?\\]?$")
-            //RFC 6874, with relaxed parsing rules
-          };
-        }
-        var URI_PROTOCOL = buildExps(false);
-        var IRI_PROTOCOL = buildExps(true);
-        var slicedToArray = /* @__PURE__ */ function() {
-          function sliceIterator(arr, i2) {
-            var _arr2 = [];
-            var _n = true;
-            var _d = false;
-            var _e = void 0;
-            try {
-              for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-                _arr2.push(_s.value);
-                if (i2 && _arr2.length === i2)
-                  break;
-              }
-            } catch (err) {
-              _d = true;
-              _e = err;
-            } finally {
-              try {
-                if (!_n && _i["return"])
-                  _i["return"]();
-              } finally {
-                if (_d)
-                  throw _e;
-              }
-            }
-            return _arr2;
-          }
-          return function(arr, i2) {
-            if (Array.isArray(arr)) {
-              return arr;
-            } else if (Symbol.iterator in Object(arr)) {
-              return sliceIterator(arr, i2);
-            } else {
-              throw new TypeError("Invalid attempt to destructure non-iterable instance");
-            }
-          };
-        }();
-        var toConsumableArray = function(arr) {
-          if (Array.isArray(arr)) {
-            for (var i2 = 0, arr2 = Array(arr.length); i2 < arr.length; i2++)
-              arr2[i2] = arr[i2];
-            return arr2;
+      }
+      return out;
+    }
+    function findToken(str2, token2) {
+      let ind = 0;
+      for (let i2 = 0; i2 < str2.length; i2++) {
+        if (str2[i2] === token2)
+          ind++;
+      }
+      return ind;
+    }
+    const RDS1 = /^\.\.?\//u;
+    const RDS2 = /^\/\.(?:\/|$)/u;
+    const RDS3 = /^\/\.\.(?:\/|$)/u;
+    const RDS5 = /^\/?(?:.|\n)*?(?=\/|$)/u;
+    function removeDotSegments$1(input) {
+      const output = [];
+      while (input.length) {
+        if (input.match(RDS1)) {
+          input = input.replace(RDS1, "");
+        } else if (input.match(RDS2)) {
+          input = input.replace(RDS2, "/");
+        } else if (input.match(RDS3)) {
+          input = input.replace(RDS3, "/");
+          output.pop();
+        } else if (input === "." || input === "..") {
+          input = "";
+        } else {
+          const im = input.match(RDS5);
+          if (im) {
+            const s = im[0];
+            input = input.slice(s.length);
+            output.push(s);
           } else {
-            return Array.from(arr);
+            throw new Error("Unexpected dot segment condition");
           }
-        };
-        var maxInt2 = 2147483647;
-        var base2 = 36;
-        var tMin2 = 1;
-        var tMax2 = 26;
-        var skew2 = 38;
-        var damp2 = 700;
-        var initialBias2 = 72;
-        var initialN2 = 128;
-        var delimiter2 = "-";
-        var regexPunycode2 = /^xn--/;
-        var regexNonASCII2 = /[^\0-\x7E]/;
-        var regexSeparators2 = /[\x2E\u3002\uFF0E\uFF61]/g;
-        var errors2 = {
-          "overflow": "Overflow: input needs wider integers to process",
-          "not-basic": "Illegal input >= 0x80 (not a basic code point)",
-          "invalid-input": "Invalid input"
-        };
-        var baseMinusTMin2 = base2 - tMin2;
-        var floor2 = Math.floor;
-        var stringFromCharCode2 = String.fromCharCode;
-        function error$12(type2) {
-          throw new RangeError(errors2[type2]);
         }
-        function map2(array, fn) {
-          var result = [];
-          var length = array.length;
-          while (length--) {
-            result[length] = fn(array[length]);
-          }
-          return result;
-        }
-        function mapDomain2(string, fn) {
-          var parts = string.split("@");
-          var result = "";
-          if (parts.length > 1) {
-            result = parts[0] + "@";
-            string = parts[1];
-          }
-          string = string.replace(regexSeparators2, ".");
-          var labels = string.split(".");
-          var encoded = map2(labels, fn).join(".");
-          return result + encoded;
-        }
-        function ucs2decode2(string) {
-          var output = [];
-          var counter = 0;
-          var length = string.length;
-          while (counter < length) {
-            var value = string.charCodeAt(counter++);
-            if (value >= 55296 && value <= 56319 && counter < length) {
-              var extra = string.charCodeAt(counter++);
-              if ((extra & 64512) == 56320) {
-                output.push(((value & 1023) << 10) + (extra & 1023) + 65536);
-              } else {
-                output.push(value);
-                counter--;
-              }
-            } else {
-              output.push(value);
-            }
-          }
-          return output;
-        }
-        var ucs2encode2 = function ucs2encode3(array) {
-          return String.fromCodePoint.apply(String, toConsumableArray(array));
-        };
-        var basicToDigit2 = function basicToDigit3(codePoint) {
-          if (codePoint - 48 < 10) {
-            return codePoint - 22;
-          }
-          if (codePoint - 65 < 26) {
-            return codePoint - 65;
-          }
-          if (codePoint - 97 < 26) {
-            return codePoint - 97;
-          }
-          return base2;
-        };
-        var digitToBasic2 = function digitToBasic3(digit, flag) {
-          return digit + 22 + 75 * (digit < 26) - ((flag != 0) << 5);
-        };
-        var adapt2 = function adapt3(delta2, numPoints, firstTime) {
-          var k = 0;
-          delta2 = firstTime ? floor2(delta2 / damp2) : delta2 >> 1;
-          delta2 += floor2(delta2 / numPoints);
-          for (
-            ;
-            /* no initialization */
-            delta2 > baseMinusTMin2 * tMax2 >> 1;
-            k += base2
-          ) {
-            delta2 = floor2(delta2 / baseMinusTMin2);
-          }
-          return floor2(k + (baseMinusTMin2 + 1) * delta2 / (delta2 + skew2));
-        };
-        var decode2 = function decode3(input) {
-          var output = [];
-          var inputLength = input.length;
-          var i2 = 0;
-          var n = initialN2;
-          var bias = initialBias2;
-          var basic = input.lastIndexOf(delimiter2);
-          if (basic < 0) {
-            basic = 0;
-          }
-          for (var j = 0; j < basic; ++j) {
-            if (input.charCodeAt(j) >= 128) {
-              error$12("not-basic");
-            }
-            output.push(input.charCodeAt(j));
-          }
-          for (var index = basic > 0 ? basic + 1 : 0; index < inputLength; ) {
-            var oldi = i2;
-            for (
-              var w = 1, k = base2;
-              ;
-              /* no condition */
-              k += base2
-            ) {
-              if (index >= inputLength) {
-                error$12("invalid-input");
-              }
-              var digit = basicToDigit2(input.charCodeAt(index++));
-              if (digit >= base2 || digit > floor2((maxInt2 - i2) / w)) {
-                error$12("overflow");
-              }
-              i2 += digit * w;
-              var t = k <= bias ? tMin2 : k >= bias + tMax2 ? tMax2 : k - bias;
-              if (digit < t) {
-                break;
-              }
-              var baseMinusT = base2 - t;
-              if (w > floor2(maxInt2 / baseMinusT)) {
-                error$12("overflow");
-              }
-              w *= baseMinusT;
-            }
-            var out = output.length + 1;
-            bias = adapt2(i2 - oldi, out, oldi == 0);
-            if (floor2(i2 / out) > maxInt2 - n) {
-              error$12("overflow");
-            }
-            n += floor2(i2 / out);
-            i2 %= out;
-            output.splice(i2++, 0, n);
-          }
-          return String.fromCodePoint.apply(String, output);
-        };
-        var encode2 = function encode3(input) {
-          var output = [];
-          input = ucs2decode2(input);
-          var inputLength = input.length;
-          var n = initialN2;
-          var delta2 = 0;
-          var bias = initialBias2;
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = void 0;
-          try {
-            for (var _iterator = input[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var _currentValue2 = _step.value;
-              if (_currentValue2 < 128) {
-                output.push(stringFromCharCode2(_currentValue2));
-              }
-            }
-          } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
-            }
-          }
-          var basicLength = output.length;
-          var handledCPCount = basicLength;
-          if (basicLength) {
-            output.push(delimiter2);
-          }
-          while (handledCPCount < inputLength) {
-            var m = maxInt2;
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = void 0;
-            try {
-              for (var _iterator2 = input[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var currentValue = _step2.value;
-                if (currentValue >= n && currentValue < m) {
-                  m = currentValue;
-                }
-              }
-            } catch (err) {
-              _didIteratorError2 = true;
-              _iteratorError2 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                  _iterator2.return();
-                }
-              } finally {
-                if (_didIteratorError2) {
-                  throw _iteratorError2;
-                }
-              }
-            }
-            var handledCPCountPlusOne = handledCPCount + 1;
-            if (m - n > floor2((maxInt2 - delta2) / handledCPCountPlusOne)) {
-              error$12("overflow");
-            }
-            delta2 += (m - n) * handledCPCountPlusOne;
-            n = m;
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = void 0;
-            try {
-              for (var _iterator3 = input[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                var _currentValue = _step3.value;
-                if (_currentValue < n && ++delta2 > maxInt2) {
-                  error$12("overflow");
-                }
-                if (_currentValue == n) {
-                  var q = delta2;
-                  for (
-                    var k = base2;
-                    ;
-                    /* no condition */
-                    k += base2
-                  ) {
-                    var t = k <= bias ? tMin2 : k >= bias + tMax2 ? tMax2 : k - bias;
-                    if (q < t) {
-                      break;
-                    }
-                    var qMinusT = q - t;
-                    var baseMinusT = base2 - t;
-                    output.push(stringFromCharCode2(digitToBasic2(t + qMinusT % baseMinusT, 0)));
-                    q = floor2(qMinusT / baseMinusT);
-                  }
-                  output.push(stringFromCharCode2(digitToBasic2(q, 0)));
-                  bias = adapt2(delta2, handledCPCountPlusOne, handledCPCount == basicLength);
-                  delta2 = 0;
-                  ++handledCPCount;
-                }
-              }
-            } catch (err) {
-              _didIteratorError3 = true;
-              _iteratorError3 = err;
-            } finally {
-              try {
-                if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                  _iterator3.return();
-                }
-              } finally {
-                if (_didIteratorError3) {
-                  throw _iteratorError3;
-                }
-              }
-            }
-            ++delta2;
-            ++n;
-          }
-          return output.join("");
-        };
-        var toUnicode2 = function toUnicode3(input) {
-          return mapDomain2(input, function(string) {
-            return regexPunycode2.test(string) ? decode2(string.slice(4).toLowerCase()) : string;
-          });
-        };
-        var toASCII2 = function toASCII3(input) {
-          return mapDomain2(input, function(string) {
-            return regexNonASCII2.test(string) ? "xn--" + encode2(string) : string;
-          });
-        };
-        var punycode2 = {
-          /**
-           * A string representing the current Punycode.js version number.
-           * @memberOf punycode
-           * @type String
-           */
-          "version": "2.1.0",
-          /**
-           * An object of methods to convert from JavaScript's internal character
-           * representation (UCS-2) to Unicode code points, and back.
-           * @see <https://mathiasbynens.be/notes/javascript-encoding>
-           * @memberOf punycode
-           * @type Object
-           */
-          "ucs2": {
-            "decode": ucs2decode2,
-            "encode": ucs2encode2
-          },
-          "decode": decode2,
-          "encode": encode2,
-          "toASCII": toASCII2,
-          "toUnicode": toUnicode2
-        };
-        var SCHEMES = {};
-        function pctEncChar(chr) {
-          var c = chr.charCodeAt(0);
-          var e = void 0;
-          if (c < 16)
-            e = "%0" + c.toString(16).toUpperCase();
-          else if (c < 128)
-            e = "%" + c.toString(16).toUpperCase();
-          else if (c < 2048)
-            e = "%" + (c >> 6 | 192).toString(16).toUpperCase() + "%" + (c & 63 | 128).toString(16).toUpperCase();
-          else
-            e = "%" + (c >> 12 | 224).toString(16).toUpperCase() + "%" + (c >> 6 & 63 | 128).toString(16).toUpperCase() + "%" + (c & 63 | 128).toString(16).toUpperCase();
-          return e;
-        }
-        function pctDecChars(str2) {
-          var newStr = "";
-          var i2 = 0;
-          var il = str2.length;
-          while (i2 < il) {
-            var c = parseInt(str2.substr(i2 + 1, 2), 16);
-            if (c < 128) {
-              newStr += String.fromCharCode(c);
-              i2 += 3;
-            } else if (c >= 194 && c < 224) {
-              if (il - i2 >= 6) {
-                var c2 = parseInt(str2.substr(i2 + 4, 2), 16);
-                newStr += String.fromCharCode((c & 31) << 6 | c2 & 63);
-              } else {
-                newStr += str2.substr(i2, 6);
-              }
-              i2 += 6;
-            } else if (c >= 224) {
-              if (il - i2 >= 9) {
-                var _c = parseInt(str2.substr(i2 + 4, 2), 16);
-                var c3 = parseInt(str2.substr(i2 + 7, 2), 16);
-                newStr += String.fromCharCode((c & 15) << 12 | (_c & 63) << 6 | c3 & 63);
-              } else {
-                newStr += str2.substr(i2, 9);
-              }
-              i2 += 9;
-            } else {
-              newStr += str2.substr(i2, 3);
-              i2 += 3;
-            }
-          }
-          return newStr;
-        }
-        function _normalizeComponentEncoding(components, protocol) {
-          function decodeUnreserved2(str2) {
-            var decStr = pctDecChars(str2);
-            return !decStr.match(protocol.UNRESERVED) ? str2 : decStr;
-          }
-          if (components.scheme)
-            components.scheme = String(components.scheme).replace(protocol.PCT_ENCODED, decodeUnreserved2).toLowerCase().replace(protocol.NOT_SCHEME, "");
-          if (components.userinfo !== void 0)
-            components.userinfo = String(components.userinfo).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_USERINFO, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-          if (components.host !== void 0)
-            components.host = String(components.host).replace(protocol.PCT_ENCODED, decodeUnreserved2).toLowerCase().replace(protocol.NOT_HOST, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-          if (components.path !== void 0)
-            components.path = String(components.path).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(components.scheme ? protocol.NOT_PATH : protocol.NOT_PATH_NOSCHEME, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-          if (components.query !== void 0)
-            components.query = String(components.query).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_QUERY, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-          if (components.fragment !== void 0)
-            components.fragment = String(components.fragment).replace(protocol.PCT_ENCODED, decodeUnreserved2).replace(protocol.NOT_FRAGMENT, pctEncChar).replace(protocol.PCT_ENCODED, toUpperCase);
-          return components;
-        }
-        function _stripLeadingZeros(str2) {
-          return str2.replace(/^0*(.*)/, "$1") || "0";
-        }
-        function _normalizeIPv4(host, protocol) {
-          var matches = host.match(protocol.IPV4ADDRESS) || [];
-          var _matches = slicedToArray(matches, 2), address = _matches[1];
-          if (address) {
-            return address.split(".").map(_stripLeadingZeros).join(".");
+      }
+      return output.join("");
+    }
+    function normalizeComponentEncoding$1(components, esc) {
+      const func = esc !== true ? escape : unescape;
+      if (components.scheme !== void 0) {
+        components.scheme = func(components.scheme);
+      }
+      if (components.userinfo !== void 0) {
+        components.userinfo = func(components.userinfo);
+      }
+      if (components.host !== void 0) {
+        components.host = func(components.host);
+      }
+      if (components.path !== void 0) {
+        components.path = func(components.path);
+      }
+      if (components.query !== void 0) {
+        components.query = func(components.query);
+      }
+      if (components.fragment !== void 0) {
+        components.fragment = func(components.fragment);
+      }
+      return components;
+    }
+    function recomposeAuthority$1(components, options) {
+      const uriTokens = [];
+      if (components.userinfo !== void 0) {
+        uriTokens.push(components.userinfo);
+        uriTokens.push("@");
+      }
+      if (components.host !== void 0) {
+        let host = unescape(components.host);
+        const ipV4res = normalizeIPv4$1(host);
+        if (ipV4res.isIPV4) {
+          host = ipV4res.host;
+        } else {
+          const ipV6res = normalizeIPv6$1(ipV4res.host, { isIPV4: false });
+          if (ipV6res.isIPV6 === true) {
+            host = `[${ipV6res.escapedHost}]`;
           } else {
-            return host;
+            host = components.host;
           }
         }
-        function _normalizeIPv6(host, protocol) {
-          var matches = host.match(protocol.IPV6ADDRESS) || [];
-          var _matches2 = slicedToArray(matches, 3), address = _matches2[1], zone = _matches2[2];
-          if (address) {
-            var _address$toLowerCase$ = address.toLowerCase().split("::").reverse(), _address$toLowerCase$2 = slicedToArray(_address$toLowerCase$, 2), last = _address$toLowerCase$2[0], first = _address$toLowerCase$2[1];
-            var firstFields = first ? first.split(":").map(_stripLeadingZeros) : [];
-            var lastFields = last.split(":").map(_stripLeadingZeros);
-            var isLastFieldIPv4Address = protocol.IPV4ADDRESS.test(lastFields[lastFields.length - 1]);
-            var fieldCount = isLastFieldIPv4Address ? 7 : 8;
-            var lastFieldsStart = lastFields.length - fieldCount;
-            var fields = Array(fieldCount);
-            for (var x2 = 0; x2 < fieldCount; ++x2) {
-              fields[x2] = firstFields[x2] || lastFields[lastFieldsStart + x2] || "";
-            }
-            if (isLastFieldIPv4Address) {
-              fields[fieldCount - 1] = _normalizeIPv4(fields[fieldCount - 1], protocol);
-            }
-            var allZeroFields = fields.reduce(function(acc, field, index) {
-              if (!field || field === "0") {
-                var lastLongest = acc[acc.length - 1];
-                if (lastLongest && lastLongest.index + lastLongest.length === index) {
-                  lastLongest.length++;
-                } else {
-                  acc.push({ index, length: 1 });
-                }
-              }
-              return acc;
-            }, []);
-            var longestZeroFields = allZeroFields.sort(function(a, b) {
-              return b.length - a.length;
-            })[0];
-            var newHost = void 0;
-            if (longestZeroFields && longestZeroFields.length > 1) {
-              var newFirst = fields.slice(0, longestZeroFields.index);
-              var newLast = fields.slice(longestZeroFields.index + longestZeroFields.length);
-              newHost = newFirst.join(":") + "::" + newLast.join(":");
-            } else {
-              newHost = fields.join(":");
-            }
-            if (zone) {
-              newHost += "%" + zone;
-            }
-            return newHost;
-          } else {
-            return host;
-          }
+        uriTokens.push(host);
+      }
+      if (typeof components.port === "number" || typeof components.port === "string") {
+        uriTokens.push(":");
+        uriTokens.push(String(components.port));
+      }
+      return uriTokens.length ? uriTokens.join("") : void 0;
+    }
+    var utils$2 = {
+      recomposeAuthority: recomposeAuthority$1,
+      normalizeComponentEncoding: normalizeComponentEncoding$1,
+      removeDotSegments: removeDotSegments$1,
+      normalizeIPv4: normalizeIPv4$1,
+      normalizeIPv6: normalizeIPv6$1,
+      stringToHexStripped
+    };
+    const UUID_REG = /^[\da-f]{8}\b-[\da-f]{4}\b-[\da-f]{4}\b-[\da-f]{4}\b-[\da-f]{12}$/iu;
+    const URN_REG = /([\da-z][\d\-a-z]{0,31}):((?:[\w!$'()*+,\-.:;=@]|%[\da-f]{2})+)/iu;
+    function isSecure(wsComponents) {
+      return typeof wsComponents.secure === "boolean" ? wsComponents.secure : String(wsComponents.scheme).toLowerCase() === "wss";
+    }
+    function httpParse(components) {
+      if (!components.host) {
+        components.error = components.error || "HTTP URIs must have a host.";
+      }
+      return components;
+    }
+    function httpSerialize(components) {
+      const secure = String(components.scheme).toLowerCase() === "https";
+      if (components.port === (secure ? 443 : 80) || components.port === "") {
+        components.port = void 0;
+      }
+      if (!components.path) {
+        components.path = "/";
+      }
+      return components;
+    }
+    function wsParse(wsComponents) {
+      wsComponents.secure = isSecure(wsComponents);
+      wsComponents.resourceName = (wsComponents.path || "/") + (wsComponents.query ? "?" + wsComponents.query : "");
+      wsComponents.path = void 0;
+      wsComponents.query = void 0;
+      return wsComponents;
+    }
+    function wsSerialize(wsComponents) {
+      if (wsComponents.port === (isSecure(wsComponents) ? 443 : 80) || wsComponents.port === "") {
+        wsComponents.port = void 0;
+      }
+      if (typeof wsComponents.secure === "boolean") {
+        wsComponents.scheme = wsComponents.secure ? "wss" : "ws";
+        wsComponents.secure = void 0;
+      }
+      if (wsComponents.resourceName) {
+        const [path, query] = wsComponents.resourceName.split("?");
+        wsComponents.path = path && path !== "/" ? path : void 0;
+        wsComponents.query = query;
+        wsComponents.resourceName = void 0;
+      }
+      wsComponents.fragment = void 0;
+      return wsComponents;
+    }
+    function urnParse(urnComponents, options) {
+      if (!urnComponents.path) {
+        urnComponents.error = "URN can not be parsed";
+        return urnComponents;
+      }
+      const matches = urnComponents.path.match(URN_REG);
+      if (matches) {
+        const scheme = options.scheme || urnComponents.scheme || "urn";
+        urnComponents.nid = matches[1].toLowerCase();
+        urnComponents.nss = matches[2];
+        const urnScheme = `${scheme}:${options.nid || urnComponents.nid}`;
+        const schemeHandler = SCHEMES$1[urnScheme];
+        urnComponents.path = void 0;
+        if (schemeHandler) {
+          urnComponents = schemeHandler.parse(urnComponents, options);
         }
-        var URI_PARSE = /^(?:([^:\/?#]+):)?(?:\/\/((?:([^\/?#@]*)@)?(\[[^\/?#\]]+\]|[^\/?#:]*)(?:\:(\d*))?))?([^?#]*)(?:\?([^#]*))?(?:#((?:.|\n|\r)*))?/i;
-        var NO_MATCH_IS_UNDEFINED = "".match(/(){0}/)[1] === void 0;
-        function parse2(uriString) {
-          var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-          var components = {};
-          var protocol = options.iri !== false ? IRI_PROTOCOL : URI_PROTOCOL;
-          if (options.reference === "suffix")
-            uriString = (options.scheme ? options.scheme + ":" : "") + "//" + uriString;
-          var matches = uriString.match(URI_PARSE);
-          if (matches) {
-            if (NO_MATCH_IS_UNDEFINED) {
-              components.scheme = matches[1];
-              components.userinfo = matches[3];
-              components.host = matches[4];
-              components.port = parseInt(matches[5], 10);
-              components.path = matches[6] || "";
-              components.query = matches[7];
-              components.fragment = matches[8];
-              if (isNaN(components.port)) {
-                components.port = matches[5];
-              }
-            } else {
-              components.scheme = matches[1] || void 0;
-              components.userinfo = uriString.indexOf("@") !== -1 ? matches[3] : void 0;
-              components.host = uriString.indexOf("//") !== -1 ? matches[4] : void 0;
-              components.port = parseInt(matches[5], 10);
-              components.path = matches[6] || "";
-              components.query = uriString.indexOf("?") !== -1 ? matches[7] : void 0;
-              components.fragment = uriString.indexOf("#") !== -1 ? matches[8] : void 0;
-              if (isNaN(components.port)) {
-                components.port = uriString.match(/\/\/(?:.|\n)*\:(?:\/|\?|\#|$)/) ? matches[4] : void 0;
-              }
-            }
-            if (components.host) {
-              components.host = _normalizeIPv6(_normalizeIPv4(components.host, protocol), protocol);
-            }
-            if (components.scheme === void 0 && components.userinfo === void 0 && components.host === void 0 && components.port === void 0 && !components.path && components.query === void 0) {
-              components.reference = "same-document";
-            } else if (components.scheme === void 0) {
-              components.reference = "relative";
-            } else if (components.fragment === void 0) {
-              components.reference = "absolute";
-            } else {
-              components.reference = "uri";
-            }
-            if (options.reference && options.reference !== "suffix" && options.reference !== components.reference) {
-              components.error = components.error || "URI is not a " + options.reference + " reference.";
-            }
-            var schemeHandler = SCHEMES[(options.scheme || components.scheme || "").toLowerCase()];
-            if (!options.unicodeSupport && (!schemeHandler || !schemeHandler.unicodeSupport)) {
-              if (components.host && (options.domainHost || schemeHandler && schemeHandler.domainHost)) {
-                try {
-                  components.host = punycode2.toASCII(components.host.replace(protocol.PCT_ENCODED, pctDecChars).toLowerCase());
-                } catch (e) {
-                  components.error = components.error || "Host's domain name can not be converted to ASCII via punycode: " + e;
-                }
-              }
-              _normalizeComponentEncoding(components, URI_PROTOCOL);
-            } else {
-              _normalizeComponentEncoding(components, protocol);
-            }
-            if (schemeHandler && schemeHandler.parse) {
-              schemeHandler.parse(components, options);
-            }
-          } else {
-            components.error = components.error || "URI can not be parsed.";
-          }
-          return components;
-        }
-        function _recomposeAuthority(components, options) {
-          var protocol = options.iri !== false ? IRI_PROTOCOL : URI_PROTOCOL;
-          var uriTokens = [];
-          if (components.userinfo !== void 0) {
-            uriTokens.push(components.userinfo);
-            uriTokens.push("@");
-          }
-          if (components.host !== void 0) {
-            uriTokens.push(_normalizeIPv6(_normalizeIPv4(String(components.host), protocol), protocol).replace(protocol.IPV6ADDRESS, function(_, $1, $2) {
-              return "[" + $1 + ($2 ? "%25" + $2 : "") + "]";
-            }));
-          }
-          if (typeof components.port === "number" || typeof components.port === "string") {
-            uriTokens.push(":");
-            uriTokens.push(String(components.port));
-          }
-          return uriTokens.length ? uriTokens.join("") : void 0;
-        }
-        var RDS1 = /^\.\.?\//;
-        var RDS2 = /^\/\.(\/|$)/;
-        var RDS3 = /^\/\.\.(\/|$)/;
-        var RDS5 = /^\/?(?:.|\n)*?(?=\/|$)/;
-        function removeDotSegments(input) {
-          var output = [];
-          while (input.length) {
-            if (input.match(RDS1)) {
-              input = input.replace(RDS1, "");
-            } else if (input.match(RDS2)) {
-              input = input.replace(RDS2, "/");
-            } else if (input.match(RDS3)) {
-              input = input.replace(RDS3, "/");
-              output.pop();
-            } else if (input === "." || input === "..") {
-              input = "";
-            } else {
-              var im = input.match(RDS5);
-              if (im) {
-                var s = im[0];
-                input = input.slice(s.length);
-                output.push(s);
-              } else {
-                throw new Error("Unexpected dot segment condition");
-              }
-            }
-          }
-          return output.join("");
-        }
-        function serialize(components) {
-          var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
-          var protocol = options.iri ? IRI_PROTOCOL : URI_PROTOCOL;
-          var uriTokens = [];
-          var schemeHandler = SCHEMES[(options.scheme || components.scheme || "").toLowerCase()];
-          if (schemeHandler && schemeHandler.serialize)
-            schemeHandler.serialize(components, options);
-          if (components.host) {
-            if (protocol.IPV6ADDRESS.test(components.host))
-              ;
-            else if (options.domainHost || schemeHandler && schemeHandler.domainHost) {
-              try {
-                components.host = !options.iri ? punycode2.toASCII(components.host.replace(protocol.PCT_ENCODED, pctDecChars).toLowerCase()) : punycode2.toUnicode(components.host);
-              } catch (e) {
-                components.error = components.error || "Host's domain name can not be converted to " + (!options.iri ? "ASCII" : "Unicode") + " via punycode: " + e;
-              }
-            }
-          }
-          _normalizeComponentEncoding(components, protocol);
-          if (options.reference !== "suffix" && components.scheme) {
-            uriTokens.push(components.scheme);
-            uriTokens.push(":");
-          }
-          var authority = _recomposeAuthority(components, options);
-          if (authority !== void 0) {
-            if (options.reference !== "suffix") {
-              uriTokens.push("//");
-            }
-            uriTokens.push(authority);
-            if (components.path && components.path.charAt(0) !== "/") {
-              uriTokens.push("/");
-            }
-          }
-          if (components.path !== void 0) {
-            var s = components.path;
-            if (!options.absolutePath && (!schemeHandler || !schemeHandler.absolutePath)) {
-              s = removeDotSegments(s);
-            }
-            if (authority === void 0) {
-              s = s.replace(/^\/\//, "/%2F");
-            }
-            uriTokens.push(s);
-          }
-          if (components.query !== void 0) {
-            uriTokens.push("?");
-            uriTokens.push(components.query);
-          }
-          if (components.fragment !== void 0) {
-            uriTokens.push("#");
-            uriTokens.push(components.fragment);
-          }
-          return uriTokens.join("");
-        }
-        function resolveComponents(base3, relative) {
-          var options = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : {};
-          var skipNormalization = arguments[3];
-          var target2 = {};
-          if (!skipNormalization) {
-            base3 = parse2(serialize(base3, options), options);
-            relative = parse2(serialize(relative, options), options);
-          }
-          options = options || {};
-          if (!options.tolerant && relative.scheme) {
-            target2.scheme = relative.scheme;
-            target2.userinfo = relative.userinfo;
-            target2.host = relative.host;
-            target2.port = relative.port;
-            target2.path = removeDotSegments(relative.path || "");
-            target2.query = relative.query;
-          } else {
-            if (relative.userinfo !== void 0 || relative.host !== void 0 || relative.port !== void 0) {
-              target2.userinfo = relative.userinfo;
-              target2.host = relative.host;
-              target2.port = relative.port;
-              target2.path = removeDotSegments(relative.path || "");
+      } else {
+        urnComponents.error = urnComponents.error || "URN can not be parsed.";
+      }
+      return urnComponents;
+    }
+    function urnSerialize(urnComponents, options) {
+      const scheme = options.scheme || urnComponents.scheme || "urn";
+      const nid = urnComponents.nid.toLowerCase();
+      const urnScheme = `${scheme}:${options.nid || nid}`;
+      const schemeHandler = SCHEMES$1[urnScheme];
+      if (schemeHandler) {
+        urnComponents = schemeHandler.serialize(urnComponents, options);
+      }
+      const uriComponents = urnComponents;
+      const nss = urnComponents.nss;
+      uriComponents.path = `${nid || options.nid}:${nss}`;
+      options.skipEscape = true;
+      return uriComponents;
+    }
+    function urnuuidParse(urnComponents, options) {
+      const uuidComponents = urnComponents;
+      uuidComponents.uuid = uuidComponents.nss;
+      uuidComponents.nss = void 0;
+      if (!options.tolerant && (!uuidComponents.uuid || !UUID_REG.test(uuidComponents.uuid))) {
+        uuidComponents.error = uuidComponents.error || "UUID is not valid.";
+      }
+      return uuidComponents;
+    }
+    function urnuuidSerialize(uuidComponents) {
+      const urnComponents = uuidComponents;
+      urnComponents.nss = (uuidComponents.uuid || "").toLowerCase();
+      return urnComponents;
+    }
+    const http = {
+      scheme: "http",
+      domainHost: true,
+      parse: httpParse,
+      serialize: httpSerialize
+    };
+    const https = {
+      scheme: "https",
+      domainHost: http.domainHost,
+      parse: httpParse,
+      serialize: httpSerialize
+    };
+    const ws = {
+      scheme: "ws",
+      domainHost: true,
+      parse: wsParse,
+      serialize: wsSerialize
+    };
+    const wss = {
+      scheme: "wss",
+      domainHost: ws.domainHost,
+      parse: ws.parse,
+      serialize: ws.serialize
+    };
+    const urn = {
+      scheme: "urn",
+      parse: urnParse,
+      serialize: urnSerialize,
+      skipNormalize: true
+    };
+    const urnuuid = {
+      scheme: "urn:uuid",
+      parse: urnuuidParse,
+      serialize: urnuuidSerialize,
+      skipNormalize: true
+    };
+    const SCHEMES$1 = {
+      http,
+      https,
+      ws,
+      wss,
+      urn,
+      "urn:uuid": urnuuid
+    };
+    var schemes = SCHEMES$1;
+    const URL$1 = require$$0$2;
+    const { normalizeIPv6, normalizeIPv4, removeDotSegments, recomposeAuthority, normalizeComponentEncoding } = utils$2;
+    const SCHEMES = schemes;
+    function normalize$1(uri2, options) {
+      if (typeof uri2 === "string") {
+        uri2 = serialize(parse$1(uri2, options), options);
+      } else if (typeof uri2 === "object") {
+        uri2 = parse$1(serialize(uri2, options), options);
+      }
+      return uri2;
+    }
+    function resolve(baseURI, relativeURI, options) {
+      const schemelessOptions = Object.assign({ scheme: "null" }, options);
+      const resolved = resolveComponents(parse$1(baseURI, schemelessOptions), parse$1(relativeURI, schemelessOptions), schemelessOptions, true);
+      return serialize(resolved, { ...schemelessOptions, skipEscape: true });
+    }
+    function resolveComponents(base2, relative, options, skipNormalization) {
+      const target2 = {};
+      if (!skipNormalization) {
+        base2 = parse$1(serialize(base2, options), options);
+        relative = parse$1(serialize(relative, options), options);
+      }
+      options = options || {};
+      if (!options.tolerant && relative.scheme) {
+        target2.scheme = relative.scheme;
+        target2.userinfo = relative.userinfo;
+        target2.host = relative.host;
+        target2.port = relative.port;
+        target2.path = removeDotSegments(relative.path || "");
+        target2.query = relative.query;
+      } else {
+        if (relative.userinfo !== void 0 || relative.host !== void 0 || relative.port !== void 0) {
+          target2.userinfo = relative.userinfo;
+          target2.host = relative.host;
+          target2.port = relative.port;
+          target2.path = removeDotSegments(relative.path || "");
+          target2.query = relative.query;
+        } else {
+          if (!relative.path) {
+            target2.path = base2.path;
+            if (relative.query !== void 0) {
               target2.query = relative.query;
             } else {
-              if (!relative.path) {
-                target2.path = base3.path;
-                if (relative.query !== void 0) {
-                  target2.query = relative.query;
-                } else {
-                  target2.query = base3.query;
-                }
-              } else {
-                if (relative.path.charAt(0) === "/") {
-                  target2.path = removeDotSegments(relative.path);
-                } else {
-                  if ((base3.userinfo !== void 0 || base3.host !== void 0 || base3.port !== void 0) && !base3.path) {
-                    target2.path = "/" + relative.path;
-                  } else if (!base3.path) {
-                    target2.path = relative.path;
-                  } else {
-                    target2.path = base3.path.slice(0, base3.path.lastIndexOf("/") + 1) + relative.path;
-                  }
-                  target2.path = removeDotSegments(target2.path);
-                }
-                target2.query = relative.query;
-              }
-              target2.userinfo = base3.userinfo;
-              target2.host = base3.host;
-              target2.port = base3.port;
+              target2.query = base2.query;
             }
-            target2.scheme = base3.scheme;
-          }
-          target2.fragment = relative.fragment;
-          return target2;
-        }
-        function resolve2(baseURI, relativeURI, options) {
-          var schemelessOptions = assign2({ scheme: "null" }, options);
-          return serialize(resolveComponents(parse2(baseURI, schemelessOptions), parse2(relativeURI, schemelessOptions), schemelessOptions, true), schemelessOptions);
-        }
-        function normalize2(uri2, options) {
-          if (typeof uri2 === "string") {
-            uri2 = serialize(parse2(uri2, options), options);
-          } else if (typeOf(uri2) === "object") {
-            uri2 = parse2(serialize(uri2, options), options);
-          }
-          return uri2;
-        }
-        function equal2(uriA, uriB, options) {
-          if (typeof uriA === "string") {
-            uriA = serialize(parse2(uriA, options), options);
-          } else if (typeOf(uriA) === "object") {
-            uriA = serialize(uriA, options);
-          }
-          if (typeof uriB === "string") {
-            uriB = serialize(parse2(uriB, options), options);
-          } else if (typeOf(uriB) === "object") {
-            uriB = serialize(uriB, options);
-          }
-          return uriA === uriB;
-        }
-        function escapeComponent(str2, options) {
-          return str2 && str2.toString().replace(!options || !options.iri ? URI_PROTOCOL.ESCAPE : IRI_PROTOCOL.ESCAPE, pctEncChar);
-        }
-        function unescapeComponent(str2, options) {
-          return str2 && str2.toString().replace(!options || !options.iri ? URI_PROTOCOL.PCT_ENCODED : IRI_PROTOCOL.PCT_ENCODED, pctDecChars);
-        }
-        var handler = {
-          scheme: "http",
-          domainHost: true,
-          parse: function parse3(components, options) {
-            if (!components.host) {
-              components.error = components.error || "HTTP URIs must have a host.";
-            }
-            return components;
-          },
-          serialize: function serialize2(components, options) {
-            var secure = String(components.scheme).toLowerCase() === "https";
-            if (components.port === (secure ? 443 : 80) || components.port === "") {
-              components.port = void 0;
-            }
-            if (!components.path) {
-              components.path = "/";
-            }
-            return components;
-          }
-        };
-        var handler$1 = {
-          scheme: "https",
-          domainHost: handler.domainHost,
-          parse: handler.parse,
-          serialize: handler.serialize
-        };
-        function isSecure(wsComponents) {
-          return typeof wsComponents.secure === "boolean" ? wsComponents.secure : String(wsComponents.scheme).toLowerCase() === "wss";
-        }
-        var handler$2 = {
-          scheme: "ws",
-          domainHost: true,
-          parse: function parse3(components, options) {
-            var wsComponents = components;
-            wsComponents.secure = isSecure(wsComponents);
-            wsComponents.resourceName = (wsComponents.path || "/") + (wsComponents.query ? "?" + wsComponents.query : "");
-            wsComponents.path = void 0;
-            wsComponents.query = void 0;
-            return wsComponents;
-          },
-          serialize: function serialize2(wsComponents, options) {
-            if (wsComponents.port === (isSecure(wsComponents) ? 443 : 80) || wsComponents.port === "") {
-              wsComponents.port = void 0;
-            }
-            if (typeof wsComponents.secure === "boolean") {
-              wsComponents.scheme = wsComponents.secure ? "wss" : "ws";
-              wsComponents.secure = void 0;
-            }
-            if (wsComponents.resourceName) {
-              var _wsComponents$resourc = wsComponents.resourceName.split("?"), _wsComponents$resourc2 = slicedToArray(_wsComponents$resourc, 2), path = _wsComponents$resourc2[0], query = _wsComponents$resourc2[1];
-              wsComponents.path = path && path !== "/" ? path : void 0;
-              wsComponents.query = query;
-              wsComponents.resourceName = void 0;
-            }
-            wsComponents.fragment = void 0;
-            return wsComponents;
-          }
-        };
-        var handler$3 = {
-          scheme: "wss",
-          domainHost: handler$2.domainHost,
-          parse: handler$2.parse,
-          serialize: handler$2.serialize
-        };
-        var O = {};
-        var UNRESERVED$$ = "[A-Za-z0-9\\-\\.\\_\\~\\xA0-\\u200D\\u2010-\\u2029\\u202F-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFEF]";
-        var HEXDIG$$ = "[0-9A-Fa-f]";
-        var PCT_ENCODED$ = subexp(subexp("%[EFef]" + HEXDIG$$ + "%" + HEXDIG$$ + HEXDIG$$ + "%" + HEXDIG$$ + HEXDIG$$) + "|" + subexp("%[89A-Fa-f]" + HEXDIG$$ + "%" + HEXDIG$$ + HEXDIG$$) + "|" + subexp("%" + HEXDIG$$ + HEXDIG$$));
-        var ATEXT$$ = "[A-Za-z0-9\\!\\$\\%\\'\\*\\+\\-\\^\\_\\`\\{\\|\\}\\~]";
-        var QTEXT$$ = "[\\!\\$\\%\\'\\(\\)\\*\\+\\,\\-\\.0-9\\<\\>A-Z\\x5E-\\x7E]";
-        var VCHAR$$ = merge2(QTEXT$$, '[\\"\\\\]');
-        var SOME_DELIMS$$ = "[\\!\\$\\'\\(\\)\\*\\+\\,\\;\\:\\@]";
-        var UNRESERVED = new RegExp(UNRESERVED$$, "g");
-        var PCT_ENCODED = new RegExp(PCT_ENCODED$, "g");
-        var NOT_LOCAL_PART = new RegExp(merge2("[^]", ATEXT$$, "[\\.]", '[\\"]', VCHAR$$), "g");
-        var NOT_HFNAME = new RegExp(merge2("[^]", UNRESERVED$$, SOME_DELIMS$$), "g");
-        var NOT_HFVALUE = NOT_HFNAME;
-        function decodeUnreserved(str2) {
-          var decStr = pctDecChars(str2);
-          return !decStr.match(UNRESERVED) ? str2 : decStr;
-        }
-        var handler$4 = {
-          scheme: "mailto",
-          parse: function parse$$1(components, options) {
-            var mailtoComponents = components;
-            var to = mailtoComponents.to = mailtoComponents.path ? mailtoComponents.path.split(",") : [];
-            mailtoComponents.path = void 0;
-            if (mailtoComponents.query) {
-              var unknownHeaders = false;
-              var headers = {};
-              var hfields = mailtoComponents.query.split("&");
-              for (var x2 = 0, xl = hfields.length; x2 < xl; ++x2) {
-                var hfield = hfields[x2].split("=");
-                switch (hfield[0]) {
-                  case "to":
-                    var toAddrs = hfield[1].split(",");
-                    for (var _x = 0, _xl = toAddrs.length; _x < _xl; ++_x) {
-                      to.push(toAddrs[_x]);
-                    }
-                    break;
-                  case "subject":
-                    mailtoComponents.subject = unescapeComponent(hfield[1], options);
-                    break;
-                  case "body":
-                    mailtoComponents.body = unescapeComponent(hfield[1], options);
-                    break;
-                  default:
-                    unknownHeaders = true;
-                    headers[unescapeComponent(hfield[0], options)] = unescapeComponent(hfield[1], options);
-                    break;
-                }
-              }
-              if (unknownHeaders)
-                mailtoComponents.headers = headers;
-            }
-            mailtoComponents.query = void 0;
-            for (var _x2 = 0, _xl2 = to.length; _x2 < _xl2; ++_x2) {
-              var addr = to[_x2].split("@");
-              addr[0] = unescapeComponent(addr[0]);
-              if (!options.unicodeSupport) {
-                try {
-                  addr[1] = punycode2.toASCII(unescapeComponent(addr[1], options).toLowerCase());
-                } catch (e) {
-                  mailtoComponents.error = mailtoComponents.error || "Email address's domain name can not be converted to ASCII via punycode: " + e;
-                }
-              } else {
-                addr[1] = unescapeComponent(addr[1], options).toLowerCase();
-              }
-              to[_x2] = addr.join("@");
-            }
-            return mailtoComponents;
-          },
-          serialize: function serialize$$1(mailtoComponents, options) {
-            var components = mailtoComponents;
-            var to = toArray2(mailtoComponents.to);
-            if (to) {
-              for (var x2 = 0, xl = to.length; x2 < xl; ++x2) {
-                var toAddr = String(to[x2]);
-                var atIdx = toAddr.lastIndexOf("@");
-                var localPart = toAddr.slice(0, atIdx).replace(PCT_ENCODED, decodeUnreserved).replace(PCT_ENCODED, toUpperCase).replace(NOT_LOCAL_PART, pctEncChar);
-                var domain = toAddr.slice(atIdx + 1);
-                try {
-                  domain = !options.iri ? punycode2.toASCII(unescapeComponent(domain, options).toLowerCase()) : punycode2.toUnicode(domain);
-                } catch (e) {
-                  components.error = components.error || "Email address's domain name can not be converted to " + (!options.iri ? "ASCII" : "Unicode") + " via punycode: " + e;
-                }
-                to[x2] = localPart + "@" + domain;
-              }
-              components.path = to.join(",");
-            }
-            var headers = mailtoComponents.headers = mailtoComponents.headers || {};
-            if (mailtoComponents.subject)
-              headers["subject"] = mailtoComponents.subject;
-            if (mailtoComponents.body)
-              headers["body"] = mailtoComponents.body;
-            var fields = [];
-            for (var name in headers) {
-              if (headers[name] !== O[name]) {
-                fields.push(name.replace(PCT_ENCODED, decodeUnreserved).replace(PCT_ENCODED, toUpperCase).replace(NOT_HFNAME, pctEncChar) + "=" + headers[name].replace(PCT_ENCODED, decodeUnreserved).replace(PCT_ENCODED, toUpperCase).replace(NOT_HFVALUE, pctEncChar));
-              }
-            }
-            if (fields.length) {
-              components.query = fields.join("&");
-            }
-            return components;
-          }
-        };
-        var URN_PARSE = /^([^\:]+)\:(.*)/;
-        var handler$5 = {
-          scheme: "urn",
-          parse: function parse$$1(components, options) {
-            var matches = components.path && components.path.match(URN_PARSE);
-            var urnComponents = components;
-            if (matches) {
-              var scheme = options.scheme || urnComponents.scheme || "urn";
-              var nid = matches[1].toLowerCase();
-              var nss = matches[2];
-              var urnScheme = scheme + ":" + (options.nid || nid);
-              var schemeHandler = SCHEMES[urnScheme];
-              urnComponents.nid = nid;
-              urnComponents.nss = nss;
-              urnComponents.path = void 0;
-              if (schemeHandler) {
-                urnComponents = schemeHandler.parse(urnComponents, options);
-              }
+          } else {
+            if (relative.path.charAt(0) === "/") {
+              target2.path = removeDotSegments(relative.path);
             } else {
-              urnComponents.error = urnComponents.error || "URN can not be parsed.";
+              if ((base2.userinfo !== void 0 || base2.host !== void 0 || base2.port !== void 0) && !base2.path) {
+                target2.path = "/" + relative.path;
+              } else if (!base2.path) {
+                target2.path = relative.path;
+              } else {
+                target2.path = base2.path.slice(0, base2.path.lastIndexOf("/") + 1) + relative.path;
+              }
+              target2.path = removeDotSegments(target2.path);
             }
-            return urnComponents;
-          },
-          serialize: function serialize$$1(urnComponents, options) {
-            var scheme = options.scheme || urnComponents.scheme || "urn";
-            var nid = urnComponents.nid;
-            var urnScheme = scheme + ":" + (options.nid || nid);
-            var schemeHandler = SCHEMES[urnScheme];
-            if (schemeHandler) {
-              urnComponents = schemeHandler.serialize(urnComponents, options);
-            }
-            var uriComponents = urnComponents;
-            var nss = urnComponents.nss;
-            uriComponents.path = (nid || options.nid) + ":" + nss;
-            return uriComponents;
+            target2.query = relative.query;
           }
-        };
-        var UUID = /^[0-9A-Fa-f]{8}(?:\-[0-9A-Fa-f]{4}){3}\-[0-9A-Fa-f]{12}$/;
-        var handler$6 = {
-          scheme: "urn:uuid",
-          parse: function parse3(urnComponents, options) {
-            var uuidComponents = urnComponents;
-            uuidComponents.uuid = uuidComponents.nss;
-            uuidComponents.nss = void 0;
-            if (!options.tolerant && (!uuidComponents.uuid || !uuidComponents.uuid.match(UUID))) {
-              uuidComponents.error = uuidComponents.error || "UUID is not valid.";
-            }
-            return uuidComponents;
-          },
-          serialize: function serialize2(uuidComponents, options) {
-            var urnComponents = uuidComponents;
-            urnComponents.nss = (uuidComponents.uuid || "").toLowerCase();
-            return urnComponents;
+          target2.userinfo = base2.userinfo;
+          target2.host = base2.host;
+          target2.port = base2.port;
+        }
+        target2.scheme = base2.scheme;
+      }
+      target2.fragment = relative.fragment;
+      return target2;
+    }
+    function equal$2(uriA, uriB, options) {
+      if (typeof uriA === "string") {
+        uriA = unescape(uriA);
+        uriA = serialize(normalizeComponentEncoding(parse$1(uriA, options), true), { ...options, skipEscape: true });
+      } else if (typeof uriA === "object") {
+        uriA = serialize(normalizeComponentEncoding(uriA, true), { ...options, skipEscape: true });
+      }
+      if (typeof uriB === "string") {
+        uriB = unescape(uriB);
+        uriB = serialize(normalizeComponentEncoding(parse$1(uriB, options), true), { ...options, skipEscape: true });
+      } else if (typeof uriB === "object") {
+        uriB = serialize(normalizeComponentEncoding(uriB, true), { ...options, skipEscape: true });
+      }
+      return uriA.toLowerCase() === uriB.toLowerCase();
+    }
+    function serialize(cmpts, opts) {
+      const components = {
+        host: cmpts.host,
+        scheme: cmpts.scheme,
+        userinfo: cmpts.userinfo,
+        port: cmpts.port,
+        path: cmpts.path,
+        query: cmpts.query,
+        nid: cmpts.nid,
+        nss: cmpts.nss,
+        uuid: cmpts.uuid,
+        fragment: cmpts.fragment,
+        reference: cmpts.reference,
+        resourceName: cmpts.resourceName,
+        secure: cmpts.secure,
+        error: ""
+      };
+      const options = Object.assign({}, opts);
+      const uriTokens = [];
+      const schemeHandler = SCHEMES[(options.scheme || components.scheme || "").toLowerCase()];
+      if (schemeHandler && schemeHandler.serialize)
+        schemeHandler.serialize(components, options);
+      if (components.path !== void 0) {
+        if (!options.skipEscape) {
+          components.path = escape(components.path);
+          if (components.scheme !== void 0) {
+            components.path = components.path.split("%3A").join(":");
           }
-        };
-        SCHEMES[handler.scheme] = handler;
-        SCHEMES[handler$1.scheme] = handler$1;
-        SCHEMES[handler$2.scheme] = handler$2;
-        SCHEMES[handler$3.scheme] = handler$3;
-        SCHEMES[handler$4.scheme] = handler$4;
-        SCHEMES[handler$5.scheme] = handler$5;
-        SCHEMES[handler$6.scheme] = handler$6;
-        exports3.SCHEMES = SCHEMES;
-        exports3.pctEncChar = pctEncChar;
-        exports3.pctDecChars = pctDecChars;
-        exports3.parse = parse2;
-        exports3.removeDotSegments = removeDotSegments;
-        exports3.serialize = serialize;
-        exports3.resolveComponents = resolveComponents;
-        exports3.resolve = resolve2;
-        exports3.normalize = normalize2;
-        exports3.equal = equal2;
-        exports3.escapeComponent = escapeComponent;
-        exports3.unescapeComponent = unescapeComponent;
-        Object.defineProperty(exports3, "__esModule", { value: true });
-      });
-    })(uri_all, uri_all.exports);
-    var uri_allExports = uri_all.exports;
+        } else {
+          components.path = unescape(components.path);
+        }
+      }
+      if (options.reference !== "suffix" && components.scheme) {
+        uriTokens.push(components.scheme);
+        uriTokens.push(":");
+      }
+      const authority = recomposeAuthority(components, options);
+      if (authority !== void 0) {
+        if (options.reference !== "suffix") {
+          uriTokens.push("//");
+        }
+        uriTokens.push(authority);
+        if (components.path && components.path.charAt(0) !== "/") {
+          uriTokens.push("/");
+        }
+      }
+      if (components.path !== void 0) {
+        let s = components.path;
+        if (!options.absolutePath && (!schemeHandler || !schemeHandler.absolutePath)) {
+          s = removeDotSegments(s);
+        }
+        if (authority === void 0) {
+          s = s.replace(/^\/\//u, "/%2F");
+        }
+        uriTokens.push(s);
+      }
+      if (components.query !== void 0) {
+        uriTokens.push("?");
+        uriTokens.push(components.query);
+      }
+      if (components.fragment !== void 0) {
+        uriTokens.push("#");
+        uriTokens.push(components.fragment);
+      }
+      return uriTokens.join("");
+    }
+    const hexLookUp = Array.from({ length: 127 }, (v, k) => /[^!"$&'()*+,\-.;=_`a-z{}~]/u.test(String.fromCharCode(k)));
+    function nonSimpleDomain(value) {
+      let code2 = 0;
+      for (let i2 = 0, len = value.length; i2 < len; ++i2) {
+        code2 = value.charCodeAt(i2);
+        if (code2 > 126 || hexLookUp[code2]) {
+          return true;
+        }
+      }
+      return false;
+    }
+    const URI_PARSE = /^(?:([^#/:?]+):)?(?:\/\/((?:([^#/?@]*)@)?(\[[^#/?\]]+\]|[^#/:?]*)(?::(\d*))?))?([^#?]*)(?:\?([^#]*))?(?:#((?:.|[\n\r])*))?/u;
+    function parse$1(uri2, opts) {
+      const options = Object.assign({}, opts);
+      const parsed = {
+        scheme: void 0,
+        userinfo: void 0,
+        host: "",
+        port: void 0,
+        path: "",
+        query: void 0,
+        fragment: void 0
+      };
+      const gotEncoding = uri2.indexOf("%") !== -1;
+      if (options.reference === "suffix")
+        uri2 = (options.scheme ? options.scheme + ":" : "") + "//" + uri2;
+      const matches = uri2.match(URI_PARSE);
+      if (matches) {
+        parsed.scheme = matches[1];
+        parsed.userinfo = matches[3];
+        parsed.host = matches[4];
+        parsed.port = parseInt(matches[5], 10);
+        parsed.path = matches[6] || "";
+        parsed.query = matches[7];
+        parsed.fragment = matches[8];
+        if (isNaN(parsed.port)) {
+          parsed.port = matches[5];
+        }
+        if (parsed.host) {
+          const ipv4result = normalizeIPv4(parsed.host);
+          if (ipv4result.isIPV4 === false) {
+            parsed.host = normalizeIPv6(ipv4result.host, { isIPV4: false }).host.toLowerCase();
+          } else {
+            parsed.host = ipv4result.host;
+          }
+        }
+        if (parsed.scheme === void 0 && parsed.userinfo === void 0 && parsed.host === void 0 && parsed.port === void 0 && !parsed.path && parsed.query === void 0) {
+          parsed.reference = "same-document";
+        } else if (parsed.scheme === void 0) {
+          parsed.reference = "relative";
+        } else if (parsed.fragment === void 0) {
+          parsed.reference = "absolute";
+        } else {
+          parsed.reference = "uri";
+        }
+        if (options.reference && options.reference !== "suffix" && options.reference !== parsed.reference) {
+          parsed.error = parsed.error || "URI is not a " + options.reference + " reference.";
+        }
+        const schemeHandler = SCHEMES[(options.scheme || parsed.scheme || "").toLowerCase()];
+        if (!options.unicodeSupport && (!schemeHandler || !schemeHandler.unicodeSupport)) {
+          if (parsed.host && (options.domainHost || schemeHandler && schemeHandler.domainHost) && nonSimpleDomain(parsed.host)) {
+            try {
+              parsed.host = URL$1.domainToASCII(parsed.host.toLowerCase());
+            } catch (e) {
+              parsed.error = parsed.error || "Host's domain name can not be converted to ASCII: " + e;
+            }
+          }
+        }
+        if (!schemeHandler || schemeHandler && !schemeHandler.skipNormalize) {
+          if (gotEncoding && parsed.scheme !== void 0) {
+            parsed.scheme = unescape(parsed.scheme);
+          }
+          if (gotEncoding && parsed.userinfo !== void 0) {
+            parsed.userinfo = unescape(parsed.userinfo);
+          }
+          if (gotEncoding && parsed.host !== void 0) {
+            parsed.host = unescape(parsed.host);
+          }
+          if (parsed.path !== void 0 && parsed.path.length) {
+            parsed.path = encodeURI(parsed.path);
+          }
+          if (parsed.fragment !== void 0 && parsed.fragment.length) {
+            parsed.fragment = encodeURI(decodeURI(parsed.fragment));
+          }
+        }
+        if (schemeHandler && schemeHandler.parse) {
+          schemeHandler.parse(parsed, options);
+        }
+      } else {
+        parsed.error = parsed.error || "URI can not be parsed.";
+      }
+      return parsed;
+    }
+    const fastUri = {
+      normalize: normalize$1,
+      resolve,
+      resolveComponents,
+      equal: equal$2,
+      serialize,
+      parse: parse$1
+    };
+    fastUri$1.exports = fastUri;
+    fastUri$1.exports.default = fastUri;
+    fastUri$1.exports.fastUri = fastUri;
+    var fastUriExports = fastUri$1.exports;
     Object.defineProperty(uri$1, "__esModule", { value: true });
-    const uri = uri_allExports;
+    const uri = fastUriExports;
     uri.code = 'require("ajv/dist/runtime/uri").default';
     uri$1.default = uri;
     (function(exports2) {
@@ -49295,7 +48907,7 @@ Reason: ${error2}`);
       const rules_12 = rules;
       const compile_12 = compile$2;
       const codegen_2 = codegen;
-      const resolve_12 = resolve$1;
+      const resolve_12 = resolve$2;
       const dataType_12 = dataType;
       const util_12 = util;
       const $dataRefSchema = require$$9;
@@ -65106,7 +64718,7 @@ Reason: ${error2}`);
     };
     var isSpace$3 = utils$1.isSpace;
     var newline = function newline2(state, silent) {
-      var pmax, max, ws, pos = state.pos;
+      var pmax, max, ws2, pos = state.pos;
       if (state.src.charCodeAt(pos) !== 10) {
         return false;
       }
@@ -65115,10 +64727,10 @@ Reason: ${error2}`);
       if (!silent) {
         if (pmax >= 0 && state.pending.charCodeAt(pmax) === 32) {
           if (pmax >= 1 && state.pending.charCodeAt(pmax - 1) === 32) {
-            ws = pmax - 1;
-            while (ws >= 1 && state.pending.charCodeAt(ws - 1) === 32)
-              ws--;
-            state.pending = state.pending.slice(0, ws);
+            ws2 = pmax - 1;
+            while (ws2 >= 1 && state.pending.charCodeAt(ws2 - 1) === 32)
+              ws2--;
+            state.pending = state.pending.slice(0, ws2);
             state.push("hardbreak", "br", 0);
           } else {
             state.pending = state.pending.slice(0, -1);
