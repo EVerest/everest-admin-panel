@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+
+name: Lint EVerest Admin Panel
+
+on:
+  pull_request:
+    branches:
+      - main
+      - spr/main/*
+  push:
+    branches:
+      - main
+    tags:
+      - '*'
+  workflow_dispatch: {}
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup node + pnpm install
+        uses: ./.github/actions/setup-node
+        with:
+          pnpm-version: 9
+      - uses: reviewdog/action-eslint@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-check
+          fail_on_error: true
+          filter_mode: 'nofilter'
+          eslint_flags: '--ignore-path .gitignore .'
