@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import {computed, ComputedRef, defineComponent, inject, onBeforeUnmount, onMounted, ref, watch} from 'vue';
+import {defineComponent, inject, onBeforeUnmount, onMounted, ref, watch} from 'vue';
 import {useEvbcStore} from '@/store/evbc';
 import ConfigStage from "@/modules/evconf_konva/config_stage";
 import EVConfigModel from "@/modules/evbc/config_model";
