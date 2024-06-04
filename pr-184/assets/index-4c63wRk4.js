@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-YmQ7q1Ye.js"(exports, module) {
+  "assets/index-4c63wRk4.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -44768,7 +44768,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             activator: withCtx(({ props: activatorProps }) => [
               renderSlot(_ctx.$slots, "activator", { activatorProps }, void 0, true)
             ]),
-            default: withCtx(({ isActive }) => [
+            default: withCtx(({}) => [
               createVNode(VCard, null, {
                 default: withCtx(() => [
                   createVNode(VCardTitle, null, {
@@ -44855,7 +44855,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
-    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["__scopeId", "data-v-82fa1853"]]);
+    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["__scopeId", "data-v-34d7fce7"]]);
     const _sfc_main$B = /* @__PURE__ */ defineComponent$1({
       components: { ConfigPreview },
       setup() {
