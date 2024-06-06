@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-xjAIy5Zm.js"(exports, module) {
+  "assets/index-bG6SNdll.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -8022,7 +8022,7 @@ var require_index_001 = __commonJS({
       }
       return container;
     }
-    const _sfc_main$F = {
+    const _sfc_main$J = {
       name: "App"
     };
     const _export_sfc = (sfc, props) => {
@@ -8036,7 +8036,7 @@ var require_index_001 = __commonJS({
       const _component_router_view = resolveComponent("router-view");
       return openBlock(), createBlock(_component_router_view);
     }
-    const App = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$7]]);
+    const App = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$7]]);
     /*!
       * vue-router v4.3.2
       * (c) 2024 Eduardo San Martin Morote
@@ -9847,7 +9847,7 @@ var require_index_001 = __commonJS({
     let evbc$1;
     let router$1;
     let notyf$1;
-    const _sfc_main$E = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$I = /* @__PURE__ */ defineComponent$1({
       data: () => ({
         drawer: false,
         evbc_disconnected: false,
@@ -20780,7 +20780,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
     /**
       * vee-validate v4.13.0
       * (c) 2024 Abdelrahman Awad
@@ -22845,7 +22845,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       ComponentViews2[ComponentViews2["ADD"] = 2] = "ADD";
       return ComponentViews2;
     })(ComponentViews || {});
-    const _sfc_main$D = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$H = /* @__PURE__ */ defineComponent$1({
       setup() {
         const evbc2 = inject$1("evbc");
         const servers = reactive([
@@ -23294,7 +23294,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         defaultsTarget: "VSelectionControl"
       })
     }, "VSelectionControlGroup");
-    genericComponent()({
+    const VSelectionControlGroup = genericComponent()({
       name: "VSelectionControlGroup",
       props: makeVSelectionControlGroupProps(),
       emits: {
@@ -26797,7 +26797,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["render", _sfc_render$5]]);
+    const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$5]]);
     var isVue2 = false;
     /*!
      * pinia v2.1.7
@@ -40009,7 +40009,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       result.compiledTypeMap = compileMap(result.compiledImplicit, result.compiledExplicit);
       return result;
     };
-    var schema$4 = Schema$1;
+    var schema$2 = Schema$1;
     var str = new type$9("tag:yaml.org,2002:str", {
       kind: "scalar",
       construct: function(data) {
@@ -40028,7 +40028,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return data !== null ? data : {};
       }
     });
-    var failsafe = new schema$4({
+    var failsafe = new schema$2({
       explicit: [
         str,
         seq,
@@ -42357,7 +42357,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
     }
     var Type$2 = type$9;
-    var Schema = schema$4;
+    var Schema = schema$2;
     var FAILSAFE_SCHEMA = failsafe;
     var JSON_SCHEMA = json$1;
     var CORE_SCHEMA = core$5;
@@ -44828,7 +44828,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         highlightjs: o.component
       }
     };
-    const _sfc_main$C = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$G = /* @__PURE__ */ defineComponent$1({
       ...__default__,
       __name: "ConfigPreview",
       props: {
@@ -44973,8 +44973,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
-    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["__scopeId", "data-v-82fa1853"]]);
-    const _sfc_main$B = /* @__PURE__ */ defineComponent$1({
+    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["__scopeId", "data-v-82fa1853"]]);
+    const _sfc_main$F = /* @__PURE__ */ defineComponent$1({
       components: { ConfigPreview },
       setup() {
         const evbcStore2 = useEvbcStore();
@@ -45154,8 +45154,8 @@ Reason: ${error2}`);
         _: 1
       });
     }
-    const EvConfigCanvas = /* @__PURE__ */ _export_sfc(_sfc_main$B, [["render", _sfc_render$4]]);
-    const _sfc_main$A = /* @__PURE__ */ defineComponent$1({
+    const EvConfigCanvas = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$4]]);
+    const _sfc_main$E = /* @__PURE__ */ defineComponent$1({
       props: {
         show_dialog: {
           type: Boolean,
@@ -45244,8 +45244,8 @@ Reason: ${error2}`);
         _: 1
       }, 8, ["model-value", "onClick:outside"]);
     }
-    const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["render", _sfc_render$3]]);
-    var ajv$2 = { exports: {} };
+    const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$3]]);
+    var ajv$1 = { exports: {} };
     var core$3 = {};
     var validate = {};
     var boolSchema = {};
@@ -51751,9 +51751,9 @@ Reason: ${error2}`);
       Object.defineProperty(exports2, "MissingRefError", { enumerable: true, get: function() {
         return ref_error_12.default;
       } });
-    })(ajv$2, ajv$2.exports);
-    var ajvExports = ajv$2.exports;
-    const Ajv$4 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
+    })(ajv$1, ajv$1.exports);
+    var ajvExports = ajv$1.exports;
+    const Ajv$3 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
     function urlToPublicAsset(filePath) {
       let base2 = "/everest-admin-panel/pr-181";
       if (!base2.endsWith("/")) {
@@ -51771,7 +51771,7 @@ Reason: ${error2}`);
     const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
     const _hoisted_4 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Abort", -1));
     const _hoisted_5 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
-    const _sfc_main$z = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$D = /* @__PURE__ */ defineComponent$1({
       __name: "CreateConfig",
       emits: ["createConfig"],
       setup(__props, { emit: __emit }) {
@@ -51838,7 +51838,7 @@ Reason: ${error2}`);
           }
         }
         async function validateConfigContent(content2) {
-          const ajv2 = new Ajv$4();
+          const ajv2 = new Ajv$3();
           const schema2 = await getConfigJsonSchema();
           const validate2 = ajv2.compile(schema2);
           const valid = validate2(content2);
@@ -52012,11 +52012,11 @@ Reason: ${error2}`);
         };
       }
     });
-    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$z, [["__scopeId", "data-v-a578a337"]]);
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["__scopeId", "data-v-a578a337"]]);
     let evbcStore;
     let evbc;
     let notyf;
-    const _sfc_main$y = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$C = /* @__PURE__ */ defineComponent$1({
       data: () => {
         return {
           show_dialog: false,
@@ -52544,7 +52544,7 @@ Reason: ${error2}`);
         _: 1
       }, 8, ["modelValue"]);
     }
-    const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$y, [["render", _sfc_render$2]]);
+    const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["render", _sfc_render$2]]);
     var _2019 = { exports: {} };
     var dynamic$1 = {};
     var dynamicAnchor$1 = {};
@@ -67686,7 +67686,7 @@ Reason: ${error2}`);
       en,
       fr
     };
-    const schema$3 = {
+    const schema$1 = {
       "$id": "https://json-layout.github.io/layout-keyword",
       "$defs": {
         "layout-keyword": {
@@ -68103,7 +68103,7 @@ Reason: ${error2}`);
         }
       }
     };
-    const schema$2 = {
+    const schema = {
       "$id": "https://json-layout.github.io/normalized-layout-keyword",
       "$defs": {
         "normalized-layout": {
@@ -68869,6 +68869,20 @@ Reason: ${error2}`);
         }
       },
       {
+        name: "checkbox-group",
+        itemsBased: true,
+        multipleCompat: true
+      },
+      {
+        name: "switch-group",
+        itemsBased: true,
+        multipleCompat: true
+      },
+      {
+        name: "radio-group",
+        itemsBased: true
+      },
+      {
         name: "file-input",
         focusable: true,
         multipleCompat: true,
@@ -68912,11 +68926,11 @@ Reason: ${error2}`);
       }
       return schema2;
     }
-    const Ajv$3 = (
+    const Ajv$2 = (
       /** @type {typeof ajvModule.default} */
       ajvModule
     );
-    const ajv$1 = new Ajv$3({
+    const ajv = new Ajv$2({
       code: {
         source: true,
         esm: true
@@ -68927,21 +68941,21 @@ Reason: ${error2}`);
       allowUnionTypes: true,
       allErrors: true
     });
-    addFormats.default(ajv$1);
-    ajvErrors.default(ajv$1);
-    ajv$1.addSchema(schema$3);
-    ajv$1.addSchema(schema$2);
+    addFormats.default(ajv);
+    ajvErrors.default(ajv);
+    ajv.addSchema(schema$1);
+    ajv.addSchema(schema);
     const componentsValidateCache = {};
     function getComponentValidate(component) {
       if (componentsValidateCache[component.name])
         return componentsValidateCache[component.name];
       const schema2 = getComponentSchema(component);
-      componentsValidateCache[component.name] = ajv$1.compile(schema2);
+      componentsValidateCache[component.name] = ajv.compile(schema2);
       return componentsValidateCache[component.name];
     }
     const validateLayoutKeyword = (
       /** @type {any} */
-      ajv$1.getSchema(schema$3.$id)
+      ajv.getSchema(schema$1.$id)
     );
     function isComponentName(layoutKeyword) {
       return typeof layoutKeyword === "string";
@@ -68973,10 +68987,13 @@ Reason: ${error2}`);
     }
     const validateNormalizedLayout = (
       /** @type {any} */
-      ajv$1.getSchema(schema$2.$id)
+      ajv.getSchema(schema.$id)
     );
     function isSwitchStruct(layout) {
       return typeof layout === "object" && "switch" in layout;
+    }
+    function isCompObject(layout) {
+      return !isSwitchStruct(layout);
     }
     function childIsCompObject(child) {
       return "comp" in child;
@@ -68999,23 +69016,47 @@ Reason: ${error2}`);
     function isGetItemsFetch(getItems) {
       return !!getItems.url;
     }
-    function getDefaultChildren(schemaFragment) {
-      var _a2;
-      const { type: type2 } = getSchemaFragmentType(schemaFragment);
+    function isTextSlot(slot) {
+      return !!slot.text;
+    }
+    function isMarkdownSlot(slot) {
+      return !!slot.markdown;
+    }
+    function isNameSlot(slot) {
+      return !!slot.name;
+    }
+    function getDefaultChildren(schemaFragment, type2) {
+      var _a2, _b;
       const children = [];
       if (type2 === "object") {
-        if (schemaFragment.properties) {
-          for (const key of Object.keys(schemaFragment.properties)) {
-            children.push({ key });
+        for (const key of Object.keys(schemaFragment)) {
+          if (key === "properties") {
+            for (const key2 of Object.keys(schemaFragment.properties ?? {})) {
+              children.push({ key: key2 });
+              if (((_a2 = schemaFragment.dependencies) == null ? void 0 : _a2[key2]) && !Array.isArray(schemaFragment.dependencies[key2])) {
+                children.push({ key: `$deps-${key2}` });
+              }
+              if (schemaFragment.dependentSchemas && schemaFragment.dependentSchemas[key2]) {
+                children.push({ key: `$deps-${key2}` });
+              }
+            }
           }
-        }
-        if ((_a2 = schemaFragment.allOf) == null ? void 0 : _a2.length) {
-          for (let i2 = 0; i2 < schemaFragment.allOf.length; i2++) {
-            children.push({ key: `$allOf-${i2}` });
+          if (key === "allOf") {
+            if ((_b = schemaFragment.allOf) == null ? void 0 : _b.length) {
+              for (let i2 = 0; i2 < schemaFragment.allOf.length; i2++) {
+                children.push({ key: `$allOf-${i2}` });
+              }
+            }
           }
-        }
-        if (schemaFragment.oneOf) {
-          children.push({ key: "$oneOf" });
+          if (key === "oneOf") {
+            children.push({ key: "$oneOf" });
+          }
+          if (key === "then" && schemaFragment.if) {
+            children.push({ key: "$then" });
+          }
+          if (key === "else" && schemaFragment.if) {
+            children.push({ key: "$else" });
+          }
         }
       }
       if (type2 === "array" && Array.isArray(schemaFragment.items)) {
@@ -69067,8 +69108,7 @@ Reason: ${error2}`);
         }
       });
     }
-    function getDefaultComp(partial, schemaFragment, arrayChild) {
-      const { type: type2 } = getSchemaFragmentType(schemaFragment);
+    function getDefaultComp(partial, schemaFragment, type2, arrayChild) {
       const hasSimpleType = type2 && ["string", "integer", "number"].includes(type2);
       if (arrayChild === "oneOf")
         return "one-of-select";
@@ -69203,9 +69243,8 @@ Reason: ${error2}`);
       }
       return { type: schemaFragment.type, nullable: false };
     };
-    function getCompObject$1(layoutKeyword, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild) {
+    function getCompObject$1(layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild) {
       const key = schemaPath.slice(schemaPath.lastIndexOf("/") + 1);
-      const { type: type2, nullable } = getSchemaFragmentType(schemaFragment);
       if ("const" in schemaFragment)
         return { comp: "none" };
       if (!type2)
@@ -69215,7 +69254,7 @@ Reason: ${error2}`);
         return { comp: "none" };
       }
       if (!partial.comp) {
-        partial.comp = getDefaultComp(partial, schemaFragment, arrayChild);
+        partial.comp = getDefaultComp(partial, schemaFragment, type2, arrayChild);
       }
       const component = components[partial.comp];
       if (!component) {
@@ -69228,7 +69267,7 @@ Reason: ${error2}`);
       if (component.composite) {
         if (!("title" in partial))
           partial.title = schemaFragment.title ?? null;
-        partial.children = getChildren(getDefaultChildren(schemaFragment), partial.children);
+        partial.children = getChildren(getDefaultChildren(schemaFragment, type2), partial.children);
       } else if (partial.comp === "list") {
         if (!("title" in partial))
           partial.title = schemaFragment.title ?? key;
@@ -69380,7 +69419,7 @@ Reason: ${error2}`);
         partial
       );
     }
-    function getNormalizedLayout(layoutKeyword, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild) {
+    function getNormalizedLayout(layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild) {
       if (isPartialSwitch(layoutKeyword)) {
         const normalizedSwitchCases = [];
         const switchCases = [...layoutKeyword.switch];
@@ -69389,12 +69428,12 @@ Reason: ${error2}`);
         }
         for (let i2 = 0; i2 < switchCases.length; i2++) {
           const switchCase = switchCases[i2];
-          const compObjectResult = getCompObject$1(switchCase, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild);
+          const compObjectResult = getCompObject$1(switchCase, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
           normalizedSwitchCases.push(compObjectResult);
         }
         return { switch: normalizedSwitchCases };
       } else {
-        return getCompObject$1(layoutKeyword, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild);
+        return getCompObject$1(layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
       }
     }
     function matchValidationError(error2, fn) {
@@ -69423,7 +69462,7 @@ Reason: ${error2}`);
       return messages;
     }
     const defaultOptionsKeys = ["readOnly", "summary", "titleDepth", "density", "removeAdditional", "validateOn", "updateOne", "debounceInputMs", "initialValidation", "defaultOn", "readOnlyPropertiesMode"];
-    function normalizeValidLayoutFragment(schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild) {
+    function normalizeValidLayoutFragment(schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild) {
       optionsKeys = optionsKeys ? optionsKeys.concat(defaultOptionsKeys) : defaultOptionsKeys;
       let layoutKeyword;
       if (arrayChild === "oneOf") {
@@ -69436,7 +69475,7 @@ Reason: ${error2}`);
         error2.cause = lighterValidationErrors(validateLayoutKeyword.errors);
         throw error2;
       }
-      const normalizedLayout = getNormalizedLayout(layoutKeyword, schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild);
+      const normalizedLayout = getNormalizedLayout(layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
       if (!validateNormalizedLayout(normalizedLayout)) {
         const error2 = new Error("normalized layout validation errors at path");
         error2.cause = lighterValidationErrors(validateNormalizedLayout.errors);
@@ -69444,10 +69483,11 @@ Reason: ${error2}`);
       }
       return normalizedLayout;
     }
-    function normalizeLayoutFragment(schemaFragment, schemaPath, components, markdown = (src) => src, optionsKeys, arrayChild) {
+    function normalizeLayoutFragment(schemaFragment, schemaPath, components, markdown = (src) => src, optionsKeys, arrayChild, knownType, knownNullable) {
+      const { type: type2, nullable } = knownType ? { type: knownType, nullable: knownNullable ?? false } : getSchemaFragmentType(schemaFragment);
       const errors2 = [];
       try {
-        const layout = normalizeValidLayoutFragment(schemaFragment, schemaPath, components, markdown, optionsKeys, arrayChild);
+        const layout = normalizeValidLayoutFragment(schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
         return { layout, errors: errors2 };
       } catch (err) {
         try {
@@ -69455,7 +69495,7 @@ Reason: ${error2}`);
           if (err.cause && Array.isArray(err.cause))
             errors2.push(...err.cause);
           errors2.push("failed to normalize layout, use default component");
-          const layout = normalizeValidLayoutFragment({ ...schemaFragment, layout: {} }, schemaPath, components, markdown, optionsKeys, arrayChild);
+          const layout = normalizeValidLayoutFragment({ ...schemaFragment, layout: {} }, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
           return { layout, errors: errors2 };
         } catch (err2) {
           errors2.push(err2.message);
@@ -69466,9 +69506,9 @@ Reason: ${error2}`);
         }
       }
     }
-    function makeSkeletonNode(schema2, options, validates, validationErrors, normalizedLayouts, expressions, key, pointer, parentPointer, required2) {
-      var _a2, _b;
-      const { type: type2, nullable } = getSchemaFragmentType(schema2);
+    function makeSkeletonNode(schema2, options, validates, validationErrors, normalizedLayouts, expressions, key, pointer, parentPointer, required2, condition, dependent, knownType) {
+      var _a2, _b, _c, _d, _e, _f;
+      const { type: type2, nullable } = knownType ? { type: knownType, nullable: false } : getSchemaFragmentType(schema2);
       schema2.errorMessage = schema2.errorMessage ?? {};
       if (!normalizedLayouts[pointer]) {
         const normalizationResult = normalizeLayoutFragment(
@@ -69477,7 +69517,10 @@ Reason: ${error2}`);
           pointer,
           options.components,
           options.markdown,
-          options.optionsKeys
+          options.optionsKeys,
+          void 0,
+          type2,
+          nullable
         );
         normalizedLayouts[pointer] = normalizationResult.layout;
         if (normalizationResult.errors.length) {
@@ -69496,7 +69539,7 @@ Reason: ${error2}`);
         else if (type2 === "array")
           defaultData = [];
       }
-      let pure = true;
+      let pure = !dependent;
       const pushExpression = (expressions2, expression) => {
         if (!expression.pure)
           pure = false;
@@ -69554,6 +69597,12 @@ Reason: ${error2}`);
         }
       }
       const node = { key: key ?? "", pointer, parentPointer, pure, propertyKeys: [], roPropertyKeys: [] };
+      if (condition) {
+        if (isSwitchStruct(normalizedLayout))
+          throw new Error("Switch struct not allowed in conditional schema");
+        node.condition = { type: "js-eval", expr: condition, pure: true };
+        pushExpression(expressions, node.condition);
+      }
       if (type2 === "object") {
         if (schema2.properties) {
           node.children = node.children ?? [];
@@ -69561,6 +69610,7 @@ Reason: ${error2}`);
             node.propertyKeys.push(propertyKey);
             if (schema2.properties[propertyKey].readOnly)
               node.roPropertyKeys.push(propertyKey);
+            const dependent2 = schema2.dependentRequired && Object.values(schema2.dependentRequired).some((dependentProperties) => dependentProperties.includes(propertyKey));
             node.children.push(makeSkeletonNode(
               schema2.properties[propertyKey],
               options,
@@ -69571,11 +69621,35 @@ Reason: ${error2}`);
               propertyKey,
               `${pointer}/properties/${propertyKey}`,
               pointer,
-              (_a2 = schema2.required) == null ? void 0 : _a2.includes(propertyKey)
+              (_a2 = schema2.required) == null ? void 0 : _a2.includes(propertyKey),
+              void 0,
+              dependent2
             ));
             if ((_b = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _b.includes(propertyKey)) {
               schema2.errorMessage.required = schema2.errorMessage.required ?? {};
               schema2.errorMessage.required[propertyKey] = options.messages.errorRequired;
+            }
+            if (schema2.dependentRequired && Object.keys(schema2.dependentRequired).includes(propertyKey)) {
+              schema2.errorMessage.dependentRequired = options.messages.errorRequired;
+            }
+            if (((_c = schema2.dependentSchemas) == null ? void 0 : _c[propertyKey]) || ((_d = schema2.dependencies) == null ? void 0 : _d[propertyKey]) && !Array.isArray(schema2.dependencies[propertyKey])) {
+              const dependentSchema = ((_e = schema2.dependentSchemas) == null ? void 0 : _e[propertyKey]) ?? schema2.dependencies[propertyKey];
+              const dependentPointer = ((_f = schema2.dependentSchemas) == null ? void 0 : _f[propertyKey]) ? `${pointer}/dependentSchemas/${propertyKey}` : `${pointer}/dependencies/${propertyKey}`;
+              node.children.push(makeSkeletonNode(
+                dependentSchema,
+                options,
+                validates,
+                validationErrors,
+                normalizedLayouts,
+                expressions,
+                `$deps-${propertyKey}`,
+                dependentPointer,
+                pointer,
+                false,
+                `"${propertyKey}" in data`,
+                void 0,
+                "object"
+              ));
             }
           }
         }
@@ -69592,7 +69666,10 @@ Reason: ${error2}`);
               `$allOf-${i2}`,
               `${pointer}/allOf/${i2}`,
               pointer,
-              false
+              false,
+              void 0,
+              void 0,
+              "object"
             );
             node.propertyKeys = node.propertyKeys.concat(allOfNode.propertyKeys);
             node.roPropertyKeys = node.roPropertyKeys.concat(allOfNode.roPropertyKeys);
@@ -69608,7 +69685,9 @@ Reason: ${error2}`);
               options.components,
               options.markdown,
               options.optionsKeys,
-              "oneOf"
+              "oneOf",
+              type2,
+              nullable
             );
             normalizedLayouts[oneOfPointer] = normalizationResult.layout;
             if (normalizationResult.errors.length) {
@@ -69643,6 +69722,45 @@ Reason: ${error2}`);
             roPropertyKeys: []
           });
           schema2.errorMessage.oneOf = options.messages.errorOneOf;
+        }
+        if (schema2.if) {
+          validates.push(`${pointer}/if`);
+          if (schema2.then) {
+            node.children = node.children ?? [];
+            node.children.push(makeSkeletonNode(
+              schema2.then,
+              options,
+              validates,
+              validationErrors,
+              normalizedLayouts,
+              expressions,
+              "$then",
+              `${pointer}/then`,
+              pointer,
+              false,
+              `validates["${pointer}/if"](data)`,
+              void 0,
+              "object"
+            ));
+          }
+          if (schema2.else) {
+            node.children = node.children ?? [];
+            node.children.push(makeSkeletonNode(
+              schema2.else,
+              options,
+              validates,
+              validationErrors,
+              normalizedLayouts,
+              expressions,
+              "$else",
+              `${pointer}/else`,
+              pointer,
+              false,
+              `!validates["${pointer}/if"](data)`,
+              void 0,
+              "object"
+            ));
+          }
         }
       }
       if (type2 === "array" && schema2.items) {
@@ -69689,7 +69807,7 @@ Reason: ${error2}`);
       validates.push(pointer);
       return { title: title2, root };
     }
-    const Ajv$2 = ajvModule.default;
+    const Ajv$1 = ajvModule.default;
     const getJSONRef = (schemas, ref2, ajv2) => {
       var _a2;
       const [schemaId, pointer] = ref2.split("#");
@@ -69735,7 +69853,7 @@ Reason: ${error2}`);
     function resolveRefs(schema2, ajv2, locale = "en") {
       if (!schema2.$id)
         throw new Error("missing schema id");
-      return recurse({ [schema2.$id]: schema2 }, schema2, schema2.$id, ajv2 ?? new Ajv$2(), locale);
+      return recurse({ [schema2.$id]: schema2 }, schema2, schema2.$id, ajv2 ?? new Ajv$1(), locale);
     }
     function copyBuffer(cur) {
       if (cur instanceof Buffer) {
@@ -69797,7 +69915,7 @@ Reason: ${error2}`);
       }
     }
     const clone$1 = rfdc();
-    const Ajv$1 = (
+    const Ajv = (
       /** @type {typeof ajvModule.default} */
       ajvModule
     );
@@ -69821,7 +69939,7 @@ Reason: ${error2}`);
           Object.assign(ajvOpts, partialOptions.ajvOptions);
         if (partialOptions.code)
           ajvOpts.code = { source: true, esm: true, lines: true };
-        const newAjv = new Ajv$1(ajvOpts);
+        const newAjv = new Ajv(ajvOpts);
         addFormats.default(newAjv);
         ajvErrors.default(newAjv);
         ajv2 = newAjv;
@@ -69892,7 +70010,7 @@ Reason: ${error2}`);
       }
       const expressions = [];
       for (const expression of expressionsDefinitions) {
-        const expressionsParams = expression.pure ? ["data", "options", "context", "display", "layout"] : ["data", "options", "context", "display", "layout", "parentData", "rootData"];
+        const expressionsParams = expression.pure ? ["data", "options", "context", "display", "layout", "validates"] : ["data", "options", "context", "display", "layout", "validates", "rootData", "parent"];
         if (expression.type === "js-fn") {
           expressions.push(
             /** @type {CompiledExpression} */
@@ -70658,22 +70776,22 @@ Reason: ${error2}`);
         return true;
       return false;
     };
-    function evalExpression(expressions, expression, data, options, display, layout, rootData, parentData) {
+    function evalExpression(expressions, expression, data, options, display, layout, validates, rootData, parentContext) {
       if (expression.ref === void 0)
         throw new Error("expression was not compiled : " + JSON.stringify(expression));
       const compiledExpression = expressions[expression.ref];
-      return expression.pure ? compiledExpression(data, options, options.context, display, layout) : compiledExpression(data, options, options.context, display, layout, rootData, parentData);
+      return expression.pure ? compiledExpression(data, options, options.context, display, layout, validates) : compiledExpression(data, options, options.context, display, layout, validates, rootData, parentContext);
     }
-    const getCompObject = (normalizedLayout, options, compiledLayout, display, data, rootData, parentData) => {
+    const getCompObject = (normalizedLayout, options, compiledLayout, display, data, rootData, parentContext) => {
       if (isSwitchStruct(normalizedLayout)) {
         for (const compObject of normalizedLayout.switch) {
-          if (!compObject.if || !!evalExpression(compiledLayout.expressions, compObject.if, data, options, display, compObject, parentData, rootData)) {
+          if (!compObject.if || !!evalExpression(compiledLayout.expressions, compObject.if, data, options, display, compObject, compiledLayout.validates, rootData, parentContext)) {
             return compObject;
           }
         }
       } else {
         if (normalizedLayout.if) {
-          if (evalExpression(compiledLayout.expressions, normalizedLayout.if, data, options, display, normalizedLayout, parentData, rootData)) {
+          if (evalExpression(compiledLayout.expressions, normalizedLayout.if, data, options, display, normalizedLayout, compiledLayout.validates, rootData, parentContext)) {
             return normalizedLayout;
           }
         } else {
@@ -70682,7 +70800,7 @@ Reason: ${error2}`);
       }
       return { comp: "none" };
     };
-    function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentData, validationState, reusedNode) {
+    function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentContext, validationState, reusedNode) {
       var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
       let cacheKey = null;
       if (skeleton.pure && reusedNode && !reusedNode.error && !reusedNode.childError) {
@@ -70692,13 +70810,13 @@ Reason: ${error2}`);
         }
       }
       const normalizedLayout = childDefinition && childIsCompObject(childDefinition) ? childDefinition : compiledLayout.normalizedLayouts[skeleton.pointer];
-      const layout = getCompObject(normalizedLayout, parentOptions, compiledLayout, parentDisplay, data, context.rootData, parentData);
+      const layout = getCompObject(normalizedLayout, parentOptions, compiledLayout, parentDisplay, data, context.rootData, parentContext);
       const [display, cols] = getChildDisplay(parentDisplay, (childDefinition == null ? void 0 : childDefinition.cols) ?? layout.cols);
       const options = layout.getOptions ? produceNodeOptions(
         (reusedNode == null ? void 0 : reusedNode.options) ?? /** @type {import('./types.js').StateNodeOptions} */
         {},
         parentOptions,
-        evalExpression(compiledLayout.expressions, layout.getOptions, data, parentOptions, display, layout, context.rootData, parentData)
+        evalExpression(compiledLayout.expressions, layout.getOptions, data, parentOptions, display, layout, compiledLayout.validates, context.rootData, parentContext)
       ) : parentOptions;
       if (context.initial && parentOptions.autofocus && layout.autofocus && layout.comp !== "none") {
         context.autofocusTarget = fullKey;
@@ -70720,6 +70838,11 @@ Reason: ${error2}`);
           )))
             continue;
           const childSkeleton = ((_b = skeleton.children) == null ? void 0 : _b.find((c) => c.key === childLayout.key)) ?? skeleton;
+          if (childSkeleton.condition) {
+            if (!evalExpression(compiledLayout.expressions, childSkeleton.condition, objectData, parentOptions, display, layout, compiledLayout.validates, context.rootData, parentContext)) {
+              continue;
+            }
+          }
           const isSameData = typeof childLayout.key === "string" && childLayout.key.startsWith("$");
           const childFullKey = `${fullKey}/${childLayout.key}`;
           if (focusChild2)
@@ -70737,7 +70860,7 @@ Reason: ${error2}`);
             childLayout,
             display,
             isSameData ? objectData : objectData[childLayout.key],
-            objectData,
+            { parent: parentContext, data: objectData },
             validationState,
             (_c = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _c[i2]
           );
@@ -70779,7 +70902,7 @@ Reason: ${error2}`);
               null,
               display,
               data,
-              data,
+              { parent: parentContext, data },
               validationState,
               (_f = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _f[0]
             )
@@ -70816,7 +70939,7 @@ Reason: ${error2}`);
             null,
             display,
             itemData,
-            arrayData,
+            { parent: parentContext, data: arrayData },
             validationState,
             (_i = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _i[i2]
           );
@@ -70854,12 +70977,12 @@ Reason: ${error2}`);
       }
       if (layout.getConstData) {
         if (!context.rehydrate) {
-          nodeData = evalExpression(compiledLayout.expressions, layout.getConstData, nodeData, options, display, layout, context.rootData, parentData);
+          nodeData = evalExpression(compiledLayout.expressions, layout.getConstData, nodeData, options, display, layout, compiledLayout.validates, context.rootData, parentContext);
         }
       } else {
         if (layout.getDefaultData && useDefaultData(nodeData, layout, options)) {
           if (!context.rehydrate) {
-            nodeData = evalExpression(compiledLayout.expressions, layout.getDefaultData, nodeData, options, display, layout, context.rootData, parentData);
+            nodeData = evalExpression(compiledLayout.expressions, layout.getDefaultData, nodeData, options, display, layout, compiledLayout.validates, context.rootData, parentContext);
           }
         } else {
           if (isDataEmpty(nodeData)) {
@@ -70875,7 +70998,7 @@ Reason: ${error2}`);
       }
       let props;
       if (layout.getProps) {
-        props = evalExpression(compiledLayout.expressions, layout.getProps, nodeData, options, display, layout, context.rootData, parentData);
+        props = evalExpression(compiledLayout.expressions, layout.getProps, nodeData, options, display, layout, compiledLayout.validates, context.rootData, parentContext);
       }
       const autofocus = isFocusableLayout(layout, compiledLayout.components) && !options.readOnly && !options.summary && context.autofocusTarget === fullKey;
       const node = produceStateNode(
@@ -71079,18 +71202,6 @@ Reason: ${error2}`);
         __publicField(this, "files", []);
         /**
          * @private
-         * @param {StateNode} node
-         * @param {import('@json-layout/vocabulary').Expression} expression
-         * @param {any} data
-         * @returns {any}
-         */
-        __publicField(this, "evalNodeExpression", (node, expression, data) => {
-          const parentNode = this._lastCreateStateTreeContext.nodes.find((n) => n.fullKey === node.parentFullKey);
-          const parentData = parentNode ? parentNode.data : null;
-          return evalExpression(this.compiledLayout.expressions, expression, data, node.options, new Display(node.width), node.layout, parentData, this._data);
-        });
-        /**
-         * @private
          * @type {null | [StateNode, unknown, boolean, number | undefined, ReturnType<typeof setTimeout>]}
          */
         __publicField(this, "debouncedInput", null);
@@ -71272,6 +71383,29 @@ Reason: ${error2}`);
        */
       get hasHiddenError() {
         return this._lastCreateStateTreeContext.nodes.findIndex((node) => node.error && !node.validated) !== -1;
+      }
+      /**
+       * @private
+       * @param {StateNode} node
+       * @returns {import('../compile/types.js').ParentContextExpression | null}
+       */
+      getParentContextExpression(node) {
+        const parentNode = this._lastCreateStateTreeContext.nodes.find((n) => n.fullKey === node.parentFullKey);
+        if (!parentNode)
+          return null;
+        return {
+          parent: this.getParentContextExpression(parentNode),
+          data: parentNode.data
+        };
+      }
+      /**
+       * @param {StateNode} node
+       * @param {import('@json-layout/vocabulary').Expression} expression
+       * @param {any} data
+       * @returns {any}
+       */
+      evalNodeExpression(node, expression, data) {
+        return evalExpression(this.compiledLayout.expressions, expression, data, node.options, new Display(node.width), node.layout, this.compiledLayout.validates, this._data, this.getParentContextExpression(node));
       }
       /**
        * @private
@@ -75652,6 +75786,237 @@ Reason: ${error2}`);
         return forwardRefs(form, formRef);
       }
     });
+    const makeVRadioProps = propsFactory({
+      ...makeVSelectionControlProps({
+        falseIcon: "$radioOff",
+        trueIcon: "$radioOn"
+      })
+    }, "VRadio");
+    const VRadio = genericComponent()({
+      name: "VRadio",
+      props: makeVRadioProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => createVNode(VSelectionControl, mergeProps(props, {
+          "class": ["v-radio", props.class],
+          "style": props.style,
+          "type": "radio"
+        }), slots));
+        return {};
+      }
+    });
+    const makeVRadioGroupProps = propsFactory({
+      height: {
+        type: [Number, String],
+        default: "auto"
+      },
+      ...makeVInputProps(),
+      ...omit$1(makeSelectionControlGroupProps(), ["multiple"]),
+      trueIcon: {
+        type: IconValue,
+        default: "$radioOn"
+      },
+      falseIcon: {
+        type: IconValue,
+        default: "$radioOff"
+      },
+      type: {
+        type: String,
+        default: "radio"
+      }
+    }, "VRadioGroup");
+    const VRadioGroup = genericComponent()({
+      name: "VRadioGroup",
+      inheritAttrs: false,
+      props: makeVRadioGroupProps(),
+      emits: {
+        "update:modelValue": (value) => true
+      },
+      setup(props, _ref) {
+        let {
+          attrs,
+          slots
+        } = _ref;
+        const uid2 = getUid();
+        const id2 = computed(() => props.id || `radio-group-${uid2}`);
+        const model = useProxiedModel(props, "modelValue");
+        useRender(() => {
+          const [rootAttrs, controlAttrs] = filterInputAttrs(attrs);
+          const inputProps = VInput.filterProps(props);
+          const controlProps = VSelectionControl.filterProps(props);
+          const label = slots.label ? slots.label({
+            label: props.label,
+            props: {
+              for: id2.value
+            }
+          }) : props.label;
+          return createVNode(VInput, mergeProps({
+            "class": ["v-radio-group", props.class],
+            "style": props.style
+          }, rootAttrs, inputProps, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "id": id2.value
+          }), {
+            ...slots,
+            default: (_ref2) => {
+              let {
+                id: id3,
+                messagesId,
+                isDisabled,
+                isReadonly: isReadonly2
+              } = _ref2;
+              return createVNode(Fragment, null, [label && createVNode(VLabel, {
+                "id": id3.value
+              }, {
+                default: () => [label]
+              }), createVNode(VSelectionControlGroup, mergeProps(controlProps, {
+                "id": id3.value,
+                "aria-describedby": messagesId.value,
+                "defaultsTarget": "VRadio",
+                "trueIcon": props.trueIcon,
+                "falseIcon": props.falseIcon,
+                "type": props.type,
+                "disabled": isDisabled.value,
+                "readonly": isReadonly2.value,
+                "aria-labelledby": label ? id3.value : void 0,
+                "multiple": false
+              }, controlAttrs, {
+                "modelValue": model.value,
+                "onUpdate:modelValue": ($event) => model.value = $event
+              }), slots)]);
+            }
+          });
+        });
+        return {};
+      }
+    });
+    const rootTypes = {
+      actions: "button@2",
+      article: "heading, paragraph",
+      avatar: "avatar",
+      button: "button",
+      card: "image, heading",
+      "card-avatar": "image, list-item-avatar",
+      chip: "chip",
+      "date-picker": "list-item, heading, divider, date-picker-options, date-picker-days, actions",
+      "date-picker-options": "text, avatar@2",
+      "date-picker-days": "avatar@28",
+      divider: "divider",
+      heading: "heading",
+      image: "image",
+      "list-item": "text",
+      "list-item-avatar": "avatar, text",
+      "list-item-two-line": "sentences",
+      "list-item-avatar-two-line": "avatar, sentences",
+      "list-item-three-line": "paragraph",
+      "list-item-avatar-three-line": "avatar, paragraph",
+      ossein: "ossein",
+      paragraph: "text@3",
+      sentences: "text@2",
+      subtitle: "text",
+      table: "table-heading, table-thead, table-tbody, table-tfoot",
+      "table-heading": "chip, text",
+      "table-thead": "heading@6",
+      "table-tbody": "table-row-divider@6",
+      "table-row-divider": "table-row, divider",
+      "table-row": "text@6",
+      "table-tfoot": "text@2, avatar@2",
+      text: "text"
+    };
+    function genBone(type2) {
+      let children = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : [];
+      return createVNode("div", {
+        "class": ["v-skeleton-loader__bone", `v-skeleton-loader__${type2}`]
+      }, [children]);
+    }
+    function genBones(bone) {
+      const [type2, length] = bone.split("@");
+      return Array.from({
+        length
+      }).map(() => genStructure(type2));
+    }
+    function genStructure(type2) {
+      let children = [];
+      if (!type2)
+        return children;
+      const bone = rootTypes[type2];
+      if (type2 === bone)
+        ;
+      else if (type2.includes(","))
+        return mapBones(type2);
+      else if (type2.includes("@"))
+        return genBones(type2);
+      else if (bone.includes(","))
+        children = mapBones(bone);
+      else if (bone.includes("@"))
+        children = genBones(bone);
+      else if (bone)
+        children.push(genStructure(bone));
+      return [genBone(type2, children)];
+    }
+    function mapBones(bones) {
+      return bones.replace(/\s/g, "").split(",").map(genStructure);
+    }
+    const makeVSkeletonLoaderProps = propsFactory({
+      boilerplate: Boolean,
+      color: String,
+      loading: Boolean,
+      loadingText: {
+        type: String,
+        default: "$vuetify.loading"
+      },
+      type: {
+        type: [String, Array],
+        default: "ossein"
+      },
+      ...makeDimensionProps(),
+      ...makeElevationProps(),
+      ...makeThemeProps()
+    }, "VSkeletonLoader");
+    const VSkeletonLoader = genericComponent()({
+      name: "VSkeletonLoader",
+      props: makeVSkeletonLoaderProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const {
+          backgroundColorClasses,
+          backgroundColorStyles
+        } = useBackgroundColor(toRef(props, "color"));
+        const {
+          dimensionStyles
+        } = useDimension(props);
+        const {
+          elevationClasses
+        } = useElevation(props);
+        const {
+          themeClasses
+        } = provideTheme(props);
+        const {
+          t
+        } = useLocale();
+        const items2 = computed(() => genStructure(wrapInArray(props.type).join(",")));
+        useRender(() => {
+          var _a2;
+          const isLoading = !slots.default || props.loading;
+          return createVNode("div", {
+            "class": ["v-skeleton-loader", {
+              "v-skeleton-loader--boilerplate": props.boilerplate
+            }, themeClasses.value, backgroundColorClasses.value, elevationClasses.value],
+            "style": [backgroundColorStyles.value, isLoading ? dimensionStyles.value : {}],
+            "aria-busy": !props.boilerplate ? isLoading : void 0,
+            "aria-live": !props.boilerplate ? "polite" : void 0,
+            "aria-label": !props.boilerplate ? t(props.loadingText) : void 0,
+            "role": !props.boilerplate ? "alert" : void 0
+          }, [isLoading ? items2.value : (_a2 = slots.default) == null ? void 0 : _a2.call(slots)]);
+        });
+        return {};
+      }
+    });
     const VStepperSymbol = Symbol.for("vuetify:v-stepper");
     const makeVStepperActionsProps = propsFactory({
       color: String,
@@ -76497,1068 +76862,7 @@ Reason: ${error2}`);
         return forwardRefs({}, vInputRef, vFieldRef, textareaRef);
       }
     });
-    const schema$1 = {
-      "$id": "https://json-layout.github.io/layout-keyword",
-      "$defs": {
-        "layout-keyword": {
-          "title": "layout keyword",
-          "errorMessage": {
-            "anyOf": "layout keyword must be a string with a valid component name, or a more complete object definition, or an array of children, or a switch structure"
-          },
-          "anyOf": [
-            {
-              "$ref": "#/$defs/comp-name"
-            },
-            {
-              "$ref": "#/$defs/partial-children"
-            },
-            {
-              "$ref": "#/$defs/partial-comp-object"
-            },
-            {
-              "$ref": "#/$defs/partial-switch"
-            }
-          ]
-        },
-        "partial-switch": {
-          "type": "object",
-          "required": [
-            "switch"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "switch": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/partial-comp-object"
-              }
-            }
-          }
-        },
-        "partial-comp-object": {
-          "title": "partial comp object",
-          "type": "object",
-          "properties": {
-            "comp": {
-              "$ref": "#/$defs/comp-name"
-            },
-            "help": {
-              "type": "string"
-            },
-            "children": {
-              "$ref": "#/$defs/partial-children"
-            },
-            "label": {
-              "type": "string"
-            },
-            "title": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "subtitle": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "step": {
-              "type": "number"
-            },
-            "if": {
-              "$ref": "#/$defs/partial-expression"
-            },
-            "items": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/partial-select-item"
-              }
-            },
-            "getItems": {
-              "$ref": "#/$defs/partial-get-items"
-            },
-            "listEditMode": {
-              "type": "string",
-              "enum": [
-                "inline",
-                "inline-single",
-                "menu",
-                "dialog"
-              ]
-            },
-            "listActions": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "add",
-                  "edit",
-                  "delete",
-                  "sort",
-                  "duplicate"
-                ]
-              }
-            },
-            "cols": {
-              "$ref": "#/$defs/partial-cols"
-            },
-            "props": {
-              "type": "object"
-            },
-            "getProps": {
-              "$ref": "#/$defs/partial-expression"
-            },
-            "slots": {
-              "type": "object",
-              "patternProperties": {
-                ".*": {
-                  "$ref": "#/$defs/partial-slot"
-                }
-              }
-            },
-            "options": {
-              "type": "object"
-            },
-            "getOptions": {
-              "$ref": "#/$defs/partial-expression"
-            },
-            "messages": {
-              "type": "object"
-            },
-            "defaultData": {},
-            "getDefaultData": {
-              "$ref": "#/$defs/partial-expression"
-            },
-            "constData": {},
-            "getConstData": {
-              "$ref": "#/$defs/partial-expression"
-            },
-            "transformData": {
-              "$ref": "#/$defs/partial-expression"
-            },
-            "autofocus": {
-              "type": "boolean"
-            },
-            "separator": {
-              "type": "string"
-            }
-          }
-        },
-        "comp-name": {
-          "title": "component name",
-          "type": "string"
-        },
-        "partial-child-ref": {
-          "type": "object",
-          "required": [
-            "key"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "key": {
-              "type": [
-                "string",
-                "integer"
-              ]
-            },
-            "cols": {
-              "$ref": "#/$defs/partial-cols"
-            }
-          }
-        },
-        "partial-child-composite": {
-          "type": "object",
-          "required": [
-            "children"
-          ],
-          "properties": {
-            "comp": {
-              "type": "string"
-            },
-            "title": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "subtitle": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "children": {
-              "$ref": "#/$defs/partial-children"
-            },
-            "cols": {
-              "$ref": "#/$defs/partial-cols"
-            }
-          }
-        },
-        "partial-child": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/partial-child-ref"
-            },
-            {
-              "$ref": "#/$defs/partial-child-composite"
-            }
-          ]
-        },
-        "partial-children": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/partial-child"
-          }
-        },
-        "partial-expression": {
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/partial-expression-obj"
-            }
-          ]
-        },
-        "partial-expression-obj": {
-          "type": "object",
-          "required": [
-            "expr"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "js-fn",
-                "js-eval",
-                "js-tpl"
-              ]
-            },
-            "expr": {
-              "type": "string"
-            }
-          }
-        },
-        "partial-select-item": {
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "object",
-              "properties": {
-                "key": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": "string"
-                },
-                "value": {}
-              }
-            }
-          ]
-        },
-        "partial-get-items": {
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/partial-get-items-obj"
-            }
-          ]
-        },
-        "partial-get-items-obj": {
-          "type": "object",
-          "allOf": [
-            {
-              "properties": {
-                "itemTitle": {
-                  "$ref": "#/$defs/partial-expression"
-                },
-                "itemKey": {
-                  "$ref": "#/$defs/partial-expression"
-                },
-                "itemValue": {
-                  "$ref": "#/$defs/partial-expression"
-                },
-                "itemIcon": {
-                  "$ref": "#/$defs/partial-expression"
-                },
-                "itemsResults": {
-                  "$ref": "#/$defs/partial-expression"
-                }
-              }
-            },
-            {
-              "anyOf": [
-                {
-                  "type": "object"
-                },
-                {
-                  "$ref": "#/$defs/partial-expression-obj"
-                },
-                {
-                  "$ref": "#/$defs/partial-get-items-fetch"
-                }
-              ]
-            }
-          ]
-        },
-        "partial-get-items-fetch": {
-          "type": "object",
-          "required": [
-            "url"
-          ],
-          "properties": {
-            "url": {
-              "$ref": "#/$defs/partial-expression"
-            }
-          }
-        },
-        "partial-cols": {
-          "oneOf": [
-            {
-              "$ref": "#/$defs/partial-cols-number"
-            },
-            {
-              "$ref": "#/$defs/partial-cols-obj"
-            }
-          ]
-        },
-        "partial-cols-obj": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "xs": {
-              "$ref": "#/$defs/partial-cols-number"
-            },
-            "sm": {
-              "$ref": "#/$defs/partial-cols-number"
-            },
-            "md": {
-              "$ref": "#/$defs/partial-cols-number"
-            },
-            "lg": {
-              "$ref": "#/$defs/partial-cols-number"
-            },
-            "xl": {
-              "$ref": "#/$defs/partial-cols-number"
-            },
-            "xxl": {
-              "$ref": "#/$defs/partial-cols-number"
-            }
-          }
-        },
-        "partial-cols-number": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 12
-        },
-        "partial-slot": {
-          "oneOf": [
-            {
-              "type": "string"
-            },
-            {
-              "$ref": "#/$defs/partial-slot-text"
-            },
-            {
-              "$ref": "#/$defs/partial-slot-markdown"
-            },
-            {
-              "$ref": "#/$defs/partial-slot-name"
-            }
-          ]
-        },
-        "partial-slot-text": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "text"
-          ],
-          "properties": {
-            "text": {
-              "type": "string"
-            }
-          }
-        },
-        "partial-slot-markdown": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "markdown"
-          ],
-          "properties": {
-            "markdown": {
-              "type": "string"
-            }
-          }
-        },
-        "partial-slot-name": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "name"
-          ],
-          "properties": {
-            "name": {
-              "type": "string"
-            }
-          }
-        }
-      }
-    };
-    const schema = {
-      "$id": "https://json-layout.github.io/normalized-layout-keyword",
-      "$defs": {
-        "normalized-layout": {
-          "title": "normalized layout",
-          "type": "object",
-          "unevaluatedProperties": false,
-          "oneOf": [
-            {
-              "$ref": "#/$defs/switch-struct"
-            },
-            {
-              "$ref": "#/$defs/base-comp-object"
-            }
-          ]
-        },
-        "switch-struct": {
-          "type": "object",
-          "required": [
-            "switch"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "switch": {
-              "type": "array",
-              "items": {
-                "$ref": "#/$defs/base-comp-object"
-              }
-            }
-          }
-        },
-        "base-comp-object": {
-          "type": "object",
-          "required": [
-            "comp"
-          ],
-          "properties": {
-            "comp": {
-              "type": "string"
-            },
-            "if": {
-              "$ref": "#/$defs/expression"
-            },
-            "options": {
-              "$ref": "#/$defs/state-node-options-base"
-            },
-            "getOptions": {
-              "$ref": "#/$defs/expression"
-            },
-            "defaultData": {},
-            "getDefaultData": {
-              "$ref": "#/$defs/expression"
-            },
-            "constData": {},
-            "getConstData": {
-              "$ref": "#/$defs/expression"
-            },
-            "transformData": {
-              "$ref": "#/$defs/expression"
-            },
-            "nullable": {
-              "type": "boolean"
-            },
-            "help": {
-              "type": "string"
-            },
-            "cols": {
-              "$ref": "#/$defs/cols-obj"
-            },
-            "props": {
-              "$ref": "#/$defs/state-node-props-lib"
-            },
-            "getProps": {
-              "$ref": "#/$defs/expression"
-            },
-            "slots": {
-              "type": "object",
-              "allOf": [
-                {
-                  "$ref": "#/$defs/state-node-slots-lib"
-                },
-                {
-                  "properties": {
-                    "before": {
-                      "$ref": "#/$defs/slot"
-                    },
-                    "after": {
-                      "$ref": "#/$defs/slot"
-                    },
-                    "component": {
-                      "$ref": "#/$defs/slot"
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "composite-comp-object": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/base-comp-object"
-            },
-            {
-              "type": "object",
-              "required": [
-                "children",
-                "comp"
-              ],
-              "properties": {
-                "comp": {
-                  "type": "string"
-                },
-                "title": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "subtitle": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "children": {
-                  "$ref": "#/$defs/children"
-                }
-              }
-            }
-          ]
-        },
-        "simple-comp-object": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/base-comp-object"
-            },
-            {
-              "type": "object",
-              "required": [
-                "comp"
-              ],
-              "properties": {
-                "comp": {
-                  "type": "string"
-                },
-                "label": {
-                  "type": "string"
-                }
-              }
-            }
-          ]
-        },
-        "focusable-comp-object": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/base-comp-object"
-            },
-            {
-              "type": "object",
-              "required": [
-                "comp"
-              ],
-              "properties": {
-                "comp": {
-                  "type": "string"
-                },
-                "label": {
-                  "type": "string"
-                },
-                "autofocus": {
-                  "type": "boolean"
-                }
-              }
-            }
-          ]
-        },
-        "items-based-comp-object": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/base-comp-object"
-            },
-            {
-              "type": "object",
-              "required": [
-                "comp"
-              ],
-              "properties": {
-                "comp": {
-                  "type": "string"
-                },
-                "items": {
-                  "$ref": "#/$defs/select-items"
-                },
-                "getItems": {
-                  "$ref": "#/$defs/get-items"
-                },
-                "multiple": {
-                  "type": "boolean"
-                },
-                "separator": {
-                  "type": "string"
-                }
-              }
-            }
-          ]
-        },
-        "multiple-compat-comp-object": {
-          "allOf": [
-            {
-              "$ref": "#/$defs/base-comp-object"
-            },
-            {
-              "type": "object",
-              "required": [
-                "comp"
-              ],
-              "properties": {
-                "comp": {
-                  "type": "string"
-                },
-                "multiple": {
-                  "type": "boolean"
-                }
-              }
-            }
-          ]
-        },
-        "child-ref": {
-          "type": "object",
-          "required": [
-            "key"
-          ],
-          "additionalProperties": false,
-          "properties": {
-            "key": {
-              "type": [
-                "string",
-                "integer"
-              ]
-            },
-            "cols": {
-              "$ref": "#/$defs/cols-obj"
-            }
-          }
-        },
-        "child-composite": {
-          "type": "object",
-          "required": [
-            "key",
-            "children"
-          ],
-          "properties": {
-            "key": {
-              "type": [
-                "string",
-                "integer"
-              ]
-            },
-            "cols": {
-              "$ref": "#/$defs/cols-obj"
-            },
-            "comp": {
-              "type": "string"
-            },
-            "title": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "subtitle": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "children": {
-              "$ref": "#/$defs/children"
-            }
-          }
-        },
-        "child": {
-          "title": "Child",
-          "type": "object",
-          "oneOf": [
-            {
-              "$ref": "#/$defs/child-ref"
-            },
-            {
-              "$ref": "#/$defs/child-composite"
-            }
-          ]
-        },
-        "children": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/child"
-          }
-        },
-        "select-items": {
-          "type": "array",
-          "items": {
-            "$ref": "#/$defs/select-item"
-          }
-        },
-        "select-item": {
-          "type": "object",
-          "required": [
-            "title",
-            "key",
-            "value"
-          ],
-          "properties": {
-            "title": {
-              "type": "string"
-            },
-            "key": {
-              "type": "string"
-            },
-            "value": {},
-            "icon": {
-              "type": "string"
-            }
-          }
-        },
-        "get-items": {
-          "type": "object",
-          "allOf": [
-            {
-              "properties": {
-                "returnObjects": {
-                  "type": "boolean",
-                  "readOnly": true
-                },
-                "itemsResults": {
-                  "$ref": "#/$defs/expression"
-                },
-                "itemTitle": {
-                  "$ref": "#/$defs/expression"
-                },
-                "itemKey": {
-                  "$ref": "#/$defs/expression"
-                },
-                "itemValue": {
-                  "$ref": "#/$defs/expression"
-                },
-                "itemIcon": {
-                  "$ref": "#/$defs/expression"
-                }
-              }
-            },
-            {
-              "oneOf": [
-                {
-                  "$ref": "#/$defs/expression"
-                },
-                {
-                  "$ref": "#/$defs/get-items-fetch"
-                }
-              ]
-            }
-          ]
-        },
-        "get-items-fetch": {
-          "type": "object",
-          "required": [
-            "url"
-          ],
-          "properties": {
-            "url": {
-              "$ref": "#/$defs/expression"
-            },
-            "qSearchParam": {
-              "type": "string"
-            },
-            "searchParams": {
-              "type": "object",
-              "patternProperties": {
-                ".*": {
-                  "$ref": "#/$defs/expression"
-                }
-              }
-            }
-          }
-        },
-        "expression": {
-          "type": "object",
-          "required": [
-            "type",
-            "expr",
-            "pure"
-          ],
-          "properties": {
-            "type": {
-              "type": "string",
-              "enum": [
-                "js-fn",
-                "js-eval",
-                "js-tpl"
-              ]
-            },
-            "expr": {
-              "type": "string"
-            },
-            "pure": {
-              "type": "boolean"
-            },
-            "ref": {
-              "type": "integer",
-              "readOnly": true
-            }
-          }
-        },
-        "cols-obj": {
-          "type": "object",
-          "additionalProperties": false,
-          "required": [
-            "xs"
-          ],
-          "properties": {
-            "xs": {
-              "$ref": "#/$defs/cols",
-              "default": 12
-            },
-            "sm": {
-              "$ref": "#/$defs/cols"
-            },
-            "md": {
-              "$ref": "#/$defs/cols"
-            },
-            "lg": {
-              "$ref": "#/$defs/cols"
-            },
-            "xl": {
-              "$ref": "#/$defs/cols"
-            },
-            "xxl": {
-              "$ref": "#/$defs/cols"
-            }
-          }
-        },
-        "cols": {
-          "type": "integer",
-          "minimum": 0,
-          "maximum": 12
-        },
-        "slot": {
-          "oneOf": [
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "text"
-              ],
-              "properties": {
-                "text": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "markdown"
-              ],
-              "properties": {
-                "markdown": {
-                  "type": "string"
-                }
-              }
-            },
-            {
-              "type": "object",
-              "additionalProperties": false,
-              "required": [
-                "name"
-              ],
-              "properties": {
-                "name": {
-                  "type": "string"
-                }
-              }
-            }
-          ]
-        },
-        "state-node-options-base": {
-          "type": "object",
-          "allOf": [
-            {
-              "$ref": "#/$defs/state-node-options-base-lib"
-            },
-            {
-              "properties": {
-                "readOnly": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "summary": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "titleDepth": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 6,
-                  "default": 2
-                },
-                "density": {
-                  "type": "string",
-                  "enum": [
-                    "default",
-                    "comfortable",
-                    "compact"
-                  ],
-                  "default": "default"
-                },
-                "removeAdditional": {
-                  "description": "true is the same as 'unknown', false is the same as 'none'",
-                  "default": "error",
-                  "oneOf": [
-                    {
-                      "type": "boolean"
-                    },
-                    {
-                      "type": "string",
-                      "enum": [
-                        "unknown",
-                        "error",
-                        "none"
-                      ]
-                    }
-                  ]
-                },
-                "validateOn": {
-                  "type": "string",
-                  "enum": [
-                    "input",
-                    "blur",
-                    "submit"
-                  ],
-                  "default": "input"
-                },
-                "updateOn": {
-                  "type": "string",
-                  "enum": [
-                    "input",
-                    "blur"
-                  ],
-                  "default": "input"
-                },
-                "debounceInputMs": {
-                  "type": "integer",
-                  "minimum": 0,
-                  "default": 300
-                },
-                "initialValidation": {
-                  "type": "string",
-                  "enum": [
-                    "never",
-                    "always",
-                    "withData"
-                  ],
-                  "default": "withData"
-                },
-                "defaultOn": {
-                  "type": "string",
-                  "enum": [
-                    "missing",
-                    "empty",
-                    "never"
-                  ],
-                  "default": "empty"
-                },
-                "autofocus": {
-                  "type": "boolean",
-                  "default": false
-                },
-                "readOnlyPropertiesMode": {
-                  "type": "string",
-                  "enum": [
-                    "remove",
-                    "hide",
-                    "show"
-                  ],
-                  "default": "show"
-                }
-              }
-            }
-          ]
-        },
-        "state-node-options-base-lib": {
-          "type": "object",
-          "patternProperties": {
-            ".*": {}
-          }
-        },
-        "state-node-props-lib": {
-          "type": "object",
-          "patternProperties": {
-            ".*": {}
-          }
-        },
-        "state-node-slots-lib": {
-          "type": "object",
-          "patternProperties": {
-            ".*": {
-              "$ref": "#/$defs/slot"
-            }
-          }
-        }
-      }
-    };
-    const Ajv = (
-      /** @type {typeof ajvModule.default} */
-      ajvModule
-    );
-    const ajv = new Ajv({
-      code: {
-        source: true,
-        esm: true
-        // optimize: true
-      },
-      discriminator: true,
-      allowMatchingProperties: true,
-      allowUnionTypes: true,
-      allErrors: true
-    });
-    addFormats.default(ajv);
-    ajvErrors.default(ajv);
-    ajv.addSchema(schema$1);
-    ajv.addSchema(schema);
-    ajv.getSchema(schema$1.$id);
-    ajv.getSchema(schema.$id);
-    function isTextSlot(slot) {
-      return !!slot.text;
-    }
-    function isMarkdownSlot(slot) {
-      return !!slot.markdown;
-    }
-    function isNameSlot(slot) {
-      return !!slot.name;
-    }
-    const _sfc_main$x = {
+    const _sfc_main$B = {
       props: {
         layoutSlot: {
           /** @type import('vue').PropType<import('@json-layout/vocabulary').Slot> */
@@ -77601,7 +76905,7 @@ Reason: ${error2}`);
     };
     const _hoisted_1$3 = { class: "vjsf-help-message" };
     const _hoisted_2$2 = ["innerHTML"];
-    const _sfc_main$w = {
+    const _sfc_main$A = {
       __name: "help-message",
       props: {
         node: {
@@ -77645,7 +76949,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$v = {
+    const _sfc_main$z = {
       __name: "node",
       props: {
         modelValue: {
@@ -77689,19 +76993,19 @@ Reason: ${error2}`);
             default: withCtx(() => {
               var _a2, _b, _c, _d, _e, _f;
               return [
-                ((_a2 = __props.modelValue.layout.slots) == null ? void 0 : _a2.before) ? (openBlock(), createBlock(_sfc_main$x, {
+                ((_a2 = __props.modelValue.layout.slots) == null ? void 0 : _a2.before) ? (openBlock(), createBlock(_sfc_main$B, {
                   key: "before",
                   "layout-slot": (_b = __props.modelValue.layout.slots) == null ? void 0 : _b.before,
                   node: __props.modelValue,
                   "stateful-layout": __props.statefulLayout,
                   class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
                 }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true),
-                __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$w, {
+                __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$A, {
                   key: 1,
                   node: __props.modelValue,
                   class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
                 }, null, 8, ["node", "class"])) : createCommentVNode("", true),
-                ((_c = __props.modelValue.layout.slots) == null ? void 0 : _c.component) ? (openBlock(), createBlock(_sfc_main$x, {
+                ((_c = __props.modelValue.layout.slots) == null ? void 0 : _c.component) ? (openBlock(), createBlock(_sfc_main$B, {
                   key: "component",
                   "layout-slot": (_d = __props.modelValue.layout.slots) == null ? void 0 : _d.component,
                   node: __props.modelValue,
@@ -77711,7 +77015,7 @@ Reason: ${error2}`);
                   "model-value": __props.modelValue,
                   "stateful-layout": __props.statefulLayout
                 }, null, 8, ["model-value", "stateful-layout"])),
-                ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$x, {
+                ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$B, {
                   key: "after",
                   "layout-slot": (_f = __props.modelValue.layout.slots) == null ? void 0 : _f.after,
                   node: __props.modelValue,
@@ -77725,7 +77029,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$u = {
+    const _sfc_main$y = {
       __name: "tree",
       props: {
         modelValue: {
@@ -77743,7 +77047,7 @@ Reason: ${error2}`);
         return (_ctx, _cache) => {
           return openBlock(), createBlock(unref(VRow), { class: "vjsf-tree" }, {
             default: withCtx(() => [
-              createVNode(_sfc_main$v, {
+              createVNode(_sfc_main$z, {
                 "stateful-layout": __props.statefulLayout,
                 "model-value": (
                   /** @type import('../types.js').VjsfNode */
@@ -77964,7 +77268,6 @@ Reason: ${error2}`);
         if (precompiledLayout == null ? void 0 : precompiledLayout.value)
           return;
         const newCompileOptions = produceCompileOptions(compileOptions.value, newOptions);
-        console.log("compile options", newOptions, newCompileOptions);
         if (newCompileOptions !== compileOptions.value)
           compileOptions.value = newCompileOptions;
       }, { immediate: true });
@@ -78044,7 +77347,7 @@ Reason: ${error2}`);
       });
       return { el: el2, statefulLayout, stateTree };
     };
-    const _sfc_main$t = {
+    const _sfc_main$x = {
       __name: "section-header",
       props: {
         node: {
@@ -78104,7 +77407,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$s = {
+    const _sfc_main$w = {
       __name: "section",
       props: {
         modelValue: {
@@ -78122,13 +77425,13 @@ Reason: ${error2}`);
         return (_ctx, _cache) => {
           var _a2, _b;
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$t, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$x, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VRow), {
               dense: ((_a2 = __props.modelValue.options) == null ? void 0 : _a2.density) === "compact" || ((_b = __props.modelValue.options) == null ? void 0 : _b.density) === "comfortable"
             }, {
               default: withCtx(() => [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child) => {
-                  return openBlock(), createBlock(_sfc_main$v, {
+                  return openBlock(), createBlock(_sfc_main$z, {
                     key: child.fullKey,
                     "model-value": (
                       /** @type import('../../types.js').VjsfNode */
@@ -78251,11 +77554,11 @@ Reason: ${error2}`);
         return {};
       const slots = {};
       for (const [key, layoutSlot] of Object.entries(node.layout.slots)) {
-        slots[key] = () => h(_sfc_main$x, { layoutSlot, node, statefulLayout });
+        slots[key] = () => h(_sfc_main$B, { layoutSlot, node, statefulLayout });
       }
       return slots;
     }
-    const _sfc_main$r = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$v = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfTextFieldNode> */
@@ -78274,7 +77577,7 @@ Reason: ${error2}`);
         return () => h(VTextField, fieldProps.value, fieldSlots.value);
       }
     });
-    const _sfc_main$q = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$u = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfTextareaNode> */
@@ -78305,7 +77608,7 @@ Reason: ${error2}`);
         return () => h(VTextarea, fieldProps.value, fieldSlots.value);
       }
     });
-    const _sfc_main$p = {
+    const _sfc_main$t = {
       __name: "checkbox",
       props: {
         modelValue: {
@@ -78334,7 +77637,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$o = {
+    const _sfc_main$s = {
       __name: "switch",
       props: {
         modelValue: {
@@ -78363,7 +77666,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$n = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$r = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfNumberFieldNode> */
@@ -78387,7 +77690,7 @@ Reason: ${error2}`);
         return () => h(VTextField, fieldProps.value, fieldSlots.value);
       }
     });
-    const _sfc_main$m = {
+    const _sfc_main$q = {
       __name: "slider",
       props: {
         modelValue: {
@@ -78418,7 +77721,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$l = {
+    const _sfc_main$p = {
       __name: "text-field-menu",
       props: {
         modelValue: {
@@ -78486,7 +77789,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$k = {
+    const _sfc_main$o = {
       __name: "date-picker",
       props: {
         modelValue: {
@@ -78511,7 +77814,7 @@ Reason: ${error2}`);
           return datePickerProps2;
         });
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(_sfc_main$l, {
+          return openBlock(), createBlock(_sfc_main$p, {
             "model-value": __props.modelValue,
             "stateful-layout": __props.statefulLayout,
             "formatted-value": __props.modelValue.data && unref(vDate).format(__props.modelValue.data, "fullDateWithWeekday")
@@ -78533,7 +77836,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$j = {
+    const _sfc_main$n = {
       __name: "date-time-picker",
       props: {
         modelValue: {
@@ -78553,7 +77856,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$i = {
+    const _sfc_main$m = {
       __name: "color-picker",
       props: {
         modelValue: {
@@ -78575,7 +77878,7 @@ Reason: ${error2}`);
           return colorPickerProps2;
         });
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(_sfc_main$l, {
+          return openBlock(), createBlock(_sfc_main$p, {
             "model-value": __props.modelValue,
             "stateful-layout": __props.statefulLayout,
             "formatted-value": __props.modelValue.data
@@ -78600,7 +77903,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
       props: {
         icon: {
           type: String,
@@ -78621,7 +77924,7 @@ Reason: ${error2}`);
         };
       }
     });
-    const _sfc_main$g = {
+    const _sfc_main$k = {
       __name: "select-item",
       props: {
         multiple: {
@@ -78650,7 +77953,7 @@ Reason: ${error2}`);
                   tabindex: "-1",
                   "model-value": isSelected
                 }, null, 8, ["model-value"])) : createCommentVNode("", true),
-                __props.item.icon ? (openBlock(), createBlock(_sfc_main$h, {
+                __props.item.icon ? (openBlock(), createBlock(_sfc_main$l, {
                   key: 1,
                   icon: __props.item.icon
                 }, null, 8, ["icon"])) : createCommentVNode("", true)
@@ -78666,7 +77969,7 @@ Reason: ${error2}`);
       key: 1,
       class: "v-select__selection-comma"
     };
-    const _sfc_main$f = {
+    const _sfc_main$j = {
       __name: "select-selection",
       props: {
         multiple: {
@@ -78686,7 +77989,7 @@ Reason: ${error2}`);
       setup(__props) {
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock("span", _hoisted_1$2, [
-            __props.item.icon ? (openBlock(), createBlock(_sfc_main$h, {
+            __props.item.icon ? (openBlock(), createBlock(_sfc_main$l, {
               key: 0,
               icon: __props.item.icon
             }, null, 8, ["icon"])) : createCommentVNode("", true),
@@ -78696,7 +77999,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfSelectNode> */
@@ -78738,14 +78041,14 @@ Reason: ${error2}`);
         const fieldSlots = computed(() => {
           const slots = getCompSlots(props.modelValue, props.statefulLayout);
           if (!slots.item) {
-            slots.item = (context) => h(_sfc_main$g, {
+            slots.item = (context) => h(_sfc_main$k, {
               multiple: props.modelValue.layout.multiple,
               itemProps: context.props,
               item: context.item.raw
             });
           }
           if (!slots.selection) {
-            slots.selection = (context) => h(_sfc_main$f, {
+            slots.selection = (context) => h(_sfc_main$j, {
               multiple: props.modelValue.layout.multiple,
               last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
               item: context.item.raw
@@ -78756,7 +78059,7 @@ Reason: ${error2}`);
         return () => h(VSelect, fieldProps.value, fieldSlots.value);
       }
     });
-    const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$h = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfSelectNode> */
@@ -78806,14 +78109,14 @@ Reason: ${error2}`);
         const fieldSlots = computed(() => {
           const slots = getCompSlots(props.modelValue, props.statefulLayout);
           if (!slots.item) {
-            slots.item = (context) => h(_sfc_main$g, {
+            slots.item = (context) => h(_sfc_main$k, {
               multiple: props.modelValue.layout.multiple,
               itemProps: context.props,
               item: context.item.raw
             });
           }
           if (!slots.selection) {
-            slots.selection = (context) => h(_sfc_main$f, {
+            slots.selection = (context) => h(_sfc_main$j, {
               multiple: props.modelValue.layout.multiple,
               last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
               item: context.item.raw
@@ -78822,6 +78125,199 @@ Reason: ${error2}`);
           return slots;
         });
         return () => h(VAutocomplete, fieldProps.value, fieldSlots.value);
+      }
+    });
+    const _sfc_main$g = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfRadioGroupNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(props) {
+        const items2 = shallowRef([]);
+        const loading = ref$1(false);
+        const fieldProps = computed(() => {
+          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
+          return fieldProps2;
+        });
+        let lastStateTree = null;
+        let lastContext = null;
+        const refresh = async () => {
+          if (props.statefulLayout.stateTree === lastStateTree && props.statefulLayout.options.context === lastContext)
+            return;
+          lastStateTree = props.statefulLayout.stateTree;
+          lastContext = props.statefulLayout.options.context ?? null;
+          loading.value = true;
+          items2.value = await props.statefulLayout.getItems(props.modelValue);
+          loading.value = false;
+        };
+        if (!props.modelValue.layout.items) {
+          refresh();
+        }
+        const fieldSlots = computed(() => {
+          const slots = getCompSlots(props.modelValue, props.statefulLayout);
+          const children = [];
+          if (loading.value) {
+            children.push(h(VSkeletonLoader, { type: "chip" }));
+          } else {
+            for (const item of items2.value) {
+              children.push(h(VRadio, { label: item.title, value: item.value }));
+            }
+          }
+          slots.default = () => children;
+          return slots;
+        });
+        return () => {
+          return h(VRadioGroup, fieldProps.value, fieldSlots.value);
+        };
+      }
+    });
+    const _sfc_main$f = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfCheckboxGroupNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        },
+        type: {
+          type: String,
+          required: true
+        }
+      },
+      setup(props) {
+        const items2 = shallowRef([]);
+        const loading = ref$1(false);
+        const fieldProps = computed(() => {
+          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
+          fieldProps2.class.push("v-radio-group");
+          fieldProps2.class.push("vjsf-selection-group");
+          return fieldProps2;
+        });
+        let lastStateTree = null;
+        let lastContext = null;
+        const refresh = async () => {
+          if (props.statefulLayout.stateTree === lastStateTree && props.statefulLayout.options.context === lastContext)
+            return;
+          lastStateTree = props.statefulLayout.stateTree;
+          lastContext = props.statefulLayout.options.context ?? null;
+          loading.value = true;
+          items2.value = await props.statefulLayout.getItems(props.modelValue);
+          loading.value = false;
+        };
+        if (!props.modelValue.layout.items) {
+          refresh();
+        }
+        const fieldSlots = computed(() => {
+          const slots = getCompSlots(props.modelValue, props.statefulLayout);
+          if (!slots.default) {
+            slots.default = () => {
+              var _a2, _b;
+              const children = [h(VLabel, { text: fieldProps.value.label })];
+              if (loading.value) {
+                children.push(h(VSkeletonLoader, { type: "chip" }));
+              } else {
+                const checkboxes = [];
+                for (const item of items2.value) {
+                  let modelValue = false;
+                  if (props.modelValue.layout.multiple) {
+                    modelValue = (_a2 = props.modelValue.data) == null ? void 0 : _a2.includes(item.value);
+                  } else {
+                    modelValue = props.modelValue.data === item.value;
+                  }
+                  checkboxes.push(h(props.type === "switch" ? VSwitch : VCheckbox, {
+                    label: item.title,
+                    hideDetails: true,
+                    density: (_b = props.modelValue.options) == null ? void 0 : _b.density,
+                    key: item.key,
+                    modelValue,
+                    onClick: () => {
+                      let newValue;
+                      if (props.modelValue.layout.multiple) {
+                        newValue = props.modelValue.data ? [...props.modelValue.data] : [];
+                        if (newValue.includes(item.value)) {
+                          newValue = newValue.filter((v) => v !== item.value);
+                        } else {
+                          newValue.push(item.value);
+                        }
+                      } else {
+                        if (props.modelValue.data === item.value) {
+                          newValue = void 0;
+                        } else {
+                          newValue = item.value;
+                        }
+                      }
+                      props.statefulLayout.input(props.modelValue, newValue);
+                    }
+                  }));
+                }
+                children.push(h("div", { class: "v-selection-control-group" }, checkboxes));
+              }
+              return children;
+            };
+          }
+          return slots;
+        });
+        return () => {
+          return h(VInput, fieldProps.value, fieldSlots.value);
+        };
+      }
+    });
+    const _sfc_main$e = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfCheckboxGroupNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(props) {
+        return () => {
+          return h(_sfc_main$f, {
+            modelValue: props.modelValue,
+            statefulLayout: props.statefulLayout,
+            type: "checkbox"
+          });
+        };
+      }
+    });
+    const _sfc_main$d = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfCheckboxGroupNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(props) {
+        return () => {
+          return h(_sfc_main$f, {
+            modelValue: props.modelValue,
+            statefulLayout: props.statefulLayout,
+            type: "switch"
+          });
+        };
       }
     });
     const _sfc_main$c = {
@@ -78859,7 +78355,14 @@ Reason: ${error2}`);
           fieldProps2.modelValue = activeChildTree.value;
           fieldProps2["onUpdate:modelValue"] = onChange;
           fieldProps2.returnObject = true;
-          fieldProps2.items = props.modelValue.skeleton.childrenTrees;
+          const items2 = [];
+          for (const childTree of props.modelValue.skeleton.childrenTrees || []) {
+            const childLayout = props.statefulLayout.compiledLayout.normalizedLayouts[childTree.root.pointer];
+            if (!isCompObject(childLayout) || !childLayout.if || !!props.statefulLayout.evalNodeExpression(props.modelValue, childLayout.if, props.modelValue.data)) {
+              items2.push(childTree);
+            }
+          }
+          fieldProps2.items = items2;
           fieldProps2.itemTitle = "title";
           return fieldProps2;
         });
@@ -78875,7 +78378,7 @@ Reason: ${error2}`);
                   _: 1
                 })) : createCommentVNode("", true),
                 ((_a2 = __props.modelValue.children) == null ? void 0 : _a2[0]) ? (openBlock(true), createElementBlock(Fragment, { key: 1 }, renderList(unref(isSection)((_b = __props.modelValue.children) == null ? void 0 : _b[0]) ? (_c = __props.modelValue.children) == null ? void 0 : _c[0].children : __props.modelValue.children, (grandChild) => {
-                  return openBlock(), createBlock(_sfc_main$v, {
+                  return openBlock(), createBlock(_sfc_main$z, {
                     key: grandChild.fullKey,
                     "model-value": (
                       /** @type import('../../types.js').VjsfNode */
@@ -78909,7 +78412,7 @@ Reason: ${error2}`);
         const tab = ref$1(0);
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$t, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$x, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VSheet), { border: "" }, {
               default: withCtx(() => [
                 createVNode(unref(VTabs), {
@@ -78958,7 +78461,7 @@ Reason: ${error2}`);
                               createVNode(unref(VRow), null, {
                                 default: withCtx(() => [
                                   (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                    return openBlock(), createBlock(_sfc_main$v, {
+                                    return openBlock(), createBlock(_sfc_main$z, {
                                       key: grandChild.fullKey,
                                       "model-value": (
                                         /** @type import('../../types.js').VjsfNode */
@@ -79006,7 +78509,7 @@ Reason: ${error2}`);
         const tab = ref$1(0);
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$t, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$x, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VSheet), { border: "" }, {
               default: withCtx(() => [
                 createBaseVNode("div", _hoisted_1$1, [
@@ -79057,7 +78560,7 @@ Reason: ${error2}`);
                                 createVNode(unref(VRow), null, {
                                   default: withCtx(() => [
                                     (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                      return openBlock(), createBlock(_sfc_main$v, {
+                                      return openBlock(), createBlock(_sfc_main$z, {
                                         key: grandChild.fullKey,
                                         "model-value": (
                                           /** @type import('../../types.js').VjsfNode */
@@ -79219,7 +78722,7 @@ Reason: ${error2}`);
       setup(__props) {
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$t, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$x, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VExpansionPanels), normalizeProps(guardReactiveProps(unref(getCompProps)(__props.modelValue, true))), {
               default: withCtx(() => [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child, i2) => {
@@ -79251,7 +78754,7 @@ Reason: ${error2}`);
                               createVNode(unref(VRow), null, {
                                 default: withCtx(() => [
                                   (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                    return openBlock(), createBlock(_sfc_main$v, {
+                                    return openBlock(), createBlock(_sfc_main$z, {
                                       key: grandChild.fullKey,
                                       "model-value": (
                                         /** @type import('../../types.js').VjsfNode */
@@ -79309,7 +78812,7 @@ Reason: ${error2}`);
         };
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$t, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$x, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VStepper), {
               modelValue: step.value,
               "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => step.value = $event)
@@ -79352,7 +78855,7 @@ Reason: ${error2}`);
                               createVNode(unref(VRow), null, {
                                 default: withCtx(() => [
                                   (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                    return openBlock(), createBlock(_sfc_main$v, {
+                                    return openBlock(), createBlock(_sfc_main$z, {
                                       key: grandChild.fullKey,
                                       "model-value": (
                                         /** @type import('../../types.js').VjsfNode */
@@ -79560,7 +79063,7 @@ Reason: ${error2}`);
                           createVNode(unref(VRow), { class: "ma-0" }, {
                             default: withCtx(() => [
                               (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                return openBlock(), createBlock(_sfc_main$v, {
+                                return openBlock(), createBlock(_sfc_main$z, {
                                   key: grandChild.fullKey,
                                   "model-value": (
                                     /** @type import('../../types.js').VjsfNode */
@@ -79791,18 +79294,21 @@ Reason: ${error2}`);
       emits,
       setup(__props, { emit: __emit }) {
         const nodeComponents = {
-          section: _sfc_main$s,
-          "text-field": _sfc_main$r,
-          textarea: _sfc_main$q,
-          checkbox: _sfc_main$p,
-          switch: _sfc_main$o,
-          "number-field": _sfc_main$n,
-          slider: _sfc_main$m,
-          "date-picker": _sfc_main$k,
-          "date-time-picker": _sfc_main$j,
-          "color-picker": _sfc_main$i,
-          select: _sfc_main$e,
-          autocomplete: _sfc_main$d,
+          section: _sfc_main$w,
+          "text-field": _sfc_main$v,
+          textarea: _sfc_main$u,
+          checkbox: _sfc_main$t,
+          switch: _sfc_main$s,
+          "number-field": _sfc_main$r,
+          slider: _sfc_main$q,
+          "date-picker": _sfc_main$o,
+          "date-time-picker": _sfc_main$n,
+          "color-picker": _sfc_main$m,
+          select: _sfc_main$i,
+          autocomplete: _sfc_main$h,
+          "radio-group": _sfc_main$g,
+          "checkbox-group": _sfc_main$e,
+          "switch-group": _sfc_main$d,
           "one-of-select": _sfc_main$c,
           tabs: _sfc_main$b,
           "vertical-tabs": _sfc_main$a,
@@ -79830,7 +79336,7 @@ Reason: ${error2}`);
             ref: el2,
             class: "vjsf"
           }, [
-            unref(statefulLayout) && unref(stateTree) ? (openBlock(), createBlock(_sfc_main$u, {
+            unref(statefulLayout) && unref(stateTree) ? (openBlock(), createBlock(_sfc_main$y, {
               key: 0,
               "model-value": unref(stateTree),
               "stateful-layout": unref(statefulLayout)
