@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-bht3OKid.js"(exports, module) {
+  "assets/index-SRONTc9i.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -1874,7 +1874,7 @@ var require_index_001 = __commonJS({
       const p2 = currentFlushPromise || resolvedPromise;
       return fn ? p2.then(this ? fn.bind(this) : fn) : p2;
     }
-    function findInsertionIndex(id2) {
+    function findInsertionIndex$1(id2) {
       let start = flushIndex + 1;
       let end = queue.length;
       while (start < end) {
@@ -1897,7 +1897,7 @@ var require_index_001 = __commonJS({
         if (job.id == null) {
           queue.push(job);
         } else {
-          queue.splice(findInsertionIndex(job.id), 0, job);
+          queue.splice(findInsertionIndex$1(job.id), 0, job);
         }
         queueFlush();
       }
@@ -8038,7 +8038,7 @@ var require_index_001 = __commonJS({
     }
     const App = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$7]]);
     /*!
-      * vue-router v4.3.2
+      * vue-router v4.3.3
       * (c) 2024 Eduardo San Martin Morote
       * @license MIT
       */
@@ -8828,6 +8828,9 @@ var require_index_001 = __commonJS({
             if (isRootAdd && record.name && !isAliasRecord(matcher))
               removeRoute(record.name);
           }
+          if (isMatchable(matcher)) {
+            insertMatcher(matcher);
+          }
           if (mainNormalizedRecord.children) {
             const children = mainNormalizedRecord.children;
             for (let i2 = 0; i2 < children.length; i2++) {
@@ -8835,9 +8838,6 @@ var require_index_001 = __commonJS({
             }
           }
           originalRecord = originalRecord || matcher;
-          if (matcher.record.components && Object.keys(matcher.record.components).length || matcher.record.name || matcher.record.redirect) {
-            insertMatcher(matcher);
-          }
         }
         return originalMatcher ? () => {
           removeRoute(originalMatcher);
@@ -8867,12 +8867,8 @@ var require_index_001 = __commonJS({
         return matchers;
       }
       function insertMatcher(matcher) {
-        let i2 = 0;
-        while (i2 < matchers.length && comparePathParserScore(matcher, matchers[i2]) >= 0 && // Adding children with empty path should still appear before the parent
-        // https://github.com/vuejs/router/issues/1124
-        (matcher.record.path !== matchers[i2].record.path || !isRecordChildOf(matcher, matchers[i2])))
-          i2++;
-        matchers.splice(i2, 0, matcher);
+        const index = findInsertionIndex(matcher, matchers);
+        matchers.splice(index, 0, matcher);
         if (matcher.record.name && !isAliasRecord(matcher))
           matcherMap.set(matcher.record.name, matcher);
       }
@@ -8990,8 +8986,35 @@ var require_index_001 = __commonJS({
       }
       return options;
     }
-    function isRecordChildOf(record, parent) {
-      return parent.children.some((child) => child === record || isRecordChildOf(record, child));
+    function findInsertionIndex(matcher, matchers) {
+      let lower = 0;
+      let upper = matchers.length;
+      while (lower !== upper) {
+        const mid2 = lower + upper >> 1;
+        const sortOrder = comparePathParserScore(matcher, matchers[mid2]);
+        if (sortOrder < 0) {
+          upper = mid2;
+        } else {
+          lower = mid2 + 1;
+        }
+      }
+      const insertionAncestor = getInsertionAncestor(matcher);
+      if (insertionAncestor) {
+        upper = matchers.lastIndexOf(insertionAncestor, upper - 1);
+      }
+      return upper;
+    }
+    function getInsertionAncestor(matcher) {
+      let ancestor = matcher;
+      while (ancestor = ancestor.parent) {
+        if (isMatchable(ancestor) && comparePathParserScore(matcher, ancestor) === 0) {
+          return ancestor;
+        }
+      }
+      return;
+    }
+    function isMatchable({ record }) {
+      return !!(record.name || record.components && Object.keys(record.components).length || record.redirect);
     }
     function parseQuery(search) {
       const query = {};
