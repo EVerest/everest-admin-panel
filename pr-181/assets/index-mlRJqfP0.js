@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-SRONTc9i.js"(exports, module) {
+  "assets/index-mlRJqfP0.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -67649,6 +67649,7 @@ Reason: ${error2}`);
       addItem: "Add item",
       delete: "Delete",
       edit: "Edit",
+      close: "Close",
       duplicate: "Duplicate",
       sort: "Sort",
       up: "Move up",
@@ -67680,6 +67681,7 @@ Reason: ${error2}`);
       addItem: "Ajouter un élément",
       delete: "Supprimer",
       edit: "Éditer",
+      close: "Fermer",
       duplicate: "Dupliquer",
       sort: "Trier",
       up: "Décaler vers le haut",
@@ -68475,6 +68477,9 @@ Reason: ${error2}`);
                 },
                 "itemIcon": {
                   "$ref": "#/$defs/expression"
+                },
+                "immutable": {
+                  "type": "boolean"
                 }
               }
             },
@@ -69154,6 +69159,8 @@ Reason: ${error2}`);
             return "autocomplete";
           if (typeof partial.getItems.url === "string" && partial.getItems.url.includes("{q}"))
             return "autocomplete";
+          if (typeof partial.getItems.url === "object" && typeof partial.getItems.url.expr === "string" && partial.getItems.url.expr.includes("{q}"))
+            return "autocomplete";
         }
         return "select";
       }
@@ -69311,8 +69318,9 @@ Reason: ${error2}`);
         if (items2) {
           if (partial.getItems && isPartialGetItemsObj(partial.getItems)) {
             partial.getItems.expr = JSON.stringify(items2);
+            partial.getItems.immutable = true;
           } else {
-            partial.getItems = JSON.stringify(items2);
+            partial.getItems = { expr: JSON.stringify(items2), immutable: true };
           }
         }
       }
@@ -69619,7 +69627,16 @@ Reason: ${error2}`);
             pushExpression(expressions, compObject.getItems.itemsResults);
         }
       }
-      const node = { key: key ?? "", pointer, parentPointer, pure, propertyKeys: [], roPropertyKeys: [] };
+      const node = {
+        key: key ?? "",
+        pointer,
+        parentPointer,
+        pure,
+        propertyKeys: [],
+        roPropertyKeys: [],
+        nullable,
+        required: required2 && !nullable
+      };
       if (condition) {
         if (isSwitchStruct(normalizedLayout))
           throw new Error("Switch struct not allowed in conditional schema");
@@ -69669,7 +69686,7 @@ Reason: ${error2}`);
                 dependentPointer,
                 pointer,
                 false,
-                `"${propertyKey}" in data`,
+                `data["${propertyKey}"] !== undefined`,
                 void 0,
                 "object"
               ));
@@ -70685,7 +70702,7 @@ Reason: ${error2}`);
         return true;
       return false;
     };
-    const produceStateNode = produce((draft, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, layout, width, cols, data, error2, validated, options, autofocus, props, children) => {
+    const produceStateNode = produce((draft, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, layout, width, cols, data, error2, validated, options, autofocus, props, itemsCacheKey, children) => {
       draft.messages = layout.messages ? produceStateNodeMessages(draft.messages || {}, layout.messages, options) : options.messages;
       draft.key = key;
       draft.fullKey = fullKey;
@@ -70699,6 +70716,7 @@ Reason: ${error2}`);
       draft.cols = cols;
       draft.data = data;
       draft.error = error2;
+      draft.itemsCacheKey = itemsCacheKey;
       draft.childError = children && children.findIndex((c) => c.error || c.childError) !== -1;
       draft.validated = validated;
       if (autofocus) {
@@ -70803,7 +70821,16 @@ Reason: ${error2}`);
       if (expression.ref === void 0)
         throw new Error("expression was not compiled : " + JSON.stringify(expression));
       const compiledExpression = expressions[expression.ref];
-      return expression.pure ? compiledExpression(data, options, options.context, display, layout, validates) : compiledExpression(data, options, options.context, display, layout, validates, rootData, parentContext);
+      try {
+        if (expression.pure) {
+          return compiledExpression(data, options, options.context, display, layout, validates);
+        } else {
+          return compiledExpression(data, options, options.context, display, layout, validates, rootData, parentContext);
+        }
+      } catch (err) {
+        console.warn("json-layout: failed to evaluate expression", err, { expression, data, context: options.context, display, rootData, parent: parentContext });
+        throw new Error("json-layout: failed to evaluate expression");
+      }
     }
     const getCompObject = (normalizedLayout, options, compiledLayout, display, data, rootData, parentContext) => {
       if (isSwitchStruct(normalizedLayout)) {
@@ -70824,7 +70851,7 @@ Reason: ${error2}`);
       return { comp: "none" };
     };
     function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentContext, validationState, reusedNode) {
-      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
       let cacheKey = null;
       if (skeleton.pure && reusedNode && !reusedNode.error && !reusedNode.childError) {
         cacheKey = [parentOptions, compiledLayout, fullKey, skeleton, childDefinition, parentDisplay.width, validationState, context.activeItems, context.initial, data];
@@ -70885,7 +70912,7 @@ Reason: ${error2}`);
             isSameData ? objectData : objectData[childLayout.key],
             { parent: parentContext, data: objectData },
             validationState,
-            (_c = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _c[i2]
+            (_c = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _c.find((c) => c.fullKey === childFullKey)
           );
           if (child.autofocus || child.autofocusChild !== void 0)
             focusChild2 = false;
@@ -71023,6 +71050,30 @@ Reason: ${error2}`);
       if (layout.getProps) {
         props = evalExpression(compiledLayout.expressions, layout.getProps, nodeData, options, display, layout, compiledLayout.validates, context.rootData, parentContext);
       }
+      let itemsCacheKey;
+      if (isItemsLayout(layout, compiledLayout.components)) {
+        if (layout.items)
+          itemsCacheKey = layout.items;
+        else if (((_m = layout.getItems) == null ? void 0 : _m.immutable) && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey))
+          itemsCacheKey = reusedNode.itemsCacheKey;
+        else if (layout.getItems && isGetItemsExpression(layout.getItems)) {
+          if (layout.getItems.immutable && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey)) {
+            itemsCacheKey = reusedNode.itemsCacheKey;
+          } else {
+            try {
+              itemsCacheKey = evalExpression(compiledLayout.expressions, layout.getItems, nodeData, options, display, layout, compiledLayout.validates, context.rootData, parentContext);
+            } catch (err) {
+              itemsCacheKey = null;
+            }
+          }
+        } else if (layout.getItems && isGetItemsFetch(layout.getItems)) {
+          try {
+            itemsCacheKey = evalExpression(compiledLayout.expressions, layout.getItems.url, null, options, display, layout, compiledLayout.validates, context.rootData, parentContext);
+          } catch (err) {
+            itemsCacheKey = null;
+          }
+        }
+      }
       const autofocus = isFocusableLayout(layout, compiledLayout.components) && !options.readOnly && !options.summary && context.autofocusTarget === fullKey;
       const node = produceStateNode(
         reusedNode ?? /** @type {import('./types.js').StateNode} */
@@ -71042,6 +71093,7 @@ Reason: ${error2}`);
         options,
         autofocus,
         props,
+        itemsCacheKey,
         children && shallowProduceArray(reusedNode == null ? void 0 : reusedNode.children, children)
       );
       if (cacheKey)
@@ -71229,6 +71281,11 @@ Reason: ${error2}`);
          */
         __publicField(this, "debouncedInput", null);
         /**
+         * @private
+         * @type {Record<string, {key: any, appliedQ: boolean, items: import('@json-layout/vocabulary').SelectItems}>}
+         */
+        __publicField(this, "_itemsCache", {});
+        /**
          * @type {Record<string, number>}
          */
         __publicField(this, "activeItems");
@@ -71317,14 +71374,14 @@ Reason: ${error2}`);
       updateState() {
         this.createStateTree();
         let nbIter = 0;
-        while (this._data !== this._stateTree.root.data || this._autofocusTarget !== this._lastCreateStateTreeContext.autofocusTarget) {
+        while (this._data !== (this._stateTree.root.data ?? null) || this._autofocusTarget !== this._lastCreateStateTreeContext.autofocusTarget) {
           nbIter += 1;
           if (nbIter > 100) {
             console.error("too many iterations in updateState, the data is probably not stable", this._data, this._stateTree.root.data);
             throw new Error("too many iterations in updateState, the data is probably not stable");
           }
           logDataBinding("hydrating state tree changed the data, do it again", this._data, this._stateTree.root.data);
-          this._data = this._stateTree.root.data;
+          this._data = this._stateTree.root.data ?? null;
           this._autofocusTarget = this._lastCreateStateTreeContext.autofocusTarget;
           this.createStateTree(true);
         }
@@ -71472,7 +71529,11 @@ Reason: ${error2}`);
         const parentNode = this._lastCreateStateTreeContext.nodes.find((p2) => p2.fullKey === node.parentFullKey);
         if (!parentNode)
           throw new Error(`parent with key "${node.parentFullKey}" not found`);
-        const newParentValue = producePatchedData(parentNode.data ?? (typeof node.key === "number" ? [] : {}), node, data);
+        const newParentValue = producePatchedData(
+          parentNode.data ?? (typeof node.key === "number" ? [] : {}),
+          node,
+          data === null || data === void 0 ? node.skeleton.nullable ? null : void 0 : data
+        );
         this.applyInput(parentNode, newParentValue, validated);
         if (activateKey !== void 0) {
           this.handleAutofocus();
@@ -71539,22 +71600,22 @@ Reason: ${error2}`);
        * @private
        * @param {StateNode} node
        * @param {string} q
-       * @returns {Promise<[import('@json-layout/vocabulary').SelectItems, boolean]>}
+       * @returns {Promise<{appliedQ: boolean, items: import('@json-layout/vocabulary').SelectItems}>}
        */
-      async getSourceItems(node, q = "") {
+      async getItemsWithoutCache(node, q = "") {
         var _a2;
         if (!isItemsNode(node, this._compiledLayout.components)) {
           throw new Error("node is not a component with an items list");
         }
-        if (node.layout.items)
-          return [node.layout.items, false];
-        let rawItems;
+        if (node.itemsCacheKey === null)
+          return { appliedQ: false, items: [] };
         let appliedQ = false;
-        if (node.layout.getItems && isGetItemsExpression(node.layout.getItems)) {
-          rawItems = this.evalNodeExpression(node, node.layout.getItems, null);
+        let rawItems;
+        if (node.layout.items || node.layout.getItems && isGetItemsExpression(node.layout.getItems)) {
+          rawItems = node.itemsCacheKey;
         }
         if (node.layout.getItems && isGetItemsFetch(node.layout.getItems)) {
-          const url = new URL(this.evalNodeExpression(node, node.layout.getItems.url, null));
+          const url = new URL(node.itemsCacheKey);
           let qSearchParam = node.layout.getItems.qSearchParam;
           if (!qSearchParam) {
             for (const searchParam of url.searchParams.entries()) {
@@ -71571,39 +71632,18 @@ Reason: ${error2}`);
           }
           rawItems = await (await fetch(url)).json();
         }
-        if (rawItems) {
-          if ((_a2 = node.layout.getItems) == null ? void 0 : _a2.itemsResults) {
-            rawItems = this.evalNodeExpression(node, node.layout.getItems.itemsResults, rawItems);
-          }
-          if (!Array.isArray(rawItems))
-            throw new Error(`getItems didn't return an array for node ${node.fullKey}, you can define itemsResults to extract the array`);
-          const items2 = rawItems.map((rawItem) => {
-            var _a3, _b, _c, _d, _e, _f, _g, _h, _i;
-            const item = {};
-            if (typeof rawItem === "object") {
-              item.value = ((_a3 = node.layout.getItems) == null ? void 0 : _a3.itemValue) ? this.evalNodeExpression(node, node.layout.getItems.itemValue, rawItem) : ((_b = node.layout.getItems) == null ? void 0 : _b.returnObjects) ? rawItem : rawItem.value;
-              item.key = ((_c = node.layout.getItems) == null ? void 0 : _c.itemKey) ? this.evalNodeExpression(node, node.layout.getItems.itemKey, rawItem) : rawItem.key;
-              item.title = ((_d = node.layout.getItems) == null ? void 0 : _d.itemTitle) ? this.evalNodeExpression(node, node.layout.getItems.itemTitle, rawItem) : rawItem.title;
-              item.value = item.value ?? item.key;
-              item.key = item.key ?? item.value + "";
-              item.title = item.title ?? item.key;
-              if (!item.icon && rawItem.icon)
-                item.icon = rawItem.icon;
-            } else {
-              item.value = ((_e = node.layout.getItems) == null ? void 0 : _e.itemValue) ? this.evalNodeExpression(node, node.layout.getItems.itemValue, rawItem) : rawItem;
-              item.key = ((_f = node.layout.getItems) == null ? void 0 : _f.itemKey) ? this.evalNodeExpression(node, node.layout.getItems.itemKey, rawItem) : item.value;
-              item.title = ((_g = node.layout.getItems) == null ? void 0 : _g.itemTitle) ? this.evalNodeExpression(node, node.layout.getItems.itemTitle, rawItem) : item.value;
-            }
-            if ((_h = node.layout.getItems) == null ? void 0 : _h.itemIcon)
-              item.icon = this.evalNodeExpression(node, (_i = node.layout.getItems) == null ? void 0 : _i.itemIcon, rawItem);
-            return (
-              /** @type {import('@json-layout/vocabulary').SelectItem} */
-              item
-            );
-          });
-          return [items2, appliedQ];
+        if (!rawItems) {
+          throw new Error(`node ${node.fullKey} is missing items or getItems parameters`);
         }
-        throw new Error(`node ${node.fullKey} is missing items or getItems parameters`);
+        if ((_a2 = node.layout.getItems) == null ? void 0 : _a2.itemsResults) {
+          rawItems = this.evalNodeExpression(node, node.layout.getItems.itemsResults, rawItems);
+        }
+        if (!Array.isArray(rawItems))
+          throw new Error(`getItems didn't return an array for node ${node.fullKey}, you can define itemsResults to extract the array`);
+        const items2 = rawItems.map((rawItem) => {
+          return this.prepareSelectItem(node, rawItem);
+        });
+        return { appliedQ, items: items2 };
       }
       /**
        * @param {StateNode} node
@@ -71611,10 +71651,47 @@ Reason: ${error2}`);
        * @returns {Promise<import('@json-layout/vocabulary').SelectItems>}
        */
       async getItems(node, q = "") {
-        const [sourceItems, appliedQ] = await this.getSourceItems(node, q);
-        if (q && !appliedQ)
-          return sourceItems.filter((item) => item.title.toLowerCase().includes(q.toLowerCase()));
-        return sourceItems;
+        let itemsResult;
+        if (this._itemsCache[node.fullKey] && this._itemsCache[node.fullKey].key === node.itemsCacheKey && (!q || !this._itemsCache[node.fullKey].appliedQ)) {
+          itemsResult = this._itemsCache[node.fullKey];
+        } else {
+          itemsResult = await this.getItemsWithoutCache(node, q);
+          if (!q || !itemsResult.appliedQ) {
+            this._itemsCache[node.fullKey] = { key: node.itemsCacheKey, ...itemsResult };
+          }
+        }
+        if (q && !itemsResult.appliedQ)
+          return itemsResult.items.filter((item) => item.title.toLowerCase().includes(q.toLowerCase()));
+        return itemsResult.items;
+      }
+      /**
+       * @param {StateNode} node
+       * @param {any} rawItem
+       * @returns {import('@json-layout/vocabulary').SelectItem}
+       */
+      prepareSelectItem(node, rawItem) {
+        var _a2, _b, _c, _d, _e, _f, _g, _h, _i;
+        const item = {};
+        if (typeof rawItem === "object") {
+          item.value = ((_a2 = node.layout.getItems) == null ? void 0 : _a2.itemValue) ? this.evalNodeExpression(node, node.layout.getItems.itemValue, rawItem) : ((_b = node.layout.getItems) == null ? void 0 : _b.returnObjects) ? rawItem : rawItem.value;
+          item.key = ((_c = node.layout.getItems) == null ? void 0 : _c.itemKey) ? this.evalNodeExpression(node, node.layout.getItems.itemKey, rawItem) : rawItem.key;
+          item.title = ((_d = node.layout.getItems) == null ? void 0 : _d.itemTitle) ? this.evalNodeExpression(node, node.layout.getItems.itemTitle, rawItem) : rawItem.title;
+          item.value = item.value ?? item.key;
+          item.key = item.key ?? item.value + "";
+          item.title = item.title ?? item.key;
+          if (!item.icon && rawItem.icon)
+            item.icon = rawItem.icon;
+        } else {
+          item.value = ((_e = node.layout.getItems) == null ? void 0 : _e.itemValue) ? this.evalNodeExpression(node, node.layout.getItems.itemValue, rawItem) : rawItem;
+          item.key = ((_f = node.layout.getItems) == null ? void 0 : _f.itemKey) ? this.evalNodeExpression(node, node.layout.getItems.itemKey, rawItem) : item.value;
+          item.title = ((_g = node.layout.getItems) == null ? void 0 : _g.itemTitle) ? this.evalNodeExpression(node, node.layout.getItems.itemTitle, rawItem) : item.value;
+        }
+        if ((_h = node.layout.getItems) == null ? void 0 : _h.itemIcon)
+          item.icon = this.evalNodeExpression(node, (_i = node.layout.getItems) == null ? void 0 : _i.itemIcon, rawItem);
+        return (
+          /** @type {import('@json-layout/vocabulary').SelectItem} */
+          item
+        );
       }
       /**
        * @param {StateNode} node
@@ -77768,6 +77845,10 @@ Reason: ${error2}`);
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, [], false);
           fieldProps2.readonly = true;
+          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
+          fieldProps2["onClick:clear"] = () => {
+            props.statefulLayout.input(props.modelValue, null);
+          };
           return fieldProps2;
         });
         const menuProps = computed(() => {
@@ -77926,6 +78007,38 @@ Reason: ${error2}`);
         };
       }
     };
+    function useGetItems(props) {
+      const items2 = shallowRef([]);
+      const loading = ref$1(false);
+      const search = ref$1("");
+      const fetchItems = async () => {
+        loading.value = true;
+        items2.value = await props.statefulLayout.getItems(props.modelValue, search.value);
+        loading.value = false;
+      };
+      watch(() => props.modelValue.itemsCacheKey, (newValue, oldValue) => {
+        if (newValue === oldValue)
+          return;
+        fetchItems();
+      }, { immediate: true });
+      watch(search, () => {
+        fetchItems();
+      });
+      const prepareSelectedItem = (selectedItem, itemValue) => {
+        let item = selectedItem;
+        if (selectedItem === itemValue) {
+          try {
+            item = props.statefulLayout.prepareSelectItem(props.modelValue, selectedItem);
+            if (item.value === void 0)
+              item.value = itemValue;
+          } catch (e) {
+            item = { value: itemValue };
+          }
+        }
+        return item;
+      };
+      return { items: items2, loading, search, prepareSelectedItem };
+    }
     const _sfc_main$l = /* @__PURE__ */ defineComponent$1({
       props: {
         icon: {
@@ -77942,7 +78055,7 @@ Reason: ${error2}`);
           } else if (isSVG.value) {
             return h("div", { innerHTML: props.icon.replace("<svg ", '<svg class="v-icon__svg" '), class: "v-icon" });
           } else {
-            return h(VIcon, null, props.icon);
+            return h(VIcon, null, () => props.icon);
           }
         };
       }
@@ -78016,7 +78129,7 @@ Reason: ${error2}`);
               key: 0,
               icon: __props.item.icon
             }, null, 8, ["icon"])) : createCommentVNode("", true),
-            createTextVNode(" " + toDisplayString(__props.item.title) + " ", 1),
+            createTextVNode(" " + toDisplayString(__props.item.title ?? __props.item.key ?? __props.item.value) + " ", 1),
             __props.multiple && !__props.last ? (openBlock(), createElementBlock("span", _hoisted_2$1, ",")) : createCommentVNode("", true)
           ]);
         };
@@ -78036,31 +78149,16 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
-        const items2 = shallowRef([]);
-        const loading = ref$1(false);
+        const getItems = useGetItems(props);
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
           if (props.modelValue.options.readOnly)
             fieldProps2.menuProps = { modelValue: false };
-          fieldProps2.loading = loading.value;
-          fieldProps2.items = items2.value;
-          fieldProps2["onUpdate:menu"] = refresh;
+          fieldProps2.loading = getItems.loading.value;
+          fieldProps2.items = getItems.items.value;
+          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
           return fieldProps2;
         });
-        let lastStateTree = null;
-        let lastContext = null;
-        const refresh = async () => {
-          if (props.statefulLayout.stateTree === lastStateTree && props.statefulLayout.options.context === lastContext)
-            return;
-          lastStateTree = props.statefulLayout.stateTree;
-          lastContext = props.statefulLayout.options.context ?? null;
-          loading.value = true;
-          items2.value = await props.statefulLayout.getItems(props.modelValue);
-          loading.value = false;
-        };
-        if (!props.modelValue.layout.items) {
-          refresh();
-        }
         const fieldSlots = computed(() => {
           const slots = getCompSlots(props.modelValue, props.statefulLayout);
           if (!slots.item) {
@@ -78074,7 +78172,7 @@ Reason: ${error2}`);
             slots.selection = (context) => h(_sfc_main$j, {
               multiple: props.modelValue.layout.multiple,
               last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
-              item: context.item.raw
+              item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
             });
           }
           return slots;
@@ -78096,39 +78194,20 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
-        const items2 = shallowRef([]);
-        const loading = ref$1(false);
-        const search = ref$1("");
+        const getItems = useGetItems(props);
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
           if (props.modelValue.options.readOnly)
             fieldProps2.menuProps = { modelValue: false };
           fieldProps2.noFilter = true;
           fieldProps2["onUpdate:search"] = (searchValue) => {
-            search.value = searchValue;
-            refresh();
+            getItems.search.value = searchValue;
           };
-          fieldProps2["onUpdate:menu"] = refresh;
-          fieldProps2.items = items2.value;
-          fieldProps2.loading = loading.value;
+          fieldProps2.items = getItems.items.value;
+          fieldProps2.loading = getItems.loading.value;
+          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
           return fieldProps2;
         });
-        let lastStateTree = null;
-        let lastContext = null;
-        let lastSearch = "";
-        const refresh = async () => {
-          if (props.statefulLayout.stateTree === lastStateTree && props.statefulLayout.options.context === lastContext && search.value === lastSearch)
-            return;
-          loading.value = true;
-          items2.value = await props.statefulLayout.getItems(props.modelValue, search.value);
-          lastStateTree = props.statefulLayout.stateTree;
-          lastContext = props.statefulLayout.options.context ?? null;
-          lastSearch = search.value;
-          loading.value = false;
-        };
-        if (!props.modelValue.layout.items) {
-          refresh();
-        }
         const fieldSlots = computed(() => {
           const slots = getCompSlots(props.modelValue, props.statefulLayout);
           if (!slots.item) {
@@ -78142,7 +78221,7 @@ Reason: ${error2}`);
             slots.selection = (context) => h(_sfc_main$j, {
               multiple: props.modelValue.layout.multiple,
               last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
-              item: context.item.raw
+              item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
             });
           }
           return slots;
@@ -78164,33 +78243,18 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
-        const items2 = shallowRef([]);
-        const loading = ref$1(false);
+        const getItems = useGetItems(props);
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
           return fieldProps2;
         });
-        let lastStateTree = null;
-        let lastContext = null;
-        const refresh = async () => {
-          if (props.statefulLayout.stateTree === lastStateTree && props.statefulLayout.options.context === lastContext)
-            return;
-          lastStateTree = props.statefulLayout.stateTree;
-          lastContext = props.statefulLayout.options.context ?? null;
-          loading.value = true;
-          items2.value = await props.statefulLayout.getItems(props.modelValue);
-          loading.value = false;
-        };
-        if (!props.modelValue.layout.items) {
-          refresh();
-        }
         const fieldSlots = computed(() => {
           const slots = getCompSlots(props.modelValue, props.statefulLayout);
           const children = [];
-          if (loading.value) {
+          if (getItems.loading.value) {
             children.push(h(VSkeletonLoader, { type: "chip" }));
           } else {
-            for (const item of items2.value) {
+            for (const item of getItems.items.value) {
               children.push(h(VRadio, { label: item.title, value: item.value }));
             }
           }
@@ -78220,39 +78284,24 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
-        const items2 = shallowRef([]);
-        const loading = ref$1(false);
+        const getItems = useGetItems(props);
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
           fieldProps2.class.push("v-radio-group");
           fieldProps2.class.push("vjsf-selection-group");
           return fieldProps2;
         });
-        let lastStateTree = null;
-        let lastContext = null;
-        const refresh = async () => {
-          if (props.statefulLayout.stateTree === lastStateTree && props.statefulLayout.options.context === lastContext)
-            return;
-          lastStateTree = props.statefulLayout.stateTree;
-          lastContext = props.statefulLayout.options.context ?? null;
-          loading.value = true;
-          items2.value = await props.statefulLayout.getItems(props.modelValue);
-          loading.value = false;
-        };
-        if (!props.modelValue.layout.items) {
-          refresh();
-        }
         const fieldSlots = computed(() => {
           const slots = getCompSlots(props.modelValue, props.statefulLayout);
           if (!slots.default) {
             slots.default = () => {
               var _a2, _b;
               const children = [h(VLabel, { text: fieldProps.value.label })];
-              if (loading.value) {
+              if (getItems.loading.value) {
                 children.push(h(VSkeletonLoader, { type: "chip" }));
               } else {
                 const checkboxes = [];
-                for (const item of items2.value) {
+                for (const item of getItems.items.value) {
                   let modelValue = false;
                   if (props.modelValue.layout.multiple) {
                     modelValue = (_a2 = props.modelValue.data) == null ? void 0 : _a2.includes(item.value);
@@ -79128,7 +79177,7 @@ Reason: ${error2}`);
                                       onClick: ($event) => __props.statefulLayout.activateItem(__props.modelValue, childIndex)
                                     }, null, 8, ["title", "density", "onClick"])) : (openBlock(), createBlock(unref(VBtn), {
                                       key: 1,
-                                      title: __props.modelValue.messages.edit,
+                                      title: __props.modelValue.messages.close,
                                       icon: "mdi-close",
                                       variant: "flat",
                                       color: "primary",
