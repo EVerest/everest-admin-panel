@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-mlRJqfP0.js"(exports, module) {
+  "assets/index-lbi6AG76.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -69665,16 +69665,9 @@ Reason: ${error2}`);
               void 0,
               dependent2
             ));
-            if ((_b = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _b.includes(propertyKey)) {
-              schema2.errorMessage.required = schema2.errorMessage.required ?? {};
-              schema2.errorMessage.required[propertyKey] = options.messages.errorRequired;
-            }
-            if (schema2.dependentRequired && Object.keys(schema2.dependentRequired).includes(propertyKey)) {
-              schema2.errorMessage.dependentRequired = options.messages.errorRequired;
-            }
-            if (((_c = schema2.dependentSchemas) == null ? void 0 : _c[propertyKey]) || ((_d = schema2.dependencies) == null ? void 0 : _d[propertyKey]) && !Array.isArray(schema2.dependencies[propertyKey])) {
-              const dependentSchema = ((_e = schema2.dependentSchemas) == null ? void 0 : _e[propertyKey]) ?? schema2.dependencies[propertyKey];
-              const dependentPointer = ((_f = schema2.dependentSchemas) == null ? void 0 : _f[propertyKey]) ? `${pointer}/dependentSchemas/${propertyKey}` : `${pointer}/dependencies/${propertyKey}`;
+            if (((_b = schema2.dependentSchemas) == null ? void 0 : _b[propertyKey]) || ((_c = schema2.dependencies) == null ? void 0 : _c[propertyKey]) && !Array.isArray(schema2.dependencies[propertyKey])) {
+              const dependentSchema = ((_d = schema2.dependentSchemas) == null ? void 0 : _d[propertyKey]) ?? schema2.dependencies[propertyKey];
+              const dependentPointer = ((_e = schema2.dependentSchemas) == null ? void 0 : _e[propertyKey]) ? `${pointer}/dependentSchemas/${propertyKey}` : `${pointer}/dependencies/${propertyKey}`;
               node.children.push(makeSkeletonNode(
                 dependentSchema,
                 options,
@@ -69800,6 +69793,15 @@ Reason: ${error2}`);
               void 0,
               "object"
             ));
+          }
+        }
+        for (const propertyKey of node.propertyKeys) {
+          if ((_f = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _f.includes(propertyKey)) {
+            schema2.errorMessage.required = schema2.errorMessage.required ?? {};
+            schema2.errorMessage.required[propertyKey] = options.messages.errorRequired;
+          }
+          if (schema2.dependentRequired && Object.keys(schema2.dependentRequired).includes(propertyKey)) {
+            schema2.errorMessage.dependentRequired = options.messages.errorRequired;
           }
         }
       }
