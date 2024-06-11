@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-lbi6AG76.js"(exports, module) {
+  "assets/index-SgnXTvS0.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -13350,6 +13350,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         canScroll
       } = args;
       let previousScroll = 0;
+      let previousScrollHeight = 0;
       const target2 = ref$1(null);
       const currentScroll = shallowRef(0);
       const savedScroll = shallowRef(0);
@@ -13368,6 +13369,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           return;
         previousScroll = currentScroll.value;
         currentScroll.value = "window" in targetEl ? targetEl.pageYOffset : targetEl.scrollTop;
+        const currentScrollHeight = targetEl instanceof Window ? document.documentElement.scrollHeight : targetEl.scrollHeight;
+        if (previousScrollHeight !== currentScrollHeight) {
+          previousScrollHeight = currentScrollHeight;
+          return;
+        }
         isScrollingUp.value = currentScroll.value < previousScroll;
         currentThreshold.value = Math.abs(currentScroll.value - scrollThreshold.value);
       };
@@ -17468,6 +17474,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       nav: Boolean,
       "onClick:open": EventProp(),
       "onClick:select": EventProp(),
+      "onUpdate:opened": EventProp(),
       ...makeNestedProps({
         selectStrategy: "single-leaf",
         openStrategy: "list"
@@ -20290,9 +20297,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
         });
         const {
-          teleportTarget
-        } = useTeleport(computed(() => props.attach || props.contained));
-        const {
           themeClasses
         } = provideTheme(props);
         const {
@@ -20324,6 +20328,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           isActive,
           isTop: localTop
         });
+        const potentialShadowDomRoot = computed(() => {
+          var _a2;
+          return (_a2 = activatorEl == null ? void 0 : activatorEl.value) == null ? void 0 : _a2.getRootNode();
+        });
+        const {
+          teleportTarget
+        } = useTeleport(computed(() => props.attach || props.contained || potentialShadowDomRoot.value instanceof ShadowRoot ? potentialShadowDomRoot.value : false));
         const {
           dimensionStyles
         } = useDimension(props);
@@ -25017,7 +25028,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (props.disabled)
             return;
           if (e.key === "Tab" || e.key === "Enter" && !props.closeOnContentClick) {
-            if (e.key === "Enter" && e.target instanceof HTMLTextAreaElement)
+            if (e.key === "Enter" && (e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLInputElement && !!e.target.closest("form")))
               return;
             if (e.key === "Enter")
               e.preventDefault();
@@ -38807,7 +38818,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.8";
+    const version$1 = "3.6.9";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -71988,7 +71999,12 @@ Reason: ${error2}`);
           if (["Escape"].includes(e.key)) {
             menu.value = false;
           }
-          if (highlightFirst.value && e.key === "Enter") {
+          if (highlightFirst.value && ["Enter", "Tab"].includes(e.key) && !model.value.some((_ref2) => {
+            let {
+              value
+            } = _ref2;
+            return value === displayItems.value[0].value;
+          })) {
             select(displayItems.value[0]);
           }
           if (e.key === "ArrowDown" && highlightFirst.value) {
@@ -72098,16 +72114,13 @@ Reason: ${error2}`);
           } else {
             if (!props.multiple && search.value == null)
               model.value = [];
-            else if (highlightFirst.value && !listHasFocus.value && !model.value.some((_ref2) => {
-              let {
-                value
-              } = _ref2;
-              return value === displayItems.value[0].value;
-            })) {
-              select(displayItems.value[0]);
-            }
             menu.value = false;
-            if (props.multiple || hasSelectionSlot.value)
+            if (!model.value.some((_ref3) => {
+              let {
+                title: title2
+              } = _ref3;
+              return title2 === search.value;
+            }))
               search.value = "";
             selectionIndex.value = -1;
           }
@@ -72200,13 +72213,13 @@ Reason: ${error2}`);
                     "renderless": true,
                     "items": displayItems.value
                   }, {
-                    default: (_ref3) => {
+                    default: (_ref4) => {
                       var _a3;
                       let {
                         item,
                         index,
                         itemRef
-                      } = _ref3;
+                      } = _ref4;
                       const itemProps = mergeProps(item.props, {
                         ref: itemRef,
                         key: index,
@@ -72220,10 +72233,10 @@ Reason: ${error2}`);
                       })) ?? createVNode(VListItem, mergeProps(itemProps, {
                         "role": "option"
                       }), {
-                        prepend: (_ref4) => {
+                        prepend: (_ref5) => {
                           let {
                             isSelected
-                          } = _ref4;
+                          } = _ref5;
                           return createVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
                             "key": item.value,
                             "modelValue": isSelected,
@@ -74298,8 +74311,13 @@ Reason: ${error2}`);
           if (["Escape"].includes(e.key)) {
             menu.value = false;
           }
-          if (["Enter", "Escape"].includes(e.key)) {
-            if (highlightFirst.value && e.key === "Enter") {
+          if (["Enter", "Escape", "Tab"].includes(e.key)) {
+            if (highlightFirst.value && ["Enter", "Tab"].includes(e.key) && !model.value.some((_ref2) => {
+              let {
+                value
+              } = _ref2;
+              return value === displayItems.value[0].value;
+            })) {
               select(filteredItems.value[0]);
             }
             isPristine.value = true;
@@ -74400,15 +74418,6 @@ Reason: ${error2}`);
             return;
           selectionIndex.value = -1;
           menu.value = false;
-          if (highlightFirst.value && !listHasFocus.value && !model.value.some((_ref2) => {
-            let {
-              value
-            } = _ref2;
-            return value === displayItems.value[0].value;
-          })) {
-            select(displayItems.value[0]);
-            return;
-          }
           if (search.value) {
             if (props.multiple) {
               select(transformItem$1(props, search.value));
