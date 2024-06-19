@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-9eshyWv5.js"(exports, module) {
+  "assets/index-vY9H3AGP.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -2252,7 +2252,7 @@ var require_index_001 = __commonJS({
       setCurrentRenderingInstance(prev);
       return result;
     }
-    function filterSingleRoot(children, recurse2 = true) {
+    function filterSingleRoot(children, recurse = true) {
       let singleRoot;
       for (let i2 = 0; i2 < children.length; i2++) {
         const child = children[i2];
@@ -51841,7 +51841,7 @@ Reason: ${error2}`);
       } });
     })(ajv$1, ajv$1.exports);
     var ajvExports = ajv$1.exports;
-    const Ajv$3 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
+    const Ajv$2 = /* @__PURE__ */ getDefaultExportFromCjs(ajvExports);
     function urlToPublicAsset(filePath) {
       let base2 = "/everest-admin-panel/pr-181";
       if (!base2.endsWith("/")) {
@@ -51926,7 +51926,7 @@ Reason: ${error2}`);
           }
         }
         async function validateConfigContent(content2) {
-          const ajv2 = new Ajv$3();
+          const ajv2 = new Ajv$2();
           const schema2 = await getConfigJsonSchema();
           const validate2 = ajv2.compile(schema2);
           const valid = validate2(content2);
@@ -69019,11 +69019,11 @@ Reason: ${error2}`);
       }
       return schema2;
     }
-    const Ajv$2 = (
+    const Ajv$1 = (
       /** @type {typeof ajvModule.default} */
       ajvModule
     );
-    const ajv = new Ajv$2({
+    const ajv = new Ajv$1({
       code: {
         source: true,
         esm: true
@@ -69602,10 +69602,183 @@ Reason: ${error2}`);
         }
       }
     }
-    function makeSkeletonNode(schema2, options, validates, validationErrors, normalizedLayouts, expressions, key, pointer, parentPointer, required2, condition, dependent, knownType) {
-      var _a2, _b, _c, _d, _e, _f;
+    function copyBuffer(cur) {
+      if (cur instanceof Buffer) {
+        return Buffer.from(cur);
+      }
+      return new cur.constructor(cur.buffer.slice(), cur.byteOffset, cur.length);
+    }
+    function rfdc() {
+      return clone2;
+      function cloneArray(a, fn) {
+        const keys2 = Object.keys(a);
+        const a2 = new Array(keys2.length);
+        for (let i2 = 0; i2 < keys2.length; i2++) {
+          const k = keys2[i2];
+          const cur = a[k];
+          if (typeof cur !== "object" || cur === null) {
+            a2[k] = cur;
+          } else if (cur instanceof Date) {
+            a2[k] = new Date(cur);
+          } else if (ArrayBuffer.isView(cur)) {
+            a2[k] = copyBuffer(cur);
+          } else {
+            a2[k] = fn(cur);
+          }
+        }
+        return a2;
+      }
+      function clone2(o2) {
+        if (typeof o2 !== "object" || o2 === null)
+          return o2;
+        if (o2 instanceof Date)
+          return new Date(o2);
+        if (Array.isArray(o2))
+          return cloneArray(o2, clone2);
+        if (o2 instanceof Map)
+          return new Map(cloneArray(Array.from(o2), clone2));
+        if (o2 instanceof Set)
+          return new Set(cloneArray(Array.from(o2), clone2));
+        const o22 = {};
+        for (const k in o2) {
+          if (Object.hasOwnProperty.call(o2, k) === false)
+            continue;
+          const cur = o2[k];
+          if (typeof cur !== "object" || cur === null) {
+            o22[k] = cur;
+          } else if (cur instanceof Date) {
+            o22[k] = new Date(cur);
+          } else if (cur instanceof Map) {
+            o22[k] = new Map(cloneArray(Array.from(cur), clone2));
+          } else if (cur instanceof Set) {
+            o22[k] = new Set(cloneArray(Array.from(cur), clone2));
+          } else if (ArrayBuffer.isView(cur)) {
+            o22[k] = copyBuffer(cur);
+          } else {
+            o22[k] = clone2(cur);
+          }
+        }
+        return o22;
+      }
+    }
+    const clone$1 = rfdc();
+    const prepareGetJSONRef = (schemas, ajv2) => {
+      return (sourceSchemaId, ref2) => {
+        var _a2;
+        const fullRef = ajv2.opts.uriResolver.resolve(sourceSchemaId, ref2);
+        const [schemaId, pointer] = fullRef.split("#");
+        schemas[schemaId] = schemas[schemaId] ?? ((_a2 = ajv2.getSchema(schemaId)) == null ? void 0 : _a2.schema);
+        if (!schemas[schemaId])
+          throw new Error(`reference not found ${schemaId}`);
+        const pointerParts = pointer.split("/").filter((p2) => !!p2);
+        const { value: fragment } = pointerParts.reduce((a, pointerPart) => {
+          a.path.push(pointerPart);
+          if (!(pointerPart in a.value))
+            throw new Error(`reference not found ${schemaId}#${a.path.join("/")}`);
+          a.value = a.value[pointerPart];
+          return a;
+        }, { path: (
+          /** @type {string[]} */
+          []
+        ), value: schemas[schemaId] });
+        return [fragment, schemaId, fullRef];
+      };
+    };
+    function resolveLocaleRefs(schema2, ajv2, locale = "en") {
+      if (!schema2.$id)
+        throw new Error("missing schema id");
+      const getJSONRef = prepareGetJSONRef({ [schema2.$id]: schema2 }, ajv2);
+      const recursed = [];
+      recurseResolveLocale(schema2, schema2.$id, getJSONRef, locale, recursed);
+      return getJSONRef;
+    }
+    const recurseResolveLocale = (schemaFragment, schemaId, getJSONRef, locale, recursed) => {
+      if (recursed.includes(schemaFragment))
+        return;
+      recursed.push(schemaFragment);
+      for (const key of Object.keys(schemaFragment)) {
+        if (schemaFragment[key] && typeof schemaFragment[key] === "object") {
+          if ("$ref" in schemaFragment[key]) {
+            const ref2 = schemaFragment[key].$ref.replace("~$locale~", locale);
+            const refDefaultLocale = schemaFragment[key].$ref.replace("~$locale~", "en");
+            let refFragment, refSchemaId;
+            try {
+              [refFragment, refSchemaId] = getJSONRef(schemaId, ref2);
+              schemaFragment[key].$ref = ref2;
+            } catch (err) {
+              [refFragment, refSchemaId] = getJSONRef(schemaId, refDefaultLocale);
+              schemaFragment[key].$ref = refDefaultLocale;
+            }
+            if (typeof refFragment === "string") {
+              schemaFragment[key] = refFragment;
+            } else {
+              recurseResolveLocale(refFragment, refSchemaId, getJSONRef, locale, recursed);
+            }
+          } else {
+            recurseResolveLocale(schemaFragment[key], schemaId, getJSONRef, locale, recursed);
+          }
+        }
+      }
+    };
+    function partialResolveRefs(schema2, schemaId, getJSONRef) {
+      let clonedSchema = null;
+      if (schema2.items && schema2.items.$ref) {
+        const [refFragment] = getJSONRef(schemaId, schema2.items.$ref);
+        clonedSchema = clonedSchema ?? clone$1(schema2);
+        clonedSchema.items = { ...refFragment, ...schema2.items };
+      }
+      if (schema2.properties) {
+        for (const key in schema2.properties) {
+          if (schema2.properties[key].$ref) {
+            const [refFragment] = getJSONRef(schemaId, schema2.properties[key].$ref);
+            clonedSchema = clonedSchema ?? clone$1(schema2);
+            clonedSchema.properties[key] = { ...refFragment, ...schema2.properties[key] };
+          }
+        }
+      }
+      if (schema2.oneOf) {
+        for (let i2 = 0; i2 < schema2.oneOf.length; i2++) {
+          if (schema2.oneOf[i2].$ref) {
+            const [refFragment] = getJSONRef(schemaId, schema2.oneOf[i2].$ref);
+            clonedSchema = clonedSchema ?? clone$1(schema2);
+            clonedSchema.oneOf[i2] = { ...refFragment, ...schema2.oneOf[i2] };
+          }
+        }
+      }
+      if (schema2.anyOf) {
+        for (let i2 = 0; i2 < schema2.anyOf.length; i2++) {
+          if (schema2.anyOf[i2].$ref) {
+            const [refFragment] = getJSONRef(schemaId, schema2.anyOf[i2].$ref);
+            clonedSchema = clonedSchema ?? clone$1(schema2);
+            clonedSchema.anyOf[i2] = { ...refFragment, ...schema2.anyOf[i2] };
+          }
+        }
+      }
+      if (schema2.allOf) {
+        for (let i2 = 0; i2 < schema2.allOf.length; i2++) {
+          if (schema2.allOf[i2].$ref) {
+            const [refFragment] = getJSONRef(schemaId, schema2.allOf[i2].$ref);
+            clonedSchema = clonedSchema ?? clone$1(schema2);
+            clonedSchema.allOf[i2] = { ...refFragment, ...schema2.allOf[i2] };
+          }
+        }
+      }
+      return clonedSchema ?? schema2;
+    }
+    function makeSkeletonNode(rawSchema, sourceSchemaId, options, getJSONRef, skeletonTrees, validates, validationErrors, normalizedLayouts, expressions, key, currentPointer, parentPointer, required2, condition, dependent, knownType) {
+      var _a2, _b, _c, _d, _e, _f, _g, _h, _i;
+      let schemaId = sourceSchemaId;
+      let schema2 = rawSchema;
+      let pointer = currentPointer;
+      let refFragment;
+      if (schema2.$ref) {
+        [refFragment, schemaId, pointer] = getJSONRef(sourceSchemaId, schema2.$ref);
+        schema2 = { ...rawSchema, ...refFragment };
+        delete schema2.$ref;
+      }
+      schema2 = partialResolveRefs(schema2, schemaId, getJSONRef);
       const { type: type2, nullable } = knownType ? { type: knownType, nullable: false } : getSchemaFragmentType(schema2);
-      schema2.errorMessage = schema2.errorMessage ?? {};
+      rawSchema.errorMessage = rawSchema.errorMessage ?? {};
       if (!normalizedLayouts[pointer]) {
         const normalizationResult = normalizeLayoutFragment(
           /** @type {import('@json-layout/vocabulary').SchemaFragment} */
@@ -69718,7 +69891,10 @@ Reason: ${error2}`);
             const dependent2 = schema2.dependentRequired && Object.values(schema2.dependentRequired).some((dependentProperties) => dependentProperties.includes(propertyKey));
             node.children.push(makeSkeletonNode(
               schema2.properties[propertyKey],
+              schemaId,
               options,
+              getJSONRef,
+              skeletonTrees,
               validates,
               validationErrors,
               normalizedLayouts,
@@ -69735,7 +69911,10 @@ Reason: ${error2}`);
               const dependentPointer = ((_e = schema2.dependentSchemas) == null ? void 0 : _e[propertyKey]) ? `${pointer}/dependentSchemas/${propertyKey}` : `${pointer}/dependencies/${propertyKey}`;
               node.children.push(makeSkeletonNode(
                 dependentSchema,
+                schemaId,
                 options,
+                getJSONRef,
+                skeletonTrees,
                 validates,
                 validationErrors,
                 normalizedLayouts,
@@ -69756,7 +69935,10 @@ Reason: ${error2}`);
           for (let i2 = 0; i2 < schema2.allOf.length; i2++) {
             const allOfNode = makeSkeletonNode(
               schema2.allOf[i2],
+              schemaId,
               options,
+              getJSONRef,
+              skeletonTrees,
               validates,
               validationErrors,
               normalizedLayouts,
@@ -69798,16 +69980,24 @@ Reason: ${error2}`);
               schema2.oneOf[i2].type = type2;
             const title2 = schema2.oneOf[i2].title ?? `option ${i2}`;
             delete schema2.oneOf[i2].title;
-            childrenTrees.push(makeSkeletonTree(
-              schema2.oneOf[i2],
-              options,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              `${oneOfPointer}/${i2}`,
-              title2
-            ));
+            const childTreePointer = `${oneOfPointer}/${i2}`;
+            if (!skeletonTrees[childTreePointer]) {
+              skeletonTrees[childTreePointer] = "recursing";
+              skeletonTrees[childTreePointer] = makeSkeletonTree(
+                schema2.oneOf[i2],
+                schemaId,
+                options,
+                getJSONRef,
+                skeletonTrees,
+                validates,
+                validationErrors,
+                normalizedLayouts,
+                expressions,
+                childTreePointer,
+                title2
+              );
+            }
+            childrenTrees.push(childTreePointer);
           }
           node.children = node.children ?? [];
           node.children.push({
@@ -69815,7 +70005,7 @@ Reason: ${error2}`);
             pointer: `${pointer}/oneOf`,
             parentPointer: pointer,
             childrenTrees,
-            pure: childrenTrees[0].root.pure,
+            pure: (_f = skeletonTrees[childrenTrees[0]]) == null ? void 0 : _f.root.pure,
             propertyKeys: [],
             roPropertyKeys: []
           });
@@ -69827,7 +70017,10 @@ Reason: ${error2}`);
             node.children = node.children ?? [];
             node.children.push(makeSkeletonNode(
               schema2.then,
+              schemaId,
               options,
+              getJSONRef,
+              skeletonTrees,
               validates,
               validationErrors,
               normalizedLayouts,
@@ -69845,7 +70038,10 @@ Reason: ${error2}`);
             node.children = node.children ?? [];
             node.children.push(makeSkeletonNode(
               schema2.else,
+              schemaId,
               options,
+              getJSONRef,
+              skeletonTrees,
               validates,
               validationErrors,
               normalizedLayouts,
@@ -69861,7 +70057,7 @@ Reason: ${error2}`);
           }
         }
         for (const propertyKey of node.propertyKeys) {
-          if ((_f = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _f.includes(propertyKey)) {
+          if ((_g = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _g.includes(propertyKey)) {
             schema2.errorMessage.required = schema2.errorMessage.required ?? {};
             schema2.errorMessage.required[propertyKey] = options.messages.errorRequired;
           }
@@ -69875,7 +70071,10 @@ Reason: ${error2}`);
           node.children = schema2.items.map((itemSchema, i2) => {
             return makeSkeletonNode(
               itemSchema,
+              schemaId,
               options,
+              getJSONRef,
+              skeletonTrees,
               validates,
               validationErrors,
               normalizedLayouts,
@@ -69887,141 +70086,55 @@ Reason: ${error2}`);
             );
           });
         } else {
-          node.childrenTrees = [
-            makeSkeletonTree(
+          const childTreePointer = `${pointer}/items`;
+          if (!skeletonTrees[childTreePointer]) {
+            skeletonTrees[childTreePointer] = "recursing";
+            skeletonTrees[childTreePointer] = makeSkeletonTree(
               schema2.items,
+              schemaId,
               options,
+              getJSONRef,
+              skeletonTrees,
               validates,
               validationErrors,
               normalizedLayouts,
               expressions,
-              `${pointer}/items`,
+              childTreePointer,
               schema2.items.title
-            )
-          ];
+            );
+          }
+          node.childrenTrees = [childTreePointer];
         }
       }
-      for (const child of node.children || [])
+      for (const child of node.children || []) {
         if (!child.pure)
           node.pure = false;
-      for (const childTree of node.childrenTrees || [])
-        if (!childTree.root.pure)
+      }
+      for (const childTree of node.childrenTrees || []) {
+        if (!((_i = (_h = skeletonTrees[childTree]) == null ? void 0 : _h.root) == null ? void 0 : _i.pure))
           node.pure = false;
+      }
       return node;
     }
-    function makeSkeletonTree(schema2, options, validates, validationErrors, normalizedLayouts, expressions, pointer, title2) {
-      const root = makeSkeletonNode(schema2, options, validates, validationErrors, normalizedLayouts, expressions, "", pointer, null, true);
-      validates.push(pointer);
+    function makeSkeletonTree(schema2, schemaId, options, getJSONRef, skeletonTrees, validates, validationErrors, normalizedLayouts, expressions, pointer, title2) {
+      const root = makeSkeletonNode(
+        schema2,
+        schemaId,
+        options,
+        getJSONRef,
+        skeletonTrees,
+        validates,
+        validationErrors,
+        normalizedLayouts,
+        expressions,
+        "",
+        pointer,
+        null,
+        true
+      );
+      validates.push(root.pointer);
       return { title: title2, root };
     }
-    const Ajv$1 = ajvModule.default;
-    const getJSONRef = (schemas, ref2, ajv2) => {
-      var _a2;
-      const [schemaId, pointer] = ref2.split("#");
-      schemas[schemaId] = schemas[schemaId] ?? ((_a2 = ajv2.getSchema(schemaId)) == null ? void 0 : _a2.schema);
-      if (!schemas[schemaId])
-        throw new Error(`reference not found ${schemaId}`);
-      const pointerParts = pointer.split("/").filter((p2) => !!p2);
-      const { value: fragment } = pointerParts.reduce((a, pointerPart) => {
-        a.path.push(pointerPart);
-        if (!(pointerPart in a.value))
-          throw new Error(`reference not found ${schemaId}#${a.path.join("/")}`);
-        a.value = a.value[pointerPart];
-        return a;
-      }, { path: ["/"], value: schemas[schemaId] });
-      return [fragment, schemaId];
-    };
-    const recurse = (schemas, schemaFragment, schemaId, ajv2, locale = "en") => {
-      for (const key of Object.keys(schemaFragment)) {
-        if (schemaFragment[key] && typeof schemaFragment[key] === "object") {
-          if ("$ref" in schemaFragment[key]) {
-            const fullRef = ajv2.opts.uriResolver.resolve(schemaId, schemaFragment[key].$ref).replace("~$locale~", locale);
-            const fullRefDefaultLocale = ajv2.opts.uriResolver.resolve(schemaId, schemaFragment[key].$ref).replace("~$locale~", "en");
-            let refFragment, refSchemaId;
-            try {
-              [refFragment, refSchemaId] = getJSONRef(schemas, fullRef, ajv2);
-            } catch (err) {
-              [refFragment, refSchemaId] = getJSONRef(schemas, fullRefDefaultLocale, ajv2);
-            }
-            if (typeof refFragment === "object" && !Array.isArray(refFragment)) {
-              schemaFragment[key] = { ...refFragment, ...schemaFragment[key] };
-              delete schemaFragment[key].$ref;
-            } else {
-              schemaFragment[key] = refFragment;
-            }
-            recurse(schemas, schemaFragment[key], refSchemaId, ajv2, locale);
-          } else {
-            recurse(schemas, schemaFragment[key], schemaId, ajv2, locale);
-          }
-        }
-      }
-      return schemaFragment;
-    };
-    function resolveRefs(schema2, ajv2, locale = "en") {
-      if (!schema2.$id)
-        throw new Error("missing schema id");
-      return recurse({ [schema2.$id]: schema2 }, schema2, schema2.$id, ajv2 ?? new Ajv$1(), locale);
-    }
-    function copyBuffer(cur) {
-      if (cur instanceof Buffer) {
-        return Buffer.from(cur);
-      }
-      return new cur.constructor(cur.buffer.slice(), cur.byteOffset, cur.length);
-    }
-    function rfdc() {
-      return clone2;
-      function cloneArray(a, fn) {
-        const keys2 = Object.keys(a);
-        const a2 = new Array(keys2.length);
-        for (let i2 = 0; i2 < keys2.length; i2++) {
-          const k = keys2[i2];
-          const cur = a[k];
-          if (typeof cur !== "object" || cur === null) {
-            a2[k] = cur;
-          } else if (cur instanceof Date) {
-            a2[k] = new Date(cur);
-          } else if (ArrayBuffer.isView(cur)) {
-            a2[k] = copyBuffer(cur);
-          } else {
-            a2[k] = fn(cur);
-          }
-        }
-        return a2;
-      }
-      function clone2(o2) {
-        if (typeof o2 !== "object" || o2 === null)
-          return o2;
-        if (o2 instanceof Date)
-          return new Date(o2);
-        if (Array.isArray(o2))
-          return cloneArray(o2, clone2);
-        if (o2 instanceof Map)
-          return new Map(cloneArray(Array.from(o2), clone2));
-        if (o2 instanceof Set)
-          return new Set(cloneArray(Array.from(o2), clone2));
-        const o22 = {};
-        for (const k in o2) {
-          if (Object.hasOwnProperty.call(o2, k) === false)
-            continue;
-          const cur = o2[k];
-          if (typeof cur !== "object" || cur === null) {
-            o22[k] = cur;
-          } else if (cur instanceof Date) {
-            o22[k] = new Date(cur);
-          } else if (cur instanceof Map) {
-            o22[k] = new Map(cloneArray(Array.from(cur), clone2));
-          } else if (cur instanceof Set) {
-            o22[k] = new Set(cloneArray(Array.from(cur), clone2));
-          } else if (ArrayBuffer.isView(cur)) {
-            o22[k] = copyBuffer(cur);
-          } else {
-            o22[k] = clone2(cur);
-          }
-        }
-        return o22;
-      }
-    }
-    const clone$1 = rfdc();
     const Ajv = (
       /** @type {typeof ajvModule.default} */
       ajvModule
@@ -70093,19 +70206,25 @@ Reason: ${error2}`);
         clone$1(_schema)
       );
       schema2.$id = schema2.$id ?? "_jl";
-      resolveRefs(schema2, options.ajv, options.locale);
+      const getJSONRef = resolveLocaleRefs(schema2, options.ajv, options.locale);
       const validatePointers = [];
       const normalizedLayouts = {};
       const expressionsDefinitions = [];
       const validationErrors = {};
-      const skeletonTree = makeSkeletonTree(
+      const skeletonTrees = {};
+      const mainTreePointer = `${schema2.$id}#`;
+      skeletonTrees[mainTreePointer] = "recursing";
+      skeletonTrees[mainTreePointer] = makeSkeletonTree(
         schema2,
+        schema2.$id,
         options,
+        getJSONRef,
+        skeletonTrees,
         validatePointers,
         validationErrors,
         normalizedLayouts,
         expressionsDefinitions,
-        `${schema2.$id}#`,
+        mainTreePointer,
         "main"
       );
       options.ajv.addSchema(schema2);
@@ -70143,7 +70262,8 @@ Reason: ${error2}`);
       return {
         options,
         schema: schema2,
-        skeletonTree,
+        mainTree: mainTreePointer,
+        skeletonTrees,
         validates,
         validationErrors,
         normalizedLayouts,
@@ -70804,7 +70924,7 @@ Reason: ${error2}`);
       Object.assign(draft, options.messages, layoutMessages);
     });
     const produceStateNodeData = produce((draft, parentDataPath, children, additionalPropertiesErrors, propertyKeys, removePropertyKeys) => {
-      if (propertyKeys) {
+      if (propertyKeys && (propertyKeys.length || (children == null ? void 0 : children.length))) {
         for (const key of Object.keys(draft)) {
           if (!propertyKeys.includes(key))
             delete draft[key];
@@ -70878,7 +70998,7 @@ Reason: ${error2}`);
       return false;
     };
     const matchChildError = (error2, skeleton, dataPath, parentDataPath) => {
-      if (!error2.schemaPath.startsWith(skeleton.pointer))
+      if (!(error2.schemaPath === skeleton.pointer || error2.schemaPath.startsWith(skeleton.pointer + "/")))
         return false;
       if (error2.instancePath.startsWith(dataPath))
         return true;
@@ -70918,10 +71038,10 @@ Reason: ${error2}`);
       return { comp: "none" };
     };
     function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentContext, validationState, reusedNode) {
-      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
+      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n;
       let cacheKey = null;
       if (skeleton.pure && reusedNode && !reusedNode.error && !reusedNode.childError) {
-        cacheKey = [parentOptions, compiledLayout, fullKey, skeleton, childDefinition, parentDisplay.width, validationState, context.activeItems, context.initial, data];
+        cacheKey = [parentOptions, compiledLayout, fullKey, skeleton, childDefinition, parentDisplay.width, validationState, context.activatedItems, context.initial, data];
         if (context.cacheKeys[fullKey] && shallowEqualArray(context.cacheKeys[fullKey], cacheKey)) {
           return reusedNode;
         }
@@ -70987,7 +71107,7 @@ Reason: ${error2}`);
         }
       }
       if (key === "$oneOf" && skeleton.childrenTrees) {
-        const activeChildTreeIndex = fullKey in context.activeItems ? context.activeItems[fullKey] : (_d = skeleton.childrenTrees) == null ? void 0 : _d.findIndex((childTree) => compiledLayout.validates[childTree.root.pointer](data));
+        const activeChildTreeIndex = fullKey in context.activatedItems ? context.activatedItems[fullKey] : (_d = skeleton.childrenTrees) == null ? void 0 : _d.findIndex((childTree) => compiledLayout.validates[compiledLayout.skeletonTrees[childTree].root.pointer](data));
         if (activeChildTreeIndex !== -1) {
           context.errors = (_e = context.errors) == null ? void 0 : _e.filter((error3) => {
             var _a3, _b2;
@@ -70998,13 +71118,10 @@ Reason: ${error2}`);
               return false;
             return true;
           });
-          context.activeItems = produce(context.activeItems, (draft) => {
-            draft[fullKey] = activeChildTreeIndex;
-          });
           const activeChildKey = `${fullKey}/${activeChildTreeIndex}`;
           if (context.autofocusTarget === fullKey)
             context.autofocusTarget = activeChildKey;
-          const activeChildTree = skeleton.childrenTrees[activeChildTreeIndex];
+          const activeChildTree = compiledLayout.skeletonTrees[skeleton.childrenTrees[activeChildTreeIndex]];
           children = [
             createStateNode(
               context,
@@ -71033,7 +71150,7 @@ Reason: ${error2}`);
         );
         const childSkeleton = (
           /** @type {import('../index.js').SkeletonNode} */
-          (_h = (_g = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _g[0]) == null ? void 0 : _h.root
+          ((_g = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _g[0]) && ((_i = compiledLayout.skeletonTrees[(_h = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _h[0]]) == null ? void 0 : _i.root)
         );
         const listItemOptions = layout.listEditMode === "inline" ? options : produceReadonlyArrayItemOptions(options);
         children = [];
@@ -71045,7 +71162,7 @@ Reason: ${error2}`);
             context.autofocusTarget = childFullKey;
           const child = createStateNode(
             context,
-            layout.listEditMode === "inline-single" && context.activeItems[fullKey] === i2 ? options : listItemOptions,
+            layout.listEditMode === "inline-single" && context.activatedItems[fullKey] === i2 ? options : listItemOptions,
             compiledLayout,
             i2,
             childFullKey,
@@ -71058,26 +71175,26 @@ Reason: ${error2}`);
             itemData,
             { parent: parentContext, data: arrayData },
             validationState,
-            (_i = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _i[i2]
+            (_j = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _j[i2]
           );
           if (child.autofocus || child.autofocusChild !== void 0)
             focusChild2 = false;
           children.push(child);
         }
       }
-      let error2 = (_j = context.errors) == null ? void 0 : _j.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath));
+      let error2 = (_k = context.errors) == null ? void 0 : _k.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath));
       if (!error2) {
-        error2 = (_k = context.errors) == null ? void 0 : _k.find((error3) => matchChildError(error3, skeleton, dataPath));
+        error2 = (_l = context.errors) == null ? void 0 : _l.find((error3) => matchChildError(error3, skeleton, dataPath));
       }
       if (layout.comp !== "none") {
         if (error2) {
-          context.errors = (_l = context.errors) == null ? void 0 : _l.filter((error3) => {
+          context.errors = (_m = context.errors) == null ? void 0 : _m.filter((error3) => {
             return !matchError(error3, skeleton, dataPath, parentDataPath) && !matchChildError(error3, skeleton, dataPath);
           });
         }
       }
       const validated = validationState.validatedForm || validationState.validatedChildren.includes(fullKey) || validationState.initialized === false && options.initialValidation === "always" || validationState.initialized === false && options.initialValidation === "withData" && !isDataEmpty(data);
-      let nodeData = children ? produceStateNodeData(
+      let nodeData = typeof data === "object" && !(data instanceof File) ? produceStateNodeData(
         /** @type {Record<string, unknown>} */
         data ?? {},
         dataPath,
@@ -71121,7 +71238,7 @@ Reason: ${error2}`);
       if (isItemsLayout(layout, compiledLayout.components)) {
         if (layout.items)
           itemsCacheKey = layout.items;
-        else if (((_m = layout.getItems) == null ? void 0 : _m.immutable) && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey))
+        else if (((_n = layout.getItems) == null ? void 0 : _n.immutable) && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey))
           itemsCacheKey = reusedNode.itemsCacheKey;
         else if (layout.getItems && isGetItemsExpression(layout.getItems)) {
           if (layout.getItems.immutable && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey)) {
@@ -71355,7 +71472,7 @@ Reason: ${error2}`);
         /**
          * @type {Record<string, number>}
          */
-        __publicField(this, "activeItems");
+        __publicField(this, "activatedItems");
         this._compiledLayout = compiledLayout;
         this.skeletonTree = skeletonTree;
         this.events = mitt();
@@ -71364,7 +71481,7 @@ Reason: ${error2}`);
         this._previousAutofocusTarget = null;
         this._data = data;
         this.initValidationState();
-        this.activeItems = {};
+        this.activatedItems = {};
         this.updateState();
         this.handleAutofocus();
       }
@@ -71473,7 +71590,7 @@ Reason: ${error2}`);
       createStateTree(rehydrate = false) {
         var _a2;
         const createStateTreeContext = {
-          activeItems: this.activeItems,
+          activatedItems: this.activatedItems,
           autofocusTarget: this._autofocusTarget,
           initial: !this._lastCreateStateTreeContext,
           rehydrate,
@@ -71500,7 +71617,6 @@ Reason: ${error2}`);
             validatedChildren: createStateTreeContext.nodes.filter((n) => n.validated).map((n) => n.fullKey)
           };
         }
-        this.activeItems = createStateTreeContext.activeItems;
         this.files = shallowProduceArray(this.files, createStateTreeContext.files);
       }
       validate() {
@@ -71583,7 +71699,7 @@ Reason: ${error2}`);
           this.validationState = { validatedChildren: this.validationState.validatedChildren.concat([node.fullKey]) };
         }
         if (activateKey !== void 0) {
-          this.activeItems = produce(this.activeItems, (draft) => {
+          this.activatedItems = produce(this.activatedItems, (draft) => {
             draft[node.fullKey] = activateKey;
           });
           this._autofocusTarget = node.fullKey + "/" + activateKey;
@@ -71765,7 +71881,7 @@ Reason: ${error2}`);
        * @param {number} key
        */
       activateItem(node, key) {
-        this.activeItems = produce(this.activeItems, (draft) => {
+        this.activatedItems = produce(this.activatedItems, (draft) => {
           draft[node.fullKey] = key;
         });
         this._autofocusTarget = node.fullKey + "/" + key;
@@ -71780,8 +71896,11 @@ Reason: ${error2}`);
        * @param {StateNode} node
        */
       deactivateItem(node) {
-        this.activeItems = produce(this.activeItems, (draft) => {
-          delete draft[node.fullKey];
+        this.activatedItems = produce(this.activatedItems, (draft) => {
+          for (const key in draft) {
+            if (key.startsWith(node.fullKey))
+              delete draft[key];
+          }
         });
         this.updateState();
       }
@@ -77470,7 +77589,7 @@ Reason: ${error2}`);
           /** @type {import('../types.js').VjsfStatefulLayout} */
           new StatefulLayout(
             toRaw(compiledLayout.value),
-            toRaw(compiledLayout.value.skeletonTree),
+            toRaw(compiledLayout.value.skeletonTrees[compiledLayout.value.mainTree]),
             toRaw(fullOptions.value),
             toRaw(modelValue.value)
           )
@@ -78473,11 +78592,13 @@ Reason: ${error2}`);
       },
       setup(__props) {
         const props = __props;
-        const activeChildTree = shallowRef(void 0);
+        const activeChildTree = ref$1(void 0);
         watch(() => props.modelValue, () => {
-          var _a2;
-          if (props.modelValue.fullKey in props.statefulLayout.activeItems) {
-            activeChildTree.value = (_a2 = props.modelValue.skeleton.childrenTrees) == null ? void 0 : _a2[props.statefulLayout.activeItems[props.modelValue.fullKey]];
+          var _a2, _b;
+          if (((_a2 = props.modelValue.children) == null ? void 0 : _a2.length) === 1) {
+            if (typeof props.modelValue.children[0].key === "number") {
+              activeChildTree.value = (_b = props.modelValue.skeleton.childrenTrees) == null ? void 0 : _b[props.modelValue.children[0].key];
+            }
           } else {
             activeChildTree.value = void 0;
           }
@@ -78491,9 +78612,9 @@ Reason: ${error2}`);
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
           fieldProps2.modelValue = activeChildTree.value;
           fieldProps2["onUpdate:modelValue"] = onChange;
-          fieldProps2.returnObject = true;
           const items2 = [];
-          for (const childTree of props.modelValue.skeleton.childrenTrees || []) {
+          for (const childTreePointer of props.modelValue.skeleton.childrenTrees || []) {
+            const childTree = props.statefulLayout.compiledLayout.skeletonTrees[childTreePointer];
             const childLayout = props.statefulLayout.compiledLayout.normalizedLayouts[childTree.root.pointer];
             if (!isCompObject(childLayout) || !childLayout.if || !!props.statefulLayout.evalNodeExpression(props.modelValue, childLayout.if, props.modelValue.data)) {
               items2.push(childTree);
@@ -78501,6 +78622,7 @@ Reason: ${error2}`);
           }
           fieldProps2.items = items2;
           fieldProps2.itemTitle = "title";
+          fieldProps2.itemValue = (childTree) => childTree.root.pointer;
           return fieldProps2;
         });
         return (_ctx, _cache) => {
@@ -79128,7 +79250,7 @@ Reason: ${error2}`);
           sortableArray.value = array;
         });
         const editedItem = computed(() => {
-          return props.statefulLayout.activeItems[props.modelValue.fullKey];
+          return props.statefulLayout.activatedItems[props.modelValue.fullKey];
         });
         const menuOpened = ref$1(-1);
         const activeItem = computed(() => {
@@ -79149,7 +79271,9 @@ Reason: ${error2}`);
         const pushEmptyItem = () => {
           const newData = (props.modelValue.data ?? []).concat([void 0]);
           props.statefulLayout.input(props.modelValue, newData);
-          props.statefulLayout.activateItem(props.modelValue, newData.length - 1);
+          if (props.modelValue.layout.listEditMode === "inline-single") {
+            props.statefulLayout.activateItem(props.modelValue, newData.length - 1);
+          }
         };
         const deleteItem = (childIndex) => {
           const newData = [...props.modelValue.data.slice(0, childIndex), ...props.modelValue.data.slice(childIndex + 1)];
@@ -79159,7 +79283,9 @@ Reason: ${error2}`);
         const duplicateItem = (child, childIndex) => {
           const newData = [...props.modelValue.data.slice(0, childIndex), clone$1(child.data), ...props.modelValue.data.slice(childIndex)];
           props.statefulLayout.input(props.modelValue, newData);
-          props.statefulLayout.activateItem(props.modelValue, childIndex + 1);
+          if (props.modelValue.layout.listEditMode === "inline-single") {
+            props.statefulLayout.activateItem(props.modelValue, childIndex + 1);
+          }
           menuOpened.value = -1;
         };
         const itemBorderColor = computed(() => (child, childIndex) => {
@@ -79167,6 +79293,10 @@ Reason: ${error2}`);
             return theme.current.value.colors.primary;
           if (child.validated && (child.error || child.childError))
             return theme.current.value.colors.error;
+          if (props.modelValue.options.readOnly)
+            return "transparent";
+          if (activeItem.value === childIndex)
+            return theme.current.value.colors.primary;
           return "transparent";
         });
         return (_ctx, _cache) => {
@@ -80204,14 +80334,14 @@ Reason: ${error2}`);
       const interface_parents = {};
       Object.keys(interface_definitions).forEach((interface_name) => {
         const parents = /* @__PURE__ */ new Set();
-        function recurse2(name) {
+        function recurse(name) {
           const parent = interface_definitions[name].parent;
           if (parent) {
             parents.add(parent);
-            recurse2(parent);
+            recurse(parent);
           }
         }
-        recurse2(interface_name);
+        recurse(interface_name);
         interface_parents[interface_name] = parents;
       });
       return interface_parents;
