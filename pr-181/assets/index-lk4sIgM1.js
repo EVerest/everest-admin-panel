@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-vY9H3AGP.js"(exports, module) {
+  "assets/index-lk4sIgM1.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -38872,7 +38872,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.9";
+    const version$1 = "3.6.10";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -52283,6 +52283,7 @@ Reason: ${error2}`);
           expandIcon: props.expandIcon,
           readonly: props.readonly
         }));
+        const icon = computed(() => expansionPanel.isSelected.value ? props.collapseIcon : props.expandIcon);
         useRender(() => {
           var _a2;
           return withDirectives(createVNode("button", {
@@ -52299,11 +52300,20 @@ Reason: ${error2}`);
             "onClick": !props.readonly ? expansionPanel.toggle : void 0
           }, [createVNode("span", {
             "class": "v-expansion-panel-title__overlay"
-          }, null), (_a2 = slots.default) == null ? void 0 : _a2.call(slots, slotProps.value), !props.hideActions && createVNode("span", {
-            "class": "v-expansion-panel-title__icon"
-          }, [slots.actions ? slots.actions(slotProps.value) : createVNode(VIcon, {
-            "icon": expansionPanel.isSelected.value ? props.collapseIcon : props.expandIcon
-          }, null)])]), [[resolveDirective("ripple"), props.ripple]]);
+          }, null), (_a2 = slots.default) == null ? void 0 : _a2.call(slots, slotProps.value), !props.hideActions && createVNode(VDefaultsProvider, {
+            "defaults": {
+              VIcon: {
+                icon: icon.value
+              }
+            }
+          }, {
+            default: () => {
+              var _a3;
+              return [createVNode("span", {
+                "class": "v-expansion-panel-title__icon"
+              }, [((_a3 = slots.actions) == null ? void 0 : _a3.call(slots, slotProps.value)) ?? createVNode(VIcon, null, null)])];
+            }
+          })]), [[resolveDirective("ripple"), props.ripple]]);
         });
         return {};
       }
@@ -52369,20 +52379,31 @@ Reason: ${error2}`);
             }, roundedClasses.value, backgroundColorClasses.value, props.class],
             "style": [backgroundColorStyles.value, props.style]
           }, {
-            default: () => {
-              var _a2;
-              return [createVNode("div", {
-                "class": ["v-expansion-panel__shadow", ...elevationClasses.value]
-              }, null), hasTitle && createVNode(VExpansionPanelTitle, mergeProps({
-                "key": "title"
-              }, expansionPanelTitleProps), {
-                default: () => [slots.title ? slots.title() : props.title]
-              }), hasText && createVNode(VExpansionPanelText, mergeProps({
-                "key": "text"
-              }, expansionPanelTextProps), {
-                default: () => [slots.text ? slots.text() : props.text]
-              }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots)];
-            }
+            default: () => [createVNode("div", {
+              "class": ["v-expansion-panel__shadow", ...elevationClasses.value]
+            }, null), createVNode(VDefaultsProvider, {
+              "defaults": {
+                VExpansionPanelTitle: {
+                  ...expansionPanelTitleProps
+                },
+                VExpansionPanelText: {
+                  ...expansionPanelTextProps
+                }
+              }
+            }, {
+              default: () => {
+                var _a2;
+                return [hasTitle && createVNode(VExpansionPanelTitle, {
+                  "key": "title"
+                }, {
+                  default: () => [slots.title ? slots.title() : props.title]
+                }), hasText && createVNode(VExpansionPanelText, {
+                  "key": "text"
+                }, {
+                  default: () => [slots.text ? slots.text() : props.text]
+                }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots)];
+              }
+            })]
           });
         });
         return {
@@ -75687,8 +75708,12 @@ Reason: ${error2}`);
           emit2("update:year", value);
         }
         watch(model, (val, oldVal) => {
-          const before = adapter.date(wrapInArray(oldVal)[oldVal.length - 1]);
-          const after = adapter.date(wrapInArray(val)[val.length - 1]);
+          const arrBefore = wrapInArray(oldVal);
+          const arrAfter = wrapInArray(val);
+          if (!arrAfter.length)
+            return;
+          const before = adapter.date(arrBefore[arrBefore.length - 1]);
+          const after = adapter.date(arrAfter[arrAfter.length - 1]);
           const newMonth = adapter.getMonth(after);
           const newYear = adapter.getYear(after);
           if (newMonth !== month.value) {
