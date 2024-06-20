@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-lk4sIgM1.js"(exports, module) {
+  "assets/index-hYwczxS2.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -27383,7 +27383,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       exports2.glob = typeof commonjsGlobal !== "undefined" ? commonjsGlobal : typeof window !== "undefined" ? window : typeof WorkerGlobalScope !== "undefined" ? self : {};
       exports2.Konva = {
         _global: exports2.glob,
-        version: "9.3.11",
+        version: "9.3.12",
         isBrowser: detectBrowser(),
         isUnminified: /param/.test((function(param) {
         }).toString()),
@@ -31881,8 +31881,17 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           };
         }
         getClientRect(config2 = {}) {
+          let hasCachedParent = false;
+          let parent = this.getParent();
+          while (parent) {
+            if (parent.isCached()) {
+              hasCachedParent = true;
+              break;
+            }
+            parent = parent.getParent();
+          }
           const skipTransform = config2.skipTransform;
-          const relativeTo = config2.relativeTo;
+          const relativeTo = config2.relativeTo || hasCachedParent && this.getStage() || void 0;
           const fillRect = this.getSelfRect();
           const applyStroke = !config2.skipStroke && this.hasStroke();
           const strokeWidth = applyStroke && this.strokeWidth() || 0;
@@ -34304,49 +34313,29 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return null;
       }
       static getPointOnLine(dist2, P1x, P1y, P2x, P2y, fromX, fromY) {
-        if (fromX === void 0) {
-          fromX = P1x;
+        fromX = fromX !== null && fromX !== void 0 ? fromX : P1x;
+        fromY = fromY !== null && fromY !== void 0 ? fromY : P1y;
+        const len = this.getLineLength(P1x, P1y, P2x, P2y);
+        if (len < 1e-10) {
+          return { x: P1x, y: P1y };
         }
-        if (fromY === void 0) {
-          fromY = P1y;
-        }
-        var m = (P2y - P1y) / (P2x - P1x + 1e-8);
-        var run2 = Math.sqrt(dist2 * dist2 / (1 + m * m));
-        if (P2x < P1x) {
-          run2 *= -1;
-        }
-        var rise = m * run2;
-        var pt;
         if (P2x === P1x) {
-          pt = {
-            x: fromX,
-            y: fromY + rise
-          };
-        } else if ((fromY - P1y) / (fromX - P1x + 1e-8) === m) {
-          pt = {
-            x: fromX + run2,
-            y: fromY + rise
-          };
-        } else {
-          var ix, iy;
-          var len = this.getLineLength(P1x, P1y, P2x, P2y);
-          var u = (fromX - P1x) * (P2x - P1x) + (fromY - P1y) * (P2y - P1y);
-          u = u / (len * len);
-          ix = P1x + u * (P2x - P1x);
-          iy = P1y + u * (P2y - P1y);
-          var pRise = this.getLineLength(fromX, fromY, ix, iy);
-          var pRun = Math.sqrt(dist2 * dist2 - pRise * pRise);
-          run2 = Math.sqrt(pRun * pRun / (1 + m * m));
-          if (P2x < P1x) {
-            run2 *= -1;
-          }
-          rise = m * run2;
-          pt = {
-            x: ix + run2,
-            y: iy + rise
-          };
+          return { x: fromX, y: fromY + (P2y > P1y ? dist2 : -dist2) };
         }
-        return pt;
+        const m = (P2y - P1y) / (P2x - P1x);
+        const run2 = Math.sqrt(dist2 * dist2 / (1 + m * m)) * (P2x < P1x ? -1 : 1);
+        const rise = m * run2;
+        if (Math.abs(fromY - P1y - m * (fromX - P1x)) < 1e-10) {
+          return { x: fromX + run2, y: fromY + rise };
+        }
+        const u = ((fromX - P1x) * (P2x - P1x) + (fromY - P1y) * (P2y - P1y)) / (len * len);
+        const ix = P1x + u * (P2x - P1x);
+        const iy = P1y + u * (P2y - P1y);
+        const pRise = this.getLineLength(fromX, fromY, ix, iy);
+        const pRun = Math.sqrt(dist2 * dist2 - pRise * pRise);
+        const adjustedRun = Math.sqrt(pRun * pRun / (1 + m * m)) * (P2x < P1x ? -1 : 1);
+        const adjustedRise = m * adjustedRun;
+        return { x: ix + adjustedRun, y: iy + adjustedRise };
       }
       static getPointOnCubicBezier(pct, P1x, P1y, P2x, P2y, P3x, P3y, P4x, P4y) {
         function CB1(t) {
@@ -36526,6 +36515,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
       }
       _handleMouseDown(e) {
+        if (this._transforming) {
+          return;
+        }
         this._movingAnchorName = e.target.name().split(" ")[0];
         var attrs = this._getNodeRect();
         var width = attrs.width;
