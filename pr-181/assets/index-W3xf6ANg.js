@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-hYwczxS2.js"(exports, module) {
+  "assets/index-W3xf6ANg.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -8092,7 +8092,7 @@ var require_index_001 = __commonJS({
     }
     const App = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$7]]);
     /*!
-      * vue-router v4.3.3
+      * vue-router v4.4.0
       * (c) 2024 Eduardo San Martin Morote
       * @license MIT
       */
@@ -8235,6 +8235,18 @@ var require_index_001 = __commonJS({
       }
       return fromSegments.slice(0, position).join("/") + "/" + toSegments.slice(toPosition).join("/");
     }
+    const START_LOCATION_NORMALIZED = {
+      path: "/",
+      // TODO: could we use a symbol in the future?
+      name: void 0,
+      params: {},
+      query: {},
+      hash: "",
+      fullPath: "/",
+      matched: [],
+      meta: {},
+      redirectedFrom: void 0
+    };
     var NavigationType;
     (function(NavigationType2) {
       NavigationType2["pop"] = "pop";
@@ -8503,17 +8515,6 @@ var require_index_001 = __commonJS({
     function isRouteName(name) {
       return typeof name === "string" || typeof name === "symbol";
     }
-    const START_LOCATION_NORMALIZED = {
-      path: "/",
-      name: void 0,
-      params: {},
-      query: {},
-      hash: "",
-      fullPath: "/",
-      matched: [],
-      meta: {},
-      redirectedFrom: void 0
-    };
     const NavigationFailureSymbol = Symbol("");
     var NavigationFailureType;
     (function(NavigationFailureType2) {
@@ -8984,7 +8985,18 @@ var require_index_001 = __commonJS({
         };
       }
       routes2.forEach((route) => addRoute(route));
-      return { addRoute, resolve: resolve2, removeRoute, getRoutes, getRecordMatcher };
+      function clearRoutes() {
+        matchers.length = 0;
+        matcherMap.clear();
+      }
+      return {
+        addRoute,
+        resolve: resolve2,
+        removeRoute,
+        clearRoutes,
+        getRoutes,
+        getRecordMatcher
+      };
     }
     function paramsFromLocation(params, keys2) {
       const newParams = {};
@@ -9835,6 +9847,7 @@ var require_index_001 = __commonJS({
         listening: true,
         addRoute,
         removeRoute,
+        clearRoutes: matcher.clearRoutes,
         hasRoute,
         getRoutes,
         resolve: resolve2,
@@ -70148,6 +70161,39 @@ Reason: ${error2}`);
       validates.push(root.pointer);
       return { title: title2, root };
     }
+    function shallowProduceArray(previousArray = [], newArray = []) {
+      if (!previousArray || !newArray || previousArray.length !== newArray.length)
+        return newArray;
+      for (let i2 = 0; i2 < previousArray.length; i2++) {
+        if (previousArray[i2] !== newArray[i2])
+          return newArray;
+      }
+      return previousArray;
+    }
+    function shallowProduceObject(previousObj = {}, newObj = {}) {
+      if (!previousObj || !newObj)
+        return newObj;
+      const previousKeys = Object.keys(previousObj);
+      const newKeys = Object.keys(newObj);
+      if (previousKeys.length !== newKeys.length)
+        return newObj;
+      for (const key of previousKeys) {
+        if (previousObj[key] !== newObj[key])
+          return newObj;
+      }
+      return previousObj;
+    }
+    function shallowEqualArray(a1 = [], a2 = []) {
+      if (!a1 || !a2)
+        return a1 === a2;
+      if (a1.length !== a2.length)
+        return false;
+      for (let i2 = 0; i2 < a1.length; i2++) {
+        if (a1[i2] !== a2[i2])
+          return false;
+      }
+      return true;
+    }
     const Ajv = (
       /** @type {typeof ajvModule.default} */
       ajvModule
@@ -70158,10 +70204,14 @@ Reason: ${error2}`);
     );
     const produceCompileOptions = produce((draft, newOptions) => {
       for (const key of ["ajv", "ajvOptions", "code", "markdown", "markdownItOptions", "locale", "messages", "optionsKeys", "components"]) {
-        if (key in newOptions)
+        if (key in newOptions) {
+          if (key === "components" && shallowEqualArray(Object.keys(draft.components ?? []), Object.keys(newOptions.components ?? []))) {
+            continue;
+          }
           draft[key] = newOptions[key];
-        else
+        } else {
           delete draft[key];
+        }
       }
     });
     const fillOptions$1 = (partialOptions) => {
@@ -70855,37 +70905,6 @@ Reason: ${error2}`);
       const display = cols === 12 ? parentDisplay : new Display(Math.round(parentDisplay.width * (cols / 12)));
       return [display, cols];
     }
-    function shallowProduceArray(previousArray = [], newArray = []) {
-      if (!previousArray || !newArray || previousArray.length !== newArray.length)
-        return newArray;
-      for (let i2 = 0; i2 < previousArray.length; i2++) {
-        if (previousArray[i2] !== newArray[i2])
-          return newArray;
-      }
-      return previousArray;
-    }
-    function shallowProduceObject(previousObj = {}, newObj = {}) {
-      if (!previousObj || !newObj)
-        return newObj;
-      const previousKeys = Object.keys(previousObj);
-      const newKeys = Object.keys(newObj);
-      if (previousKeys.length !== newKeys.length)
-        return newObj;
-      for (const key of previousKeys) {
-        if (previousObj[key] !== newObj[key])
-          return newObj;
-      }
-      return previousObj;
-    }
-    function shallowEqualArray(a1 = [], a2 = []) {
-      if (a1.length !== a2.length)
-        return false;
-      for (let i2 = 0; i2 < a1.length; i2++) {
-        if (a1[i2] !== a2[i2])
-          return false;
-      }
-      return true;
-    }
     const isDataEmpty = (data) => {
       if (data === "" || data === void 0)
         return true;
@@ -71229,7 +71248,10 @@ Reason: ${error2}`);
       } else {
         if (layout.getDefaultData && useDefaultData(nodeData, layout, options)) {
           if (!context.rehydrate) {
-            nodeData = evalExpression(compiledLayout.expressions, layout.getDefaultData, nodeData, options, display, layout, compiledLayout.validates, context.rootData, parentContext);
+            const defaultData = evalExpression(compiledLayout.expressions, layout.getDefaultData, nodeData, options, display, layout, compiledLayout.validates, context.rootData, parentContext);
+            if (nodeData === void 0 || !isDataEmpty(defaultData)) {
+              nodeData = defaultData;
+            }
           }
         } else {
           if (isDataEmpty(nodeData)) {
@@ -71486,6 +71508,7 @@ Reason: ${error2}`);
          * @type {Record<string, number>}
          */
         __publicField(this, "activatedItems");
+        logDataBinding("create stateful layout", compiledLayout, skeletonTree, options, data);
         this._compiledLayout = compiledLayout;
         this.skeletonTree = skeletonTree;
         this.events = mitt();
@@ -71493,6 +71516,7 @@ Reason: ${error2}`);
         this._autofocusTarget = this.options.autofocus ? "" : null;
         this._previousAutofocusTarget = null;
         this._data = data;
+        this._previousData = data;
         this.initValidationState();
         this.activatedItems = {};
         this.updateState();
@@ -77502,7 +77526,7 @@ Reason: ${error2}`);
       pluginsOptions: {}
     };
     const getFullOptions = (options, form, width, slots, defaultNodeComponents) => {
-      const components = (options == null ? void 0 : options.components) ?? {};
+      const components = { ...options == null ? void 0 : options.components };
       const nodeComponents = { ...defaultNodeComponents, ...options == null ? void 0 : options.nodeComponents };
       if (options == null ? void 0 : options.plugins) {
         for (const plugin of options.plugins) {
@@ -77599,38 +77623,36 @@ Reason: ${error2}`);
           emit2("update:modelValue", statefulLayout.value.data);
         }
       };
+      const onAutofocus = () => {
+        if (!el2.value)
+          return;
+        const autofocusNodeElement = el2.value.querySelector(".vjsf-input--autofocus");
+        if (autofocusNodeElement) {
+          const autofocusInputElement = autofocusNodeElement.querySelector("input") ?? autofocusNodeElement.querySelector('textarea:not([style*="display: none"]');
+          if (autofocusInputElement)
+            autofocusInputElement.focus();
+        }
+      };
       const initStatefulLayout = () => {
         if (!width.value)
           return;
-        const _statefulLayout = (
-          /** @type {import('../types.js').VjsfStatefulLayout} */
-          new StatefulLayout(
-            toRaw(compiledLayout.value),
-            toRaw(compiledLayout.value.skeletonTrees[compiledLayout.value.mainTree]),
-            toRaw(fullOptions.value),
-            toRaw(modelValue.value)
-          )
+        if (statefulLayout.value) {
+          statefulLayout.value.events.off("update", onStatefulLayoutUpdate);
+          statefulLayout.value.events.off("data", onDataUpdate);
+          statefulLayout.value.events.off("autofocus", onAutofocus);
+        }
+        statefulLayout.value = /** @type {import('../types.js').VjsfStatefulLayout} */
+        new StatefulLayout(
+          toRaw(compiledLayout.value),
+          toRaw(compiledLayout.value.skeletonTrees[compiledLayout.value.mainTree]),
+          toRaw(fullOptions.value),
+          toRaw(modelValue.value)
         );
-        statefulLayout.value = _statefulLayout;
         onStatefulLayoutUpdate();
         onDataUpdate();
-        _statefulLayout.events.on("update", () => {
-          onStatefulLayoutUpdate();
-        });
-        _statefulLayout.events.on("data", () => {
-          onDataUpdate();
-        });
-        emit2("update:state", _statefulLayout);
-        _statefulLayout.events.on("autofocus", () => {
-          if (!el2.value)
-            return;
-          const autofocusNodeElement = el2.value.querySelector(".vjsf-input--autofocus");
-          if (autofocusNodeElement) {
-            const autofocusInputElement = autofocusNodeElement.querySelector("input") ?? autofocusNodeElement.querySelector('textarea:not([style*="display: none"]');
-            if (autofocusInputElement)
-              autofocusInputElement.focus();
-          }
-        });
+        statefulLayout.value.events.on("update", onStatefulLayoutUpdate);
+        statefulLayout.value.events.on("data", onDataUpdate);
+        statefulLayout.value.events.on("autofocus", onAutofocus);
       };
       watch(fullOptions, (newOptions) => {
         if (statefulLayout.value) {
