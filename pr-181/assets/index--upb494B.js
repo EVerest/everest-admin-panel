@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-W3xf6ANg.js"(exports, module) {
+  "assets/index--upb494B.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.29
+    * @vue/shared v3.4.30
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -658,7 +658,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.29
+    * @vue/reactivity v3.4.30
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -770,8 +770,10 @@ var require_index_001 = __commonJS({
           for (let i2 = 0; i2 < this._depsLength; i2++) {
             const dep = this.deps[i2];
             if (dep.computed) {
-              if (dep.computed.effect._dirtyLevel === 2)
+              if (dep.computed.effect._dirtyLevel === 2) {
+                resetTracking();
                 return true;
+              }
               triggerComputed(dep.computed);
               if (this._dirtyLevel >= 5) {
                 break;
@@ -879,13 +881,13 @@ var require_index_001 = __commonJS({
     function triggerEffects(dep, dirtyLevel, debuggerEventExtraInfo) {
       pauseScheduling();
       for (const effect2 of dep.keys()) {
+        let tracking;
         if (!dep.computed && effect2.computed) {
-          if (dep.get(effect2) === effect2._trackId && effect2._runnings > 0) {
+          if (effect2._runnings > 0 && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
             effect2._dirtyLevel = 2;
             continue;
           }
         }
-        let tracking;
         if (effect2._dirtyLevel < dirtyLevel && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
           effect2._shouldSchedule || (effect2._shouldSchedule = effect2._dirtyLevel === 0);
           if (effect2.computed && effect2._dirtyLevel === 2) {
@@ -1540,8 +1542,11 @@ var require_index_001 = __commonJS({
       }
       get value() {
         const self2 = toRaw(this);
+        const lastDirtyLevel = self2.effect._dirtyLevel;
         if ((!self2._cacheable || self2.effect.dirty) && hasChanged(self2._value, self2._value = self2.effect.run())) {
-          triggerRefValue(self2, 5);
+          if (lastDirtyLevel !== 3) {
+            triggerRefValue(self2, 5);
+          }
         }
         trackRefValue(self2);
         if (self2.effect._dirtyLevel >= 2) {
@@ -1708,7 +1713,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.29
+    * @vue/runtime-core v3.4.30
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -2446,7 +2451,6 @@ var require_index_001 = __commonJS({
         }
       },
       hydrate: hydrateSuspense,
-      create: createSuspenseBoundary,
       normalize: normalizeSuspenseChildren
     };
     const Suspense = SuspenseImpl;
@@ -5361,6 +5365,9 @@ var require_index_001 = __commonJS({
           dirs,
           memoIndex
         } = vnode;
+        if (patchFlag === -2) {
+          optimized = false;
+        }
         if (ref3 != null) {
           setRef(ref3, null, parentSuspense, vnode, true);
         }
@@ -5392,7 +5399,6 @@ var require_index_001 = __commonJS({
               vnode,
               parentComponent,
               parentSuspense,
-              optimized,
               internals,
               doRemove
             );
@@ -6369,7 +6375,7 @@ var require_index_001 = __commonJS({
         }
         updateCssVars(n2);
       },
-      remove(vnode, parentComponent, parentSuspense, optimized, { um: unmount, o: { remove: hostRemove } }, doRemove) {
+      remove(vnode, parentComponent, parentSuspense, { um: unmount, o: { remove: hostRemove } }, doRemove) {
         const { shapeFlag, children, anchor, targetAnchor, target: target2, props } = vnode;
         if (target2) {
           hostRemove(targetAnchor);
@@ -7127,9 +7133,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.29";
+    const version$2 = "3.4.30";
     /**
-    * @vue/runtime-dom v3.4.29
+    * @vue/runtime-dom v3.4.30
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -7624,7 +7630,10 @@ var require_index_001 = __commonJS({
         if (value == null || isBoolean2 && !includeBooleanAttr(value)) {
           el2.removeAttribute(key);
         } else {
-          el2.setAttribute(key, isBoolean2 ? "" : String(value));
+          el2.setAttribute(
+            key,
+            isBoolean2 ? "" : isSymbol(value) ? String(value) : value
+          );
         }
       }
     }
@@ -7766,7 +7775,7 @@ var require_index_001 = __commonJS({
           parentSuspense,
           unmountChildren
         );
-        if (key === "value" || key === "checked" || key === "selected") {
+        if (!el2.tagName.includes("-") && (key === "value" || key === "checked" || key === "selected")) {
           patchAttr(el2, key, nextValue, isSVG, parentComponent, key !== "value");
         }
       } else {
