@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index--upb494B.js"(exports, module) {
+  "assets/index-ZCFpcgt1.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -70347,22 +70347,6 @@ Reason: ${error2}`);
         localizeErrors: ajvLocalize[options.locale] || ajvLocalize.en
       };
     }
-    function mittModule(n) {
-      return { all: n = n || /* @__PURE__ */ new Map(), on: function(t, e) {
-        var i2 = n.get(t);
-        i2 ? i2.push(e) : n.set(t, [e]);
-      }, off: function(t, e) {
-        var i2 = n.get(t);
-        i2 && (e ? i2.splice(i2.indexOf(e) >>> 0, 1) : n.set(t, []));
-      }, emit: function(t, e) {
-        var i2 = n.get(t);
-        i2 && i2.slice().map(function(n2) {
-          n2(e);
-        }), (i2 = n.get("*")) && i2.slice().map(function(n2) {
-          n2(t, e);
-        });
-      } };
-    }
     var browser = { exports: {} };
     var ms;
     var hasRequiredMs;
@@ -70806,7 +70790,7 @@ Reason: ${error2}`);
       };
     })(browser, browser.exports);
     var browserExports = browser.exports;
-    const debug = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
+    const Debug = /* @__PURE__ */ getDefaultExportFromCjs(browserExports);
     const names = ["xs", "sm", "md", "lg", "xl", "xxl"];
     const thresholds = {
       xs: 0,
@@ -71392,11 +71376,7 @@ Reason: ${error2}`);
     }
     const isSection = (node) => !!node && node.layout.comp === "section";
     const isItemsNode = (node, components) => !!node && isItemsLayout(node.layout, components);
-    const logDataBinding = debug("jl:data-binding");
-    const mitt = (
-      /** @type {typeof mittModule.default} */
-      mittModule
-    );
+    const logDataBinding = Debug("jl:data-binding");
     function fillOptions(partialOptions, compiledLayout) {
       const messages = { ...compiledLayout.messages };
       if (partialOptions.messages)
@@ -71416,6 +71396,12 @@ Reason: ${error2}`);
         removeAdditional: "error",
         autofocus: false,
         readOnlyPropertiesMode: "show",
+        onAutofocus: () => {
+        },
+        onUpdate: () => {
+        },
+        onData: () => {
+        },
         ...partialOptions,
         messages
       };
@@ -71428,11 +71414,6 @@ Reason: ${error2}`);
        * @param {unknown} [data]
        */
       constructor(compiledLayout, skeletonTree, options, data) {
-        /**
-         * @readonly
-         * @type {import('mitt').Emitter<StatefulLayoutEvents>}
-         */
-        __publicField(this, "events");
         /**
          * @private
          * @readonly
@@ -71520,7 +71501,6 @@ Reason: ${error2}`);
         logDataBinding("create stateful layout", compiledLayout, skeletonTree, options, data);
         this._compiledLayout = compiledLayout;
         this.skeletonTree = skeletonTree;
-        this.events = mitt();
         this.prepareOptions(options);
         this._autofocusTarget = this.options.autofocus ? "" : null;
         this._previousAutofocusTarget = null;
@@ -71616,7 +71596,7 @@ Reason: ${error2}`);
           this.createStateTree(true);
         }
         logDataBinding("emit update event", this._data, this._stateTree);
-        this.events.emit("update", this);
+        this.options.onUpdate(this);
         this.emitData();
       }
       /**
@@ -71625,7 +71605,7 @@ Reason: ${error2}`);
       emitData() {
         if (!this._dataWaitingForBlur && this._data !== this._previousData) {
           logDataBinding("emit data event", this._data);
-          this.events.emit("data", this._data);
+          this.options.onData(this._data);
           this._previousData = this._data;
         }
       }
@@ -71901,22 +71881,23 @@ Reason: ${error2}`);
       prepareSelectItem(node, rawItem) {
         var _a2, _b, _c, _d, _e, _f, _g, _h, _i;
         const item = {};
+        const layout = node.layout;
         if (typeof rawItem === "object") {
-          item.value = ((_a2 = node.layout.getItems) == null ? void 0 : _a2.itemValue) ? this.evalNodeExpression(node, node.layout.getItems.itemValue, rawItem) : ((_b = node.layout.getItems) == null ? void 0 : _b.returnObjects) ? rawItem : rawItem.value;
-          item.key = ((_c = node.layout.getItems) == null ? void 0 : _c.itemKey) ? this.evalNodeExpression(node, node.layout.getItems.itemKey, rawItem) : rawItem.key;
-          item.title = ((_d = node.layout.getItems) == null ? void 0 : _d.itemTitle) ? this.evalNodeExpression(node, node.layout.getItems.itemTitle, rawItem) : rawItem.title;
+          item.value = ((_a2 = layout.getItems) == null ? void 0 : _a2.itemValue) ? this.evalNodeExpression(node, layout.getItems.itemValue, rawItem) : ((_b = layout.getItems) == null ? void 0 : _b.returnObjects) ? rawItem : rawItem.value;
+          item.key = ((_c = layout.getItems) == null ? void 0 : _c.itemKey) ? this.evalNodeExpression(node, layout.getItems.itemKey, rawItem) : rawItem.key;
+          item.title = ((_d = layout.getItems) == null ? void 0 : _d.itemTitle) ? this.evalNodeExpression(node, layout.getItems.itemTitle, rawItem) : rawItem.title;
           item.value = item.value ?? item.key;
           item.key = item.key ?? item.value + "";
           item.title = item.title ?? item.key;
           if (!item.icon && rawItem.icon)
             item.icon = rawItem.icon;
         } else {
-          item.value = ((_e = node.layout.getItems) == null ? void 0 : _e.itemValue) ? this.evalNodeExpression(node, node.layout.getItems.itemValue, rawItem) : rawItem;
-          item.key = ((_f = node.layout.getItems) == null ? void 0 : _f.itemKey) ? this.evalNodeExpression(node, node.layout.getItems.itemKey, rawItem) : item.value;
-          item.title = ((_g = node.layout.getItems) == null ? void 0 : _g.itemTitle) ? this.evalNodeExpression(node, node.layout.getItems.itemTitle, rawItem) : item.value;
+          item.value = ((_e = layout.getItems) == null ? void 0 : _e.itemValue) ? this.evalNodeExpression(node, layout.getItems.itemValue, rawItem) : rawItem;
+          item.key = ((_f = layout.getItems) == null ? void 0 : _f.itemKey) ? this.evalNodeExpression(node, layout.getItems.itemKey, rawItem) : item.value;
+          item.title = ((_g = layout.getItems) == null ? void 0 : _g.itemTitle) ? this.evalNodeExpression(node, layout.getItems.itemTitle, rawItem) : item.value;
         }
-        if ((_h = node.layout.getItems) == null ? void 0 : _h.itemIcon)
-          item.icon = this.evalNodeExpression(node, (_i = node.layout.getItems) == null ? void 0 : _i.itemIcon, rawItem);
+        if ((_h = layout.getItems) == null ? void 0 : _h.itemIcon)
+          item.icon = this.evalNodeExpression(node, (_i = layout.getItems) == null ? void 0 : _i.itemIcon, rawItem);
         return (
           /** @type {import('@json-layout/vocabulary').SelectItem} */
           item
@@ -71956,7 +71937,7 @@ Reason: ${error2}`);
           this._previousAutofocusTarget = autofocusTarget;
           setTimeout(() => {
             logDataBinding("emit autofocus event", autofocusTarget);
-            this.events.emit("autofocus", autofocusTarget);
+            this.options.onAutofocus(autofocusTarget);
           });
         }
       }
@@ -77534,7 +77515,7 @@ Reason: ${error2}`);
       plugins: [],
       pluginsOptions: {}
     };
-    const getFullOptions = (options, form, width, slots, defaultNodeComponents) => {
+    const getFullOptions = (options, form, width, slots, defaultNodeComponents, onData, onUpdate, onAutofocus) => {
       const components = { ...options == null ? void 0 : options.components };
       const nodeComponents = { ...defaultNodeComponents, ...options == null ? void 0 : options.nodeComponents };
       if (options == null ? void 0 : options.plugins) {
@@ -77547,6 +77528,9 @@ Reason: ${error2}`);
         ...defaultOptions,
         readOnly: !!(form && (form.isDisabled.value || form.isReadonly.value)),
         ...options,
+        onData,
+        onUpdate,
+        onAutofocus,
         context: (options == null ? void 0 : options.context) ? JSON.parse(JSON.stringify(options.context)) : {},
         width: Math.round(width ?? 0),
         vjsfSlots: { ...slots },
@@ -77558,6 +77542,7 @@ Reason: ${error2}`);
         fullOptions
       );
     };
+    const debug = Debug("vjsf:use-vjsf");
     setAutoFreeze(false);
     const emits = {
       /**
@@ -77596,14 +77581,48 @@ Reason: ${error2}`);
         });
       }
       const slots = useSlots();
-      const fullOptions = computed(() => getFullOptions(options.value, form, width.value, slots, { ...nodeComponents }));
+      const onStatefulLayoutUpdate = (statefulLayout2) => {
+        debug("onStatefulLayoutUpdate", statefulLayout2);
+        if (!statefulLayout2)
+          return;
+        stateTree.value = statefulLayout2.stateTree;
+        debug("  -> emit update:state");
+        emit2("update:state", statefulLayout2);
+        if (form) {
+          if (statefulLayout2.valid)
+            form.update("vjsf", true, []);
+          else if (statefulLayout2.hasHiddenError)
+            form.update("vjsf", null, []);
+          else
+            form.update("vjsf", false, []);
+        }
+      };
+      const onDataUpdate = (data) => {
+        debug("onDataUpdate", data);
+        debug("  -> emit update:modelValue");
+        emit2("update:modelValue", data);
+      };
+      const onAutofocus = () => {
+        if (!el2.value)
+          return;
+        const autofocusNodeElement = el2.value.querySelector(".vjsf-input--autofocus");
+        debug("onAutofocus", autofocusNodeElement);
+        if (autofocusNodeElement) {
+          const autofocusInputElement = autofocusNodeElement.querySelector("input") ?? autofocusNodeElement.querySelector('textarea:not([style*="display: none"]');
+          if (autofocusInputElement)
+            autofocusInputElement.focus();
+        }
+      };
+      const fullOptions = computed(() => getFullOptions(options.value, form, width.value, slots, { ...nodeComponents }, onDataUpdate, onStatefulLayoutUpdate, onAutofocus));
       const compileOptions = ref$1({});
       watch(fullOptions, (newOptions) => {
         if (precompiledLayout == null ? void 0 : precompiledLayout.value)
           return;
         const newCompileOptions = produceCompileOptions(compileOptions.value, newOptions);
-        if (newCompileOptions !== compileOptions.value)
+        if (newCompileOptions !== compileOptions.value) {
+          debug("new compileOptions", newCompileOptions);
           compileOptions.value = newCompileOptions;
+        }
       }, { immediate: true });
       const compiledLayout = computed(() => {
         if (precompiledLayout == null ? void 0 : precompiledLayout.value)
@@ -77613,43 +77632,9 @@ Reason: ${error2}`);
         const compiledLayout2 = compile2(schema2.value, compileOptions.value);
         return compiledLayout2;
       });
-      const onStatefulLayoutUpdate = () => {
-        if (!statefulLayout.value)
-          return;
-        stateTree.value = statefulLayout.value.stateTree;
-        emit2("update:state", statefulLayout.value);
-        if (form) {
-          if (statefulLayout.value.valid)
-            form.update("vjsf", true, []);
-          else if (statefulLayout.value.hasHiddenError)
-            form.update("vjsf", null, []);
-          else
-            form.update("vjsf", false, []);
-        }
-      };
-      const onDataUpdate = () => {
-        if (statefulLayout.value && modelValue !== statefulLayout.value.data) {
-          emit2("update:modelValue", statefulLayout.value.data);
-        }
-      };
-      const onAutofocus = () => {
-        if (!el2.value)
-          return;
-        const autofocusNodeElement = el2.value.querySelector(".vjsf-input--autofocus");
-        if (autofocusNodeElement) {
-          const autofocusInputElement = autofocusNodeElement.querySelector("input") ?? autofocusNodeElement.querySelector('textarea:not([style*="display: none"]');
-          if (autofocusInputElement)
-            autofocusInputElement.focus();
-        }
-      };
       const initStatefulLayout = () => {
         if (!width.value)
           return;
-        if (statefulLayout.value) {
-          statefulLayout.value.events.off("update", onStatefulLayoutUpdate);
-          statefulLayout.value.events.off("data", onDataUpdate);
-          statefulLayout.value.events.off("autofocus", onAutofocus);
-        }
         statefulLayout.value = /** @type {import('../types.js').VjsfStatefulLayout} */
         new StatefulLayout(
           toRaw(compiledLayout.value),
@@ -77657,24 +77642,28 @@ Reason: ${error2}`);
           toRaw(fullOptions.value),
           toRaw(modelValue.value)
         );
-        onStatefulLayoutUpdate();
-        onDataUpdate();
-        statefulLayout.value.events.on("update", onStatefulLayoutUpdate);
-        statefulLayout.value.events.on("data", onDataUpdate);
-        statefulLayout.value.events.on("autofocus", onAutofocus);
       };
       watch(fullOptions, (newOptions) => {
+        debug("watch fullOptions", fullOptions);
         if (statefulLayout.value) {
+          debug("  -> update statefulLayout options");
           statefulLayout.value.options = newOptions;
         } else {
+          debug("  -> init statefulLayout");
           initStatefulLayout();
         }
       });
       watch(modelValue, (newData) => {
-        if (statefulLayout.value && statefulLayout.value.data !== newData)
-          statefulLayout.value.data = toRaw(newData);
+        const rawData = toRaw(newData);
+        if (statefulLayout.value && statefulLayout.value.data !== rawData) {
+          debug("modelValue changed from outside", rawData);
+          debug("  -> update statefulLayout data");
+          statefulLayout.value.data = toRaw(rawData);
+        }
       });
       watch(compiledLayout, (newCompiledLayout) => {
+        debug("watch compiledLayout", newCompiledLayout);
+        debug("  -> init statefulLayout");
         initStatefulLayout();
       });
       return { el: el2, statefulLayout, stateTree };
