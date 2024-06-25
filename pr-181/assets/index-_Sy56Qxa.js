@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-ZCFpcgt1.js"(exports, module) {
+  "assets/index-_Sy56Qxa.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -71219,20 +71219,25 @@ Reason: ${error2}`);
         }
       }
       const validated = validationState.validatedForm || validationState.validatedChildren.includes(fullKey) || validationState.initialized === false && options.initialValidation === "always" || validationState.initialized === false && options.initialValidation === "withData" && !isDataEmpty(data);
-      let nodeData = typeof data === "object" && !(data instanceof File) ? produceStateNodeData(
-        /** @type {Record<string, unknown>} */
-        data ?? {},
-        dataPath,
-        children,
-        context.additionalPropertiesErrors,
-        [true, "unknown"].includes(options.removeAdditional) ? skeleton.propertyKeys : void 0,
-        options.readOnlyPropertiesMode === "remove" ? skeleton.roPropertyKeys : void 0
-      ) : data;
-      if (nodeData !== data) {
-        if (Array.isArray(data) && Array.isArray(nodeData))
-          nodeData = shallowProduceArray(data, nodeData);
-        else if (typeof data === "object" && typeof nodeData === "object")
-          nodeData = shallowProduceObject(data, nodeData);
+      let nodeData = data;
+      if (nodeData === null && !layout.nullable)
+        nodeData = void 0;
+      if (typeof nodeData === "object" && !(nodeData instanceof File)) {
+        nodeData = produceStateNodeData(
+          /** @type {Record<string, unknown>} */
+          nodeData ?? {},
+          dataPath,
+          children,
+          context.additionalPropertiesErrors,
+          [true, "unknown"].includes(options.removeAdditional) ? skeleton.propertyKeys : void 0,
+          options.readOnlyPropertiesMode === "remove" ? skeleton.roPropertyKeys : void 0
+        );
+        if (nodeData !== data) {
+          if (Array.isArray(data) && Array.isArray(nodeData))
+            nodeData = shallowProduceArray(data, nodeData);
+          else if (typeof data === "object" && typeof nodeData === "object")
+            nodeData = shallowProduceObject(data, nodeData);
+        }
       }
       if (layout.getConstData) {
         if (!context.rehydrate) {
@@ -77647,7 +77652,7 @@ Reason: ${error2}`);
         debug("watch fullOptions", fullOptions);
         if (statefulLayout.value) {
           debug("  -> update statefulLayout options");
-          statefulLayout.value.options = newOptions;
+          statefulLayout.value.options = toRaw(newOptions);
         } else {
           debug("  -> init statefulLayout");
           initStatefulLayout();
