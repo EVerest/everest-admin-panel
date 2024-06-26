@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-_Sy56Qxa.js"(exports, module) {
+  "assets/index-o6pQrkVR.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -69800,24 +69800,26 @@ Reason: ${error2}`);
       }
       return clonedSchema ?? schema2;
     }
-    function makeSkeletonNode(rawSchema, sourceSchemaId, options, getJSONRef, skeletonTrees, validates, validationErrors, normalizedLayouts, expressions, key, currentPointer, parentPointer, required2, condition, dependent, knownType) {
+    function makeSkeletonNode(rawSchema, sourceSchemaId, options, getJSONRef, skeletonTrees, skeletonNodes, validates, validationErrors, normalizedLayouts, expressions, key, pointer, required2, condition, dependent, knownType) {
       var _a2, _b, _c, _d, _e, _f, _g, _h, _i;
       let schemaId = sourceSchemaId;
       let schema2 = rawSchema;
-      let pointer = currentPointer;
+      let refPointer = pointer;
       let refFragment;
+      rawSchema.__pointer = pointer;
       if (schema2.$ref) {
-        [refFragment, schemaId, pointer] = getJSONRef(sourceSchemaId, schema2.$ref);
+        [refFragment, schemaId, refPointer] = getJSONRef(sourceSchemaId, schema2.$ref);
+        refFragment.__pointer = refPointer;
         schema2 = { ...rawSchema, ...refFragment };
         delete schema2.$ref;
       }
-      schema2 = partialResolveRefs(schema2, schemaId, getJSONRef);
-      const { type: type2, nullable } = knownType ? { type: knownType, nullable: false } : getSchemaFragmentType(schema2);
+      const resolvedSchema = partialResolveRefs(schema2, schemaId, getJSONRef);
+      const { type: type2, nullable } = knownType ? { type: knownType, nullable: false } : getSchemaFragmentType(resolvedSchema);
       rawSchema.errorMessage = rawSchema.errorMessage ?? {};
       if (!normalizedLayouts[pointer]) {
         const normalizationResult = normalizeLayoutFragment(
           /** @type {import('@json-layout/vocabulary').SchemaFragment} */
-          schema2,
+          resolvedSchema,
           pointer,
           options.components,
           options.markdown,
@@ -69903,7 +69905,7 @@ Reason: ${error2}`);
       const node = {
         key: key ?? "",
         pointer,
-        parentPointer,
+        refPointer,
         pure,
         propertyKeys: [],
         roPropertyKeys: [],
@@ -69924,71 +69926,84 @@ Reason: ${error2}`);
             if (schema2.properties[propertyKey].readOnly)
               node.roPropertyKeys.push(propertyKey);
             const dependent2 = schema2.dependentRequired && Object.values(schema2.dependentRequired).some((dependentProperties) => dependentProperties.includes(propertyKey));
-            node.children.push(makeSkeletonNode(
-              schema2.properties[propertyKey],
-              schemaId,
-              options,
-              getJSONRef,
-              skeletonTrees,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              propertyKey,
-              `${pointer}/properties/${propertyKey}`,
-              pointer,
-              (_a2 = schema2.required) == null ? void 0 : _a2.includes(propertyKey),
-              void 0,
-              dependent2
-            ));
-            if (((_b = schema2.dependentSchemas) == null ? void 0 : _b[propertyKey]) || ((_c = schema2.dependencies) == null ? void 0 : _c[propertyKey]) && !Array.isArray(schema2.dependencies[propertyKey])) {
-              const dependentSchema = ((_d = schema2.dependentSchemas) == null ? void 0 : _d[propertyKey]) ?? schema2.dependencies[propertyKey];
-              const dependentPointer = ((_e = schema2.dependentSchemas) == null ? void 0 : _e[propertyKey]) ? `${pointer}/dependentSchemas/${propertyKey}` : `${pointer}/dependencies/${propertyKey}`;
-              node.children.push(makeSkeletonNode(
-                dependentSchema,
+            const childPointer = `${refPointer}/properties/${propertyKey}`;
+            if (!skeletonNodes[childPointer]) {
+              skeletonNodes[childPointer] = "recursing";
+              skeletonNodes[childPointer] = makeSkeletonNode(
+                schema2.properties[propertyKey],
                 schemaId,
                 options,
                 getJSONRef,
                 skeletonTrees,
+                skeletonNodes,
                 validates,
                 validationErrors,
                 normalizedLayouts,
                 expressions,
-                `$deps-${propertyKey}`,
-                dependentPointer,
-                pointer,
-                false,
-                `data["${propertyKey}"] !== undefined`,
+                propertyKey,
+                childPointer,
+                (_a2 = schema2.required) == null ? void 0 : _a2.includes(propertyKey),
                 void 0,
-                "object"
-              ));
+                dependent2
+              );
+            }
+            node.children.push(childPointer);
+            if (((_b = schema2.dependentSchemas) == null ? void 0 : _b[propertyKey]) || ((_c = schema2.dependencies) == null ? void 0 : _c[propertyKey]) && !Array.isArray(schema2.dependencies[propertyKey])) {
+              const dependentSchema = ((_d = schema2.dependentSchemas) == null ? void 0 : _d[propertyKey]) ?? schema2.dependencies[propertyKey];
+              const dependentPointer = ((_e = schema2.dependentSchemas) == null ? void 0 : _e[propertyKey]) ? `${refPointer}/dependentSchemas/${propertyKey}` : `${refPointer}/dependencies/${propertyKey}`;
+              if (!skeletonNodes[dependentPointer]) {
+                skeletonNodes[dependentPointer] = "recursing";
+                skeletonNodes[dependentPointer] = makeSkeletonNode(
+                  dependentSchema,
+                  schemaId,
+                  options,
+                  getJSONRef,
+                  skeletonTrees,
+                  skeletonNodes,
+                  validates,
+                  validationErrors,
+                  normalizedLayouts,
+                  expressions,
+                  `$deps-${propertyKey}`,
+                  dependentPointer,
+                  false,
+                  `data["${propertyKey}"] !== undefined`,
+                  void 0,
+                  "object"
+                );
+              }
+              node.children.push(dependentPointer);
             }
           }
         }
         if (schema2.allOf) {
-          node.children = node.children ?? [];
           for (let i2 = 0; i2 < schema2.allOf.length; i2++) {
-            const allOfNode = makeSkeletonNode(
-              schema2.allOf[i2],
-              schemaId,
-              options,
-              getJSONRef,
-              skeletonTrees,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              `$allOf-${i2}`,
-              `${pointer}/allOf/${i2}`,
-              pointer,
-              false,
-              void 0,
-              void 0,
-              "object"
-            );
-            node.propertyKeys = node.propertyKeys.concat(allOfNode.propertyKeys);
-            node.roPropertyKeys = node.roPropertyKeys.concat(allOfNode.roPropertyKeys);
-            node.children.push(allOfNode);
+            const childPointer = `${refPointer}/allOf/${i2}`;
+            if (!skeletonNodes[childPointer]) {
+              skeletonNodes[childPointer] = "recursing";
+              skeletonNodes[childPointer] = makeSkeletonNode(
+                schema2.allOf[i2],
+                schemaId,
+                options,
+                getJSONRef,
+                skeletonTrees,
+                skeletonNodes,
+                validates,
+                validationErrors,
+                normalizedLayouts,
+                expressions,
+                `$allOf-${i2}`,
+                childPointer,
+                false,
+                void 0,
+                void 0,
+                "object"
+              );
+            }
+            node.propertyKeys = node.propertyKeys.concat(skeletonNodes[childPointer].propertyKeys);
+            node.roPropertyKeys = node.roPropertyKeys.concat(skeletonNodes[childPointer].roPropertyKeys);
+            node.children = node.children ?? [];
+            node.children.push(childPointer);
           }
         }
         if (schema2.oneOf) {
@@ -70024,6 +70039,7 @@ Reason: ${error2}`);
                 options,
                 getJSONRef,
                 skeletonTrees,
+                skeletonNodes,
                 validates,
                 validationErrors,
                 normalizedLayouts,
@@ -70034,92 +70050,112 @@ Reason: ${error2}`);
             }
             childrenTrees.push(childTreePointer);
           }
+          if (!skeletonNodes[oneOfPointer]) {
+            skeletonNodes[oneOfPointer] = {
+              key: "$oneOf",
+              pointer: oneOfPointer,
+              refPointer: oneOfPointer,
+              childrenTrees,
+              pure: skeletonNodes[(_f = skeletonTrees[childrenTrees[0]]) == null ? void 0 : _f.root].pure,
+              propertyKeys: [],
+              roPropertyKeys: []
+            };
+          }
           node.children = node.children ?? [];
-          node.children.push({
-            key: "$oneOf",
-            pointer: `${pointer}/oneOf`,
-            parentPointer: pointer,
-            childrenTrees,
-            pure: (_f = skeletonTrees[childrenTrees[0]]) == null ? void 0 : _f.root.pure,
-            propertyKeys: [],
-            roPropertyKeys: []
-          });
-          schema2.errorMessage.oneOf = options.messages.errorOneOf;
+          node.children.push(oneOfPointer);
+          rawSchema.errorMessage.oneOf = options.messages.errorOneOf;
         }
         if (schema2.if) {
           validates.push(`${pointer}/if`);
           if (schema2.then) {
+            const childPointer = `${refPointer}/then`;
+            if (!skeletonNodes[childPointer]) {
+              skeletonNodes[childPointer] = "recursing";
+              skeletonNodes[childPointer] = makeSkeletonNode(
+                schema2.then,
+                schemaId,
+                options,
+                getJSONRef,
+                skeletonTrees,
+                skeletonNodes,
+                validates,
+                validationErrors,
+                normalizedLayouts,
+                expressions,
+                "$then",
+                childPointer,
+                false,
+                `validates["${pointer}/if"](data)`,
+                void 0,
+                "object"
+              );
+            }
             node.children = node.children ?? [];
-            node.children.push(makeSkeletonNode(
-              schema2.then,
-              schemaId,
-              options,
-              getJSONRef,
-              skeletonTrees,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              "$then",
-              `${pointer}/then`,
-              pointer,
-              false,
-              `validates["${pointer}/if"](data)`,
-              void 0,
-              "object"
-            ));
+            node.children.push(childPointer);
           }
           if (schema2.else) {
+            const childPointer = `${refPointer}/else`;
+            if (!skeletonNodes[childPointer]) {
+              skeletonNodes[childPointer] = "recursing";
+              skeletonNodes[childPointer] = makeSkeletonNode(
+                schema2.else,
+                schemaId,
+                options,
+                getJSONRef,
+                skeletonTrees,
+                skeletonNodes,
+                validates,
+                validationErrors,
+                normalizedLayouts,
+                expressions,
+                "$else",
+                childPointer,
+                false,
+                `!validates["${pointer}/if"](data)`,
+                void 0,
+                "object"
+              );
+            }
             node.children = node.children ?? [];
-            node.children.push(makeSkeletonNode(
-              schema2.else,
-              schemaId,
-              options,
-              getJSONRef,
-              skeletonTrees,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              "$else",
-              `${pointer}/else`,
-              pointer,
-              false,
-              `!validates["${pointer}/if"](data)`,
-              void 0,
-              "object"
-            ));
+            node.children.push(childPointer);
           }
         }
         for (const propertyKey of node.propertyKeys) {
           if ((_g = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _g.includes(propertyKey)) {
-            schema2.errorMessage.required = schema2.errorMessage.required ?? {};
-            schema2.errorMessage.required[propertyKey] = options.messages.errorRequired;
+            rawSchema.errorMessage.required = rawSchema.errorMessage.required ?? {};
+            rawSchema.errorMessage.required[propertyKey] = options.messages.errorRequired;
           }
           if (schema2.dependentRequired && Object.keys(schema2.dependentRequired).includes(propertyKey)) {
-            schema2.errorMessage.dependentRequired = options.messages.errorRequired;
+            rawSchema.errorMessage.dependentRequired = options.messages.errorRequired;
           }
         }
       }
       if (type2 === "array" && schema2.items) {
         if (Array.isArray(schema2.items)) {
-          node.children = schema2.items.map((itemSchema, i2) => {
-            return makeSkeletonNode(
-              itemSchema,
-              schemaId,
-              options,
-              getJSONRef,
-              skeletonTrees,
-              validates,
-              validationErrors,
-              normalizedLayouts,
-              expressions,
-              i2,
-              `${pointer}/items/${i2}`,
-              pointer,
-              true
-            );
-          });
+          node.children = node.children ?? [];
+          for (let i2 = 0; i2 < schema2.items.length; i2++) {
+            const itemSchema = schema2.items[i2];
+            const childPointer = `${refPointer}/items/${i2}`;
+            if (!skeletonNodes[childPointer]) {
+              skeletonNodes[childPointer] = "recursing";
+              skeletonNodes[childPointer] = makeSkeletonNode(
+                itemSchema,
+                schemaId,
+                options,
+                getJSONRef,
+                skeletonTrees,
+                skeletonNodes,
+                validates,
+                validationErrors,
+                normalizedLayouts,
+                expressions,
+                i2,
+                childPointer,
+                true
+              );
+            }
+            node.children.push(childPointer);
+          }
         } else {
           const childTreePointer = `${pointer}/items`;
           if (!skeletonTrees[childTreePointer]) {
@@ -70130,6 +70166,7 @@ Reason: ${error2}`);
               options,
               getJSONRef,
               skeletonTrees,
+              skeletonNodes,
               validates,
               validationErrors,
               normalizedLayouts,
@@ -70141,34 +70178,38 @@ Reason: ${error2}`);
           node.childrenTrees = [childTreePointer];
         }
       }
-      for (const child of node.children || []) {
+      for (const childPointer of node.children || []) {
+        const child = skeletonNodes[childPointer];
         if (!child.pure)
           node.pure = false;
       }
       for (const childTree of node.childrenTrees || []) {
-        if (!((_i = (_h = skeletonTrees[childTree]) == null ? void 0 : _h.root) == null ? void 0 : _i.pure))
+        if (!((_i = skeletonNodes[(_h = skeletonTrees[childTree]) == null ? void 0 : _h.root]) == null ? void 0 : _i.pure))
           node.pure = false;
       }
       return node;
     }
-    function makeSkeletonTree(schema2, schemaId, options, getJSONRef, skeletonTrees, validates, validationErrors, normalizedLayouts, expressions, pointer, title2) {
-      const root = makeSkeletonNode(
-        schema2,
-        schemaId,
-        options,
-        getJSONRef,
-        skeletonTrees,
-        validates,
-        validationErrors,
-        normalizedLayouts,
-        expressions,
-        "",
-        pointer,
-        null,
-        true
-      );
-      validates.push(root.pointer);
-      return { title: title2, root };
+    function makeSkeletonTree(schema2, schemaId, options, getJSONRef, skeletonTrees, skeletonNodes, validates, validationErrors, normalizedLayouts, expressions, pointer, title2) {
+      if (!skeletonNodes[pointer]) {
+        skeletonNodes[pointer] = "recursing";
+        skeletonNodes[pointer] = makeSkeletonNode(
+          schema2,
+          schemaId,
+          options,
+          getJSONRef,
+          skeletonTrees,
+          skeletonNodes,
+          validates,
+          validationErrors,
+          normalizedLayouts,
+          expressions,
+          "",
+          pointer,
+          true
+        );
+        validates.push(pointer);
+      }
+      return { title: title2, root: pointer };
     }
     function shallowProduceArray(previousArray = [], newArray = []) {
       if (!previousArray || !newArray || previousArray.length !== newArray.length)
@@ -70226,7 +70267,7 @@ Reason: ${error2}`);
     const fillOptions$1 = (partialOptions) => {
       let ajv2 = partialOptions.ajv;
       if (!ajv2) {
-        const ajvOpts = { allErrors: true, strict: false };
+        const ajvOpts = { allErrors: true, strict: false, verbose: true };
         if (partialOptions.ajvOptions)
           Object.assign(ajvOpts, partialOptions.ajvOptions);
         if (partialOptions.code)
@@ -70284,6 +70325,7 @@ Reason: ${error2}`);
       const expressionsDefinitions = [];
       const validationErrors = {};
       const skeletonTrees = {};
+      const skeletonNodes = {};
       const mainTreePointer = `${schema2.$id}#`;
       skeletonTrees[mainTreePointer] = "recursing";
       skeletonTrees[mainTreePointer] = makeSkeletonTree(
@@ -70292,6 +70334,7 @@ Reason: ${error2}`);
         options,
         getJSONRef,
         skeletonTrees,
+        skeletonNodes,
         validatePointers,
         validationErrors,
         normalizedLayouts,
@@ -70336,6 +70379,7 @@ Reason: ${error2}`);
         schema: schema2,
         mainTree: mainTreePointer,
         skeletonTrees,
+        skeletonNodes,
         validates,
         validationErrors,
         normalizedLayouts,
@@ -71018,14 +71062,16 @@ Reason: ${error2}`);
       const originalError = ((_b = (_a2 = error2.params) == null ? void 0 : _a2.errors) == null ? void 0 : _b[0]) ?? error2;
       if (parentDataPath === originalError.instancePath && ((_c = originalError.params) == null ? void 0 : _c.missingProperty) === skeleton.key)
         return true;
-      if (originalError.instancePath === dataPath && originalError.schemaPath === skeleton.pointer)
+      if (originalError.instancePath === dataPath && (originalError.schemaPath === skeleton.pointer || originalError.schemaPath === skeleton.refPointer))
         return true;
       return false;
     };
     const matchChildError = (error2, skeleton, dataPath, parentDataPath) => {
-      if (!(error2.schemaPath === skeleton.pointer || error2.schemaPath.startsWith(skeleton.pointer + "/")))
+      var _a2, _b;
+      const originalError = ((_b = (_a2 = error2.params) == null ? void 0 : _a2.errors) == null ? void 0 : _b[0]) ?? error2;
+      if (!(originalError.schemaPath === skeleton.pointer || originalError.schemaPath.startsWith(skeleton.pointer + "/")) && !(originalError.schemaPath === skeleton.refPointer || originalError.schemaPath.startsWith(skeleton.refPointer + "/")))
         return false;
-      if (error2.instancePath.startsWith(dataPath))
+      if (originalError.instancePath.startsWith(dataPath))
         return true;
       return false;
     };
@@ -71099,7 +71145,10 @@ Reason: ${error2}`);
             childLayout.key
           )))
             continue;
-          const childSkeleton = ((_b = skeleton.children) == null ? void 0 : _b.find((c) => c.key === childLayout.key)) ?? skeleton;
+          let childSkeleton = skeleton;
+          const childSkeletonKey = (_b = skeleton.children) == null ? void 0 : _b.find((c) => compiledLayout.skeletonNodes[c].key === childLayout.key);
+          if (childSkeletonKey !== void 0)
+            childSkeleton = compiledLayout.skeletonNodes[childSkeletonKey];
           if (childSkeleton.condition) {
             if (!evalExpression(compiledLayout.expressions, childSkeleton.condition, objectData, parentOptions, display, layout, compiledLayout.validates, context.rootData, parentContext)) {
               continue;
@@ -71132,14 +71181,16 @@ Reason: ${error2}`);
         }
       }
       if (key === "$oneOf" && skeleton.childrenTrees) {
-        const activeChildTreeIndex = fullKey in context.activatedItems ? context.activatedItems[fullKey] : (_d = skeleton.childrenTrees) == null ? void 0 : _d.findIndex((childTree) => compiledLayout.validates[compiledLayout.skeletonTrees[childTree].root.pointer](data));
+        const activeChildTreeIndex = fullKey in context.activatedItems ? context.activatedItems[fullKey] : (_d = skeleton.childrenTrees) == null ? void 0 : _d.findIndex((childTree) => compiledLayout.validates[compiledLayout.skeletonTrees[childTree].root](data));
         if (activeChildTreeIndex !== -1) {
           context.errors = (_e = context.errors) == null ? void 0 : _e.filter((error3) => {
             var _a3, _b2;
             const originalError = ((_b2 = (_a3 = error3.params) == null ? void 0 : _a3.errors) == null ? void 0 : _b2[0]) ?? error3;
-            if (originalError.schemaPath === skeleton.pointer && originalError.keyword === "oneOf")
+            if ((originalError.schemaPath === skeleton.pointer || originalError.schemaPath === skeleton.refPointer) && originalError.keyword === "oneOf")
               return false;
             if (originalError.schemaPath.startsWith(skeleton.pointer) && !originalError.schemaPath.startsWith(skeleton.pointer + "/" + activeChildTreeIndex))
+              return false;
+            if (originalError.schemaPath.startsWith(skeleton.refPointer) && !originalError.schemaPath.startsWith(skeleton.refPointer + "/" + activeChildTreeIndex))
               return false;
             return true;
           });
@@ -71157,7 +71208,7 @@ Reason: ${error2}`);
               fullKey,
               dataPath,
               dataPath,
-              activeChildTree.root,
+              compiledLayout.skeletonNodes[activeChildTree.root],
               null,
               display,
               data,
@@ -71175,7 +71226,7 @@ Reason: ${error2}`);
         );
         const childSkeleton = (
           /** @type {import('../index.js').SkeletonNode} */
-          ((_g = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _g[0]) && ((_i = compiledLayout.skeletonTrees[(_h = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _h[0]]) == null ? void 0 : _i.root)
+          ((_g = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _g[0]) && compiledLayout.skeletonNodes[(_i = compiledLayout.skeletonTrees[(_h = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _h[0]]) == null ? void 0 : _i.root]
         );
         const listItemOptions = layout.listEditMode === "inline" ? options : produceReadonlyArrayItemOptions(options);
         children = [];
@@ -71339,7 +71390,8 @@ Reason: ${error2}`);
       }
     }
     function createStateTree(context, options, compiledLayout, skeleton, display, data, validationState, reusedStateTree) {
-      const validate2 = compiledLayout.validates[skeleton.root.pointer];
+      var _a2, _b;
+      const validate2 = compiledLayout.validates[skeleton.root];
       const valid = validate2(data);
       if (validate2.errors) {
         for (const error2 of validate2.errors) {
@@ -71347,6 +71399,16 @@ Reason: ${error2}`);
             compiledLayout.localizeErrors([error2]);
         }
         context.errors = validate2.errors;
+        if (context.errors.length) {
+          for (const error2 of context.errors) {
+            const originalError = ((_b = (_a2 = error2.params) == null ? void 0 : _a2.errors) == null ? void 0 : _b[0]) ?? error2;
+            if (originalError == null ? void 0 : originalError.parentSchema.__pointer) {
+              originalError.schemaPath = originalError == null ? void 0 : originalError.parentSchema.__pointer;
+              if (originalError.keyword === "oneOf")
+                originalError.schemaPath += "/oneOf";
+            }
+          }
+        }
         if ([true, "error"].includes(options.removeAdditional)) {
           context.additionalPropertiesErrors = validate2.errors.filter((error2) => error2.keyword === "additionalProperties" || error2.keyword === "unevaluatedProperties");
         }
@@ -71360,7 +71422,7 @@ Reason: ${error2}`);
         null,
         "",
         null,
-        skeleton.root,
+        compiledLayout.skeletonNodes[skeleton.root],
         null,
         display,
         data,
@@ -78657,14 +78719,14 @@ Reason: ${error2}`);
           const items2 = [];
           for (const childTreePointer of props.modelValue.skeleton.childrenTrees || []) {
             const childTree = props.statefulLayout.compiledLayout.skeletonTrees[childTreePointer];
-            const childLayout = props.statefulLayout.compiledLayout.normalizedLayouts[childTree.root.pointer];
+            const childLayout = props.statefulLayout.compiledLayout.normalizedLayouts[childTree.root];
             if (!isCompObject(childLayout) || !childLayout.if || !!props.statefulLayout.evalNodeExpression(props.modelValue, childLayout.if, props.modelValue.data)) {
               items2.push(childTree);
             }
           }
           fieldProps2.items = items2;
           fieldProps2.itemTitle = "title";
-          fieldProps2.itemValue = (childTree) => childTree.root.pointer;
+          fieldProps2.itemValue = (childTree) => childTree.root;
           return fieldProps2;
         });
         return (_ctx, _cache) => {
