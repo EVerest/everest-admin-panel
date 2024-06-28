@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-1iPq6nMz.js"(exports, module) {
+  "assets/index-3Xt4ET9e.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -11185,6 +11185,16 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         props: _props,
         provideSubDefaults
       };
+    }
+    function useDefaults() {
+      let props = arguments.length > 0 && arguments[0] !== void 0 ? arguments[0] : {};
+      let name = arguments.length > 1 ? arguments[1] : void 0;
+      const {
+        props: _props,
+        provideSubDefaults
+      } = internalUseDefaults(props, name);
+      provideSubDefaults();
+      return _props;
     }
     function defineComponent(options) {
       options._setup = options._setup ?? options.setup;
@@ -47741,8 +47751,8 @@ Reason: ${error2}`);
       }
     }
     function iterateKeywords(it2, group) {
-      const { gen, schema: schema2, opts: { useDefaults } } = it2;
-      if (useDefaults)
+      const { gen, schema: schema2, opts: { useDefaults: useDefaults2 } } = it2;
+      if (useDefaults2)
         (0, defaults_1.assignDefaults)(it2, group.type);
       gen.block(() => {
         for (const rule of group.rules) {
@@ -56482,7 +56492,7 @@ Reason: ${error2}`);
         e.message = out;
       }
     };
-    var nl = function localize_nl(errors2) {
+    var nl$1 = function localize_nl(errors2) {
       if (!(errors2 && errors2.length))
         return;
       for (const e of errors2) {
@@ -58082,7 +58092,7 @@ Reason: ${error2}`);
       ja,
       ko,
       nb,
-      nl,
+      nl: nl$1,
       pl,
       "pt-BR": ptBR,
       ru,
@@ -67792,9 +67802,42 @@ Reason: ${error2}`);
       undo: "Défaire",
       redo: "Refaire"
     };
+    const nl = {
+      errorOneOf: "Kies er een",
+      errorRequired: "benodigde informatie",
+      addItem: "Item toevoegen",
+      delete: "Verwijderen",
+      edit: "Bewerken",
+      close: "Sluiten",
+      duplicate: "Verveelvoudigen",
+      sort: "Sorteren",
+      up: "Omhoog verplaatsen",
+      down: "Omlaag verplaatsen",
+      showHelp: "Toon helpbericht",
+      mdeLink1: "[Link titel",
+      mdeLink2: "](link url)",
+      mdeImg1: "![](",
+      mdeImg2: "afbeelding url)",
+      mdeTable1: "",
+      mdeTable2: "\n\n| Kolom 1  | Kolom 2  | Kolom 3  |\n| -------- | -------- | -------- |\n| Tekst    | Tekst    | Tekst    |\n\n",
+      bold: "Vet",
+      italic: "Cursief",
+      heading: "Titel",
+      quote: "Citaat",
+      unorderedList: "Ongeordende lijst",
+      orderedList: "Geordende lijst",
+      createLink: "Maak een koppeling",
+      insertImage: "Afbeelding invoegen",
+      createTable: "Tabel aanmaken",
+      preview: "Voorbeeld",
+      mdeGuide: "Documentatie over syntaxis",
+      undo: "Ongedaan maken",
+      redo: "Opnieuw"
+    };
     const i18n = {
       en,
-      fr
+      fr,
+      nl
     };
     const schema$1 = {
       "$id": "https://json-layout.github.io/layout-keyword",
@@ -77287,17 +77330,14 @@ Reason: ${error2}`);
           return openBlock(), createElementBlock("div", _hoisted_1$3, [
             createVNode(unref(VSlideXReverseTransition), null, {
               default: withCtx(() => [
-                withDirectives(createVNode(unref(VAlert), {
-                  color: "info",
-                  density: __props.node.options.density
-                }, {
+                withDirectives(createVNode(unref(VAlert), { color: "info" }, {
                   default: withCtx(() => [
                     createBaseVNode("div", {
                       innerHTML: __props.node.layout.help
                     }, null, 8, _hoisted_2$2)
                   ]),
                   _: 1
-                }, 8, ["density"]), [
+                }, 512), [
                   [vShow, show.value]
                 ])
               ]),
@@ -77331,6 +77371,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfNode");
         const props = __props;
         const beforeAfterClasses = {
           compact: "my-1",
@@ -77352,47 +77393,54 @@ Reason: ${error2}`);
           console.error(`vjsf: missing component to render vjsf node "${props.modelValue.layout.comp}", maybe you forgot to register a component from a plugin ?`);
         }
         return (_ctx, _cache) => {
-          return __props.modelValue.layout.comp !== "none" ? (openBlock(), createBlock(unref(VCol), {
-            key: 0,
-            cols: __props.modelValue.cols,
-            class: normalizeClass(nodeClasses.value)
+          return openBlock(), createBlock(unref(VDefaultsProvider), {
+            defaults: { global: { density: props.modelValue.options.density } }
           }, {
-            default: withCtx(() => {
-              var _a2, _b, _c, _d, _e, _f;
-              return [
-                ((_a2 = __props.modelValue.layout.slots) == null ? void 0 : _a2.before) ? (openBlock(), createBlock(_sfc_main$B, {
-                  key: "before",
-                  "layout-slot": (_b = __props.modelValue.layout.slots) == null ? void 0 : _b.before,
-                  node: __props.modelValue,
-                  "stateful-layout": __props.statefulLayout,
-                  class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
-                }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true),
-                __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$A, {
-                  key: 1,
-                  node: __props.modelValue,
-                  class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
-                }, null, 8, ["node", "class"])) : createCommentVNode("", true),
-                ((_c = __props.modelValue.layout.slots) == null ? void 0 : _c.component) ? (openBlock(), createBlock(_sfc_main$B, {
-                  key: "component",
-                  "layout-slot": (_d = __props.modelValue.layout.slots) == null ? void 0 : _d.component,
-                  node: __props.modelValue,
-                  "stateful-layout": __props.statefulLayout
-                }, null, 8, ["layout-slot", "node", "stateful-layout"])) : (openBlock(), createBlock(resolveDynamicComponent(props.statefulLayout.options.nodeComponents[__props.modelValue.layout.comp]), {
-                  key: 3,
-                  "model-value": __props.modelValue,
-                  "stateful-layout": __props.statefulLayout
-                }, null, 8, ["model-value", "stateful-layout"])),
-                ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$B, {
-                  key: "after",
-                  "layout-slot": (_f = __props.modelValue.layout.slots) == null ? void 0 : _f.after,
-                  node: __props.modelValue,
-                  "stateful-layout": __props.statefulLayout,
-                  class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
-                }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true)
-              ];
-            }),
+            default: withCtx(() => [
+              __props.modelValue.layout.comp !== "none" ? (openBlock(), createBlock(unref(VCol), {
+                key: 0,
+                cols: __props.modelValue.cols,
+                class: normalizeClass(nodeClasses.value)
+              }, {
+                default: withCtx(() => {
+                  var _a2, _b, _c, _d, _e, _f;
+                  return [
+                    ((_a2 = __props.modelValue.layout.slots) == null ? void 0 : _a2.before) ? (openBlock(), createBlock(_sfc_main$B, {
+                      key: "before",
+                      "layout-slot": (_b = __props.modelValue.layout.slots) == null ? void 0 : _b.before,
+                      node: __props.modelValue,
+                      "stateful-layout": __props.statefulLayout,
+                      class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
+                    }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true),
+                    __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$A, {
+                      key: 1,
+                      node: __props.modelValue,
+                      class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
+                    }, null, 8, ["node", "class"])) : createCommentVNode("", true),
+                    ((_c = __props.modelValue.layout.slots) == null ? void 0 : _c.component) ? (openBlock(), createBlock(_sfc_main$B, {
+                      key: "component",
+                      "layout-slot": (_d = __props.modelValue.layout.slots) == null ? void 0 : _d.component,
+                      node: __props.modelValue,
+                      "stateful-layout": __props.statefulLayout
+                    }, null, 8, ["layout-slot", "node", "stateful-layout"])) : (openBlock(), createBlock(resolveDynamicComponent(props.statefulLayout.options.nodeComponents[__props.modelValue.layout.comp]), {
+                      key: 3,
+                      "model-value": __props.modelValue,
+                      "stateful-layout": __props.statefulLayout
+                    }, null, 8, ["model-value", "stateful-layout"])),
+                    ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$B, {
+                      key: "after",
+                      "layout-slot": (_f = __props.modelValue.layout.slots) == null ? void 0 : _f.after,
+                      node: __props.modelValue,
+                      "stateful-layout": __props.statefulLayout,
+                      class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
+                    }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true)
+                  ];
+                }),
+                _: 1
+              }, 8, ["cols", "class"])) : createCommentVNode("", true)
+            ]),
             _: 1
-          }, 8, ["cols", "class"])) : createCommentVNode("", true);
+          }, 8, ["defaults"]);
         };
       }
     };
@@ -77768,14 +77816,13 @@ Reason: ${error2}`);
             __props.node.error && __props.node.validated ? (openBlock(), createBlock(unref(VAlert), {
               key: 2,
               type: "error",
-              class: normalizeClass(`mt-${titleDepthBase.value - __props.node.options.titleDepth}`),
-              density: __props.node.options.density
+              class: normalizeClass(`mt-${titleDepthBase.value - __props.node.options.titleDepth}`)
             }, {
               default: withCtx(() => [
                 createTextVNode(toDisplayString(__props.node.error), 1)
               ]),
               _: 1
-            }, 8, ["class", "density"])) : createCommentVNode("", true)
+            }, 8, ["class"])) : createCommentVNode("", true)
           ], 2)) : createCommentVNode("", true);
         };
       }
@@ -77795,6 +77842,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfSection");
         return (_ctx, _cache) => {
           var _a2, _b;
           return openBlock(), createElementBlock(Fragment, null, [
@@ -77838,11 +77886,7 @@ Reason: ${error2}`);
     };
     const defaultProps = {
       fieldPropsCompact: {
-        density: "compact",
         hideDetails: "auto"
-      },
-      fieldPropsComfortable: {
-        density: "comfortable"
       },
       fieldPropsReadOnly: { hideDetails: "auto", variant: "plain" },
       fieldPropsSummary: { hideDetails: true }
@@ -77868,8 +77912,6 @@ Reason: ${error2}`);
     function getInputProps(node, statefulLayout, layoutPropsMap, isMainComp = true) {
       const options = node.options;
       const propsLevels = [];
-      if (options.density === "comfortable")
-        propsLevels.push(defaultProps.fieldPropsComfortable);
       if (options.density === "compact")
         propsLevels.push(defaultProps.fieldPropsCompact);
       if (node.options.readOnly)
@@ -77945,6 +77987,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfTextField");
         const fieldProps = computed(() => getInputProps(props.modelValue, props.statefulLayout, ["placeholder"]));
         const fieldSlots = computed(() => getCompSlots(props.modelValue, props.statefulLayout));
         return () => h(VTextField, fieldProps.value, fieldSlots.value);
@@ -77964,6 +78007,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfTextArea");
         const textarea = ref$1(null);
         const fieldProps = computed(() => {
           const inputProps = getInputProps(props.modelValue, props.statefulLayout, ["placeholder"]);
@@ -77996,6 +78040,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfCheckbox");
         const props = __props;
         const fieldProps = computed(() => {
           const inputProps = getInputProps(props.modelValue, props.statefulLayout);
@@ -78025,6 +78070,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfSwitch");
         const props = __props;
         const fieldProps = computed(() => {
           const inputProps = getInputProps(props.modelValue, props.statefulLayout);
@@ -78053,6 +78099,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfNumberField");
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["step", "min", "max", "placeholder"]);
           fieldProps2.type = "number";
@@ -78078,6 +78125,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfSlider");
         const props = __props;
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
@@ -78181,6 +78229,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfDatePicker");
         const props = __props;
         const vDate = useDate();
         const datePickerProps = computed(() => {
@@ -78228,6 +78277,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfDateTimePicker");
         return (_ctx, _cache) => {
           return " TODO date-time ";
         };
@@ -78248,6 +78298,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfColorPicker");
         const props = __props;
         const colorPickerProps = computed(() => {
           const colorPickerProps2 = getCompProps(props.modelValue, true);
@@ -78422,6 +78473,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfSelect");
         const getItems = useGetItems(props);
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
@@ -78467,6 +78519,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfAutocomplete");
         const getItems = useGetItems(props);
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
@@ -78516,6 +78569,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfRadioGroup");
         const getItems = useGetItems(props);
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
@@ -78568,7 +78622,7 @@ Reason: ${error2}`);
           const slots = getCompSlots(props.modelValue, props.statefulLayout);
           if (!slots.default) {
             slots.default = () => {
-              var _a2, _b;
+              var _a2;
               const children = [h(VLabel, { text: fieldProps.value.label })];
               if (getItems.loading.value) {
                 children.push(h(VSkeletonLoader, { type: "chip" }));
@@ -78584,7 +78638,6 @@ Reason: ${error2}`);
                   checkboxes.push(h(props.type === "switch" ? VSwitch : VCheckbox, {
                     label: item.title,
                     hideDetails: true,
-                    density: (_b = props.modelValue.options) == null ? void 0 : _b.density,
                     key: item.key,
                     modelValue,
                     onClick: () => {
@@ -78633,6 +78686,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfCheckboxGroup");
         return () => {
           return h(_sfc_main$f, {
             modelValue: props.modelValue,
@@ -78656,6 +78710,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfSwitchGroup");
         return () => {
           return h(_sfc_main$f, {
             modelValue: props.modelValue,
@@ -78680,6 +78735,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfOneOfSelect");
         const props = __props;
         const activeChildTree = ref$1(void 0);
         watch(() => props.modelValue, () => {
@@ -78742,6 +78798,18 @@ Reason: ${error2}`);
         };
       }
     };
+    function useCompDefaultProps(name, localDefaults = null) {
+      const defaults2 = inject$1(Symbol.for("vuetify:defaults"));
+      if (!defaults2)
+        throw new Error("[vjsf] Could not find defaults instance");
+      return computed(() => {
+        var _a2;
+        const componentDefaults = ((_a2 = defaults2.value) == null ? void 0 : _a2[name]) ?? {};
+        if (!localDefaults)
+          return componentDefaults;
+        return { ...componentDefaults, ...localDefaults };
+      });
+    }
     const _sfc_main$b = {
       __name: "tabs",
       props: {
@@ -78757,22 +78825,24 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfTabs");
+        const vSheetProps = useCompDefaultProps("VjsfTabs-VSheet", { border: true });
         const tab = ref$1(0);
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
             createVNode(_sfc_main$x, { node: __props.modelValue }, null, 8, ["node"]),
-            createVNode(unref(VSheet), { border: "" }, {
+            createVNode(unref(VSheet), normalizeProps(guardReactiveProps(unref(vSheetProps))), {
               default: withCtx(() => [
                 createVNode(unref(VTabs), {
                   modelValue: tab.value,
-                  "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => tab.value = $event)
+                  "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => tab.value = $event),
+                  direction: "horizontal"
                 }, {
                   default: withCtx(() => [
                     (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child, i2) => {
                       return openBlock(), createBlock(unref(VTab), {
                         key: child.key,
                         value: i2,
-                        density: __props.modelValue.options.density,
                         color: child.validated && (child.error || child.childError) ? "error" : void 0
                       }, {
                         default: withCtx(() => [
@@ -78788,7 +78858,7 @@ Reason: ${error2}`);
                           createTextVNode(" " + toDisplayString(child.layout.title ?? child.layout.label), 1)
                         ]),
                         _: 2
-                      }, 1032, ["value", "density", "color"]);
+                      }, 1032, ["value", "color"]);
                     }), 128))
                   ]),
                   _: 1
@@ -78833,7 +78903,7 @@ Reason: ${error2}`);
                 }, 8, ["modelValue"])
               ]),
               _: 1
-            })
+            }, 16)
           ], 64);
         };
       }
@@ -78854,11 +78924,13 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfVerticalTabs");
+        const vSheetProps = useCompDefaultProps("VjsfVerticalTabs-VSheet", { border: true });
         const tab = ref$1(0);
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
             createVNode(_sfc_main$x, { node: __props.modelValue }, null, 8, ["node"]),
-            createVNode(unref(VSheet), { border: "" }, {
+            createVNode(unref(VSheet), normalizeProps(guardReactiveProps(unref(vSheetProps))), {
               default: withCtx(() => [
                 createBaseVNode("div", _hoisted_1$1, [
                   createVNode(unref(VTabs), {
@@ -78933,7 +79005,7 @@ Reason: ${error2}`);
                 ])
               ]),
               _: 1
-            })
+            }, 16)
           ], 64);
         };
       }
@@ -78952,6 +79024,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfCombobox");
         const items2 = shallowRef(props.modelValue.layout.items ?? []);
         const loading = ref$1(false);
         let lastStateTree = null;
@@ -79009,6 +79082,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfNumberCombobox");
         const items2 = shallowRef(props.modelValue.layout.items ?? []);
         const loading = ref$1(false);
         let lastStateTree = null;
@@ -79068,6 +79142,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfExpansionPanels");
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
             createVNode(_sfc_main$x, { node: __props.modelValue }, null, 8, ["node"]),
@@ -79146,6 +79221,7 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfStepper");
         const props = __props;
         const step = ref$1(0);
         const firstErrorIndex = computed(() => {
@@ -79330,6 +79406,8 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
+        useDefaults({}, "VjsfList");
+        const vSheetProps = useCompDefaultProps("VjsfList-VSheet", { border: true });
         const props = __props;
         const theme = useTheme();
         const { activeDnd, sortableArray, draggable, hovered, dragging, itemBind, handleBind } = useDnd(props.modelValue.children, () => {
@@ -79389,14 +79467,9 @@ Reason: ${error2}`);
           return "transparent";
         });
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VSheet), {
-            elevation: 2,
-            rounded: ""
-          }, {
+          return openBlock(), createBlock(unref(VSheet), normalizeProps(guardReactiveProps(unref(vSheetProps))), {
             default: withCtx(() => [
-              createVNode(unref(VList), {
-                density: __props.modelValue.options.density
-              }, {
+              createVNode(unref(VList), null, {
                 default: withCtx(() => [
                   __props.modelValue.layout.title ? (openBlock(), createBlock(unref(VListSubheader), { key: 0 }, {
                     default: withCtx(() => [
@@ -79409,7 +79482,6 @@ Reason: ${error2}`);
                       key: props.modelValue.children.findIndex((c) => c === child)
                     }, [
                       createVNode(unref(VListItem), mergeProps({ ref_for: true }, unref(itemBind)(childIndex), {
-                        density: __props.modelValue.options.density,
                         draggable: unref(draggable) === childIndex,
                         variant: "flat",
                         style: `border: 1px solid ${itemBorderColor.value(child, childIndex)}`,
@@ -79500,9 +79572,7 @@ Reason: ${error2}`);
                                         }), null, 16, ["density"])
                                       ]),
                                       default: withCtx(() => [
-                                        createVNode(unref(VList), {
-                                          density: __props.modelValue.options.density
-                                        }, {
+                                        createVNode(unref(VList), null, {
                                           default: withCtx(() => [
                                             __props.modelValue.layout.listActions.includes("delete") ? (openBlock(), createBlock(unref(VListItem), {
                                               key: 0,
@@ -79555,7 +79625,7 @@ Reason: ${error2}`);
                                             }, 1032, ["onClick"])) : createCommentVNode("", true)
                                           ]),
                                           _: 2
-                                        }, 1032, ["density"])
+                                        }, 1024)
                                       ]),
                                       _: 2
                                     }, 1032, ["onUpdate:modelValue"])
@@ -79567,7 +79637,7 @@ Reason: ${error2}`);
                           ]),
                           key: "0"
                         } : void 0
-                      ]), 1040, ["density", "draggable", "style"]),
+                      ]), 1040, ["draggable", "style"]),
                       childIndex < __props.modelValue.children.length - 1 ? (openBlock(), createBlock(unref(VDivider), { key: 0 })) : createCommentVNode("", true)
                     ], 64);
                   }), 128)),
@@ -79576,24 +79646,23 @@ Reason: ${error2}`);
                       createVNode(unref(VSpacer)),
                       createVNode(unref(VBtn), {
                         color: "primary",
-                        density: __props.modelValue.options.density,
                         onClick: pushEmptyItem
                       }, {
                         default: withCtx(() => [
                           createTextVNode(toDisplayString(__props.modelValue.messages.addItem), 1)
                         ]),
                         _: 1
-                      }, 8, ["density"]),
+                      }),
                       createVNode(unref(VSpacer))
                     ]),
                     _: 1
                   })) : createCommentVNode("", true)
                 ]),
                 _: 1
-              }, 8, ["density"])
+              })
             ]),
             _: 1
-          });
+          }, 16);
         };
       }
     };
@@ -79611,6 +79680,7 @@ Reason: ${error2}`);
         }
       },
       setup(props) {
+        useDefaults({}, "VjsfFileInput");
         const fieldProps = computed(() => {
           const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["placeholder", "accept"]);
           if (props.modelValue.layout.multiple) {
