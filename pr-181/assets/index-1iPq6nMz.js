@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-o6pQrkVR.js"(exports, module) {
+  "assets/index-1iPq6nMz.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.30
+    * @vue/shared v3.4.31
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -622,11 +622,14 @@ var require_index_001 = __commonJS({
     function includeBooleanAttr(value) {
       return !!value || value === "";
     }
+    const isRef$1 = (val) => {
+      return !!(val && val.__v_isRef === true);
+    };
     const toDisplayString = (val) => {
-      return isString$1(val) ? val : val == null ? "" : isArray$1(val) || isObject$4(val) && (val.toString === objectToString || !isFunction$1(val.toString)) ? JSON.stringify(val, replacer, 2) : String(val);
+      return isString$1(val) ? val : val == null ? "" : isArray$1(val) || isObject$4(val) && (val.toString === objectToString || !isFunction$1(val.toString)) ? isRef$1(val) ? toDisplayString(val.value) : JSON.stringify(val, replacer, 2) : String(val);
     };
     const replacer = (_key, val) => {
-      if (val && val.__v_isRef) {
+      if (isRef$1(val)) {
         return replacer(_key, val.value);
       } else if (isMap$1(val)) {
         return {
@@ -658,7 +661,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.30
+    * @vue/reactivity v3.4.31
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -754,7 +757,7 @@ var require_index_001 = __commonJS({
         this.scheduler = scheduler;
         this.active = true;
         this.deps = [];
-        this._dirtyLevel = 5;
+        this._dirtyLevel = 4;
         this._trackId = 0;
         this._runnings = 0;
         this._shouldSchedule = false;
@@ -762,20 +765,14 @@ var require_index_001 = __commonJS({
         recordEffectScope(this, scope2);
       }
       get dirty() {
-        if (this._dirtyLevel === 2)
-          return false;
-        if (this._dirtyLevel === 3 || this._dirtyLevel === 4) {
+        if (this._dirtyLevel === 2 || this._dirtyLevel === 3) {
           this._dirtyLevel = 1;
           pauseTracking();
           for (let i2 = 0; i2 < this._depsLength; i2++) {
             const dep = this.deps[i2];
             if (dep.computed) {
-              if (dep.computed.effect._dirtyLevel === 2) {
-                resetTracking();
-                return true;
-              }
               triggerComputed(dep.computed);
-              if (this._dirtyLevel >= 5) {
+              if (this._dirtyLevel >= 4) {
                 break;
               }
             }
@@ -785,10 +782,10 @@ var require_index_001 = __commonJS({
           }
           resetTracking();
         }
-        return this._dirtyLevel >= 5;
+        return this._dirtyLevel >= 4;
       }
       set dirty(v) {
-        this._dirtyLevel = v ? 5 : 0;
+        this._dirtyLevel = v ? 4 : 0;
       }
       run() {
         this._dirtyLevel = 0;
@@ -882,22 +879,13 @@ var require_index_001 = __commonJS({
       pauseScheduling();
       for (const effect2 of dep.keys()) {
         let tracking;
-        if (!dep.computed && effect2.computed) {
-          if (effect2._runnings > 0 && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
-            effect2._dirtyLevel = 2;
-            continue;
-          }
-        }
         if (effect2._dirtyLevel < dirtyLevel && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
           effect2._shouldSchedule || (effect2._shouldSchedule = effect2._dirtyLevel === 0);
-          if (effect2.computed && effect2._dirtyLevel === 2) {
-            effect2._shouldSchedule = true;
-          }
           effect2._dirtyLevel = dirtyLevel;
         }
         if (effect2._shouldSchedule && (tracking != null ? tracking : tracking = dep.get(effect2) === effect2._trackId)) {
           effect2.trigger();
-          if ((!effect2._runnings || effect2.allowRecurse) && effect2._dirtyLevel !== 3) {
+          if ((!effect2._runnings || effect2.allowRecurse) && effect2._dirtyLevel !== 2) {
             effect2._shouldSchedule = false;
             if (effect2.scheduler) {
               queueEffectSchedulers.push(effect2.scheduler);
@@ -982,7 +970,7 @@ var require_index_001 = __commonJS({
         if (dep) {
           triggerEffects(
             dep,
-            5
+            4
           );
         }
       }
@@ -1533,7 +1521,7 @@ var require_index_001 = __commonJS({
           () => getter(this._value),
           () => triggerRefValue(
             this,
-            this.effect._dirtyLevel === 3 ? 3 : 4
+            this.effect._dirtyLevel === 2 ? 2 : 3
           )
         );
         this.effect.computed = this;
@@ -1542,15 +1530,12 @@ var require_index_001 = __commonJS({
       }
       get value() {
         const self2 = toRaw(this);
-        const lastDirtyLevel = self2.effect._dirtyLevel;
         if ((!self2._cacheable || self2.effect.dirty) && hasChanged(self2._value, self2._value = self2.effect.run())) {
-          if (lastDirtyLevel !== 3) {
-            triggerRefValue(self2, 5);
-          }
+          triggerRefValue(self2, 4);
         }
         trackRefValue(self2);
         if (self2.effect._dirtyLevel >= 2) {
-          triggerRefValue(self2, 3);
+          triggerRefValue(self2, 2);
         }
         return self2._value;
       }
@@ -1593,7 +1578,7 @@ var require_index_001 = __commonJS({
         );
       }
     }
-    function triggerRefValue(ref2, dirtyLevel = 5, newVal, oldVal) {
+    function triggerRefValue(ref2, dirtyLevel = 4, newVal, oldVal) {
       ref2 = toRaw(ref2);
       const dep = ref2.dep;
       if (dep) {
@@ -1637,7 +1622,7 @@ var require_index_001 = __commonJS({
           this._rawValue;
           this._rawValue = newVal;
           this._value = useDirectValue ? newVal : toReactive(newVal);
-          triggerRefValue(this, 5);
+          triggerRefValue(this, 4);
         }
       }
     }
@@ -1713,7 +1698,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.30
+    * @vue/runtime-core v3.4.31
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -7133,9 +7118,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.30";
+    const version$2 = "3.4.31";
     /**
-    * @vue/runtime-dom v3.4.30
+    * @vue/runtime-dom v3.4.31
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
