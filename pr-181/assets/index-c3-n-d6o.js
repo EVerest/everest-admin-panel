@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-QT31alSB.js"(exports, module) {
+  "assets/index-c3-n-d6o.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -20405,7 +20405,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
         const {
           teleportTarget
-        } = useTeleport(computed(() => props.attach || props.contained || potentialShadowDomRoot.value instanceof ShadowRoot ? potentialShadowDomRoot.value : false));
+        } = useTeleport(computed(() => props.attach || props.contained || potentialShadowDomRoot.value instanceof ShadowRoot ? potentialShadowDomRoot.value ?? true : false));
         const {
           dimensionStyles
         } = useDimension(props);
@@ -38881,7 +38881,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.10";
+    const version$1 = "3.6.11";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
