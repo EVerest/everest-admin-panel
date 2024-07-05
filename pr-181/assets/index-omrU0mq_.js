@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-C_m74GIK.js"(exports, module) {
+  "assets/index-omrU0mq_.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -27400,7 +27400,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       exports2.glob = typeof commonjsGlobal !== "undefined" ? commonjsGlobal : typeof window !== "undefined" ? window : typeof WorkerGlobalScope !== "undefined" ? self : {};
       exports2.Konva = {
         _global: exports2.glob,
-        version: "9.3.12",
+        version: "9.3.13",
         isBrowser: detectBrowser(),
         isUnminified: /param/.test((function(param) {
         }).toString()),
@@ -35690,23 +35690,25 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return this.textHeight;
       }
       measureSize(text2) {
+        var _a2, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         var _context = getDummyContext(), fontSize = this.fontSize(), metrics;
         _context.save();
         _context.font = this._getContextFont();
         metrics = _context.measureText(text2);
         _context.restore();
+        const scaleFactor = fontSize / 100;
         return {
-          actualBoundingBoxAscent: metrics.actualBoundingBoxAscent,
-          actualBoundingBoxDescent: metrics.actualBoundingBoxDescent,
-          actualBoundingBoxLeft: metrics.actualBoundingBoxLeft,
-          actualBoundingBoxRight: metrics.actualBoundingBoxRight,
-          alphabeticBaseline: metrics.alphabeticBaseline,
-          emHeightAscent: metrics.emHeightAscent,
-          emHeightDescent: metrics.emHeightDescent,
-          fontBoundingBoxAscent: metrics.fontBoundingBoxAscent,
-          fontBoundingBoxDescent: metrics.fontBoundingBoxDescent,
-          hangingBaseline: metrics.hangingBaseline,
-          ideographicBaseline: metrics.ideographicBaseline,
+          actualBoundingBoxAscent: (_a2 = metrics.actualBoundingBoxAscent) !== null && _a2 !== void 0 ? _a2 : 71.58203125 * scaleFactor,
+          actualBoundingBoxDescent: (_b = metrics.actualBoundingBoxDescent) !== null && _b !== void 0 ? _b : 0,
+          actualBoundingBoxLeft: (_c = metrics.actualBoundingBoxLeft) !== null && _c !== void 0 ? _c : -7.421875 * scaleFactor,
+          actualBoundingBoxRight: (_d = metrics.actualBoundingBoxRight) !== null && _d !== void 0 ? _d : 75.732421875 * scaleFactor,
+          alphabeticBaseline: (_e = metrics.alphabeticBaseline) !== null && _e !== void 0 ? _e : 0,
+          emHeightAscent: (_f = metrics.emHeightAscent) !== null && _f !== void 0 ? _f : 100 * scaleFactor,
+          emHeightDescent: (_g = metrics.emHeightDescent) !== null && _g !== void 0 ? _g : -20 * scaleFactor,
+          fontBoundingBoxAscent: (_h = metrics.fontBoundingBoxAscent) !== null && _h !== void 0 ? _h : 91 * scaleFactor,
+          fontBoundingBoxDescent: (_j = metrics.fontBoundingBoxDescent) !== null && _j !== void 0 ? _j : 21 * scaleFactor,
+          hangingBaseline: (_k = metrics.hangingBaseline) !== null && _k !== void 0 ? _k : 72.80000305175781 * scaleFactor,
+          ideographicBaseline: (_l = metrics.ideographicBaseline) !== null && _l !== void 0 ? _l : -21 * scaleFactor,
           width: metrics.width,
           height: fontSize
         };
