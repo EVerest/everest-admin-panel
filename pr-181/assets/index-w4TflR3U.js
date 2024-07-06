@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-omrU0mq_.js"(exports, module) {
+  "assets/index-w4TflR3U.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -43418,7 +43418,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       return mode;
     }
-    var version = "11.9.0";
+    var version = "11.10.0";
     class HTMLInjectionError extends Error {
       constructor(reason, html) {
         super(reason);
@@ -89058,14 +89058,15 @@ Reason: ${error2}`);
       const KEY = {
         className: "attr",
         variants: [
-          { begin: "\\w[\\w :\\/.-]*:(?=[ 	]|$)" },
+          // added brackets support 
+          { begin: /\w[\w :()\./-]*:(?=[ \t]|$)/ },
           {
-            // double quoted keys
-            begin: '"\\w[\\w :\\/.-]*":(?=[ 	]|$)'
+            // double quoted keys - with brackets
+            begin: /"\w[\w :()\./-]*":(?=[ \t]|$)/
           },
           {
-            // single quoted keys
-            begin: "'\\w[\\w :\\/.-]*':(?=[ 	]|$)"
+            // single quoted keys - with brackets
+            begin: /'\w[\w :()\./-]*':(?=[ \t]|$)/
           }
         ]
       };
@@ -89256,6 +89257,7 @@ Reason: ${error2}`);
       };
       return {
         name: "JSON",
+        aliases: ["jsonc"],
         keywords: {
           literal: LITERALS
         },
