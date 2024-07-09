@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-w4TflR3U.js"(exports, module) {
+  "assets/index-rlg9YmnN.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -14550,6 +14550,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         "update:modelValue": (value) => true
       },
       setup(props, _ref) {
+        var _a2;
         let {
           slots
         } = _ref;
@@ -14593,6 +14594,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const normalizedValue = computed(() => clamp(parseFloat(progress.value) / max.value * 100, 0, 100));
         const isReversed = computed(() => isRtl.value !== props.reverse);
         const transition = computed(() => props.indeterminate ? "fade-transition" : "slide-x-transition");
+        const isForcedColorsModeActive = IN_BROWSER && ((_a2 = window.matchMedia) == null ? void 0 : _a2.call(window, "(forced-colors: active)").matches);
         function handleClick(e) {
           if (!intersectionRef.value)
             return;
@@ -14641,13 +14643,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "--v-progress-linear-stream-to": convertToUnit(height.value * (isReversed.value ? 1 : -1))
             }
           }, null), createVNode("div", {
-            "class": ["v-progress-linear__background", backgroundColorClasses.value],
+            "class": ["v-progress-linear__background", !isForcedColorsModeActive ? backgroundColorClasses.value : void 0],
             "style": [backgroundColorStyles.value, {
               opacity: parseFloat(props.bgOpacity),
               width: props.stream ? 0 : void 0
             }]
           }, null), createVNode("div", {
-            "class": ["v-progress-linear__buffer", bufferColorClasses.value],
+            "class": ["v-progress-linear__buffer", !isForcedColorsModeActive ? bufferColorClasses.value : void 0],
             "style": [bufferColorStyles.value, {
               opacity: parseFloat(props.bufferOpacity),
               width: convertToUnit(normalizedBuffer.value, "%")
@@ -14656,7 +14658,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "name": transition.value
           }, {
             default: () => [!props.indeterminate ? createVNode("div", {
-              "class": ["v-progress-linear__determinate", barColorClasses.value],
+              "class": ["v-progress-linear__determinate", !isForcedColorsModeActive ? barColorClasses.value : void 0],
               "style": [barColorStyles.value, {
                 width: convertToUnit(normalizedValue.value, "%")
               }]
@@ -14664,7 +14666,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "class": "v-progress-linear__indeterminate"
             }, [["long", "short"].map((bar) => createVNode("div", {
               "key": bar,
-              "class": ["v-progress-linear__indeterminate", bar, barColorClasses.value],
+              "class": ["v-progress-linear__indeterminate", bar, !isForcedColorsModeActive ? barColorClasses.value : void 0],
               "style": barColorStyles.value
             }, null))])]
           }), slots.default && createVNode("div", {
@@ -18224,13 +18226,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       ZA: 0,
       ZW: 0
     };
-    function getWeekArray(date2, locale) {
+    function getWeekArray(date2, locale, firstDayOfWeek) {
       const weeks = [];
       let currentWeek = [];
       const firstDayOfMonth = startOfMonth(date2);
       const lastDayOfMonth = endOfMonth(date2);
-      const firstDayWeekIndex = (firstDayOfMonth.getDay() - firstDay[locale.slice(-2).toUpperCase()] + 7) % 7;
-      const lastDayWeekIndex = (lastDayOfMonth.getDay() - firstDay[locale.slice(-2).toUpperCase()] + 7) % 7;
+      const first = firstDayOfWeek ?? firstDay[locale.slice(-2).toUpperCase()] ?? 0;
+      const firstDayWeekIndex = (firstDayOfMonth.getDay() - first + 7) % 7;
+      const lastDayWeekIndex = (lastDayOfMonth.getDay() - first + 7) % 7;
       for (let i2 = 0; i2 < firstDayWeekIndex; i2++) {
         const adjacentDay = new Date(firstDayOfMonth);
         adjacentDay.setDate(adjacentDay.getDate() - (firstDayWeekIndex - i2));
@@ -18254,9 +18257,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       }
       return weeks;
     }
-    function startOfWeek(date2, locale) {
+    function startOfWeek(date2, locale, firstDayOfWeek) {
+      const day = firstDayOfWeek ?? firstDay[locale.slice(-2).toUpperCase()] ?? 0;
       const d = new Date(date2);
-      while (d.getDay() !== (firstDay[locale.slice(-2).toUpperCase()] ?? 0)) {
+      while (d.getDay() !== day) {
         d.setDate(d.getDate() - 1);
       }
       return d;
@@ -18298,8 +18302,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return null;
     }
     const sundayJanuarySecond2000 = new Date(2e3, 0, 2);
-    function getWeekdays(locale) {
-      const daysFromSunday = firstDay[locale.slice(-2).toUpperCase()];
+    function getWeekdays(locale, firstDayOfWeek) {
+      const daysFromSunday = firstDayOfWeek ?? firstDay[locale.slice(-2).toUpperCase()] ?? 0;
       return createRange(7).map((i2) => {
         const weekday = new Date(sundayJanuarySecond2000);
         weekday.setDate(sundayJanuarySecond2000.getDate() + daysFromSunday + i2);
@@ -18696,11 +18700,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       addMonths(date2, amount) {
         return addMonths(date2, amount);
       }
-      getWeekArray(date2) {
-        return getWeekArray(date2, this.locale);
+      getWeekArray(date2, firstDayOfWeek) {
+        return getWeekArray(date2, this.locale, firstDayOfWeek ? Number(firstDayOfWeek) : void 0);
       }
-      startOfWeek(date2) {
-        return startOfWeek(date2, this.locale);
+      startOfWeek(date2, firstDayOfWeek) {
+        return startOfWeek(date2, this.locale, firstDayOfWeek ? Number(firstDayOfWeek) : void 0);
       }
       endOfWeek(date2) {
         return endOfWeek(date2, this.locale);
@@ -18759,8 +18763,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       getDiff(date2, comparing, unit) {
         return getDiff(date2, comparing, unit);
       }
-      getWeekdays() {
-        return getWeekdays(this.locale);
+      getWeekdays(firstDayOfWeek) {
+        return getWeekdays(this.locale, firstDayOfWeek ? Number(firstDayOfWeek) : void 0);
       }
       getYear(date2) {
         return getYear(date2);
@@ -20198,7 +20202,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     function useTeleport(target2) {
       const teleportTarget = computed(() => {
-        const _target = target2.value;
+        const _target = target2();
         if (_target === true || !IN_BROWSER)
           return void 0;
         const targetElement = _target === false ? document.body : typeof _target === "string" ? document.querySelector(_target) : _target;
@@ -20399,13 +20403,18 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           isActive,
           isTop: localTop
         });
-        const potentialShadowDomRoot = computed(() => {
-          var _a2;
-          return (_a2 = activatorEl == null ? void 0 : activatorEl.value) == null ? void 0 : _a2.getRootNode();
-        });
         const {
           teleportTarget
-        } = useTeleport(computed(() => props.attach || props.contained || potentialShadowDomRoot.value instanceof ShadowRoot ? potentialShadowDomRoot.value ?? true : false));
+        } = useTeleport(() => {
+          var _a2;
+          const target3 = props.attach || props.contained;
+          if (target3)
+            return target3;
+          const rootNode = (_a2 = activatorEl == null ? void 0 : activatorEl.value) == null ? void 0 : _a2.getRootNode();
+          if (rootNode instanceof ShadowRoot)
+            return rootNode;
+          return false;
+        });
         const {
           dimensionStyles
         } = useDimension(props);
@@ -24106,10 +24115,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const makeVInputProps = propsFactory({
       id: String,
       appendIcon: IconValue,
-      centerAffix: {
-        type: Boolean,
-        default: true
-      },
+      centerAffix: Boolean,
       prependIcon: IconValue,
       hideDetails: [Boolean, String],
       hideSpinButtons: Boolean,
@@ -25249,10 +25255,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         default: "$clear"
       },
       active: Boolean,
-      centerAffix: {
-        type: Boolean,
-        default: void 0
-      },
+      centerAffix: Boolean,
       color: String,
       baseColor: String,
       dirty: Boolean,
@@ -25319,8 +25322,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           rtlClasses
         } = useRtl();
+        const isSingleLine = computed(() => props.singleLine || props.centerAffix);
         const isActive = computed(() => props.dirty || props.active);
-        const hasLabel = computed(() => !props.singleLine && !!(props.label || slots.label));
+        const hasLabel = computed(() => !isSingleLine.value && !!(props.label || slots.label));
         const uid2 = getUid();
         const id2 = computed(() => props.id || `input-${uid2}`);
         const messagesId = computed(() => `${id2.value}-messages`);
@@ -25412,7 +25416,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "class": ["v-field", {
               "v-field--active": isActive.value,
               "v-field--appended": hasAppend,
-              "v-field--center-affix": props.centerAffix ?? !isPlainOrUnderlined.value,
+              "v-field--center-affix": props.centerAffix,
               "v-field--disabled": props.disabled,
               "v-field--dirty": props.dirty,
               "v-field--error": props.error,
@@ -25421,7 +25425,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "v-field--persistent-clear": props.persistentClear,
               "v-field--prepended": hasPrepend,
               "v-field--reverse": props.reverse,
-              "v-field--single-line": props.singleLine,
+              "v-field--single-line": isSingleLine.value,
               "v-field--no-label": !label(),
               [`v-field--variant-${props.variant}`]: true
             }, themeClasses.value, backgroundColorClasses.value, focusClasses.value, loaderClasses.value, roundedClasses.value, rtlClasses.value, props.class],
@@ -25660,7 +25664,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, props.class],
             "style": props.style
           }, rootAttrs, inputProps, {
-            "centerAffix": !isPlainOrUnderlined.value,
             "focused": isFocused.value
           }), {
             ...slots,
@@ -25686,6 +25689,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 "dirty": isDirty.value || props.dirty,
                 "disabled": isDisabled.value,
                 "focused": isFocused.value,
+                "centerAffix": props.centerAffix,
                 "error": isValid2.value === false
               }), {
                 ...slots,
@@ -38883,7 +38887,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.11";
+    const version$1 = "3.6.12";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -52426,8 +52430,10 @@ Reason: ${error2}`);
     const makeVExpansionPanelsProps = propsFactory({
       flat: Boolean,
       ...makeGroupProps(),
-      ...makeVExpansionPanelProps(),
+      ...pick(makeVExpansionPanelProps(), ["bgColor", "collapseIcon", "color", "eager", "elevation", "expandIcon", "focusable", "hideActions", "readonly", "ripple", "rounded", "tile", "static"]),
       ...makeThemeProps(),
+      ...makeComponentProps(),
+      ...makeTagProps(),
       variant: {
         type: String,
         default: "default",
@@ -74966,15 +74972,15 @@ Reason: ${error2}`);
         default: false
       },
       nextIcon: {
-        type: [String],
+        type: IconValue,
         default: "$next"
       },
       prevIcon: {
-        type: [String],
+        type: IconValue,
         default: "$prev"
       },
       modeIcon: {
-        type: [String],
+        type: IconValue,
         default: "$subgroup"
       },
       text: String,
@@ -75154,7 +75160,8 @@ Reason: ${error2}`);
       weeksInMonth: {
         type: String,
         default: "dynamic"
-      }
+      },
+      firstDayOfWeek: [Number, String]
     }, "calendar");
     function useCalendar(props) {
       const adapter = useDate();
@@ -75179,8 +75186,12 @@ Reason: ${error2}`);
         const date2 = adapter.setYear(adapter.startOfMonth(adapter.date()), adapter.getYear(year.value));
         return adapter.setMonth(date2, value);
       }, (v) => adapter.getMonth(v));
+      const weekDays = computed(() => {
+        const firstDayOfWeek = Number(props.firstDayOfWeek ?? 0);
+        return props.weekdays.map((day) => (day + firstDayOfWeek) % 7);
+      });
       const weeksInMonth = computed(() => {
-        const weeks = adapter.getWeekArray(month.value);
+        const weeks = adapter.getWeekArray(month.value, props.firstDayOfWeek);
         const days = weeks.flat();
         const daysInMonth2 = 6 * 7;
         if (props.weeksInMonth === "static" && days.length < daysInMonth2) {
@@ -75198,7 +75209,7 @@ Reason: ${error2}`);
       });
       function genDays(days, today) {
         return days.filter((date2) => {
-          return props.weekdays.includes(adapter.toJsDate(date2).getDay());
+          return weekDays.value.includes(adapter.toJsDate(date2).getDay());
         }).map((date2, index) => {
           const isoDate = adapter.toISO(date2);
           const isAdjacent = !adapter.isSameMonth(date2, month.value);
@@ -75226,7 +75237,7 @@ Reason: ${error2}`);
         });
       }
       const daysInWeek = computed(() => {
-        const lastDay = adapter.startOfWeek(displayValue.value);
+        const lastDay = adapter.startOfWeek(displayValue.value, props.firstDayOfWeek);
         const week = [];
         for (let day = 0; day <= 6; day++) {
           week.push(adapter.addDays(lastDay, day));
@@ -75267,6 +75278,7 @@ Reason: ${error2}`);
         genDays,
         model,
         weeksInMonth,
+        weekDays,
         weekNumbers
       };
     }
@@ -75397,7 +75409,7 @@ Reason: ${error2}`);
               "ref": daysRef,
               "key": (_a2 = daysInMonth.value[0].date) == null ? void 0 : _a2.toString(),
               "class": "v-date-picker-month__days"
-            }, [!props.hideWeekdays && adapter.getWeekdays().map((weekDay) => createVNode("div", {
+            }, [!props.hideWeekdays && adapter.getWeekdays(props.firstDayOfWeek).map((weekDay) => createVNode("div", {
               "class": ["v-date-picker-month__day", "v-date-picker-month__weekday"]
             }, [weekDay])), daysInMonth.value.map((item, i2) => {
               const slotProps = {
@@ -76220,11 +76232,14 @@ Reason: ${error2}`);
         let {
           slots
         } = _ref;
-        useRender(() => createVNode(VSelectionControl, mergeProps(props, {
-          "class": ["v-radio", props.class],
-          "style": props.style,
-          "type": "radio"
-        }), slots));
+        useRender(() => {
+          const controlProps = VSelectionControl.filterProps(props);
+          return createVNode(VSelectionControl, mergeProps(controlProps, {
+            "class": ["v-radio", props.class],
+            "style": props.style,
+            "type": "radio"
+          }), slots);
+        });
         return {};
       }
     });
@@ -77048,8 +77063,8 @@ Reason: ${error2}`);
       },
       suffix: String,
       modelModifiers: Object,
-      ...makeVInputProps(),
-      ...makeVFieldProps()
+      ...omit$1(makeVInputProps(), ["centerAffix"]),
+      ...omit$1(makeVFieldProps(), ["centerAffix"])
     }, "VTextarea");
     const VTextarea = genericComponent()({
       name: "VTextarea",
@@ -77198,7 +77213,7 @@ Reason: ${error2}`);
             }, props.class],
             "style": props.style
           }, rootAttrs, inputProps, {
-            "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
+            "centerAffix": false,
             "focused": isFocused.value
           }), {
             ...slots,
@@ -77223,7 +77238,7 @@ Reason: ${error2}`);
               }, fieldProps, {
                 "id": id2.value,
                 "active": isActive.value || isDirty.value,
-                "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
+                "centerAffix": false,
                 "dirty": isDirty.value || props.dirty,
                 "disabled": isDisabled.value,
                 "focused": isFocused.value,
