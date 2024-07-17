@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-RtT8Vdcw.js"(exports, module) {
+  "assets/index-w-df03Xj.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -24115,7 +24115,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const makeVInputProps = propsFactory({
       id: String,
       appendIcon: IconValue,
-      centerAffix: Boolean,
+      centerAffix: {
+        type: Boolean,
+        default: true
+      },
       prependIcon: IconValue,
       hideDetails: [Boolean, String],
       hideSpinButtons: Boolean,
@@ -25255,7 +25258,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         default: "$clear"
       },
       active: Boolean,
-      centerAffix: Boolean,
+      centerAffix: {
+        type: Boolean,
+        default: void 0
+      },
       color: String,
       baseColor: String,
       dirty: Boolean,
@@ -25322,9 +25328,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           rtlClasses
         } = useRtl();
-        const isSingleLine = computed(() => props.singleLine || props.centerAffix);
         const isActive = computed(() => props.dirty || props.active);
-        const hasLabel = computed(() => !isSingleLine.value && !!(props.label || slots.label));
+        const hasLabel = computed(() => !props.singleLine && !!(props.label || slots.label));
         const uid2 = getUid();
         const id2 = computed(() => props.id || `input-${uid2}`);
         const messagesId = computed(() => `${id2.value}-messages`);
@@ -25416,7 +25421,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "class": ["v-field", {
               "v-field--active": isActive.value,
               "v-field--appended": hasAppend,
-              "v-field--center-affix": props.centerAffix,
+              "v-field--center-affix": props.centerAffix ?? !isPlainOrUnderlined.value,
               "v-field--disabled": props.disabled,
               "v-field--dirty": props.dirty,
               "v-field--error": props.error,
@@ -25425,7 +25430,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "v-field--persistent-clear": props.persistentClear,
               "v-field--prepended": hasPrepend,
               "v-field--reverse": props.reverse,
-              "v-field--single-line": isSingleLine.value,
+              "v-field--single-line": props.singleLine,
               "v-field--no-label": !label(),
               [`v-field--variant-${props.variant}`]: true
             }, themeClasses.value, backgroundColorClasses.value, focusClasses.value, loaderClasses.value, roundedClasses.value, rtlClasses.value, props.class],
@@ -25664,6 +25669,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, props.class],
             "style": props.style
           }, rootAttrs, inputProps, {
+            "centerAffix": !isPlainOrUnderlined.value,
             "focused": isFocused.value
           }), {
             ...slots,
@@ -25689,7 +25695,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 "dirty": isDirty.value || props.dirty,
                 "disabled": isDisabled.value,
                 "focused": isFocused.value,
-                "centerAffix": props.centerAffix,
                 "error": isValid2.value === false
               }), {
                 ...slots,
@@ -38887,7 +38892,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.12";
+    const version$1 = "3.6.13";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -74954,6 +74959,9 @@ Reason: ${error2}`);
           const _value = adapter.startOfDay(value);
           if (model.value.length === 0) {
             rangeStart.value = void 0;
+          } else if (model.value.length === 1) {
+            rangeStart.value = model.value[0];
+            rangeStop.value = void 0;
           }
           if (!rangeStart.value) {
             rangeStart.value = _value;
@@ -76675,8 +76683,8 @@ Reason: ${error2}`);
       },
       suffix: String,
       modelModifiers: Object,
-      ...omit$1(makeVInputProps(), ["centerAffix"]),
-      ...omit$1(makeVFieldProps(), ["centerAffix"])
+      ...makeVInputProps(),
+      ...makeVFieldProps()
     }, "VTextarea");
     const VTextarea = genericComponent()({
       name: "VTextarea",
@@ -76825,7 +76833,7 @@ Reason: ${error2}`);
             }, props.class],
             "style": props.style
           }, rootAttrs, inputProps, {
-            "centerAffix": false,
+            "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
             "focused": isFocused.value
           }), {
             ...slots,
@@ -76850,7 +76858,7 @@ Reason: ${error2}`);
               }, fieldProps, {
                 "id": id2.value,
                 "active": isActive.value || isDirty.value,
-                "centerAffix": false,
+                "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
                 "dirty": isDirty.value || props.dirty,
                 "disabled": isDisabled.value,
                 "focused": isFocused.value,
