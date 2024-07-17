@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-w-df03Xj.js"(exports, module) {
+  "assets/index-X-dEOb7h.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -27409,7 +27409,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       exports2.glob = typeof commonjsGlobal !== "undefined" ? commonjsGlobal : typeof window !== "undefined" ? window : typeof WorkerGlobalScope !== "undefined" ? self : {};
       exports2.Konva = {
         _global: exports2.glob,
-        version: "9.3.13",
+        version: "9.3.14",
         isBrowser: detectBrowser(),
         isUnminified: /param/.test((function(param) {
         }).toString()),
@@ -31694,7 +31694,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         context.stroke();
       }
       function _fillFuncHit(context) {
-        context.fill();
+        const fillRule = this.attrs.fillRule;
+        if (fillRule) {
+          context.fill(fillRule);
+        } else {
+          context.fill();
+        }
       }
       function _strokeFuncHit(context) {
         context.stroke();
@@ -34965,6 +34970,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
       }
       _useBufferCanvas() {
+        const hasCornerRadius = !!this.cornerRadius();
+        const hasShadow = this.hasShadow();
+        if (hasCornerRadius && hasShadow) {
+          return true;
+        }
         return super._useBufferCanvas(true);
       }
       _sceneFunc(context) {
