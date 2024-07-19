@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-Ks7A2ZqN.js"(exports, module) {
+  "assets/index-p5S2g_f-.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.32
+    * @vue/shared v3.4.33
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -661,7 +661,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.32
+    * @vue/reactivity v3.4.33
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -1706,7 +1706,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.32
+    * @vue/runtime-core v3.4.33
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -6857,8 +6857,6 @@ var require_index_001 = __commonJS({
         refs: EMPTY_OBJ,
         setupState: EMPTY_OBJ,
         setupContext: null,
-        attrsProxy: null,
-        slotsProxy: null,
         // suspense related
         suspense,
         suspenseId: suspense ? suspense.pendingId : 0,
@@ -7125,9 +7123,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.32";
+    const version$2 = "3.4.33";
     /**
-    * @vue/runtime-dom v3.4.32
+    * @vue/runtime-dom v3.4.33
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -7631,7 +7629,7 @@ var require_index_001 = __commonJS({
     }
     function patchDOMProp(el2, key, value, parentComponent) {
       if (key === "innerHTML" || key === "textContent") {
-        if (value === null)
+        if (value == null)
           return;
         el2[key] = value;
         return;
@@ -71699,1052 +71697,1293 @@ Reason: ${error2}`);
         }
       }
     }
-    const defaultFilter = (value, query, item) => {
-      if (value == null || query == null)
-        return -1;
-      return value.toString().toLocaleLowerCase().indexOf(query.toString().toLocaleLowerCase());
-    };
-    const makeFilterProps = propsFactory({
-      customFilter: Function,
-      customKeyFilter: Object,
-      filterKeys: [Array, String],
-      filterMode: {
-        type: String,
-        default: "intersection"
-      },
-      noFilter: Boolean
-    }, "filter");
-    function filterItems(items2, query, options) {
-      var _a2;
-      const array = [];
-      const filter = (options == null ? void 0 : options.default) ?? defaultFilter;
-      const keys2 = (options == null ? void 0 : options.filterKeys) ? wrapInArray(options.filterKeys) : false;
-      const customFiltersLength = Object.keys((options == null ? void 0 : options.customKeyFilter) ?? {}).length;
-      if (!(items2 == null ? void 0 : items2.length))
-        return array;
-      loop:
-        for (let i2 = 0; i2 < items2.length; i2++) {
-          const [item, transformed = item] = wrapInArray(items2[i2]);
-          const customMatches = {};
-          const defaultMatches = {};
-          let match = -1;
-          if ((query || customFiltersLength > 0) && !(options == null ? void 0 : options.noFilter)) {
-            if (typeof item === "object") {
-              const filterKeys = keys2 || Object.keys(transformed);
-              for (const key of filterKeys) {
-                const value = getPropertyFromItem(transformed, key);
-                const keyFilter = (_a2 = options == null ? void 0 : options.customKeyFilter) == null ? void 0 : _a2[key];
-                match = keyFilter ? keyFilter(value, query, item) : filter(value, query, item);
-                if (match !== -1 && match !== false) {
-                  if (keyFilter)
-                    customMatches[key] = match;
-                  else
-                    defaultMatches[key] = match;
-                } else if ((options == null ? void 0 : options.filterMode) === "every") {
-                  continue loop;
-                }
-              }
-            } else {
-              match = filter(item, query, item);
-              if (match !== -1 && match !== false) {
-                defaultMatches.title = match;
-              }
-            }
-            const defaultMatchesLength = Object.keys(defaultMatches).length;
-            const customMatchesLength = Object.keys(customMatches).length;
-            if (!defaultMatchesLength && !customMatchesLength)
-              continue;
-            if ((options == null ? void 0 : options.filterMode) === "union" && customMatchesLength !== customFiltersLength && !defaultMatchesLength)
-              continue;
-            if ((options == null ? void 0 : options.filterMode) === "intersection" && (customMatchesLength !== customFiltersLength || !defaultMatchesLength))
-              continue;
-          }
-          array.push({
-            index: i2,
-            matches: {
-              ...defaultMatches,
-              ...customMatches
-            }
-          });
+    const _sfc_main$D = {
+      props: {
+        layoutSlot: {
+          /** @type import('vue').PropType<import('@json-layout/vocabulary').Slot> */
+          type: Object,
+          required: true
+        },
+        node: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        },
+        tag: {
+          /** @type import('vue').PropType<string> */
+          type: String,
+          default: null
         }
-      return array;
-    }
-    function useFilter(props, items2, query, options) {
-      const filteredItems = ref$1([]);
-      const filteredMatches = ref$1(/* @__PURE__ */ new Map());
-      const transformedItems = computed(() => (options == null ? void 0 : options.transform) ? unref(items2).map((item) => [item, options.transform(item)]) : unref(items2));
-      watchEffect(() => {
-        const _query = typeof query === "function" ? query() : unref(query);
-        const strQuery = typeof _query !== "string" && typeof _query !== "number" ? "" : String(_query);
-        const results = filterItems(transformedItems.value, strQuery, {
-          customKeyFilter: {
-            ...props.customKeyFilter,
-            ...unref(options == null ? void 0 : options.customKeyFilter)
-          },
-          default: props.customFilter,
-          filterKeys: props.filterKeys,
-          filterMode: props.filterMode,
-          noFilter: props.noFilter
-        });
-        const originalItems = unref(items2);
-        const _filteredItems = [];
-        const _filteredMatches = /* @__PURE__ */ new Map();
-        results.forEach((_ref) => {
-          let {
-            index,
-            matches
-          } = _ref;
-          const item = originalItems[index];
-          _filteredItems.push(item);
-          _filteredMatches.set(item.value, matches);
-        });
-        filteredItems.value = _filteredItems;
-        filteredMatches.value = _filteredMatches;
-      });
-      function getMatches(item) {
-        return filteredMatches.value.get(item.value);
+      },
+      render() {
+        const renderTag = this.tag ?? (isTextSlot(this.layoutSlot) ? "p" : "div");
+        if (isTextSlot(this.layoutSlot)) {
+          return h(renderTag, this.layoutSlot.text);
+        }
+        if (isMarkdownSlot(this.layoutSlot)) {
+          return h(renderTag, { innerHTML: this.layoutSlot.markdown });
+        }
+        if (isNameSlot(this.layoutSlot)) {
+          if (!this.statefulLayout.options.vjsfSlots[this.layoutSlot.name]) {
+            console.error(`vjsf: layout references a code slot "${this.layoutSlot.name}" that was not provided.`);
+          } else {
+            return h(renderTag, this.statefulLayout.options.vjsfSlots[this.layoutSlot.name]({ node: this.node, statefulLayout: this.statefulLayout }));
+          }
+        }
+        return null;
       }
+    };
+    const _hoisted_1$5 = ["innerHTML"];
+    const _sfc_main$C = {
+      __name: "help-message",
+      props: {
+        node: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        const show = ref$1(false);
+        return (_ctx, _cache) => {
+          return openBlock(), createElementBlock("div", {
+            class: normalizeClass(`vjsf-help-message vjsf-help-message-${__props.node.options.density}`)
+          }, [
+            createVNode(unref(VSlideXReverseTransition), null, {
+              default: withCtx(() => [
+                withDirectives(createVNode(unref(VAlert), { color: "info" }, {
+                  default: withCtx(() => [
+                    createBaseVNode("div", {
+                      innerHTML: __props.node.layout.help
+                    }, null, 8, _hoisted_1$5)
+                  ]),
+                  _: 1
+                }, 512), [
+                  [vShow, show.value]
+                ])
+              ]),
+              _: 1
+            }),
+            createVNode(unref(VBtn), {
+              color: "info",
+              class: normalizeClass(`vjsf-help-message-toggle vjsf-help-message-toggle-${__props.node.options.density}`),
+              icon: show.value ? "mdi-close" : "mdi-information-symbol",
+              border: 0,
+              elevation: show.value ? 0 : 2,
+              density: "compact",
+              size: __props.node.options.density === "default" ? 28 : 24,
+              title: show.value ? "" : __props.node.messages.showHelp,
+              onClick: _cache[0] || (_cache[0] = ($event) => show.value = !show.value)
+            }, null, 8, ["class", "icon", "elevation", "size", "title"])
+          ], 2);
+        };
+      }
+    };
+    const _sfc_main$B = {
+      __name: "node",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../types.js').VjsfNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        useDefaults({}, "VjsfNode");
+        const props = __props;
+        const beforeAfterClasses = {
+          compact: "my-1",
+          comfortable: "my-2",
+          default: "my-3"
+        };
+        const theme = useTheme();
+        const indent = computed(() => {
+          if (props.modelValue.parentFullKey === null)
+            return 0;
+          if (!props.modelValue.options.indent)
+            return 0;
+          if (props.modelValue.layout.comp !== "section")
+            return 0;
+          if (!props.modelValue.layout.title)
+            return 0;
+          if (typeof props.modelValue.options.indent === "number")
+            return props.modelValue.options.indent;
+          if (props.modelValue.options.density === "compact")
+            return 2;
+          if (props.modelValue.options.density === "comfortable")
+            return 4;
+          return 6;
+        });
+        const nodeClasses = computed(() => {
+          let classes = `vjsf-node vjsf-node-${props.modelValue.layout.comp} vjsf-density-${props.modelValue.options.density}`;
+          if (props.modelValue.options.readOnly)
+            classes += " vjsf-readonly";
+          if (props.modelValue.options.summary)
+            classes += " vjsf-summary";
+          if (theme.current.value.dark)
+            classes += " vjsf-dark";
+          if (indent.value)
+            classes += " ml-" + indent.value;
+          return classes;
+        });
+        if (props.modelValue.layout.comp !== "none" && !props.statefulLayout.options.nodeComponents[props.modelValue.layout.comp]) {
+          console.error(`vjsf: missing component to render vjsf node "${props.modelValue.layout.comp}", maybe you forgot to register a component from a plugin ?`);
+        }
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(unref(VDefaultsProvider), {
+            defaults: { global: { density: props.modelValue.options.density } }
+          }, {
+            default: withCtx(() => [
+              __props.modelValue.layout.comp !== "none" ? (openBlock(), createBlock(unref(VCol), {
+                key: 0,
+                cols: __props.modelValue.cols,
+                class: normalizeClass(nodeClasses.value)
+              }, {
+                default: withCtx(() => {
+                  var _a2, _b, _c, _d, _e, _f;
+                  return [
+                    ((_a2 = __props.modelValue.layout.slots) == null ? void 0 : _a2.before) ? (openBlock(), createBlock(_sfc_main$D, {
+                      key: "before",
+                      "layout-slot": (_b = __props.modelValue.layout.slots) == null ? void 0 : _b.before,
+                      node: __props.modelValue,
+                      "stateful-layout": __props.statefulLayout,
+                      class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
+                    }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true),
+                    __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$C, {
+                      key: 1,
+                      node: __props.modelValue
+                    }, null, 8, ["node"])) : createCommentVNode("", true),
+                    ((_c = __props.modelValue.layout.slots) == null ? void 0 : _c.component) ? (openBlock(), createBlock(_sfc_main$D, {
+                      key: "component",
+                      "layout-slot": (_d = __props.modelValue.layout.slots) == null ? void 0 : _d.component,
+                      node: __props.modelValue,
+                      "stateful-layout": __props.statefulLayout
+                    }, null, 8, ["layout-slot", "node", "stateful-layout"])) : (openBlock(), createBlock(resolveDynamicComponent(props.statefulLayout.options.nodeComponents[__props.modelValue.layout.comp]), {
+                      key: 3,
+                      "model-value": __props.modelValue,
+                      "stateful-layout": __props.statefulLayout
+                    }, null, 8, ["model-value", "stateful-layout"])),
+                    ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$D, {
+                      key: "after",
+                      "layout-slot": (_f = __props.modelValue.layout.slots) == null ? void 0 : _f.after,
+                      node: __props.modelValue,
+                      "stateful-layout": __props.statefulLayout,
+                      class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
+                    }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true)
+                  ];
+                }),
+                _: 1
+              }, 8, ["cols", "class"])) : createCommentVNode("", true)
+            ]),
+            _: 1
+          }, 8, ["defaults"]);
+        };
+      }
+    };
+    const _sfc_main$A = {
+      __name: "tree",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('@json-layout/core').StateTree> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(unref(VRow), { class: "vjsf-tree" }, {
+            default: withCtx(() => [
+              createVNode(_sfc_main$B, {
+                "stateful-layout": __props.statefulLayout,
+                "model-value": (
+                  /** @type import('../types.js').VjsfNode */
+                  __props.modelValue.root
+                )
+              }, null, 8, ["stateful-layout", "model-value"])
+            ]),
+            _: 1
+          });
+        };
+      }
+    };
+    function tryOnScopeDispose(fn) {
+      if (getCurrentScope$1()) {
+        onScopeDispose(fn);
+        return true;
+      }
+      return false;
+    }
+    function toValue(r2) {
+      return typeof r2 === "function" ? r2() : unref(r2);
+    }
+    const isClient = typeof window !== "undefined" && typeof document !== "undefined";
+    typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
+    function getLifeCycleTarget(target2) {
+      return target2 || getCurrentInstance$1();
+    }
+    function tryOnMounted(fn, sync = true, target2) {
+      const instance = getLifeCycleTarget();
+      if (instance)
+        onMounted(fn, target2);
+      else if (sync)
+        fn();
+      else
+        nextTick(fn);
+    }
+    function unrefElement(elRef) {
+      var _a2;
+      const plain = toValue(elRef);
+      return (_a2 = plain == null ? void 0 : plain.$el) != null ? _a2 : plain;
+    }
+    const defaultWindow = isClient ? window : void 0;
+    function useMounted() {
+      const isMounted = ref$1(false);
+      if (getCurrentInstance$1()) {
+        onMounted(() => {
+          isMounted.value = true;
+        });
+      }
+      return isMounted;
+    }
+    function useSupported(callback) {
+      const isMounted = useMounted();
+      return computed(() => {
+        isMounted.value;
+        return Boolean(callback());
+      });
+    }
+    function useResizeObserver(target2, callback, options = {}) {
+      const { window: window2 = defaultWindow, ...observerOptions } = options;
+      let observer;
+      const isSupported = useSupported(() => window2 && "ResizeObserver" in window2);
+      const cleanup = () => {
+        if (observer) {
+          observer.disconnect();
+          observer = void 0;
+        }
+      };
+      const targets = computed(() => Array.isArray(target2) ? target2.map((el2) => unrefElement(el2)) : [unrefElement(target2)]);
+      const stopWatch = watch(
+        targets,
+        (els2) => {
+          cleanup();
+          if (isSupported.value && window2) {
+            observer = new ResizeObserver(callback);
+            for (const _el of els2)
+              _el && observer.observe(_el, observerOptions);
+          }
+        },
+        { immediate: true, flush: "post", deep: true }
+      );
+      const stop = () => {
+        cleanup();
+        stopWatch();
+      };
+      tryOnScopeDispose(stop);
       return {
-        filteredItems,
-        filteredMatches,
-        getMatches
+        isSupported,
+        stop
       };
     }
-    function highlightResult$1(text2, matches, length) {
-      if (matches == null)
-        return text2;
-      if (Array.isArray(matches))
-        throw new Error("Multiple matches is not implemented");
-      return typeof matches === "number" && ~matches ? createVNode(Fragment, null, [createVNode("span", {
-        "class": "v-autocomplete__unmask"
-      }, [text2.substr(0, matches)]), createVNode("span", {
-        "class": "v-autocomplete__mask"
-      }, [text2.substr(matches, length)]), createVNode("span", {
-        "class": "v-autocomplete__unmask"
-      }, [text2.substr(matches + length)])]) : text2;
+    function useElementSize(target2, initialSize = { width: 0, height: 0 }, options = {}) {
+      const { window: window2 = defaultWindow, box = "content-box" } = options;
+      const isSVG = computed(() => {
+        var _a2, _b;
+        return (_b = (_a2 = unrefElement(target2)) == null ? void 0 : _a2.namespaceURI) == null ? void 0 : _b.includes("svg");
+      });
+      const width = ref$1(initialSize.width);
+      const height = ref$1(initialSize.height);
+      const { stop: stop1 } = useResizeObserver(
+        target2,
+        ([entry]) => {
+          const boxSize = box === "border-box" ? entry.borderBoxSize : box === "content-box" ? entry.contentBoxSize : entry.devicePixelContentBoxSize;
+          if (window2 && isSVG.value) {
+            const $elem = unrefElement(target2);
+            if ($elem) {
+              const styles = window2.getComputedStyle($elem);
+              width.value = Number.parseFloat(styles.width);
+              height.value = Number.parseFloat(styles.height);
+            }
+          } else {
+            if (boxSize) {
+              const formatBoxSize = Array.isArray(boxSize) ? boxSize : [boxSize];
+              width.value = formatBoxSize.reduce((acc, { inlineSize }) => acc + inlineSize, 0);
+              height.value = formatBoxSize.reduce((acc, { blockSize }) => acc + blockSize, 0);
+            } else {
+              width.value = entry.contentRect.width;
+              height.value = entry.contentRect.height;
+            }
+          }
+        },
+        options
+      );
+      tryOnMounted(() => {
+        const ele = unrefElement(target2);
+        if (ele) {
+          width.value = "offsetWidth" in ele ? ele.offsetWidth : initialSize.width;
+          height.value = "offsetHeight" in ele ? ele.offsetHeight : initialSize.height;
+        }
+      });
+      const stop2 = watch(
+        () => unrefElement(target2),
+        (ele) => {
+          width.value = ele ? initialSize.width : 0;
+          height.value = ele ? initialSize.height : 0;
+        }
+      );
+      function stop() {
+        stop1();
+        stop2();
+      }
+      return {
+        width,
+        height,
+        stop
+      };
     }
-    const makeVAutocompleteProps = propsFactory({
-      autoSelectFirst: {
-        type: [Boolean, String]
+    const defaultOptions = {
+      nodeComponents: {},
+      plugins: [],
+      pluginsOptions: {}
+    };
+    const getFullOptions = (options, form, width, slots, defaultNodeComponents, onData, onUpdate, onAutofocus) => {
+      const components = { ...options == null ? void 0 : options.components };
+      const nodeComponents = { ...defaultNodeComponents, ...options == null ? void 0 : options.nodeComponents };
+      if (options == null ? void 0 : options.plugins) {
+        for (const plugin of options.plugins) {
+          components[plugin.info.name] = plugin.info;
+          nodeComponents[plugin.info.name] = plugin.nodeComponent;
+        }
+      }
+      const fullOptions = {
+        ...defaultOptions,
+        readOnly: !!(form && (form.isDisabled.value || form.isReadonly.value)),
+        ...options,
+        onData,
+        onUpdate,
+        onAutofocus,
+        context: (options == null ? void 0 : options.context) ? JSON.parse(JSON.stringify(options.context)) : {},
+        width: Math.round(width ?? 0),
+        vjsfSlots: { ...slots },
+        components,
+        nodeComponents
+      };
+      return (
+        /** @type import('../types.js').VjsfOptions */
+        fullOptions
+      );
+    };
+    const debug = Debug("vjsf:use-vjsf");
+    setAutoFreeze(false);
+    const emits = {
+      /**
+       * @arg {any} data
+      */
+      "update:modelValue": (data) => true,
+      /**
+       * @arg {import('../types.js').VjsfStatefulLayout} state
+      */
+      "update:state": (state) => true
+    };
+    const useVjsf = (schema2, modelValue, options, nodeComponents, emit2, compile2, precompiledLayout) => {
+      const el2 = ref$1(null);
+      const { width } = useElementSize(el2);
+      const statefulLayout = shallowRef(null);
+      const stateTree = shallowRef(null);
+      const form = inject$1(Symbol.for("vuetify:form"));
+      if (form) {
+        form.register({
+          id: "vjsf",
+          // TODO: a unique random id ?
+          validate: () => {
+            var _a2, _b;
+            (_a2 = statefulLayout.value) == null ? void 0 : _a2.validate();
+            return (_b = statefulLayout.value) == null ? void 0 : _b.errors;
+          },
+          reset: () => {
+            var _a2;
+            return (_a2 = statefulLayout.value) == null ? void 0 : _a2.resetValidation();
+          },
+          // TODO: also empty the data ?
+          resetValidation: () => {
+            var _a2;
+            return (_a2 = statefulLayout.value) == null ? void 0 : _a2.resetValidation();
+          }
+        });
+      }
+      const slots = useSlots();
+      const onStatefulLayoutUpdate = (statefulLayout2) => {
+        debug("onStatefulLayoutUpdate", statefulLayout2);
+        if (!statefulLayout2)
+          return;
+        stateTree.value = statefulLayout2.stateTree;
+        debug("  -> emit update:state");
+        emit2("update:state", statefulLayout2);
+        if (form) {
+          if (statefulLayout2.valid)
+            form.update("vjsf", true, []);
+          else if (statefulLayout2.hasHiddenError)
+            form.update("vjsf", null, []);
+          else
+            form.update("vjsf", false, []);
+        }
+      };
+      const onDataUpdate = (data) => {
+        debug("onDataUpdate", data);
+        debug("  -> emit update:modelValue");
+        emit2("update:modelValue", data);
+      };
+      const onAutofocus = () => {
+        if (!el2.value)
+          return;
+        const autofocusNodeElement = el2.value.querySelector(".vjsf-input--autofocus");
+        debug("onAutofocus", autofocusNodeElement);
+        if (autofocusNodeElement) {
+          const autofocusInputElement = autofocusNodeElement.querySelector("input") ?? autofocusNodeElement.querySelector('textarea:not([style*="display: none"]');
+          if (autofocusInputElement)
+            autofocusInputElement.focus();
+        }
+      };
+      const fullOptions = computed(() => getFullOptions(options.value, form, width.value, slots, { ...nodeComponents }, onDataUpdate, onStatefulLayoutUpdate, onAutofocus));
+      const compileOptions = ref$1({});
+      watch(fullOptions, (newOptions) => {
+        if (precompiledLayout == null ? void 0 : precompiledLayout.value)
+          return;
+        const newCompileOptions = produceCompileOptions(compileOptions.value, newOptions);
+        if (newCompileOptions !== compileOptions.value) {
+          debug("new compileOptions", newCompileOptions);
+          compileOptions.value = newCompileOptions;
+        }
+      }, { immediate: true });
+      const compiledLayout = computed(() => {
+        if (precompiledLayout == null ? void 0 : precompiledLayout.value)
+          return precompiledLayout == null ? void 0 : precompiledLayout.value;
+        if (!compile2)
+          throw new Error("compile function is not available");
+        const compiledLayout2 = compile2(schema2.value, compileOptions.value);
+        return compiledLayout2;
+      });
+      const initStatefulLayout = () => {
+        if (!width.value)
+          return;
+        statefulLayout.value = /** @type {import('../types.js').VjsfStatefulLayout} */
+        new StatefulLayout(
+          toRaw(compiledLayout.value),
+          toRaw(compiledLayout.value.skeletonTrees[compiledLayout.value.mainTree]),
+          toRaw(fullOptions.value),
+          toRaw(modelValue.value)
+        );
+      };
+      watch(fullOptions, (newOptions) => {
+        debug("watch fullOptions", fullOptions);
+        if (statefulLayout.value) {
+          debug("  -> update statefulLayout options");
+          statefulLayout.value.options = toRaw(newOptions);
+        } else {
+          debug("  -> init statefulLayout");
+          initStatefulLayout();
+        }
+      });
+      watch(modelValue, (newData) => {
+        const rawData = toRaw(newData);
+        if (statefulLayout.value && statefulLayout.value.data !== rawData) {
+          debug("modelValue changed from outside", rawData);
+          debug("  -> update statefulLayout data");
+          statefulLayout.value.data = toRaw(rawData);
+        }
+      });
+      watch(compiledLayout, (newCompiledLayout) => {
+        debug("watch compiledLayout", newCompiledLayout);
+        debug("  -> init statefulLayout");
+        initStatefulLayout();
+      });
+      return { el: el2, statefulLayout, stateTree };
+    };
+    const _hoisted_1$4 = ["innerHTML"];
+    const _sfc_main$z = {
+      __name: "section-header",
+      props: {
+        node: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
+          type: Object,
+          required: true
+        },
+        hideTitle: {
+          type: Boolean,
+          default: false
+        }
       },
-      clearOnSelect: Boolean,
-      search: String,
-      ...makeFilterProps({
-        filterKeys: ["title"]
-      }),
-      ...makeSelectProps(),
-      ...omit$1(makeVTextFieldProps({
-        modelValue: null,
-        role: "combobox"
-      }), ["validationValue", "dirty", "appendInnerIcon"]),
-      ...makeTransitionProps({
-        transition: false
-      })
-    }, "VAutocomplete");
-    const VAutocomplete = genericComponent()({
-      name: "VAutocomplete",
-      props: makeVAutocompleteProps(),
+      setup(__props) {
+        const props = __props;
+        const titleDepthBase = computed(() => {
+          if (props.node.options.density === "compact")
+            return 6;
+          if (props.node.options.density === "comfortable")
+            return 7;
+          return 8;
+        });
+        const classes = ["text-h1", "text-h2", "text-h3", "text-h4", "text-h5", "text-h6", "text-subtitle-1", "text-subtitle-2"];
+        const titleClass = computed(() => {
+          const index = props.node.options.titleDepth;
+          if (props.node.options.density === "compact")
+            return classes[index + 2];
+          if (props.node.options.density === "comfortable")
+            return classes[index + 1];
+          return classes[index];
+        });
+        return (_ctx, _cache) => {
+          return __props.node.layout.title && !__props.hideTitle || __props.node.layout.subtitle || __props.node.error && __props.node.validated ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            class: normalizeClass(`mb-${titleDepthBase.value - __props.node.options.titleDepth} mt-${titleDepthBase.value - __props.node.options.titleDepth}`)
+          }, [
+            __props.node.layout.title && !__props.hideTitle ? (openBlock(), createBlock(resolveDynamicComponent(`h${__props.node.options.titleDepth}`), {
+              key: 0,
+              class: normalizeClass(`${titleClass.value}`)
+            }, {
+              default: withCtx(() => [
+                createTextVNode(toDisplayString(__props.node.layout.title), 1)
+              ]),
+              _: 1
+            }, 8, ["class"])) : createCommentVNode("", true),
+            __props.node.layout.subtitle ? (openBlock(), createElementBlock("p", {
+              key: 1,
+              class: normalizeClass(`text-subtitle mt-${titleDepthBase.value - __props.node.options.titleDepth}`),
+              innerHTML: __props.node.layout.subtitle
+            }, null, 10, _hoisted_1$4)) : createCommentVNode("", true),
+            __props.node.error && __props.node.validated ? (openBlock(), createBlock(unref(VAlert), {
+              key: 2,
+              type: "error",
+              class: normalizeClass(`mt-${titleDepthBase.value - __props.node.options.titleDepth}`)
+            }, {
+              default: withCtx(() => [
+                createTextVNode(toDisplayString(__props.node.error), 1)
+              ]),
+              _: 1
+            }, 8, ["class"])) : createCommentVNode("", true)
+          ], 2)) : createCommentVNode("", true);
+        };
+      }
+    };
+    const _sfc_main$y = {
+      __name: "section",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfSectionNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        useDefaults({}, "VjsfSection");
+        return (_ctx, _cache) => {
+          var _a2, _b;
+          return openBlock(), createElementBlock(Fragment, null, [
+            createVNode(_sfc_main$z, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(unref(VRow), {
+              dense: ((_a2 = __props.modelValue.options) == null ? void 0 : _a2.density) === "compact" || ((_b = __props.modelValue.options) == null ? void 0 : _b.density) === "comfortable"
+            }, {
+              default: withCtx(() => [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child) => {
+                  return openBlock(), createBlock(_sfc_main$B, {
+                    key: child.fullKey,
+                    "model-value": (
+                      /** @type import('../../types.js').VjsfNode */
+                      child
+                    ),
+                    "stateful-layout": __props.statefulLayout
+                  }, null, 8, ["model-value", "stateful-layout"]);
+                }), 128))
+              ]),
+              _: 1
+            }, 8, ["dense"])
+          ], 64);
+        };
+      }
+    };
+    function moveArrayItem(array, fromIndex, toIndex) {
+      if (fromIndex === toIndex || fromIndex === -1 || toIndex === -1)
+        return array;
+      const newArray = [...array];
+      const element = newArray[fromIndex];
+      newArray.splice(fromIndex, 1);
+      newArray.splice(toIndex, 0, element);
+      return newArray;
+    }
+    const padTimeComponent = (val) => {
+      const s = "" + val;
+      return s.length === 1 ? "0" + s : s;
+    };
+    const getDateTimeParts = (date2) => {
+      return [`${date2.getFullYear()}-${padTimeComponent(date2.getMonth() + 1)}-${padTimeComponent(date2.getDate())}`, `${padTimeComponent(date2.getHours())}:${padTimeComponent(date2.getMinutes())}`];
+    };
+    const defaultProps = {
+      fieldPropsCompact: {
+        hideDetails: "auto"
+      },
+      fieldPropsReadOnly: { hideDetails: "auto", variant: "plain" },
+      fieldPropsSummary: { hideDetails: true }
+    };
+    function mergePropsLevels(propsLevels) {
+      const fullProps = { class: [] };
+      for (const propsLevel of propsLevels) {
+        if (propsLevel) {
+          for (const key of Object.keys(propsLevel)) {
+            if (key === "class") {
+              if (Array.isArray(propsLevel.class))
+                fullProps.class = fullProps.class.concat(propsLevel.class);
+              else
+                fullProps.class = [propsLevel.class];
+            } else {
+              fullProps[camelize(key)] = propsLevel[key];
+            }
+          }
+        }
+      }
+      return fullProps;
+    }
+    function getInputProps(node, statefulLayout, layoutPropsMap, isMainComp = true) {
+      const options = node.options;
+      const propsLevels = [];
+      if (options.density === "compact")
+        propsLevels.push(defaultProps.fieldPropsCompact);
+      if (node.options.readOnly)
+        propsLevels.push(defaultProps.fieldPropsReadOnly);
+      if (isMainComp && node.props)
+        propsLevels.push(node.props);
+      const fullProps = mergePropsLevels(propsLevels);
+      fullProps.label = node.layout.label;
+      if (node.error && node.validated) {
+        fullProps.errorMessages = node.error;
+      }
+      fullProps.modelValue = typeof node.data === "string" && node.layout.separator ? node.data.split(
+        /** @type {string} */
+        node.layout.separator
+      ) : node.data;
+      if (node.options.readOnly) {
+        fullProps.disabled = true;
+        fullProps.class.push("vjsf-input--readonly");
+      }
+      if (node.autofocus) {
+        fullProps.class.push("vjsf-input--autofocus");
+      }
+      if (layoutPropsMap) {
+        for (const propMap2 of layoutPropsMap) {
+          if (typeof propMap2 === "string")
+            fullProps[propMap2] = node.layout[propMap2];
+          else
+            fullProps[propMap2[0]] = node.layout[propMap2[1]];
+        }
+      }
+      if (isMainComp) {
+        fullProps["onUpdate:modelValue"] = (value) => {
+          return statefulLayout.input(node, Array.isArray(value) && node.layout.separator ? value.join(
+            /** @type {string} */
+            node.layout.separator
+          ) : value);
+        };
+        fullProps.onBlur = () => statefulLayout.blur(node);
+      }
+      return fullProps;
+    }
+    function getCompProps(node, isMainComp = true) {
+      const options = (
+        /** @type import('../types.js').VjsfOptions */
+        node.options
+      );
+      const propsLevels = [{ density: options.density }];
+      if (isMainComp)
+        propsLevels.push(node.layout.props);
+      const fullProps = mergePropsLevels(propsLevels);
+      return fullProps;
+    }
+    function getCompSlots(node, statefulLayout) {
+      if (!node.layout.slots)
+        return {};
+      const slots = {};
+      for (const [key, layoutSlot] of Object.entries(node.layout.slots)) {
+        slots[key] = () => h(_sfc_main$D, { layoutSlot, node, statefulLayout });
+      }
+      return slots;
+    }
+    const _sfc_main$x = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfTextFieldNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(props) {
+        useDefaults({}, "VjsfTextField");
+        const fieldProps = computed(() => getInputProps(props.modelValue, props.statefulLayout, ["placeholder"]));
+        const fieldSlots = computed(() => getCompSlots(props.modelValue, props.statefulLayout));
+        return () => h(VTextField, fieldProps.value, fieldSlots.value);
+      }
+    });
+    const makeVTextareaProps = propsFactory({
+      autoGrow: Boolean,
+      autofocus: Boolean,
+      counter: [Boolean, Number, String],
+      counterValue: Function,
+      prefix: String,
+      placeholder: String,
+      persistentPlaceholder: Boolean,
+      persistentCounter: Boolean,
+      noResize: Boolean,
+      rows: {
+        type: [Number, String],
+        default: 5,
+        validator: (v) => !isNaN(parseFloat(v))
+      },
+      maxRows: {
+        type: [Number, String],
+        validator: (v) => !isNaN(parseFloat(v))
+      },
+      suffix: String,
+      modelModifiers: Object,
+      ...makeVInputProps(),
+      ...makeVFieldProps()
+    }, "VTextarea");
+    const VTextarea = genericComponent()({
+      name: "VTextarea",
+      directives: {
+        Intersect: Intersect$1
+      },
+      inheritAttrs: false,
+      props: makeVTextareaProps(),
       emits: {
+        "click:control": (e) => true,
+        "mousedown:control": (e) => true,
         "update:focused": (focused) => true,
-        "update:search": (value) => true,
-        "update:modelValue": (value) => true,
-        "update:menu": (value) => true
+        "update:modelValue": (val) => true
       },
       setup(props, _ref) {
         let {
+          attrs,
+          emit: emit2,
           slots
         } = _ref;
+        const model = useProxiedModel(props, "modelValue");
         const {
-          t
-        } = useLocale();
-        const vTextFieldRef = ref$1();
-        const isFocused = shallowRef(false);
-        const isPristine = shallowRef(true);
-        const listHasFocus = shallowRef(false);
-        const vMenuRef = ref$1();
-        const vVirtualScrollRef = ref$1();
-        const _menu = useProxiedModel(props, "menu");
-        const menu = computed({
-          get: () => _menu.value,
-          set: (v) => {
-            var _a2;
-            if (_menu.value && !v && ((_a2 = vMenuRef.value) == null ? void 0 : _a2.ΨopenChildren))
-              return;
-            _menu.value = v;
-          }
-        });
-        const selectionIndex = shallowRef(-1);
-        const color = computed(() => {
-          var _a2;
-          return (_a2 = vTextFieldRef.value) == null ? void 0 : _a2.color;
-        });
-        const label = computed(() => menu.value ? props.closeText : props.openText);
-        const {
-          items: items2,
-          transformIn,
-          transformOut
-        } = useItems(props);
-        const {
-          textColorClasses,
-          textColorStyles
-        } = useTextColor(color);
-        const search = useProxiedModel(props, "search", "");
-        const model = useProxiedModel(props, "modelValue", [], (v) => transformIn(v === null ? [null] : wrapInArray(v)), (v) => {
-          const transformed = transformOut(v);
-          return props.multiple ? transformed : transformed[0] ?? null;
-        });
+          isFocused,
+          focus,
+          blur
+        } = useFocus(props);
         const counterValue = computed(() => {
-          return typeof props.counterValue === "function" ? props.counterValue(model.value) : typeof props.counterValue === "number" ? props.counterValue : model.value.length;
+          return typeof props.counterValue === "function" ? props.counterValue(model.value) : (model.value || "").toString().length;
         });
-        const form = useForm();
-        const {
-          filteredItems,
-          getMatches
-        } = useFilter(props, items2, () => isPristine.value ? "" : search.value);
-        const displayItems = computed(() => {
-          if (props.hideSelected) {
-            return filteredItems.value.filter((filteredItem) => !model.value.some((s) => s.value === filteredItem.value));
-          }
-          return filteredItems.value;
+        const max = computed(() => {
+          if (attrs.maxlength)
+            return attrs.maxlength;
+          if (!props.counter || typeof props.counter !== "number" && typeof props.counter !== "string")
+            return void 0;
+          return props.counter;
         });
-        const hasChips = computed(() => !!(props.chips || slots.chip));
-        const hasSelectionSlot = computed(() => hasChips.value || !!slots.selection);
-        const selectedValues = computed(() => model.value.map((selection) => selection.props.value));
-        const highlightFirst = computed(() => {
+        function onIntersect(isIntersecting, entries) {
+          var _a2, _b;
+          if (!props.autofocus || !isIntersecting)
+            return;
+          (_b = (_a2 = entries[0].target) == null ? void 0 : _a2.focus) == null ? void 0 : _b.call(_a2);
+        }
+        const vInputRef = ref$1();
+        const vFieldRef = ref$1();
+        const controlHeight = shallowRef("");
+        const textareaRef = ref$1();
+        const isActive = computed(() => props.persistentPlaceholder || isFocused.value || props.active);
+        function onFocus() {
           var _a2;
-          const selectFirst = props.autoSelectFirst === true || props.autoSelectFirst === "exact" && search.value === ((_a2 = displayItems.value[0]) == null ? void 0 : _a2.title);
-          return selectFirst && displayItems.value.length > 0 && !isPristine.value && !listHasFocus.value;
-        });
-        const menuDisabled = computed(() => props.hideNoData && !displayItems.value.length || props.readonly || (form == null ? void 0 : form.isReadonly.value));
-        const listRef = ref$1();
-        const {
-          onListScroll,
-          onListKeydown
-        } = useScrolling(listRef, vTextFieldRef);
+          if (textareaRef.value !== document.activeElement) {
+            (_a2 = textareaRef.value) == null ? void 0 : _a2.focus();
+          }
+          if (!isFocused.value)
+            focus();
+        }
+        function onControlClick(e) {
+          onFocus();
+          emit2("click:control", e);
+        }
+        function onControlMousedown(e) {
+          emit2("mousedown:control", e);
+        }
         function onClear(e) {
-          if (props.openOnClear) {
-            menu.value = true;
-          }
-          search.value = "";
-        }
-        function onMousedownControl() {
-          if (menuDisabled.value)
-            return;
-          menu.value = true;
-        }
-        function onMousedownMenuIcon(e) {
-          if (menuDisabled.value)
-            return;
-          if (isFocused.value) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-          menu.value = !menu.value;
-        }
-        function onKeydown(e) {
-          var _a2, _b, _c;
-          if (props.readonly || (form == null ? void 0 : form.isReadonly.value))
-            return;
-          const selectionStart = vTextFieldRef.value.selectionStart;
-          const length = model.value.length;
-          if (selectionIndex.value > -1 || ["Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
-            e.preventDefault();
-          }
-          if (["Enter", "ArrowDown"].includes(e.key)) {
-            menu.value = true;
-          }
-          if (["Escape"].includes(e.key)) {
-            menu.value = false;
-          }
-          if (highlightFirst.value && ["Enter", "Tab"].includes(e.key) && !model.value.some((_ref2) => {
-            let {
-              value
-            } = _ref2;
-            return value === displayItems.value[0].value;
-          })) {
-            select(displayItems.value[0]);
-          }
-          if (e.key === "ArrowDown" && highlightFirst.value) {
-            (_a2 = listRef.value) == null ? void 0 : _a2.focus("next");
-          }
-          if (["Backspace", "Delete"].includes(e.key)) {
-            if (!props.multiple && hasSelectionSlot.value && model.value.length > 0 && !search.value)
-              return select(model.value[0], false);
-            if (~selectionIndex.value) {
-              const originalSelectionIndex = selectionIndex.value;
-              select(model.value[selectionIndex.value], false);
-              selectionIndex.value = originalSelectionIndex >= length - 1 ? length - 2 : originalSelectionIndex;
-            } else if (e.key === "Backspace" && !search.value) {
-              selectionIndex.value = length - 1;
-            }
-          }
-          if (!props.multiple)
-            return;
-          if (e.key === "ArrowLeft") {
-            if (selectionIndex.value < 0 && selectionStart > 0)
-              return;
-            const prev = selectionIndex.value > -1 ? selectionIndex.value - 1 : length - 1;
-            if (model.value[prev]) {
-              selectionIndex.value = prev;
-            } else {
-              selectionIndex.value = -1;
-              vTextFieldRef.value.setSelectionRange((_b = search.value) == null ? void 0 : _b.length, (_c = search.value) == null ? void 0 : _c.length);
-            }
-          }
-          if (e.key === "ArrowRight") {
-            if (selectionIndex.value < 0)
-              return;
-            const next2 = selectionIndex.value + 1;
-            if (model.value[next2]) {
-              selectionIndex.value = next2;
-            } else {
-              selectionIndex.value = -1;
-              vTextFieldRef.value.setSelectionRange(0, 0);
-            }
-          }
-        }
-        function onChange(e) {
-          if (matchesSelector(vTextFieldRef.value, ":autofill") || matchesSelector(vTextFieldRef.value, ":-webkit-autofill")) {
-            const item = items2.value.find((item2) => item2.title === e.target.value);
-            if (item) {
-              select(item);
-            }
-          }
-        }
-        function onAfterLeave() {
-          var _a2;
-          if (isFocused.value) {
-            isPristine.value = true;
-            (_a2 = vTextFieldRef.value) == null ? void 0 : _a2.focus();
-          }
-        }
-        function onFocusin(e) {
-          isFocused.value = true;
-          setTimeout(() => {
-            listHasFocus.value = true;
+          e.stopPropagation();
+          onFocus();
+          nextTick(() => {
+            model.value = "";
+            callEvent(props["onClick:clear"], e);
           });
         }
-        function onFocusout(e) {
-          listHasFocus.value = false;
-        }
-        function onUpdateModelValue(v) {
-          if (v == null || v === "" && !props.multiple && !hasSelectionSlot.value)
-            model.value = [];
-        }
-        const isSelecting = shallowRef(false);
-        function select(item) {
-          let set2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-          if (!item || item.props.disabled)
-            return;
-          if (props.multiple) {
-            const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
-            const add2 = set2 == null ? !~index : set2;
-            if (~index) {
-              const value = add2 ? [...model.value, item] : [...model.value];
-              value.splice(index, 1);
-              model.value = value;
-            } else if (add2) {
-              model.value = [...model.value, item];
-            }
-            if (props.clearOnSelect) {
-              search.value = "";
-            }
-          } else {
-            const add2 = set2 !== false;
-            model.value = add2 ? [item] : [];
-            search.value = add2 && !hasSelectionSlot.value ? item.title : "";
-            nextTick(() => {
-              menu.value = false;
-              isPristine.value = true;
-            });
-          }
-        }
-        watch(isFocused, (val, oldVal) => {
+        function onInput(e) {
           var _a2;
-          if (val === oldVal)
-            return;
-          if (val) {
-            isSelecting.value = true;
-            search.value = props.multiple || hasSelectionSlot.value ? "" : String(((_a2 = model.value.at(-1)) == null ? void 0 : _a2.props.title) ?? "");
-            isPristine.value = true;
-            nextTick(() => isSelecting.value = false);
-          } else {
-            if (!props.multiple && search.value == null)
-              model.value = [];
-            menu.value = false;
-            if (!model.value.some((_ref3) => {
-              let {
-                title: title2
-              } = _ref3;
-              return title2 === search.value;
-            }))
-              search.value = "";
-            selectionIndex.value = -1;
-          }
-        });
-        watch(search, (val) => {
-          if (!isFocused.value || isSelecting.value)
-            return;
-          if (val)
-            menu.value = true;
-          isPristine.value = !val;
-        });
-        watch(menu, () => {
-          if (!props.hideSelected && menu.value && model.value.length) {
-            const index = displayItems.value.findIndex((item) => model.value.some((s) => item.value === s.value));
-            IN_BROWSER && window.requestAnimationFrame(() => {
-              var _a2;
-              index >= 0 && ((_a2 = vVirtualScrollRef.value) == null ? void 0 : _a2.scrollToIndex(index));
+          const el2 = e.target;
+          model.value = el2.value;
+          if ((_a2 = props.modelModifiers) == null ? void 0 : _a2.trim) {
+            const caretPosition = [el2.selectionStart, el2.selectionEnd];
+            nextTick(() => {
+              el2.selectionStart = caretPosition[0];
+              el2.selectionEnd = caretPosition[1];
             });
           }
+        }
+        const sizerRef = ref$1();
+        const rows = ref$1(+props.rows);
+        const isPlainOrUnderlined = computed(() => ["plain", "underlined"].includes(props.variant));
+        watchEffect(() => {
+          if (!props.autoGrow)
+            rows.value = +props.rows;
         });
-        watch(() => props.items, (newVal, oldVal) => {
-          if (menu.value)
+        function calculateInputHeight() {
+          if (!props.autoGrow)
             return;
-          if (isFocused.value && !oldVal.length && newVal.length) {
-            menu.value = true;
+          nextTick(() => {
+            if (!sizerRef.value || !vFieldRef.value)
+              return;
+            const style = getComputedStyle(sizerRef.value);
+            const fieldStyle = getComputedStyle(vFieldRef.value.$el);
+            const padding = parseFloat(style.getPropertyValue("--v-field-padding-top")) + parseFloat(style.getPropertyValue("--v-input-padding-top")) + parseFloat(style.getPropertyValue("--v-field-padding-bottom"));
+            const height = sizerRef.value.scrollHeight;
+            const lineHeight = parseFloat(style.lineHeight);
+            const minHeight = Math.max(parseFloat(props.rows) * lineHeight + padding, parseFloat(fieldStyle.getPropertyValue("--v-input-control-height")));
+            const maxHeight = parseFloat(props.maxRows) * lineHeight + padding || Infinity;
+            const newHeight = clamp(height ?? 0, minHeight, maxHeight);
+            rows.value = Math.floor((newHeight - padding) / lineHeight);
+            controlHeight.value = convertToUnit(newHeight);
+          });
+        }
+        onMounted(calculateInputHeight);
+        watch(model, calculateInputHeight);
+        watch(() => props.rows, calculateInputHeight);
+        watch(() => props.maxRows, calculateInputHeight);
+        watch(() => props.density, calculateInputHeight);
+        let observer;
+        watch(sizerRef, (val) => {
+          if (val) {
+            observer = new ResizeObserver(calculateInputHeight);
+            observer.observe(sizerRef.value);
+          } else {
+            observer == null ? void 0 : observer.disconnect();
           }
+        });
+        onBeforeUnmount(() => {
+          observer == null ? void 0 : observer.disconnect();
         });
         useRender(() => {
-          const hasList = !!(!props.hideNoData || displayItems.value.length || slots["prepend-item"] || slots["append-item"] || slots["no-data"]);
-          const isDirty = model.value.length > 0;
-          const textFieldProps = VTextField.filterProps(props);
-          return createVNode(VTextField, mergeProps({
-            "ref": vTextFieldRef
-          }, textFieldProps, {
-            "modelValue": search.value,
-            "onUpdate:modelValue": [($event) => search.value = $event, onUpdateModelValue],
-            "focused": isFocused.value,
-            "onUpdate:focused": ($event) => isFocused.value = $event,
-            "validationValue": model.externalValue,
-            "counterValue": counterValue.value,
-            "dirty": isDirty,
-            "onChange": onChange,
-            "class": ["v-autocomplete", `v-autocomplete--${props.multiple ? "multiple" : "single"}`, {
-              "v-autocomplete--active-menu": menu.value,
-              "v-autocomplete--chips": !!props.chips,
-              "v-autocomplete--selection-slot": !!hasSelectionSlot.value,
-              "v-autocomplete--selecting-index": selectionIndex.value > -1
+          const hasCounter = !!(slots.counter || props.counter || props.counterValue);
+          const hasDetails = !!(hasCounter || slots.details);
+          const [rootAttrs, inputAttrs] = filterInputAttrs(attrs);
+          const {
+            modelValue: _,
+            ...inputProps
+          } = VInput.filterProps(props);
+          const fieldProps = filterFieldProps(props);
+          return createVNode(VInput, mergeProps({
+            "ref": vInputRef,
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "class": ["v-textarea v-text-field", {
+              "v-textarea--prefixed": props.prefix,
+              "v-textarea--suffixed": props.suffix,
+              "v-text-field--prefixed": props.prefix,
+              "v-text-field--suffixed": props.suffix,
+              "v-textarea--auto-grow": props.autoGrow,
+              "v-textarea--no-resize": props.noResize || props.autoGrow,
+              "v-input--plain-underlined": isPlainOrUnderlined.value
             }, props.class],
-            "style": props.style,
-            "readonly": props.readonly,
-            "placeholder": isDirty ? void 0 : props.placeholder,
-            "onClick:clear": onClear,
-            "onMousedown:control": onMousedownControl,
-            "onKeydown": onKeydown
+            "style": props.style
+          }, rootAttrs, inputProps, {
+            "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
+            "focused": isFocused.value
           }), {
             ...slots,
-            default: () => createVNode(Fragment, null, [createVNode(VMenu, mergeProps({
-              "ref": vMenuRef,
-              "modelValue": menu.value,
-              "onUpdate:modelValue": ($event) => menu.value = $event,
-              "activator": "parent",
-              "contentClass": "v-autocomplete__content",
-              "disabled": menuDisabled.value,
-              "eager": props.eager,
-              "maxHeight": 310,
-              "openOnClick": false,
-              "closeOnContentClick": false,
-              "transition": props.transition,
-              "onAfterLeave": onAfterLeave
-            }, props.menuProps), {
-              default: () => [hasList && createVNode(VList, mergeProps({
-                "ref": listRef,
-                "selected": selectedValues.value,
-                "selectStrategy": props.multiple ? "independent" : "single-independent",
-                "onMousedown": (e) => e.preventDefault(),
-                "onKeydown": onListKeydown,
-                "onFocusin": onFocusin,
-                "onFocusout": onFocusout,
-                "onScrollPassive": onListScroll,
-                "tabindex": "-1",
-                "aria-live": "polite",
-                "color": props.itemColor ?? props.color
-              }, props.listProps), {
-                default: () => {
-                  var _a2, _b, _c;
-                  return [(_a2 = slots["prepend-item"]) == null ? void 0 : _a2.call(slots), !displayItems.value.length && !props.hideNoData && (((_b = slots["no-data"]) == null ? void 0 : _b.call(slots)) ?? createVNode(VListItem, {
-                    "title": t(props.noDataText)
-                  }, null)), createVNode(VVirtualScroll, {
-                    "ref": vVirtualScrollRef,
-                    "renderless": true,
-                    "items": displayItems.value
-                  }, {
-                    default: (_ref4) => {
-                      var _a3;
-                      let {
-                        item,
-                        index,
-                        itemRef
-                      } = _ref4;
-                      const itemProps = mergeProps(item.props, {
-                        ref: itemRef,
-                        key: index,
-                        active: highlightFirst.value && index === 0 ? true : void 0,
-                        onClick: () => select(item, null)
-                      });
-                      return ((_a3 = slots.item) == null ? void 0 : _a3.call(slots, {
-                        item,
-                        index,
-                        props: itemProps
-                      })) ?? createVNode(VListItem, mergeProps(itemProps, {
-                        "role": "option"
-                      }), {
-                        prepend: (_ref5) => {
-                          let {
-                            isSelected
-                          } = _ref5;
-                          return createVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
-                            "key": item.value,
-                            "modelValue": isSelected,
-                            "ripple": false,
-                            "tabindex": "-1"
-                          }, null) : void 0, item.props.prependAvatar && createVNode(VAvatar, {
-                            "image": item.props.prependAvatar
-                          }, null), item.props.prependIcon && createVNode(VIcon, {
-                            "icon": item.props.prependIcon
-                          }, null)]);
-                        },
-                        title: () => {
-                          var _a4, _b2;
-                          return isPristine.value ? item.title : highlightResult$1(item.title, (_a4 = getMatches(item)) == null ? void 0 : _a4.title, ((_b2 = search.value) == null ? void 0 : _b2.length) ?? 0);
-                        }
-                      });
+            default: (_ref2) => {
+              let {
+                id: id2,
+                isDisabled,
+                isDirty,
+                isReadonly: isReadonly2,
+                isValid: isValid2
+              } = _ref2;
+              return createVNode(VField, mergeProps({
+                "ref": vFieldRef,
+                "style": {
+                  "--v-textarea-control-height": controlHeight.value
+                },
+                "onClick": onControlClick,
+                "onMousedown": onControlMousedown,
+                "onClick:clear": onClear,
+                "onClick:prependInner": props["onClick:prependInner"],
+                "onClick:appendInner": props["onClick:appendInner"]
+              }, fieldProps, {
+                "id": id2.value,
+                "active": isActive.value || isDirty.value,
+                "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
+                "dirty": isDirty.value || props.dirty,
+                "disabled": isDisabled.value,
+                "focused": isFocused.value,
+                "error": isValid2.value === false
+              }), {
+                ...slots,
+                default: (_ref3) => {
+                  let {
+                    props: {
+                      class: fieldClass,
+                      ...slotProps
                     }
-                  }), (_c = slots["append-item"]) == null ? void 0 : _c.call(slots)];
+                  } = _ref3;
+                  return createVNode(Fragment, null, [props.prefix && createVNode("span", {
+                    "class": "v-text-field__prefix"
+                  }, [props.prefix]), withDirectives(createVNode("textarea", mergeProps({
+                    "ref": textareaRef,
+                    "class": fieldClass,
+                    "value": model.value,
+                    "onInput": onInput,
+                    "autofocus": props.autofocus,
+                    "readonly": isReadonly2.value,
+                    "disabled": isDisabled.value,
+                    "placeholder": props.placeholder,
+                    "rows": props.rows,
+                    "name": props.name,
+                    "onFocus": onFocus,
+                    "onBlur": blur
+                  }, slotProps, inputAttrs), null), [[resolveDirective("intersect"), {
+                    handler: onIntersect
+                  }, null, {
+                    once: true
+                  }]]), props.autoGrow && withDirectives(createVNode("textarea", {
+                    "class": [fieldClass, "v-textarea__sizer"],
+                    "id": `${slotProps.id}-sizer`,
+                    "onUpdate:modelValue": ($event) => model.value = $event,
+                    "ref": sizerRef,
+                    "readonly": true,
+                    "aria-hidden": "true"
+                  }, null), [[vModelText, model.value]]), props.suffix && createVNode("span", {
+                    "class": "v-text-field__suffix"
+                  }, [props.suffix])]);
                 }
-              })]
-            }), model.value.map((item, index) => {
-              function onChipClose(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                select(item, false);
-              }
-              const slotProps = {
-                "onClick:close": onChipClose,
-                onKeydown(e) {
-                  if (e.key !== "Enter" && e.key !== " ")
-                    return;
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onChipClose(e);
-                },
-                onMousedown(e) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                },
-                modelValue: true,
-                "onUpdate:modelValue": void 0
-              };
-              const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
-              const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
-                item,
-                index,
-                props: slotProps
-              }) : slots.selection({
-                item,
-                index
-              })) : void 0;
-              if (hasSlot && !slotContent)
-                return void 0;
-              return createVNode("div", {
-                "key": item.value,
-                "class": ["v-autocomplete__selection", index === selectionIndex.value && ["v-autocomplete__selection--selected", textColorClasses.value]],
-                "style": index === selectionIndex.value ? textColorStyles.value : {}
-              }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
-                "key": "chip",
-                "closable": props.closableChips,
-                "size": "small",
-                "text": item.title,
-                "disabled": item.props.disabled
-              }, slotProps), null) : createVNode(VDefaultsProvider, {
-                "key": "chip-defaults",
-                "defaults": {
-                  VChip: {
-                    closable: props.closableChips,
-                    size: "small",
-                    text: item.title
-                  }
-                }
-              }, {
-                default: () => [slotContent]
-              }) : slotContent ?? createVNode("span", {
-                "class": "v-autocomplete__selection-text"
-              }, [item.title, props.multiple && index < model.value.length - 1 && createVNode("span", {
-                "class": "v-autocomplete__selection-comma"
-              }, [createTextVNode(",")])])]);
-            })]),
-            "append-inner": function() {
+              });
+            },
+            details: hasDetails ? (slotProps) => {
               var _a2;
-              for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-              }
-              return createVNode(Fragment, null, [(_a2 = slots["append-inner"]) == null ? void 0 : _a2.call(slots, ...args), props.menuIcon ? createVNode(VIcon, {
-                "class": "v-autocomplete__menu-icon",
-                "icon": props.menuIcon,
-                "onMousedown": onMousedownMenuIcon,
-                "onClick": noop$1,
-                "aria-label": t(label.value),
-                "title": t(label.value),
-                "tabindex": "-1"
-              }, null) : void 0]);
-            }
+              return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
+                "active": props.persistentCounter || isFocused.value,
+                "value": counterValue.value,
+                "max": max.value,
+                "disabled": props.disabled
+              }, slots.counter)])]);
+            } : void 0
           });
         });
-        return forwardRefs({
-          isFocused,
-          isPristine,
-          menu,
-          search,
-          filteredItems,
-          select
-        }, vTextFieldRef);
+        return forwardRefs({}, vInputRef, vFieldRef, textareaRef);
       }
     });
-    const makeVColorPickerCanvasProps = propsFactory({
-      color: {
-        type: Object
+    const _sfc_main$w = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfTextareaNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
       },
-      disabled: Boolean,
-      dotSize: {
-        type: [Number, String],
-        default: 10
+      setup(props) {
+        useDefaults({}, "VjsfTextArea");
+        const textarea = ref$1(null);
+        const fieldProps = computed(() => {
+          const inputProps = getInputProps(props.modelValue, props.statefulLayout, ["placeholder"]);
+          inputProps.ref = textarea;
+          if (props.modelValue.options.readOnly && props.modelValue.options.summary)
+            inputProps.rows = 3;
+          return inputProps;
+        });
+        const fieldSlots = computed(() => getCompSlots(props.modelValue, props.statefulLayout));
+        watch(() => props.modelValue.options.readOnly, (readOnly) => {
+          if (readOnly && textarea.value) {
+            textarea.value.scrollTop = 0;
+          }
+        });
+        return () => h(VTextarea, fieldProps.value, fieldSlots.value);
+      }
+    });
+    const _sfc_main$v = {
+      __name: "checkbox",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfCheckboxNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
       },
-      height: {
-        type: [Number, String],
-        default: 150
+      setup(__props) {
+        useDefaults({}, "VjsfCheckbox");
+        const props = __props;
+        const fieldProps = computed(() => {
+          const inputProps = getInputProps(props.modelValue, props.statefulLayout);
+          if (!("hideDetails" in inputProps))
+            inputProps.hideDetails = "auto";
+          return inputProps;
+        });
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(unref(VCheckbox), mergeProps(fieldProps.value, {
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value))
+          }), null, 16);
+        };
+      }
+    };
+    const makeVSwitchProps = propsFactory({
+      indeterminate: Boolean,
+      inset: Boolean,
+      flat: Boolean,
+      loading: {
+        type: [Boolean, String],
+        default: false
       },
-      width: {
-        type: [Number, String],
-        default: 300
-      },
-      ...makeComponentProps()
-    }, "VColorPickerCanvas");
-    const VColorPickerCanvas = defineComponent({
-      name: "VColorPickerCanvas",
-      props: makeVColorPickerCanvasProps(),
+      ...makeVInputProps(),
+      ...makeVSelectionControlProps()
+    }, "VSwitch");
+    const VSwitch = genericComponent()({
+      name: "VSwitch",
+      inheritAttrs: false,
+      props: makeVSwitchProps(),
       emits: {
-        "update:color": (color) => true,
-        "update:position": (hue) => true
+        "update:focused": (focused) => true,
+        "update:modelValue": (value) => true,
+        "update:indeterminate": (value) => true
       },
       setup(props, _ref) {
         let {
-          emit: emit2
+          attrs,
+          slots
         } = _ref;
-        const isInteracting = shallowRef(false);
-        const canvasRef = ref$1();
-        const canvasWidth = shallowRef(parseFloat(props.width));
-        const canvasHeight = shallowRef(parseFloat(props.height));
-        const _dotPosition = ref$1({
-          x: 0,
-          y: 0
-        });
-        const dotPosition = computed({
-          get: () => _dotPosition.value,
-          set(val) {
-            var _a2, _b;
-            if (!canvasRef.value)
-              return;
-            const {
-              x: x2,
-              y
-            } = val;
-            _dotPosition.value = val;
-            emit2("update:color", {
-              h: ((_a2 = props.color) == null ? void 0 : _a2.h) ?? 0,
-              s: clamp(x2, 0, canvasWidth.value) / canvasWidth.value,
-              v: 1 - clamp(y, 0, canvasHeight.value) / canvasHeight.value,
-              a: ((_b = props.color) == null ? void 0 : _b.a) ?? 1
-            });
-          }
-        });
-        const dotStyles = computed(() => {
-          const {
-            x: x2,
-            y
-          } = dotPosition.value;
-          const radius = parseInt(props.dotSize, 10) / 2;
-          return {
-            width: convertToUnit(props.dotSize),
-            height: convertToUnit(props.dotSize),
-            transform: `translate(${convertToUnit(x2 - radius)}, ${convertToUnit(y - radius)})`
-          };
-        });
+        const indeterminate = useProxiedModel(props, "indeterminate");
+        const model = useProxiedModel(props, "modelValue");
         const {
-          resizeRef
-        } = useResizeObserver$1((entries) => {
-          var _a2;
-          if (!((_a2 = resizeRef.el) == null ? void 0 : _a2.offsetParent))
-            return;
-          const {
-            width,
-            height
-          } = entries[0].contentRect;
-          canvasWidth.value = width;
-          canvasHeight.value = height;
+          loaderClasses
+        } = useLoader(props);
+        const {
+          isFocused,
+          focus,
+          blur
+        } = useFocus(props);
+        const control = ref$1();
+        const isForcedColorsModeActive = IN_BROWSER && window.matchMedia("(forced-colors: active)").matches;
+        const loaderColor = computed(() => {
+          return typeof props.loading === "string" && props.loading !== "" ? props.loading : props.color;
         });
-        function updateDotPosition(x2, y, rect2) {
-          const {
-            left,
-            top: top2,
-            width,
-            height
-          } = rect2;
-          dotPosition.value = {
-            x: clamp(x2 - left, 0, width),
-            y: clamp(y - top2, 0, height)
-          };
-        }
-        function handleMouseDown(e) {
-          if (e.type === "mousedown") {
-            e.preventDefault();
+        const uid2 = getUid();
+        const id2 = computed(() => props.id || `switch-${uid2}`);
+        function onChange() {
+          if (indeterminate.value) {
+            indeterminate.value = false;
           }
-          if (props.disabled)
-            return;
-          handleMouseMove(e);
-          window.addEventListener("mousemove", handleMouseMove);
-          window.addEventListener("mouseup", handleMouseUp);
-          window.addEventListener("touchmove", handleMouseMove);
-          window.addEventListener("touchend", handleMouseUp);
         }
-        function handleMouseMove(e) {
-          if (props.disabled || !canvasRef.value)
-            return;
-          isInteracting.value = true;
-          const coords = getEventCoordinates(e);
-          updateDotPosition(coords.clientX, coords.clientY, canvasRef.value.getBoundingClientRect());
+        function onTrackClick(e) {
+          var _a2, _b;
+          e.stopPropagation();
+          e.preventDefault();
+          (_b = (_a2 = control.value) == null ? void 0 : _a2.input) == null ? void 0 : _b.click();
         }
-        function handleMouseUp() {
-          window.removeEventListener("mousemove", handleMouseMove);
-          window.removeEventListener("mouseup", handleMouseUp);
-          window.removeEventListener("touchmove", handleMouseMove);
-          window.removeEventListener("touchend", handleMouseUp);
-        }
-        function updateCanvas() {
-          var _a2;
-          if (!canvasRef.value)
-            return;
-          const canvas = canvasRef.value;
-          const ctx = canvas.getContext("2d");
-          if (!ctx)
-            return;
-          const saturationGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
-          saturationGradient.addColorStop(0, "hsla(0, 0%, 100%, 1)");
-          saturationGradient.addColorStop(1, `hsla(${((_a2 = props.color) == null ? void 0 : _a2.h) ?? 0}, 100%, 50%, 1)`);
-          ctx.fillStyle = saturationGradient;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          const valueGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-          valueGradient.addColorStop(0, "hsla(0, 0%, 0%, 0)");
-          valueGradient.addColorStop(1, "hsla(0, 0%, 0%, 1)");
-          ctx.fillStyle = valueGradient;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        watch(() => {
-          var _a2;
-          return (_a2 = props.color) == null ? void 0 : _a2.h;
-        }, updateCanvas, {
-          immediate: true
+        useRender(() => {
+          const [rootAttrs, controlAttrs] = filterInputAttrs(attrs);
+          const inputProps = VInput.filterProps(props);
+          const controlProps = VSelectionControl.filterProps(props);
+          return createVNode(VInput, mergeProps({
+            "class": ["v-switch", {
+              "v-switch--flat": props.flat
+            }, {
+              "v-switch--inset": props.inset
+            }, {
+              "v-switch--indeterminate": indeterminate.value
+            }, loaderClasses.value, props.class]
+          }, rootAttrs, inputProps, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "id": id2.value,
+            "focused": isFocused.value,
+            "style": props.style
+          }), {
+            ...slots,
+            default: (_ref2) => {
+              let {
+                id: id3,
+                messagesId,
+                isDisabled,
+                isReadonly: isReadonly2,
+                isValid: isValid2
+              } = _ref2;
+              const slotProps = {
+                model,
+                isValid: isValid2
+              };
+              return createVNode(VSelectionControl, mergeProps({
+                "ref": control
+              }, controlProps, {
+                "modelValue": model.value,
+                "onUpdate:modelValue": [($event) => model.value = $event, onChange],
+                "id": id3.value,
+                "aria-describedby": messagesId.value,
+                "type": "checkbox",
+                "aria-checked": indeterminate.value ? "mixed" : void 0,
+                "disabled": isDisabled.value,
+                "readonly": isReadonly2.value,
+                "onFocus": focus,
+                "onBlur": blur
+              }, controlAttrs), {
+                ...slots,
+                default: (_ref3) => {
+                  let {
+                    backgroundColorClasses,
+                    backgroundColorStyles
+                  } = _ref3;
+                  return createVNode("div", {
+                    "class": ["v-switch__track", !isForcedColorsModeActive ? backgroundColorClasses.value : void 0],
+                    "style": backgroundColorStyles.value,
+                    "onClick": onTrackClick
+                  }, [slots["track-true"] && createVNode("div", {
+                    "key": "prepend",
+                    "class": "v-switch__track-true"
+                  }, [slots["track-true"](slotProps)]), slots["track-false"] && createVNode("div", {
+                    "key": "append",
+                    "class": "v-switch__track-false"
+                  }, [slots["track-false"](slotProps)])]);
+                },
+                input: (_ref4) => {
+                  let {
+                    inputNode,
+                    icon,
+                    backgroundColorClasses,
+                    backgroundColorStyles
+                  } = _ref4;
+                  return createVNode(Fragment, null, [inputNode, createVNode("div", {
+                    "class": ["v-switch__thumb", {
+                      "v-switch__thumb--filled": icon || props.loading
+                    }, props.inset || isForcedColorsModeActive ? void 0 : backgroundColorClasses.value],
+                    "style": props.inset ? void 0 : backgroundColorStyles.value
+                  }, [slots.thumb ? createVNode(VDefaultsProvider, {
+                    "defaults": {
+                      VIcon: {
+                        icon,
+                        size: "x-small"
+                      }
+                    }
+                  }, {
+                    default: () => [slots.thumb({
+                      ...slotProps,
+                      icon
+                    })]
+                  }) : createVNode(VScaleTransition, null, {
+                    default: () => [!props.loading ? icon && createVNode(VIcon, {
+                      "key": String(icon),
+                      "icon": icon,
+                      "size": "x-small"
+                    }, null) : createVNode(LoaderSlot, {
+                      "name": "v-switch",
+                      "active": true,
+                      "color": isValid2.value === false ? void 0 : loaderColor.value
+                    }, {
+                      default: (slotProps2) => slots.loader ? slots.loader(slotProps2) : createVNode(VProgressCircular, {
+                        "active": slotProps2.isActive,
+                        "color": slotProps2.color,
+                        "indeterminate": true,
+                        "size": "16",
+                        "width": "2"
+                      }, null)
+                    })]
+                  })])]);
+                }
+              });
+            }
+          });
         });
-        watch(() => [canvasWidth.value, canvasHeight.value], (newVal, oldVal) => {
-          updateCanvas();
-          _dotPosition.value = {
-            x: dotPosition.value.x * newVal[0] / oldVal[0],
-            y: dotPosition.value.y * newVal[1] / oldVal[1]
-          };
-        }, {
-          flush: "post"
-        });
-        watch(() => props.color, () => {
-          if (isInteracting.value) {
-            isInteracting.value = false;
-            return;
-          }
-          _dotPosition.value = props.color ? {
-            x: props.color.s * canvasWidth.value,
-            y: (1 - props.color.v) * canvasHeight.value
-          } : {
-            x: 0,
-            y: 0
-          };
-        }, {
-          deep: true,
-          immediate: true
-        });
-        onMounted(() => updateCanvas());
-        useRender(() => createVNode("div", {
-          "ref": resizeRef,
-          "class": ["v-color-picker-canvas", props.class],
-          "style": props.style,
-          "onMousedown": handleMouseDown,
-          "onTouchstartPassive": handleMouseDown
-        }, [createVNode("canvas", {
-          "ref": canvasRef,
-          "width": canvasWidth.value,
-          "height": canvasHeight.value
-        }, null), props.color && createVNode("div", {
-          "class": ["v-color-picker-canvas__dot", {
-            "v-color-picker-canvas__dot--disabled": props.disabled
-          }],
-          "style": dotStyles.value
-        }, null)]));
         return {};
       }
     });
-    function stripAlpha(color, stripAlpha2) {
-      if (stripAlpha2) {
-        const {
-          a,
-          ...rest
-        } = color;
-        return rest;
-      }
-      return color;
-    }
-    function extractColor(color, input) {
-      if (input == null || typeof input === "string") {
-        const hex2 = HSVtoHex(color);
-        if (color.a === 1)
-          return hex2.slice(0, 7);
-        else
-          return hex2;
-      }
-      if (typeof input === "object") {
-        let converted;
-        if (has$2(input, ["r", "g", "b"]))
-          converted = HSVtoRGB(color);
-        else if (has$2(input, ["h", "s", "l"]))
-          converted = HSVtoHSL(color);
-        else if (has$2(input, ["h", "s", "v"]))
-          converted = color;
-        return stripAlpha(converted, !has$2(input, ["a"]) && color.a === 1);
-      }
-      return color;
-    }
-    const nullColor = {
-      h: 0,
-      s: 0,
-      v: 0,
-      a: 1
-    };
-    const rgba = {
-      inputProps: {
-        type: "number",
-        min: 0
-      },
-      inputs: [{
-        label: "R",
-        max: 255,
-        step: 1,
-        getValue: (c) => Math.round(c.r),
-        getColor: (c, v) => ({
-          ...c,
-          r: Number(v)
-        })
-      }, {
-        label: "G",
-        max: 255,
-        step: 1,
-        getValue: (c) => Math.round(c.g),
-        getColor: (c, v) => ({
-          ...c,
-          g: Number(v)
-        })
-      }, {
-        label: "B",
-        max: 255,
-        step: 1,
-        getValue: (c) => Math.round(c.b),
-        getColor: (c, v) => ({
-          ...c,
-          b: Number(v)
-        })
-      }, {
-        label: "A",
-        max: 1,
-        step: 0.01,
-        getValue: (_ref) => {
-          let {
-            a
-          } = _ref;
-          return a != null ? Math.round(a * 100) / 100 : 1;
+    const _sfc_main$u = {
+      __name: "switch",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfSwitchNode> */
+          type: Object,
+          required: true
         },
-        getColor: (c, v) => ({
-          ...c,
-          a: Number(v)
-        })
-      }],
-      to: HSVtoRGB,
-      from: RGBtoHSV
-    };
-    const rgb = {
-      ...rgba,
-      inputs: (_a = rgba.inputs) == null ? void 0 : _a.slice(0, 3)
-    };
-    const hsla = {
-      inputProps: {
-        type: "number",
-        min: 0
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
       },
-      inputs: [{
-        label: "H",
-        max: 360,
-        step: 1,
-        getValue: (c) => Math.round(c.h),
-        getColor: (c, v) => ({
-          ...c,
-          h: Number(v)
-        })
-      }, {
-        label: "S",
-        max: 1,
-        step: 0.01,
-        getValue: (c) => Math.round(c.s * 100) / 100,
-        getColor: (c, v) => ({
-          ...c,
-          s: Number(v)
-        })
-      }, {
-        label: "L",
-        max: 1,
-        step: 0.01,
-        getValue: (c) => Math.round(c.l * 100) / 100,
-        getColor: (c, v) => ({
-          ...c,
-          l: Number(v)
-        })
-      }, {
-        label: "A",
-        max: 1,
-        step: 0.01,
-        getValue: (_ref2) => {
-          let {
-            a
-          } = _ref2;
-          return a != null ? Math.round(a * 100) / 100 : 1;
+      setup(__props) {
+        useDefaults({}, "VjsfSwitch");
+        const props = __props;
+        const fieldProps = computed(() => {
+          const inputProps = getInputProps(props.modelValue, props.statefulLayout);
+          if (!("hideDetails" in inputProps))
+            inputProps.hideDetails = "auto";
+          return inputProps;
+        });
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(unref(VSwitch), mergeProps(fieldProps.value, {
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value))
+          }), null, 16);
+        };
+      }
+    };
+    const _sfc_main$t = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfNumberFieldNode> */
+          type: Object,
+          required: true
         },
-        getColor: (c, v) => ({
-          ...c,
-          a: Number(v)
-        })
-      }],
-      to: HSVtoHSL,
-      from: HSLtoHSV
-    };
-    const hsl = {
-      ...hsla,
-      inputs: hsla.inputs.slice(0, 3)
-    };
-    const hexa = {
-      inputProps: {
-        type: "text"
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
       },
-      inputs: [{
-        label: "HEXA",
-        getValue: (c) => c,
-        getColor: (c, v) => v
-      }],
-      to: HSVtoHex,
-      from: HexToHSV
-    };
-    const hex = {
-      ...hexa,
-      inputs: [{
-        label: "HEX",
-        getValue: (c) => c.slice(0, 7),
-        getColor: (c, v) => v
-      }]
-    };
-    const modes = {
-      rgb,
-      rgba,
-      hsl,
-      hsla,
-      hex,
-      hexa
-    };
-    const VColorPickerInput = (_ref) => {
-      let {
-        label,
-        ...rest
-      } = _ref;
-      return createVNode("div", {
-        "class": "v-color-picker-edit__input"
-      }, [createVNode("input", rest, null), createVNode("span", null, [label])]);
-    };
-    const makeVColorPickerEditProps = propsFactory({
-      color: Object,
-      disabled: Boolean,
-      mode: {
-        type: String,
-        default: "rgba",
-        validator: (v) => Object.keys(modes).includes(v)
-      },
-      modes: {
-        type: Array,
-        default: () => Object.keys(modes),
-        validator: (v) => Array.isArray(v) && v.every((m) => Object.keys(modes).includes(m))
-      },
-      ...makeComponentProps()
-    }, "VColorPickerEdit");
-    const VColorPickerEdit = defineComponent({
-      name: "VColorPickerEdit",
-      props: makeVColorPickerEditProps(),
-      emits: {
-        "update:color": (color) => true,
-        "update:mode": (mode) => true
-      },
-      setup(props, _ref2) {
-        let {
-          emit: emit2
-        } = _ref2;
-        const enabledModes = computed(() => {
-          return props.modes.map((key) => ({
-            ...modes[key],
-            name: key
-          }));
+      setup(props) {
+        useDefaults({}, "VjsfNumberField");
+        const fieldProps = computed(() => {
+          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["step", "min", "max", "placeholder"]);
+          fieldProps2.type = "number";
+          fieldProps2["onUpdate:modelValue"] = (value) => props.statefulLayout.input(props.modelValue, value && Number(value));
+          return fieldProps2;
         });
-        const inputs = computed(() => {
-          var _a2;
-          const mode = enabledModes.value.find((m) => m.name === props.mode);
-          if (!mode)
-            return [];
-          const color = props.color ? mode.to(props.color) : null;
-          return (_a2 = mode.inputs) == null ? void 0 : _a2.map((_ref3) => {
-            let {
-              getValue,
-              getColor,
-              ...inputProps
-            } = _ref3;
-            return {
-              ...mode.inputProps,
-              ...inputProps,
-              disabled: props.disabled,
-              value: color && getValue(color),
-              onChange: (e) => {
-                const target2 = e.target;
-                if (!target2)
-                  return;
-                emit2("update:color", mode.from(getColor(color ?? mode.to(nullColor), target2.value)));
-              }
-            };
-          });
-        });
-        useRender(() => {
-          var _a2;
-          return createVNode("div", {
-            "class": ["v-color-picker-edit", props.class],
-            "style": props.style
-          }, [(_a2 = inputs.value) == null ? void 0 : _a2.map((props2) => createVNode(VColorPickerInput, props2, null)), enabledModes.value.length > 1 && createVNode(VBtn, {
-            "icon": "$unfold",
-            "size": "x-small",
-            "variant": "plain",
-            "onClick": () => {
-              const mi = enabledModes.value.findIndex((m) => m.name === props.mode);
-              emit2("update:mode", enabledModes.value[(mi + 1) % enabledModes.value.length].name);
-            }
-          }, null)]);
-        });
-        return {};
+        const fieldSlots = computed(() => getCompSlots(props.modelValue, props.statefulLayout));
+        return () => h(VTextField, fieldProps.value, fieldSlots.value);
       }
     });
     const VSliderSymbol = Symbol.for("vuetify:v-slider");
@@ -73455,1158 +73694,110 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const makeVColorPickerPreviewProps = propsFactory({
-      color: {
-        type: Object
-      },
-      disabled: Boolean,
-      hideAlpha: Boolean,
-      ...makeComponentProps()
-    }, "VColorPickerPreview");
-    const VColorPickerPreview = defineComponent({
-      name: "VColorPickerPreview",
-      props: makeVColorPickerPreviewProps(),
-      emits: {
-        "update:color": (color) => true
-      },
-      setup(props, _ref) {
-        let {
-          emit: emit2
-        } = _ref;
-        const abortController = new AbortController();
-        onUnmounted(() => abortController.abort());
-        async function openEyeDropper() {
-          if (!SUPPORTS_EYE_DROPPER)
-            return;
-          const eyeDropper = new window.EyeDropper();
-          try {
-            const result = await eyeDropper.open({
-              signal: abortController.signal
-            });
-            const colorHexValue = HexToHSV(result.sRGBHex);
-            emit2("update:color", {
-              ...props.color ?? nullColor,
-              ...colorHexValue
-            });
-          } catch (e) {
-          }
+    const _sfc_main$s = {
+      __name: "slider",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfSliderNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
         }
-        useRender(() => {
-          var _a2, _b;
-          return createVNode("div", {
-            "class": ["v-color-picker-preview", {
-              "v-color-picker-preview--hide-alpha": props.hideAlpha
-            }, props.class],
-            "style": props.style
-          }, [SUPPORTS_EYE_DROPPER && createVNode("div", {
-            "class": "v-color-picker-preview__eye-dropper",
-            "key": "eyeDropper"
-          }, [createVNode(VBtn, {
-            "onClick": openEyeDropper,
-            "icon": "$eyeDropper",
-            "variant": "plain",
-            "density": "comfortable"
-          }, null)]), createVNode("div", {
-            "class": "v-color-picker-preview__dot"
-          }, [createVNode("div", {
-            "style": {
-              background: HSVtoCSS(props.color ?? nullColor)
-            }
-          }, null)]), createVNode("div", {
-            "class": "v-color-picker-preview__sliders"
-          }, [createVNode(VSlider, {
-            "class": "v-color-picker-preview__track v-color-picker-preview__hue",
-            "modelValue": (_a2 = props.color) == null ? void 0 : _a2.h,
-            "onUpdate:modelValue": (h2) => emit2("update:color", {
-              ...props.color ?? nullColor,
-              h: h2
-            }),
-            "step": 0,
-            "min": 0,
-            "max": 360,
-            "disabled": props.disabled,
-            "thumbSize": 14,
-            "trackSize": 8,
-            "trackFillColor": "white",
-            "hideDetails": true
-          }, null), !props.hideAlpha && createVNode(VSlider, {
-            "class": "v-color-picker-preview__track v-color-picker-preview__alpha",
-            "modelValue": ((_b = props.color) == null ? void 0 : _b.a) ?? 1,
-            "onUpdate:modelValue": (a) => emit2("update:color", {
-              ...props.color ?? nullColor,
-              a
-            }),
-            "step": 1 / 256,
-            "min": 0,
-            "max": 1,
-            "disabled": props.disabled,
-            "thumbSize": 14,
-            "trackSize": 8,
-            "trackFillColor": "white",
-            "hideDetails": true
-          }, null)])]);
+      },
+      setup(__props) {
+        useDefaults({}, "VjsfSlider");
+        const props = __props;
+        const fieldProps = computed(() => {
+          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
+          if ("step" in props.modelValue.layout)
+            fieldProps2.step = props.modelValue.layout.step;
+          fieldProps2.min = props.modelValue.layout.min;
+          fieldProps2.max = props.modelValue.layout.max;
+          return fieldProps2;
         });
-        return {};
-      }
-    });
-    const red = {
-      base: "#f44336",
-      lighten5: "#ffebee",
-      lighten4: "#ffcdd2",
-      lighten3: "#ef9a9a",
-      lighten2: "#e57373",
-      lighten1: "#ef5350",
-      darken1: "#e53935",
-      darken2: "#d32f2f",
-      darken3: "#c62828",
-      darken4: "#b71c1c",
-      accent1: "#ff8a80",
-      accent2: "#ff5252",
-      accent3: "#ff1744",
-      accent4: "#d50000"
-    };
-    const pink = {
-      base: "#e91e63",
-      lighten5: "#fce4ec",
-      lighten4: "#f8bbd0",
-      lighten3: "#f48fb1",
-      lighten2: "#f06292",
-      lighten1: "#ec407a",
-      darken1: "#d81b60",
-      darken2: "#c2185b",
-      darken3: "#ad1457",
-      darken4: "#880e4f",
-      accent1: "#ff80ab",
-      accent2: "#ff4081",
-      accent3: "#f50057",
-      accent4: "#c51162"
-    };
-    const purple = {
-      base: "#9c27b0",
-      lighten5: "#f3e5f5",
-      lighten4: "#e1bee7",
-      lighten3: "#ce93d8",
-      lighten2: "#ba68c8",
-      lighten1: "#ab47bc",
-      darken1: "#8e24aa",
-      darken2: "#7b1fa2",
-      darken3: "#6a1b9a",
-      darken4: "#4a148c",
-      accent1: "#ea80fc",
-      accent2: "#e040fb",
-      accent3: "#d500f9",
-      accent4: "#aa00ff"
-    };
-    const deepPurple = {
-      base: "#673ab7",
-      lighten5: "#ede7f6",
-      lighten4: "#d1c4e9",
-      lighten3: "#b39ddb",
-      lighten2: "#9575cd",
-      lighten1: "#7e57c2",
-      darken1: "#5e35b1",
-      darken2: "#512da8",
-      darken3: "#4527a0",
-      darken4: "#311b92",
-      accent1: "#b388ff",
-      accent2: "#7c4dff",
-      accent3: "#651fff",
-      accent4: "#6200ea"
-    };
-    const indigo = {
-      base: "#3f51b5",
-      lighten5: "#e8eaf6",
-      lighten4: "#c5cae9",
-      lighten3: "#9fa8da",
-      lighten2: "#7986cb",
-      lighten1: "#5c6bc0",
-      darken1: "#3949ab",
-      darken2: "#303f9f",
-      darken3: "#283593",
-      darken4: "#1a237e",
-      accent1: "#8c9eff",
-      accent2: "#536dfe",
-      accent3: "#3d5afe",
-      accent4: "#304ffe"
-    };
-    const blue = {
-      base: "#2196f3",
-      lighten5: "#e3f2fd",
-      lighten4: "#bbdefb",
-      lighten3: "#90caf9",
-      lighten2: "#64b5f6",
-      lighten1: "#42a5f5",
-      darken1: "#1e88e5",
-      darken2: "#1976d2",
-      darken3: "#1565c0",
-      darken4: "#0d47a1",
-      accent1: "#82b1ff",
-      accent2: "#448aff",
-      accent3: "#2979ff",
-      accent4: "#2962ff"
-    };
-    const lightBlue = {
-      base: "#03a9f4",
-      lighten5: "#e1f5fe",
-      lighten4: "#b3e5fc",
-      lighten3: "#81d4fa",
-      lighten2: "#4fc3f7",
-      lighten1: "#29b6f6",
-      darken1: "#039be5",
-      darken2: "#0288d1",
-      darken3: "#0277bd",
-      darken4: "#01579b",
-      accent1: "#80d8ff",
-      accent2: "#40c4ff",
-      accent3: "#00b0ff",
-      accent4: "#0091ea"
-    };
-    const cyan = {
-      base: "#00bcd4",
-      lighten5: "#e0f7fa",
-      lighten4: "#b2ebf2",
-      lighten3: "#80deea",
-      lighten2: "#4dd0e1",
-      lighten1: "#26c6da",
-      darken1: "#00acc1",
-      darken2: "#0097a7",
-      darken3: "#00838f",
-      darken4: "#006064",
-      accent1: "#84ffff",
-      accent2: "#18ffff",
-      accent3: "#00e5ff",
-      accent4: "#00b8d4"
-    };
-    const teal = {
-      base: "#009688",
-      lighten5: "#e0f2f1",
-      lighten4: "#b2dfdb",
-      lighten3: "#80cbc4",
-      lighten2: "#4db6ac",
-      lighten1: "#26a69a",
-      darken1: "#00897b",
-      darken2: "#00796b",
-      darken3: "#00695c",
-      darken4: "#004d40",
-      accent1: "#a7ffeb",
-      accent2: "#64ffda",
-      accent3: "#1de9b6",
-      accent4: "#00bfa5"
-    };
-    const green = {
-      base: "#4caf50",
-      lighten5: "#e8f5e9",
-      lighten4: "#c8e6c9",
-      lighten3: "#a5d6a7",
-      lighten2: "#81c784",
-      lighten1: "#66bb6a",
-      darken1: "#43a047",
-      darken2: "#388e3c",
-      darken3: "#2e7d32",
-      darken4: "#1b5e20",
-      accent1: "#b9f6ca",
-      accent2: "#69f0ae",
-      accent3: "#00e676",
-      accent4: "#00c853"
-    };
-    const lightGreen = {
-      base: "#8bc34a",
-      lighten5: "#f1f8e9",
-      lighten4: "#dcedc8",
-      lighten3: "#c5e1a5",
-      lighten2: "#aed581",
-      lighten1: "#9ccc65",
-      darken1: "#7cb342",
-      darken2: "#689f38",
-      darken3: "#558b2f",
-      darken4: "#33691e",
-      accent1: "#ccff90",
-      accent2: "#b2ff59",
-      accent3: "#76ff03",
-      accent4: "#64dd17"
-    };
-    const lime = {
-      base: "#cddc39",
-      lighten5: "#f9fbe7",
-      lighten4: "#f0f4c3",
-      lighten3: "#e6ee9c",
-      lighten2: "#dce775",
-      lighten1: "#d4e157",
-      darken1: "#c0ca33",
-      darken2: "#afb42b",
-      darken3: "#9e9d24",
-      darken4: "#827717",
-      accent1: "#f4ff81",
-      accent2: "#eeff41",
-      accent3: "#c6ff00",
-      accent4: "#aeea00"
-    };
-    const yellow = {
-      base: "#ffeb3b",
-      lighten5: "#fffde7",
-      lighten4: "#fff9c4",
-      lighten3: "#fff59d",
-      lighten2: "#fff176",
-      lighten1: "#ffee58",
-      darken1: "#fdd835",
-      darken2: "#fbc02d",
-      darken3: "#f9a825",
-      darken4: "#f57f17",
-      accent1: "#ffff8d",
-      accent2: "#ffff00",
-      accent3: "#ffea00",
-      accent4: "#ffd600"
-    };
-    const amber = {
-      base: "#ffc107",
-      lighten5: "#fff8e1",
-      lighten4: "#ffecb3",
-      lighten3: "#ffe082",
-      lighten2: "#ffd54f",
-      lighten1: "#ffca28",
-      darken1: "#ffb300",
-      darken2: "#ffa000",
-      darken3: "#ff8f00",
-      darken4: "#ff6f00",
-      accent1: "#ffe57f",
-      accent2: "#ffd740",
-      accent3: "#ffc400",
-      accent4: "#ffab00"
-    };
-    const orange = {
-      base: "#ff9800",
-      lighten5: "#fff3e0",
-      lighten4: "#ffe0b2",
-      lighten3: "#ffcc80",
-      lighten2: "#ffb74d",
-      lighten1: "#ffa726",
-      darken1: "#fb8c00",
-      darken2: "#f57c00",
-      darken3: "#ef6c00",
-      darken4: "#e65100",
-      accent1: "#ffd180",
-      accent2: "#ffab40",
-      accent3: "#ff9100",
-      accent4: "#ff6d00"
-    };
-    const deepOrange = {
-      base: "#ff5722",
-      lighten5: "#fbe9e7",
-      lighten4: "#ffccbc",
-      lighten3: "#ffab91",
-      lighten2: "#ff8a65",
-      lighten1: "#ff7043",
-      darken1: "#f4511e",
-      darken2: "#e64a19",
-      darken3: "#d84315",
-      darken4: "#bf360c",
-      accent1: "#ff9e80",
-      accent2: "#ff6e40",
-      accent3: "#ff3d00",
-      accent4: "#dd2c00"
-    };
-    const brown = {
-      base: "#795548",
-      lighten5: "#efebe9",
-      lighten4: "#d7ccc8",
-      lighten3: "#bcaaa4",
-      lighten2: "#a1887f",
-      lighten1: "#8d6e63",
-      darken1: "#6d4c41",
-      darken2: "#5d4037",
-      darken3: "#4e342e",
-      darken4: "#3e2723"
-    };
-    const blueGrey = {
-      base: "#607d8b",
-      lighten5: "#eceff1",
-      lighten4: "#cfd8dc",
-      lighten3: "#b0bec5",
-      lighten2: "#90a4ae",
-      lighten1: "#78909c",
-      darken1: "#546e7a",
-      darken2: "#455a64",
-      darken3: "#37474f",
-      darken4: "#263238"
-    };
-    const grey = {
-      base: "#9e9e9e",
-      lighten5: "#fafafa",
-      lighten4: "#f5f5f5",
-      lighten3: "#eeeeee",
-      lighten2: "#e0e0e0",
-      lighten1: "#bdbdbd",
-      darken1: "#757575",
-      darken2: "#616161",
-      darken3: "#424242",
-      darken4: "#212121"
-    };
-    const shades = {
-      black: "#000000",
-      white: "#ffffff",
-      transparent: "#ffffff00"
-    };
-    const colors = {
-      red,
-      pink,
-      purple,
-      deepPurple,
-      indigo,
-      blue,
-      lightBlue,
-      cyan,
-      teal,
-      green,
-      lightGreen,
-      lime,
-      yellow,
-      amber,
-      orange,
-      deepOrange,
-      brown,
-      blueGrey,
-      grey,
-      shades
-    };
-    const makeVColorPickerSwatchesProps = propsFactory({
-      swatches: {
-        type: Array,
-        default: () => parseDefaultColors(colors)
-      },
-      disabled: Boolean,
-      color: Object,
-      maxHeight: [Number, String],
-      ...makeComponentProps()
-    }, "VColorPickerSwatches");
-    function parseDefaultColors(colors2) {
-      return Object.keys(colors2).map((key) => {
-        const color = colors2[key];
-        return color.base ? [color.base, color.darken4, color.darken3, color.darken2, color.darken1, color.lighten1, color.lighten2, color.lighten3, color.lighten4, color.lighten5] : [color.black, color.white, color.transparent];
-      });
-    }
-    const VColorPickerSwatches = defineComponent({
-      name: "VColorPickerSwatches",
-      props: makeVColorPickerSwatchesProps(),
-      emits: {
-        "update:color": (color) => true
-      },
-      setup(props, _ref) {
-        let {
-          emit: emit2
-        } = _ref;
-        useRender(() => createVNode("div", {
-          "class": ["v-color-picker-swatches", props.class],
-          "style": [{
-            maxHeight: convertToUnit(props.maxHeight)
-          }, props.style]
-        }, [createVNode("div", null, [props.swatches.map((swatch) => createVNode("div", {
-          "class": "v-color-picker-swatches__swatch"
-        }, [swatch.map((color) => {
-          const rgba2 = parseColor(color);
-          const hsva = RGBtoHSV(rgba2);
-          const background = RGBtoCSS(rgba2);
-          return createVNode("div", {
-            "class": "v-color-picker-swatches__color",
-            "onClick": () => hsva && emit2("update:color", hsva)
-          }, [createVNode("div", {
-            "style": {
-              background
-            }
-          }, [props.color && deepEqual(props.color, hsva) ? createVNode(VIcon, {
-            "size": "x-small",
-            "icon": "$success",
-            "color": getContrast(color, "#FFFFFF") > 2 ? "white" : "black"
-          }, null) : void 0])]);
-        })]))])]));
-        return {};
-      }
-    });
-    const makeVColorPickerProps = propsFactory({
-      canvasHeight: {
-        type: [String, Number],
-        default: 150
-      },
-      disabled: Boolean,
-      dotSize: {
-        type: [Number, String],
-        default: 10
-      },
-      hideCanvas: Boolean,
-      hideSliders: Boolean,
-      hideInputs: Boolean,
-      mode: {
-        type: String,
-        default: "rgba",
-        validator: (v) => Object.keys(modes).includes(v)
-      },
-      modes: {
-        type: Array,
-        default: () => Object.keys(modes),
-        validator: (v) => Array.isArray(v) && v.every((m) => Object.keys(modes).includes(m))
-      },
-      showSwatches: Boolean,
-      swatches: Array,
-      swatchesMaxHeight: {
-        type: [Number, String],
-        default: 150
-      },
-      modelValue: {
-        type: [Object, String]
-      },
-      ...omit$1(makeVSheetProps({
-        width: 300
-      }), ["height", "location", "minHeight", "maxHeight", "minWidth", "maxWidth"])
-    }, "VColorPicker");
-    const VColorPicker = defineComponent({
-      name: "VColorPicker",
-      props: makeVColorPickerProps(),
-      emits: {
-        "update:modelValue": (color) => true,
-        "update:mode": (mode) => true
-      },
-      setup(props) {
-        const mode = useProxiedModel(props, "mode");
-        const hue = ref$1(null);
-        const model = useProxiedModel(props, "modelValue", void 0, (v) => {
-          if (v == null || v === "")
-            return null;
-          let c;
-          try {
-            c = RGBtoHSV(parseColor(v));
-          } catch (err) {
-            return null;
-          }
-          return c;
-        }, (v) => {
-          if (!v)
-            return null;
-          return extractColor(v, props.modelValue);
-        });
-        const currentColor = computed(() => {
-          return model.value ? {
-            ...model.value,
-            h: hue.value ?? model.value.h
-          } : null;
-        });
-        const {
-          rtlClasses
-        } = useRtl();
-        let externalChange = true;
-        watch(model, (v) => {
-          if (!externalChange) {
-            externalChange = true;
-            return;
-          }
-          if (!v)
-            return;
-          hue.value = v.h;
-        }, {
-          immediate: true
-        });
-        const updateColor = (hsva) => {
-          externalChange = false;
-          hue.value = hsva.h;
-          model.value = hsva;
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(unref(VSlider), mergeProps({ type: "number" }, fieldProps.value, {
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value && Number(value)))
+          }), null, 16);
         };
-        onMounted(() => {
-          if (!props.modes.includes(mode.value))
-            mode.value = props.modes[0];
-        });
-        provideDefaults({
-          VSlider: {
-            color: void 0,
-            trackColor: void 0,
-            trackFillColor: void 0
-          }
-        });
-        useRender(() => {
-          const sheetProps = VSheet.filterProps(props);
-          return createVNode(VSheet, mergeProps({
-            "rounded": props.rounded,
-            "elevation": props.elevation,
-            "theme": props.theme,
-            "class": ["v-color-picker", rtlClasses.value, props.class],
-            "style": [{
-              "--v-color-picker-color-hsv": HSVtoCSS({
-                ...currentColor.value ?? nullColor,
-                a: 1
-              })
-            }, props.style]
-          }, sheetProps, {
-            "maxWidth": props.width
-          }), {
-            default: () => [!props.hideCanvas && createVNode(VColorPickerCanvas, {
-              "key": "canvas",
-              "color": currentColor.value,
-              "onUpdate:color": updateColor,
-              "disabled": props.disabled,
-              "dotSize": props.dotSize,
-              "width": props.width,
-              "height": props.canvasHeight
-            }, null), (!props.hideSliders || !props.hideInputs) && createVNode("div", {
-              "key": "controls",
-              "class": "v-color-picker__controls"
-            }, [!props.hideSliders && createVNode(VColorPickerPreview, {
-              "key": "preview",
-              "color": currentColor.value,
-              "onUpdate:color": updateColor,
-              "hideAlpha": !mode.value.endsWith("a"),
-              "disabled": props.disabled
-            }, null), !props.hideInputs && createVNode(VColorPickerEdit, {
-              "key": "edit",
-              "modes": props.modes,
-              "mode": mode.value,
-              "onUpdate:mode": (m) => mode.value = m,
-              "color": currentColor.value,
-              "onUpdate:color": updateColor,
-              "disabled": props.disabled
-            }, null)]), props.showSwatches && createVNode(VColorPickerSwatches, {
-              "key": "swatches",
-              "color": currentColor.value,
-              "onUpdate:color": updateColor,
-              "maxHeight": props.swatchesMaxHeight,
-              "swatches": props.swatches,
-              "disabled": props.disabled
-            }, null)]
-          });
-        });
-        return {};
       }
-    });
-    function highlightResult(text2, matches, length) {
-      if (matches == null)
-        return text2;
-      if (Array.isArray(matches))
-        throw new Error("Multiple matches is not implemented");
-      return typeof matches === "number" && ~matches ? createVNode(Fragment, null, [createVNode("span", {
-        "class": "v-combobox__unmask"
-      }, [text2.substr(0, matches)]), createVNode("span", {
-        "class": "v-combobox__mask"
-      }, [text2.substr(matches, length)]), createVNode("span", {
-        "class": "v-combobox__unmask"
-      }, [text2.substr(matches + length)])]) : text2;
-    }
-    const makeVComboboxProps = propsFactory({
-      autoSelectFirst: {
-        type: [Boolean, String]
+    };
+    const _sfc_main$r = {
+      __name: "text-field-menu",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        },
+        formattedValue: {
+          /** @type import('vue').PropType<string | null> */
+          type: String,
+          default: null
+        }
       },
-      clearOnSelect: {
-        type: Boolean,
-        default: true
-      },
-      delimiters: Array,
-      ...makeFilterProps({
-        filterKeys: ["title"]
-      }),
-      ...makeSelectProps({
-        hideNoData: true,
-        returnObject: true
-      }),
-      ...omit$1(makeVTextFieldProps({
-        modelValue: null,
-        role: "combobox"
-      }), ["validationValue", "dirty", "appendInnerIcon"]),
-      ...makeTransitionProps({
-        transition: false
-      })
-    }, "VCombobox");
-    const VCombobox = genericComponent()({
-      name: "VCombobox",
-      props: makeVComboboxProps(),
-      emits: {
-        "update:focused": (focused) => true,
-        "update:modelValue": (value) => true,
-        "update:search": (value) => true,
-        "update:menu": (value) => true
-      },
-      setup(props, _ref) {
-        var _a2;
-        let {
-          emit: emit2,
-          slots
-        } = _ref;
-        const {
-          t
-        } = useLocale();
-        const vTextFieldRef = ref$1();
-        const isFocused = shallowRef(false);
-        const isPristine = shallowRef(true);
-        const listHasFocus = shallowRef(false);
-        const vMenuRef = ref$1();
-        const vVirtualScrollRef = ref$1();
-        const _menu = useProxiedModel(props, "menu");
-        const menu = computed({
-          get: () => _menu.value,
-          set: (v) => {
-            var _a3;
-            if (_menu.value && !v && ((_a3 = vMenuRef.value) == null ? void 0 : _a3.ΨopenChildren))
-              return;
-            _menu.value = v;
-          }
+      setup(__props) {
+        const props = __props;
+        const fieldProps = computed(() => {
+          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, [], false);
+          fieldProps2.readonly = true;
+          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
+          fieldProps2["onClick:clear"] = () => {
+            props.statefulLayout.input(props.modelValue, null);
+          };
+          return fieldProps2;
         });
-        const selectionIndex = shallowRef(-1);
-        let cleared = false;
-        const color = computed(() => {
-          var _a3;
-          return (_a3 = vTextFieldRef.value) == null ? void 0 : _a3.color;
+        const menuProps = computed(() => {
+          const menuProps2 = getCompProps(props.modelValue);
+          menuProps2.closeOnContentClick = false;
+          menuProps2.disabled = true;
+          return menuProps2;
         });
-        const label = computed(() => menu.value ? props.closeText : props.openText);
-        const {
-          items: items2,
-          transformIn,
-          transformOut
-        } = useItems(props);
-        const {
-          textColorClasses,
-          textColorStyles
-        } = useTextColor(color);
-        const model = useProxiedModel(props, "modelValue", [], (v) => transformIn(wrapInArray(v)), (v) => {
-          const transformed = transformOut(v);
-          return props.multiple ? transformed : transformed[0] ?? null;
-        });
-        const form = useForm();
-        const hasChips = computed(() => !!(props.chips || slots.chip));
-        const hasSelectionSlot = computed(() => hasChips.value || !!slots.selection);
-        const _search = shallowRef(!props.multiple && !hasSelectionSlot.value ? ((_a2 = model.value[0]) == null ? void 0 : _a2.title) ?? "" : "");
-        const search = computed({
-          get: () => {
-            return _search.value;
-          },
-          set: (val) => {
-            var _a3;
-            _search.value = val ?? "";
-            if (!props.multiple && !hasSelectionSlot.value) {
-              model.value = [transformItem$1(props, val)];
-            }
-            if (val && props.multiple && ((_a3 = props.delimiters) == null ? void 0 : _a3.length)) {
-              const values = val.split(new RegExp(`(?:${props.delimiters.join("|")})+`));
-              if (values.length > 1) {
-                values.forEach((v) => {
-                  v = v.trim();
-                  if (v)
-                    select(transformItem$1(props, v));
-                });
-                _search.value = "";
-              }
-            }
-            if (!val)
-              selectionIndex.value = -1;
-            isPristine.value = !val;
-          }
-        });
-        const counterValue = computed(() => {
-          return typeof props.counterValue === "function" ? props.counterValue(model.value) : typeof props.counterValue === "number" ? props.counterValue : props.multiple ? model.value.length : search.value.length;
-        });
-        watch(_search, (value) => {
-          if (cleared) {
-            nextTick(() => cleared = false);
-          } else if (isFocused.value && !menu.value) {
-            menu.value = true;
-          }
-          emit2("update:search", value);
-        });
-        watch(model, (value) => {
-          var _a3;
-          if (!props.multiple && !hasSelectionSlot.value) {
-            _search.value = ((_a3 = value[0]) == null ? void 0 : _a3.title) ?? "";
-          }
-        });
-        const {
-          filteredItems,
-          getMatches
-        } = useFilter(props, items2, () => isPristine.value ? "" : search.value);
-        const displayItems = computed(() => {
-          if (props.hideSelected) {
-            return filteredItems.value.filter((filteredItem) => !model.value.some((s) => s.value === filteredItem.value));
-          }
-          return filteredItems.value;
-        });
-        const selectedValues = computed(() => model.value.map((selection) => selection.value));
-        const highlightFirst = computed(() => {
-          var _a3;
-          const selectFirst = props.autoSelectFirst === true || props.autoSelectFirst === "exact" && search.value === ((_a3 = displayItems.value[0]) == null ? void 0 : _a3.title);
-          return selectFirst && displayItems.value.length > 0 && !isPristine.value && !listHasFocus.value;
-        });
-        const menuDisabled = computed(() => props.hideNoData && !displayItems.value.length || props.readonly || (form == null ? void 0 : form.isReadonly.value));
-        const listRef = ref$1();
-        const {
-          onListScroll,
-          onListKeydown
-        } = useScrolling(listRef, vTextFieldRef);
-        function onClear(e) {
-          cleared = true;
-          if (props.openOnClear) {
-            menu.value = true;
-          }
-        }
-        function onMousedownControl() {
-          if (menuDisabled.value)
-            return;
-          menu.value = true;
-        }
-        function onMousedownMenuIcon(e) {
-          if (menuDisabled.value)
-            return;
-          if (isFocused.value) {
-            e.preventDefault();
-            e.stopPropagation();
-          }
-          menu.value = !menu.value;
-        }
-        function onKeydown(e) {
-          var _a3;
-          if (isComposingIgnoreKey(e) || props.readonly || (form == null ? void 0 : form.isReadonly.value))
-            return;
-          const selectionStart = vTextFieldRef.value.selectionStart;
-          const length = model.value.length;
-          if (selectionIndex.value > -1 || ["Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
-            e.preventDefault();
-          }
-          if (["Enter", "ArrowDown"].includes(e.key)) {
-            menu.value = true;
-          }
-          if (["Escape"].includes(e.key)) {
-            menu.value = false;
-          }
-          if (["Enter", "Escape", "Tab"].includes(e.key)) {
-            if (highlightFirst.value && ["Enter", "Tab"].includes(e.key) && !model.value.some((_ref2) => {
-              let {
-                value
-              } = _ref2;
-              return value === displayItems.value[0].value;
-            })) {
-              select(filteredItems.value[0]);
-            }
-            isPristine.value = true;
-          }
-          if (e.key === "ArrowDown" && highlightFirst.value) {
-            (_a3 = listRef.value) == null ? void 0 : _a3.focus("next");
-          }
-          if (e.key === "Enter" && search.value) {
-            select(transformItem$1(props, search.value));
-            if (hasSelectionSlot.value)
-              _search.value = "";
-          }
-          if (["Backspace", "Delete"].includes(e.key)) {
-            if (!props.multiple && hasSelectionSlot.value && model.value.length > 0 && !search.value)
-              return select(model.value[0], false);
-            if (~selectionIndex.value) {
-              const originalSelectionIndex = selectionIndex.value;
-              select(model.value[selectionIndex.value], false);
-              selectionIndex.value = originalSelectionIndex >= length - 1 ? length - 2 : originalSelectionIndex;
-            } else if (e.key === "Backspace" && !search.value) {
-              selectionIndex.value = length - 1;
-            }
-          }
-          if (!props.multiple)
-            return;
-          if (e.key === "ArrowLeft") {
-            if (selectionIndex.value < 0 && selectionStart > 0)
-              return;
-            const prev = selectionIndex.value > -1 ? selectionIndex.value - 1 : length - 1;
-            if (model.value[prev]) {
-              selectionIndex.value = prev;
-            } else {
-              selectionIndex.value = -1;
-              vTextFieldRef.value.setSelectionRange(search.value.length, search.value.length);
-            }
-          }
-          if (e.key === "ArrowRight") {
-            if (selectionIndex.value < 0)
-              return;
-            const next2 = selectionIndex.value + 1;
-            if (model.value[next2]) {
-              selectionIndex.value = next2;
-            } else {
-              selectionIndex.value = -1;
-              vTextFieldRef.value.setSelectionRange(0, 0);
-            }
-          }
-        }
-        function onAfterLeave() {
-          var _a3;
-          if (isFocused.value) {
-            isPristine.value = true;
-            (_a3 = vTextFieldRef.value) == null ? void 0 : _a3.focus();
-          }
-        }
-        function select(item) {
-          let set2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
-          if (!item || item.props.disabled)
-            return;
-          if (props.multiple) {
-            const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
-            const add2 = set2 == null ? !~index : set2;
-            if (~index) {
-              const value = add2 ? [...model.value, item] : [...model.value];
-              value.splice(index, 1);
-              model.value = value;
-            } else if (add2) {
-              model.value = [...model.value, item];
-            }
-            if (props.clearOnSelect) {
-              search.value = "";
-            }
-          } else {
-            const add2 = set2 !== false;
-            model.value = add2 ? [item] : [];
-            _search.value = add2 && !hasSelectionSlot.value ? item.title : "";
-            nextTick(() => {
-              menu.value = false;
-              isPristine.value = true;
-            });
-          }
-        }
-        function onFocusin(e) {
-          isFocused.value = true;
-          setTimeout(() => {
-            listHasFocus.value = true;
-          });
-        }
-        function onFocusout(e) {
-          listHasFocus.value = false;
-        }
-        function onUpdateModelValue(v) {
-          if (v == null || v === "" && !props.multiple && !hasSelectionSlot.value)
-            model.value = [];
-        }
-        watch(isFocused, (val, oldVal) => {
-          if (val || val === oldVal)
-            return;
-          selectionIndex.value = -1;
-          menu.value = false;
-          if (search.value) {
-            if (props.multiple) {
-              select(transformItem$1(props, search.value));
-              return;
-            }
-            if (!hasSelectionSlot.value)
-              return;
-            if (model.value.some((_ref3) => {
-              let {
-                title: title2
-              } = _ref3;
-              return title2 === search.value;
-            })) {
-              _search.value = "";
-            } else {
-              select(transformItem$1(props, search.value));
-            }
-          }
-        });
-        watch(menu, () => {
-          if (!props.hideSelected && menu.value && model.value.length) {
-            const index = displayItems.value.findIndex((item) => model.value.some((s) => props.valueComparator(s.value, item.value)));
-            IN_BROWSER && window.requestAnimationFrame(() => {
-              var _a3;
-              index >= 0 && ((_a3 = vVirtualScrollRef.value) == null ? void 0 : _a3.scrollToIndex(index));
-            });
-          }
-        });
-        watch(() => props.items, (newVal, oldVal) => {
-          if (menu.value)
-            return;
-          if (isFocused.value && !oldVal.length && newVal.length) {
-            menu.value = true;
-          }
-        });
-        useRender(() => {
-          const hasList = !!(!props.hideNoData || displayItems.value.length || slots["prepend-item"] || slots["append-item"] || slots["no-data"]);
-          const isDirty = model.value.length > 0;
-          const textFieldProps = VTextField.filterProps(props);
-          return createVNode(VTextField, mergeProps({
-            "ref": vTextFieldRef
-          }, textFieldProps, {
-            "modelValue": search.value,
-            "onUpdate:modelValue": [($event) => search.value = $event, onUpdateModelValue],
-            "focused": isFocused.value,
-            "onUpdate:focused": ($event) => isFocused.value = $event,
-            "validationValue": model.externalValue,
-            "counterValue": counterValue.value,
-            "dirty": isDirty,
-            "class": ["v-combobox", {
-              "v-combobox--active-menu": menu.value,
-              "v-combobox--chips": !!props.chips,
-              "v-combobox--selection-slot": !!hasSelectionSlot.value,
-              "v-combobox--selecting-index": selectionIndex.value > -1,
-              [`v-combobox--${props.multiple ? "multiple" : "single"}`]: true
-            }, props.class],
-            "style": props.style,
-            "readonly": props.readonly,
-            "placeholder": isDirty ? void 0 : props.placeholder,
-            "onClick:clear": onClear,
-            "onMousedown:control": onMousedownControl,
-            "onKeydown": onKeydown
-          }), {
-            ...slots,
-            default: () => createVNode(Fragment, null, [createVNode(VMenu, mergeProps({
-              "ref": vMenuRef,
-              "modelValue": menu.value,
-              "onUpdate:modelValue": ($event) => menu.value = $event,
-              "activator": "parent",
-              "contentClass": "v-combobox__content",
-              "disabled": menuDisabled.value,
-              "eager": props.eager,
-              "maxHeight": 310,
-              "openOnClick": false,
-              "closeOnContentClick": false,
-              "transition": props.transition,
-              "onAfterLeave": onAfterLeave
-            }, props.menuProps), {
-              default: () => [hasList && createVNode(VList, mergeProps({
-                "ref": listRef,
-                "selected": selectedValues.value,
-                "selectStrategy": props.multiple ? "independent" : "single-independent",
-                "onMousedown": (e) => e.preventDefault(),
-                "onKeydown": onListKeydown,
-                "onFocusin": onFocusin,
-                "onFocusout": onFocusout,
-                "onScrollPassive": onListScroll,
-                "tabindex": "-1",
-                "aria-live": "polite",
-                "color": props.itemColor ?? props.color
-              }, props.listProps), {
-                default: () => {
-                  var _a3, _b, _c;
-                  return [(_a3 = slots["prepend-item"]) == null ? void 0 : _a3.call(slots), !displayItems.value.length && !props.hideNoData && (((_b = slots["no-data"]) == null ? void 0 : _b.call(slots)) ?? createVNode(VListItem, {
-                    "title": t(props.noDataText)
-                  }, null)), createVNode(VVirtualScroll, {
-                    "ref": vVirtualScrollRef,
-                    "renderless": true,
-                    "items": displayItems.value
-                  }, {
-                    default: (_ref4) => {
-                      var _a4;
-                      let {
-                        item,
-                        index,
-                        itemRef
-                      } = _ref4;
-                      const itemProps = mergeProps(item.props, {
-                        ref: itemRef,
-                        key: index,
-                        active: highlightFirst.value && index === 0 ? true : void 0,
-                        onClick: () => select(item, null)
-                      });
-                      return ((_a4 = slots.item) == null ? void 0 : _a4.call(slots, {
-                        item,
-                        index,
-                        props: itemProps
-                      })) ?? createVNode(VListItem, mergeProps(itemProps, {
-                        "role": "option"
-                      }), {
-                        prepend: (_ref5) => {
-                          let {
-                            isSelected
-                          } = _ref5;
-                          return createVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
-                            "key": item.value,
-                            "modelValue": isSelected,
-                            "ripple": false,
-                            "tabindex": "-1"
-                          }, null) : void 0, item.props.prependAvatar && createVNode(VAvatar, {
-                            "image": item.props.prependAvatar
-                          }, null), item.props.prependIcon && createVNode(VIcon, {
-                            "icon": item.props.prependIcon
-                          }, null)]);
-                        },
-                        title: () => {
-                          var _a5, _b2;
-                          return isPristine.value ? item.title : highlightResult(item.title, (_a5 = getMatches(item)) == null ? void 0 : _a5.title, ((_b2 = search.value) == null ? void 0 : _b2.length) ?? 0);
-                        }
-                      });
-                    }
-                  }), (_c = slots["append-item"]) == null ? void 0 : _c.call(slots)];
-                }
-              })]
-            }), model.value.map((item, index) => {
-              function onChipClose(e) {
+        const textField = ref$1(null);
+        const menuOpened = ref$1(false);
+        return (_ctx, _cache) => {
+          return openBlock(), createElementBlock(Fragment, null, [
+            createVNode(unref(VTextField), mergeProps({
+              ref_key: "textField",
+              ref: textField
+            }, fieldProps.value, {
+              "model-value": __props.formattedValue ?? __props.modelValue.data,
+              "onClick:control": _cache[0] || (_cache[0] = (e) => {
+                menuOpened.value = !menuOpened.value;
                 e.stopPropagation();
-                e.preventDefault();
-                select(item, false);
-              }
-              const slotProps = {
-                "onClick:close": onChipClose,
-                onKeydown(e) {
-                  if (e.key !== "Enter" && e.key !== " ")
-                    return;
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onChipClose(e);
-                },
-                onMousedown(e) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                },
-                modelValue: true,
-                "onUpdate:modelValue": void 0
-              };
-              const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
-              const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
-                item,
-                index,
-                props: slotProps
-              }) : slots.selection({
-                item,
-                index
-              })) : void 0;
-              if (hasSlot && !slotContent)
-                return void 0;
-              return createVNode("div", {
-                "key": item.value,
-                "class": ["v-combobox__selection", index === selectionIndex.value && ["v-combobox__selection--selected", textColorClasses.value]],
-                "style": index === selectionIndex.value ? textColorStyles.value : {}
-              }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
-                "key": "chip",
-                "closable": props.closableChips,
-                "size": "small",
-                "text": item.title,
-                "disabled": item.props.disabled
-              }, slotProps), null) : createVNode(VDefaultsProvider, {
-                "key": "chip-defaults",
-                "defaults": {
-                  VChip: {
-                    closable: props.closableChips,
-                    size: "small",
-                    text: item.title
-                  }
-                }
-              }, {
-                default: () => [slotContent]
-              }) : slotContent ?? createVNode("span", {
-                "class": "v-combobox__selection-text"
-              }, [item.title, props.multiple && index < model.value.length - 1 && createVNode("span", {
-                "class": "v-combobox__selection-comma"
-              }, [createTextVNode(",")])])]);
-            })]),
-            "append-inner": function() {
-              var _a3;
-              for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-              }
-              return createVNode(Fragment, null, [(_a3 = slots["append-inner"]) == null ? void 0 : _a3.call(slots, ...args), (!props.hideNoData || props.items.length) && props.menuIcon ? createVNode(VIcon, {
-                "class": "v-combobox__menu-icon",
-                "icon": props.menuIcon,
-                "onMousedown": onMousedownMenuIcon,
-                "onClick": noop$1,
-                "aria-label": t(label.value),
-                "title": t(label.value),
-                "tabindex": "-1"
-              }, null) : void 0]);
-            }
-          });
-        });
-        return forwardRefs({
-          isFocused,
-          isPristine,
-          menu,
-          search,
-          selectionIndex,
-          filteredItems,
-          select
-        }, vTextFieldRef);
+              })
+            }), {
+              "prepend-inner": withCtx(() => [
+                renderSlot(_ctx.$slots, "prepend-inner")
+              ]),
+              _: 3
+            }, 16, ["model-value"]),
+            textField.value ? (openBlock(), createBlock(unref(VMenu), mergeProps({ key: 0 }, menuProps.value, {
+              modelValue: menuOpened.value,
+              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => menuOpened.value = $event),
+              class: "vjsf-text-field-menu",
+              activator: textField.value
+            }), {
+              default: withCtx(() => [
+                renderSlot(_ctx.$slots, "default", {
+                  close: () => menuOpened.value = false
+                })
+              ]),
+              _: 3
+            }, 16, ["modelValue", "activator"])) : createCommentVNode("", true)
+          ], 64);
+        };
       }
-    });
+    };
     const makeVDatePickerControlsProps = propsFactory({
       active: {
         type: [String, Array],
@@ -75584,287 +74775,2011 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const makeVFileInputProps = propsFactory({
-      chips: Boolean,
-      counter: Boolean,
-      counterSizeString: {
-        type: String,
-        default: "$vuetify.fileInput.counterSize"
-      },
-      counterString: {
-        type: String,
-        default: "$vuetify.fileInput.counter"
-      },
-      hideInput: Boolean,
-      multiple: Boolean,
-      showSize: {
-        type: [Boolean, Number, String],
-        default: false,
-        validator: (v) => {
-          return typeof v === "boolean" || [1e3, 1024].includes(Number(v));
+    const _sfc_main$q = {
+      __name: "date-picker",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfDatePickerNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
         }
       },
-      ...makeVInputProps({
-        prependIcon: "$file"
-      }),
-      modelValue: {
-        type: [Array, Object],
-        default: (props) => props.multiple ? [] : null,
-        validator: (val) => {
-          return wrapInArray(val).every((v) => v != null && typeof v === "object");
+      setup(__props) {
+        useDefaults({}, "VjsfDatePicker");
+        const props = __props;
+        const vDate = useDate();
+        const datePickerProps = computed(() => {
+          const datePickerProps2 = getCompProps(props.modelValue, true);
+          datePickerProps2.hideActions = true;
+          if (props.modelValue.data)
+            datePickerProps2.modelValue = new Date(props.modelValue.data);
+          return datePickerProps2;
+        });
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(_sfc_main$r, {
+            "model-value": __props.modelValue,
+            "stateful-layout": __props.statefulLayout,
+            "formatted-value": __props.modelValue.data && unref(vDate).format(__props.modelValue.data, "fullDateWithWeekday")
+          }, {
+            default: withCtx(({ close }) => [
+              createVNode(unref(VDatePicker), mergeProps(datePickerProps.value, {
+                "onUpdate:modelValue": (value) => {
+                  __props.statefulLayout.input(__props.modelValue, value && unref(getDateTimeParts)(
+                    /** @type Date */
+                    /** @type unknown */
+                    value
+                  )[0]);
+                  close();
+                }
+              }), null, 16, ["onUpdate:modelValue"])
+            ]),
+            _: 1
+          }, 8, ["model-value", "stateful-layout", "formatted-value"]);
+        };
+      }
+    };
+    const _sfc_main$p = {
+      __name: "date-time-picker",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfDateTimePickerNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
         }
       },
-      ...makeVFieldProps({
-        clearable: true
-      })
-    }, "VFileInput");
-    const VFileInput = genericComponent()({
-      name: "VFileInput",
-      inheritAttrs: false,
-      props: makeVFileInputProps(),
+      setup(__props) {
+        useDefaults({}, "VjsfDateTimePicker");
+        return (_ctx, _cache) => {
+          return " TODO date-time ";
+        };
+      }
+    };
+    const makeVColorPickerCanvasProps = propsFactory({
+      color: {
+        type: Object
+      },
+      disabled: Boolean,
+      dotSize: {
+        type: [Number, String],
+        default: 10
+      },
+      height: {
+        type: [Number, String],
+        default: 150
+      },
+      width: {
+        type: [Number, String],
+        default: 300
+      },
+      ...makeComponentProps()
+    }, "VColorPickerCanvas");
+    const VColorPickerCanvas = defineComponent({
+      name: "VColorPickerCanvas",
+      props: makeVColorPickerCanvasProps(),
       emits: {
-        "click:control": (e) => true,
-        "mousedown:control": (e) => true,
-        "update:focused": (focused) => true,
-        "update:modelValue": (files) => true
+        "update:color": (color) => true,
+        "update:position": (hue) => true
       },
       setup(props, _ref) {
         let {
-          attrs,
-          emit: emit2,
+          emit: emit2
+        } = _ref;
+        const isInteracting = shallowRef(false);
+        const canvasRef = ref$1();
+        const canvasWidth = shallowRef(parseFloat(props.width));
+        const canvasHeight = shallowRef(parseFloat(props.height));
+        const _dotPosition = ref$1({
+          x: 0,
+          y: 0
+        });
+        const dotPosition = computed({
+          get: () => _dotPosition.value,
+          set(val) {
+            var _a2, _b;
+            if (!canvasRef.value)
+              return;
+            const {
+              x: x2,
+              y
+            } = val;
+            _dotPosition.value = val;
+            emit2("update:color", {
+              h: ((_a2 = props.color) == null ? void 0 : _a2.h) ?? 0,
+              s: clamp(x2, 0, canvasWidth.value) / canvasWidth.value,
+              v: 1 - clamp(y, 0, canvasHeight.value) / canvasHeight.value,
+              a: ((_b = props.color) == null ? void 0 : _b.a) ?? 1
+            });
+          }
+        });
+        const dotStyles = computed(() => {
+          const {
+            x: x2,
+            y
+          } = dotPosition.value;
+          const radius = parseInt(props.dotSize, 10) / 2;
+          return {
+            width: convertToUnit(props.dotSize),
+            height: convertToUnit(props.dotSize),
+            transform: `translate(${convertToUnit(x2 - radius)}, ${convertToUnit(y - radius)})`
+          };
+        });
+        const {
+          resizeRef
+        } = useResizeObserver$1((entries) => {
+          var _a2;
+          if (!((_a2 = resizeRef.el) == null ? void 0 : _a2.offsetParent))
+            return;
+          const {
+            width,
+            height
+          } = entries[0].contentRect;
+          canvasWidth.value = width;
+          canvasHeight.value = height;
+        });
+        function updateDotPosition(x2, y, rect2) {
+          const {
+            left,
+            top: top2,
+            width,
+            height
+          } = rect2;
+          dotPosition.value = {
+            x: clamp(x2 - left, 0, width),
+            y: clamp(y - top2, 0, height)
+          };
+        }
+        function handleMouseDown(e) {
+          if (e.type === "mousedown") {
+            e.preventDefault();
+          }
+          if (props.disabled)
+            return;
+          handleMouseMove(e);
+          window.addEventListener("mousemove", handleMouseMove);
+          window.addEventListener("mouseup", handleMouseUp);
+          window.addEventListener("touchmove", handleMouseMove);
+          window.addEventListener("touchend", handleMouseUp);
+        }
+        function handleMouseMove(e) {
+          if (props.disabled || !canvasRef.value)
+            return;
+          isInteracting.value = true;
+          const coords = getEventCoordinates(e);
+          updateDotPosition(coords.clientX, coords.clientY, canvasRef.value.getBoundingClientRect());
+        }
+        function handleMouseUp() {
+          window.removeEventListener("mousemove", handleMouseMove);
+          window.removeEventListener("mouseup", handleMouseUp);
+          window.removeEventListener("touchmove", handleMouseMove);
+          window.removeEventListener("touchend", handleMouseUp);
+        }
+        function updateCanvas() {
+          var _a2;
+          if (!canvasRef.value)
+            return;
+          const canvas = canvasRef.value;
+          const ctx = canvas.getContext("2d");
+          if (!ctx)
+            return;
+          const saturationGradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+          saturationGradient.addColorStop(0, "hsla(0, 0%, 100%, 1)");
+          saturationGradient.addColorStop(1, `hsla(${((_a2 = props.color) == null ? void 0 : _a2.h) ?? 0}, 100%, 50%, 1)`);
+          ctx.fillStyle = saturationGradient;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          const valueGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+          valueGradient.addColorStop(0, "hsla(0, 0%, 0%, 0)");
+          valueGradient.addColorStop(1, "hsla(0, 0%, 0%, 1)");
+          ctx.fillStyle = valueGradient;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        watch(() => {
+          var _a2;
+          return (_a2 = props.color) == null ? void 0 : _a2.h;
+        }, updateCanvas, {
+          immediate: true
+        });
+        watch(() => [canvasWidth.value, canvasHeight.value], (newVal, oldVal) => {
+          updateCanvas();
+          _dotPosition.value = {
+            x: dotPosition.value.x * newVal[0] / oldVal[0],
+            y: dotPosition.value.y * newVal[1] / oldVal[1]
+          };
+        }, {
+          flush: "post"
+        });
+        watch(() => props.color, () => {
+          if (isInteracting.value) {
+            isInteracting.value = false;
+            return;
+          }
+          _dotPosition.value = props.color ? {
+            x: props.color.s * canvasWidth.value,
+            y: (1 - props.color.v) * canvasHeight.value
+          } : {
+            x: 0,
+            y: 0
+          };
+        }, {
+          deep: true,
+          immediate: true
+        });
+        onMounted(() => updateCanvas());
+        useRender(() => createVNode("div", {
+          "ref": resizeRef,
+          "class": ["v-color-picker-canvas", props.class],
+          "style": props.style,
+          "onMousedown": handleMouseDown,
+          "onTouchstartPassive": handleMouseDown
+        }, [createVNode("canvas", {
+          "ref": canvasRef,
+          "width": canvasWidth.value,
+          "height": canvasHeight.value
+        }, null), props.color && createVNode("div", {
+          "class": ["v-color-picker-canvas__dot", {
+            "v-color-picker-canvas__dot--disabled": props.disabled
+          }],
+          "style": dotStyles.value
+        }, null)]));
+        return {};
+      }
+    });
+    function stripAlpha(color, stripAlpha2) {
+      if (stripAlpha2) {
+        const {
+          a,
+          ...rest
+        } = color;
+        return rest;
+      }
+      return color;
+    }
+    function extractColor(color, input) {
+      if (input == null || typeof input === "string") {
+        const hex2 = HSVtoHex(color);
+        if (color.a === 1)
+          return hex2.slice(0, 7);
+        else
+          return hex2;
+      }
+      if (typeof input === "object") {
+        let converted;
+        if (has$2(input, ["r", "g", "b"]))
+          converted = HSVtoRGB(color);
+        else if (has$2(input, ["h", "s", "l"]))
+          converted = HSVtoHSL(color);
+        else if (has$2(input, ["h", "s", "v"]))
+          converted = color;
+        return stripAlpha(converted, !has$2(input, ["a"]) && color.a === 1);
+      }
+      return color;
+    }
+    const nullColor = {
+      h: 0,
+      s: 0,
+      v: 0,
+      a: 1
+    };
+    const rgba = {
+      inputProps: {
+        type: "number",
+        min: 0
+      },
+      inputs: [{
+        label: "R",
+        max: 255,
+        step: 1,
+        getValue: (c) => Math.round(c.r),
+        getColor: (c, v) => ({
+          ...c,
+          r: Number(v)
+        })
+      }, {
+        label: "G",
+        max: 255,
+        step: 1,
+        getValue: (c) => Math.round(c.g),
+        getColor: (c, v) => ({
+          ...c,
+          g: Number(v)
+        })
+      }, {
+        label: "B",
+        max: 255,
+        step: 1,
+        getValue: (c) => Math.round(c.b),
+        getColor: (c, v) => ({
+          ...c,
+          b: Number(v)
+        })
+      }, {
+        label: "A",
+        max: 1,
+        step: 0.01,
+        getValue: (_ref) => {
+          let {
+            a
+          } = _ref;
+          return a != null ? Math.round(a * 100) / 100 : 1;
+        },
+        getColor: (c, v) => ({
+          ...c,
+          a: Number(v)
+        })
+      }],
+      to: HSVtoRGB,
+      from: RGBtoHSV
+    };
+    const rgb = {
+      ...rgba,
+      inputs: (_a = rgba.inputs) == null ? void 0 : _a.slice(0, 3)
+    };
+    const hsla = {
+      inputProps: {
+        type: "number",
+        min: 0
+      },
+      inputs: [{
+        label: "H",
+        max: 360,
+        step: 1,
+        getValue: (c) => Math.round(c.h),
+        getColor: (c, v) => ({
+          ...c,
+          h: Number(v)
+        })
+      }, {
+        label: "S",
+        max: 1,
+        step: 0.01,
+        getValue: (c) => Math.round(c.s * 100) / 100,
+        getColor: (c, v) => ({
+          ...c,
+          s: Number(v)
+        })
+      }, {
+        label: "L",
+        max: 1,
+        step: 0.01,
+        getValue: (c) => Math.round(c.l * 100) / 100,
+        getColor: (c, v) => ({
+          ...c,
+          l: Number(v)
+        })
+      }, {
+        label: "A",
+        max: 1,
+        step: 0.01,
+        getValue: (_ref2) => {
+          let {
+            a
+          } = _ref2;
+          return a != null ? Math.round(a * 100) / 100 : 1;
+        },
+        getColor: (c, v) => ({
+          ...c,
+          a: Number(v)
+        })
+      }],
+      to: HSVtoHSL,
+      from: HSLtoHSV
+    };
+    const hsl = {
+      ...hsla,
+      inputs: hsla.inputs.slice(0, 3)
+    };
+    const hexa = {
+      inputProps: {
+        type: "text"
+      },
+      inputs: [{
+        label: "HEXA",
+        getValue: (c) => c,
+        getColor: (c, v) => v
+      }],
+      to: HSVtoHex,
+      from: HexToHSV
+    };
+    const hex = {
+      ...hexa,
+      inputs: [{
+        label: "HEX",
+        getValue: (c) => c.slice(0, 7),
+        getColor: (c, v) => v
+      }]
+    };
+    const modes = {
+      rgb,
+      rgba,
+      hsl,
+      hsla,
+      hex,
+      hexa
+    };
+    const VColorPickerInput = (_ref) => {
+      let {
+        label,
+        ...rest
+      } = _ref;
+      return createVNode("div", {
+        "class": "v-color-picker-edit__input"
+      }, [createVNode("input", rest, null), createVNode("span", null, [label])]);
+    };
+    const makeVColorPickerEditProps = propsFactory({
+      color: Object,
+      disabled: Boolean,
+      mode: {
+        type: String,
+        default: "rgba",
+        validator: (v) => Object.keys(modes).includes(v)
+      },
+      modes: {
+        type: Array,
+        default: () => Object.keys(modes),
+        validator: (v) => Array.isArray(v) && v.every((m) => Object.keys(modes).includes(m))
+      },
+      ...makeComponentProps()
+    }, "VColorPickerEdit");
+    const VColorPickerEdit = defineComponent({
+      name: "VColorPickerEdit",
+      props: makeVColorPickerEditProps(),
+      emits: {
+        "update:color": (color) => true,
+        "update:mode": (mode) => true
+      },
+      setup(props, _ref2) {
+        let {
+          emit: emit2
+        } = _ref2;
+        const enabledModes = computed(() => {
+          return props.modes.map((key) => ({
+            ...modes[key],
+            name: key
+          }));
+        });
+        const inputs = computed(() => {
+          var _a2;
+          const mode = enabledModes.value.find((m) => m.name === props.mode);
+          if (!mode)
+            return [];
+          const color = props.color ? mode.to(props.color) : null;
+          return (_a2 = mode.inputs) == null ? void 0 : _a2.map((_ref3) => {
+            let {
+              getValue,
+              getColor,
+              ...inputProps
+            } = _ref3;
+            return {
+              ...mode.inputProps,
+              ...inputProps,
+              disabled: props.disabled,
+              value: color && getValue(color),
+              onChange: (e) => {
+                const target2 = e.target;
+                if (!target2)
+                  return;
+                emit2("update:color", mode.from(getColor(color ?? mode.to(nullColor), target2.value)));
+              }
+            };
+          });
+        });
+        useRender(() => {
+          var _a2;
+          return createVNode("div", {
+            "class": ["v-color-picker-edit", props.class],
+            "style": props.style
+          }, [(_a2 = inputs.value) == null ? void 0 : _a2.map((props2) => createVNode(VColorPickerInput, props2, null)), enabledModes.value.length > 1 && createVNode(VBtn, {
+            "icon": "$unfold",
+            "size": "x-small",
+            "variant": "plain",
+            "onClick": () => {
+              const mi = enabledModes.value.findIndex((m) => m.name === props.mode);
+              emit2("update:mode", enabledModes.value[(mi + 1) % enabledModes.value.length].name);
+            }
+          }, null)]);
+        });
+        return {};
+      }
+    });
+    const makeVColorPickerPreviewProps = propsFactory({
+      color: {
+        type: Object
+      },
+      disabled: Boolean,
+      hideAlpha: Boolean,
+      ...makeComponentProps()
+    }, "VColorPickerPreview");
+    const VColorPickerPreview = defineComponent({
+      name: "VColorPickerPreview",
+      props: makeVColorPickerPreviewProps(),
+      emits: {
+        "update:color": (color) => true
+      },
+      setup(props, _ref) {
+        let {
+          emit: emit2
+        } = _ref;
+        const abortController = new AbortController();
+        onUnmounted(() => abortController.abort());
+        async function openEyeDropper() {
+          if (!SUPPORTS_EYE_DROPPER)
+            return;
+          const eyeDropper = new window.EyeDropper();
+          try {
+            const result = await eyeDropper.open({
+              signal: abortController.signal
+            });
+            const colorHexValue = HexToHSV(result.sRGBHex);
+            emit2("update:color", {
+              ...props.color ?? nullColor,
+              ...colorHexValue
+            });
+          } catch (e) {
+          }
+        }
+        useRender(() => {
+          var _a2, _b;
+          return createVNode("div", {
+            "class": ["v-color-picker-preview", {
+              "v-color-picker-preview--hide-alpha": props.hideAlpha
+            }, props.class],
+            "style": props.style
+          }, [SUPPORTS_EYE_DROPPER && createVNode("div", {
+            "class": "v-color-picker-preview__eye-dropper",
+            "key": "eyeDropper"
+          }, [createVNode(VBtn, {
+            "onClick": openEyeDropper,
+            "icon": "$eyeDropper",
+            "variant": "plain",
+            "density": "comfortable"
+          }, null)]), createVNode("div", {
+            "class": "v-color-picker-preview__dot"
+          }, [createVNode("div", {
+            "style": {
+              background: HSVtoCSS(props.color ?? nullColor)
+            }
+          }, null)]), createVNode("div", {
+            "class": "v-color-picker-preview__sliders"
+          }, [createVNode(VSlider, {
+            "class": "v-color-picker-preview__track v-color-picker-preview__hue",
+            "modelValue": (_a2 = props.color) == null ? void 0 : _a2.h,
+            "onUpdate:modelValue": (h2) => emit2("update:color", {
+              ...props.color ?? nullColor,
+              h: h2
+            }),
+            "step": 0,
+            "min": 0,
+            "max": 360,
+            "disabled": props.disabled,
+            "thumbSize": 14,
+            "trackSize": 8,
+            "trackFillColor": "white",
+            "hideDetails": true
+          }, null), !props.hideAlpha && createVNode(VSlider, {
+            "class": "v-color-picker-preview__track v-color-picker-preview__alpha",
+            "modelValue": ((_b = props.color) == null ? void 0 : _b.a) ?? 1,
+            "onUpdate:modelValue": (a) => emit2("update:color", {
+              ...props.color ?? nullColor,
+              a
+            }),
+            "step": 1 / 256,
+            "min": 0,
+            "max": 1,
+            "disabled": props.disabled,
+            "thumbSize": 14,
+            "trackSize": 8,
+            "trackFillColor": "white",
+            "hideDetails": true
+          }, null)])]);
+        });
+        return {};
+      }
+    });
+    const red = {
+      base: "#f44336",
+      lighten5: "#ffebee",
+      lighten4: "#ffcdd2",
+      lighten3: "#ef9a9a",
+      lighten2: "#e57373",
+      lighten1: "#ef5350",
+      darken1: "#e53935",
+      darken2: "#d32f2f",
+      darken3: "#c62828",
+      darken4: "#b71c1c",
+      accent1: "#ff8a80",
+      accent2: "#ff5252",
+      accent3: "#ff1744",
+      accent4: "#d50000"
+    };
+    const pink = {
+      base: "#e91e63",
+      lighten5: "#fce4ec",
+      lighten4: "#f8bbd0",
+      lighten3: "#f48fb1",
+      lighten2: "#f06292",
+      lighten1: "#ec407a",
+      darken1: "#d81b60",
+      darken2: "#c2185b",
+      darken3: "#ad1457",
+      darken4: "#880e4f",
+      accent1: "#ff80ab",
+      accent2: "#ff4081",
+      accent3: "#f50057",
+      accent4: "#c51162"
+    };
+    const purple = {
+      base: "#9c27b0",
+      lighten5: "#f3e5f5",
+      lighten4: "#e1bee7",
+      lighten3: "#ce93d8",
+      lighten2: "#ba68c8",
+      lighten1: "#ab47bc",
+      darken1: "#8e24aa",
+      darken2: "#7b1fa2",
+      darken3: "#6a1b9a",
+      darken4: "#4a148c",
+      accent1: "#ea80fc",
+      accent2: "#e040fb",
+      accent3: "#d500f9",
+      accent4: "#aa00ff"
+    };
+    const deepPurple = {
+      base: "#673ab7",
+      lighten5: "#ede7f6",
+      lighten4: "#d1c4e9",
+      lighten3: "#b39ddb",
+      lighten2: "#9575cd",
+      lighten1: "#7e57c2",
+      darken1: "#5e35b1",
+      darken2: "#512da8",
+      darken3: "#4527a0",
+      darken4: "#311b92",
+      accent1: "#b388ff",
+      accent2: "#7c4dff",
+      accent3: "#651fff",
+      accent4: "#6200ea"
+    };
+    const indigo = {
+      base: "#3f51b5",
+      lighten5: "#e8eaf6",
+      lighten4: "#c5cae9",
+      lighten3: "#9fa8da",
+      lighten2: "#7986cb",
+      lighten1: "#5c6bc0",
+      darken1: "#3949ab",
+      darken2: "#303f9f",
+      darken3: "#283593",
+      darken4: "#1a237e",
+      accent1: "#8c9eff",
+      accent2: "#536dfe",
+      accent3: "#3d5afe",
+      accent4: "#304ffe"
+    };
+    const blue = {
+      base: "#2196f3",
+      lighten5: "#e3f2fd",
+      lighten4: "#bbdefb",
+      lighten3: "#90caf9",
+      lighten2: "#64b5f6",
+      lighten1: "#42a5f5",
+      darken1: "#1e88e5",
+      darken2: "#1976d2",
+      darken3: "#1565c0",
+      darken4: "#0d47a1",
+      accent1: "#82b1ff",
+      accent2: "#448aff",
+      accent3: "#2979ff",
+      accent4: "#2962ff"
+    };
+    const lightBlue = {
+      base: "#03a9f4",
+      lighten5: "#e1f5fe",
+      lighten4: "#b3e5fc",
+      lighten3: "#81d4fa",
+      lighten2: "#4fc3f7",
+      lighten1: "#29b6f6",
+      darken1: "#039be5",
+      darken2: "#0288d1",
+      darken3: "#0277bd",
+      darken4: "#01579b",
+      accent1: "#80d8ff",
+      accent2: "#40c4ff",
+      accent3: "#00b0ff",
+      accent4: "#0091ea"
+    };
+    const cyan = {
+      base: "#00bcd4",
+      lighten5: "#e0f7fa",
+      lighten4: "#b2ebf2",
+      lighten3: "#80deea",
+      lighten2: "#4dd0e1",
+      lighten1: "#26c6da",
+      darken1: "#00acc1",
+      darken2: "#0097a7",
+      darken3: "#00838f",
+      darken4: "#006064",
+      accent1: "#84ffff",
+      accent2: "#18ffff",
+      accent3: "#00e5ff",
+      accent4: "#00b8d4"
+    };
+    const teal = {
+      base: "#009688",
+      lighten5: "#e0f2f1",
+      lighten4: "#b2dfdb",
+      lighten3: "#80cbc4",
+      lighten2: "#4db6ac",
+      lighten1: "#26a69a",
+      darken1: "#00897b",
+      darken2: "#00796b",
+      darken3: "#00695c",
+      darken4: "#004d40",
+      accent1: "#a7ffeb",
+      accent2: "#64ffda",
+      accent3: "#1de9b6",
+      accent4: "#00bfa5"
+    };
+    const green = {
+      base: "#4caf50",
+      lighten5: "#e8f5e9",
+      lighten4: "#c8e6c9",
+      lighten3: "#a5d6a7",
+      lighten2: "#81c784",
+      lighten1: "#66bb6a",
+      darken1: "#43a047",
+      darken2: "#388e3c",
+      darken3: "#2e7d32",
+      darken4: "#1b5e20",
+      accent1: "#b9f6ca",
+      accent2: "#69f0ae",
+      accent3: "#00e676",
+      accent4: "#00c853"
+    };
+    const lightGreen = {
+      base: "#8bc34a",
+      lighten5: "#f1f8e9",
+      lighten4: "#dcedc8",
+      lighten3: "#c5e1a5",
+      lighten2: "#aed581",
+      lighten1: "#9ccc65",
+      darken1: "#7cb342",
+      darken2: "#689f38",
+      darken3: "#558b2f",
+      darken4: "#33691e",
+      accent1: "#ccff90",
+      accent2: "#b2ff59",
+      accent3: "#76ff03",
+      accent4: "#64dd17"
+    };
+    const lime = {
+      base: "#cddc39",
+      lighten5: "#f9fbe7",
+      lighten4: "#f0f4c3",
+      lighten3: "#e6ee9c",
+      lighten2: "#dce775",
+      lighten1: "#d4e157",
+      darken1: "#c0ca33",
+      darken2: "#afb42b",
+      darken3: "#9e9d24",
+      darken4: "#827717",
+      accent1: "#f4ff81",
+      accent2: "#eeff41",
+      accent3: "#c6ff00",
+      accent4: "#aeea00"
+    };
+    const yellow = {
+      base: "#ffeb3b",
+      lighten5: "#fffde7",
+      lighten4: "#fff9c4",
+      lighten3: "#fff59d",
+      lighten2: "#fff176",
+      lighten1: "#ffee58",
+      darken1: "#fdd835",
+      darken2: "#fbc02d",
+      darken3: "#f9a825",
+      darken4: "#f57f17",
+      accent1: "#ffff8d",
+      accent2: "#ffff00",
+      accent3: "#ffea00",
+      accent4: "#ffd600"
+    };
+    const amber = {
+      base: "#ffc107",
+      lighten5: "#fff8e1",
+      lighten4: "#ffecb3",
+      lighten3: "#ffe082",
+      lighten2: "#ffd54f",
+      lighten1: "#ffca28",
+      darken1: "#ffb300",
+      darken2: "#ffa000",
+      darken3: "#ff8f00",
+      darken4: "#ff6f00",
+      accent1: "#ffe57f",
+      accent2: "#ffd740",
+      accent3: "#ffc400",
+      accent4: "#ffab00"
+    };
+    const orange = {
+      base: "#ff9800",
+      lighten5: "#fff3e0",
+      lighten4: "#ffe0b2",
+      lighten3: "#ffcc80",
+      lighten2: "#ffb74d",
+      lighten1: "#ffa726",
+      darken1: "#fb8c00",
+      darken2: "#f57c00",
+      darken3: "#ef6c00",
+      darken4: "#e65100",
+      accent1: "#ffd180",
+      accent2: "#ffab40",
+      accent3: "#ff9100",
+      accent4: "#ff6d00"
+    };
+    const deepOrange = {
+      base: "#ff5722",
+      lighten5: "#fbe9e7",
+      lighten4: "#ffccbc",
+      lighten3: "#ffab91",
+      lighten2: "#ff8a65",
+      lighten1: "#ff7043",
+      darken1: "#f4511e",
+      darken2: "#e64a19",
+      darken3: "#d84315",
+      darken4: "#bf360c",
+      accent1: "#ff9e80",
+      accent2: "#ff6e40",
+      accent3: "#ff3d00",
+      accent4: "#dd2c00"
+    };
+    const brown = {
+      base: "#795548",
+      lighten5: "#efebe9",
+      lighten4: "#d7ccc8",
+      lighten3: "#bcaaa4",
+      lighten2: "#a1887f",
+      lighten1: "#8d6e63",
+      darken1: "#6d4c41",
+      darken2: "#5d4037",
+      darken3: "#4e342e",
+      darken4: "#3e2723"
+    };
+    const blueGrey = {
+      base: "#607d8b",
+      lighten5: "#eceff1",
+      lighten4: "#cfd8dc",
+      lighten3: "#b0bec5",
+      lighten2: "#90a4ae",
+      lighten1: "#78909c",
+      darken1: "#546e7a",
+      darken2: "#455a64",
+      darken3: "#37474f",
+      darken4: "#263238"
+    };
+    const grey = {
+      base: "#9e9e9e",
+      lighten5: "#fafafa",
+      lighten4: "#f5f5f5",
+      lighten3: "#eeeeee",
+      lighten2: "#e0e0e0",
+      lighten1: "#bdbdbd",
+      darken1: "#757575",
+      darken2: "#616161",
+      darken3: "#424242",
+      darken4: "#212121"
+    };
+    const shades = {
+      black: "#000000",
+      white: "#ffffff",
+      transparent: "#ffffff00"
+    };
+    const colors = {
+      red,
+      pink,
+      purple,
+      deepPurple,
+      indigo,
+      blue,
+      lightBlue,
+      cyan,
+      teal,
+      green,
+      lightGreen,
+      lime,
+      yellow,
+      amber,
+      orange,
+      deepOrange,
+      brown,
+      blueGrey,
+      grey,
+      shades
+    };
+    const makeVColorPickerSwatchesProps = propsFactory({
+      swatches: {
+        type: Array,
+        default: () => parseDefaultColors(colors)
+      },
+      disabled: Boolean,
+      color: Object,
+      maxHeight: [Number, String],
+      ...makeComponentProps()
+    }, "VColorPickerSwatches");
+    function parseDefaultColors(colors2) {
+      return Object.keys(colors2).map((key) => {
+        const color = colors2[key];
+        return color.base ? [color.base, color.darken4, color.darken3, color.darken2, color.darken1, color.lighten1, color.lighten2, color.lighten3, color.lighten4, color.lighten5] : [color.black, color.white, color.transparent];
+      });
+    }
+    const VColorPickerSwatches = defineComponent({
+      name: "VColorPickerSwatches",
+      props: makeVColorPickerSwatchesProps(),
+      emits: {
+        "update:color": (color) => true
+      },
+      setup(props, _ref) {
+        let {
+          emit: emit2
+        } = _ref;
+        useRender(() => createVNode("div", {
+          "class": ["v-color-picker-swatches", props.class],
+          "style": [{
+            maxHeight: convertToUnit(props.maxHeight)
+          }, props.style]
+        }, [createVNode("div", null, [props.swatches.map((swatch) => createVNode("div", {
+          "class": "v-color-picker-swatches__swatch"
+        }, [swatch.map((color) => {
+          const rgba2 = parseColor(color);
+          const hsva = RGBtoHSV(rgba2);
+          const background = RGBtoCSS(rgba2);
+          return createVNode("div", {
+            "class": "v-color-picker-swatches__color",
+            "onClick": () => hsva && emit2("update:color", hsva)
+          }, [createVNode("div", {
+            "style": {
+              background
+            }
+          }, [props.color && deepEqual(props.color, hsva) ? createVNode(VIcon, {
+            "size": "x-small",
+            "icon": "$success",
+            "color": getContrast(color, "#FFFFFF") > 2 ? "white" : "black"
+          }, null) : void 0])]);
+        })]))])]));
+        return {};
+      }
+    });
+    const makeVColorPickerProps = propsFactory({
+      canvasHeight: {
+        type: [String, Number],
+        default: 150
+      },
+      disabled: Boolean,
+      dotSize: {
+        type: [Number, String],
+        default: 10
+      },
+      hideCanvas: Boolean,
+      hideSliders: Boolean,
+      hideInputs: Boolean,
+      mode: {
+        type: String,
+        default: "rgba",
+        validator: (v) => Object.keys(modes).includes(v)
+      },
+      modes: {
+        type: Array,
+        default: () => Object.keys(modes),
+        validator: (v) => Array.isArray(v) && v.every((m) => Object.keys(modes).includes(m))
+      },
+      showSwatches: Boolean,
+      swatches: Array,
+      swatchesMaxHeight: {
+        type: [Number, String],
+        default: 150
+      },
+      modelValue: {
+        type: [Object, String]
+      },
+      ...omit$1(makeVSheetProps({
+        width: 300
+      }), ["height", "location", "minHeight", "maxHeight", "minWidth", "maxWidth"])
+    }, "VColorPicker");
+    const VColorPicker = defineComponent({
+      name: "VColorPicker",
+      props: makeVColorPickerProps(),
+      emits: {
+        "update:modelValue": (color) => true,
+        "update:mode": (mode) => true
+      },
+      setup(props) {
+        const mode = useProxiedModel(props, "mode");
+        const hue = ref$1(null);
+        const model = useProxiedModel(props, "modelValue", void 0, (v) => {
+          if (v == null || v === "")
+            return null;
+          let c;
+          try {
+            c = RGBtoHSV(parseColor(v));
+          } catch (err) {
+            return null;
+          }
+          return c;
+        }, (v) => {
+          if (!v)
+            return null;
+          return extractColor(v, props.modelValue);
+        });
+        const currentColor = computed(() => {
+          return model.value ? {
+            ...model.value,
+            h: hue.value ?? model.value.h
+          } : null;
+        });
+        const {
+          rtlClasses
+        } = useRtl();
+        let externalChange = true;
+        watch(model, (v) => {
+          if (!externalChange) {
+            externalChange = true;
+            return;
+          }
+          if (!v)
+            return;
+          hue.value = v.h;
+        }, {
+          immediate: true
+        });
+        const updateColor = (hsva) => {
+          externalChange = false;
+          hue.value = hsva.h;
+          model.value = hsva;
+        };
+        onMounted(() => {
+          if (!props.modes.includes(mode.value))
+            mode.value = props.modes[0];
+        });
+        provideDefaults({
+          VSlider: {
+            color: void 0,
+            trackColor: void 0,
+            trackFillColor: void 0
+          }
+        });
+        useRender(() => {
+          const sheetProps = VSheet.filterProps(props);
+          return createVNode(VSheet, mergeProps({
+            "rounded": props.rounded,
+            "elevation": props.elevation,
+            "theme": props.theme,
+            "class": ["v-color-picker", rtlClasses.value, props.class],
+            "style": [{
+              "--v-color-picker-color-hsv": HSVtoCSS({
+                ...currentColor.value ?? nullColor,
+                a: 1
+              })
+            }, props.style]
+          }, sheetProps, {
+            "maxWidth": props.width
+          }), {
+            default: () => [!props.hideCanvas && createVNode(VColorPickerCanvas, {
+              "key": "canvas",
+              "color": currentColor.value,
+              "onUpdate:color": updateColor,
+              "disabled": props.disabled,
+              "dotSize": props.dotSize,
+              "width": props.width,
+              "height": props.canvasHeight
+            }, null), (!props.hideSliders || !props.hideInputs) && createVNode("div", {
+              "key": "controls",
+              "class": "v-color-picker__controls"
+            }, [!props.hideSliders && createVNode(VColorPickerPreview, {
+              "key": "preview",
+              "color": currentColor.value,
+              "onUpdate:color": updateColor,
+              "hideAlpha": !mode.value.endsWith("a"),
+              "disabled": props.disabled
+            }, null), !props.hideInputs && createVNode(VColorPickerEdit, {
+              "key": "edit",
+              "modes": props.modes,
+              "mode": mode.value,
+              "onUpdate:mode": (m) => mode.value = m,
+              "color": currentColor.value,
+              "onUpdate:color": updateColor,
+              "disabled": props.disabled
+            }, null)]), props.showSwatches && createVNode(VColorPickerSwatches, {
+              "key": "swatches",
+              "color": currentColor.value,
+              "onUpdate:color": updateColor,
+              "maxHeight": props.swatchesMaxHeight,
+              "swatches": props.swatches,
+              "disabled": props.disabled
+            }, null)]
+          });
+        });
+        return {};
+      }
+    });
+    const _sfc_main$o = {
+      __name: "color-picker",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfColorPickerNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        useDefaults({}, "VjsfColorPicker");
+        const props = __props;
+        const colorPickerProps = computed(() => {
+          const colorPickerProps2 = getCompProps(props.modelValue, true);
+          colorPickerProps2.modelValue = props.modelValue.data;
+          return colorPickerProps2;
+        });
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(_sfc_main$r, {
+            "model-value": __props.modelValue,
+            "stateful-layout": __props.statefulLayout,
+            "formatted-value": __props.modelValue.data
+          }, createSlots({
+            default: withCtx(() => [
+              createVNode(unref(VColorPicker), mergeProps(colorPickerProps.value, {
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value))
+              }), null, 16)
+            ]),
+            _: 2
+          }, [
+            __props.modelValue.data ? {
+              name: "prepend-inner",
+              fn: withCtx(() => [
+                createBaseVNode("div", {
+                  style: normalizeStyle(`height:30px; width: 30px; border-radius: 40px; margin-right:6px; background: ${__props.modelValue.data};`)
+                }, null, 4)
+              ]),
+              key: "0"
+            } : void 0
+          ]), 1032, ["model-value", "stateful-layout", "formatted-value"]);
+        };
+      }
+    };
+    function useGetItems(props) {
+      const items2 = shallowRef([]);
+      const loading = ref$1(false);
+      const search = ref$1("");
+      const fetchItems = async () => {
+        loading.value = true;
+        items2.value = await props.statefulLayout.getItems(props.modelValue, search.value);
+        loading.value = false;
+      };
+      watch(() => props.modelValue.itemsCacheKey, (newValue, oldValue) => {
+        if (newValue === oldValue)
+          return;
+        fetchItems();
+      }, { immediate: true });
+      watch(search, () => {
+        fetchItems();
+      });
+      const prepareSelectedItem = (selectedItem, itemValue) => {
+        let item = selectedItem;
+        if (selectedItem === itemValue) {
+          try {
+            item = props.statefulLayout.prepareSelectItem(props.modelValue, selectedItem);
+            if (item.value === void 0)
+              item.value = itemValue;
+          } catch (e) {
+            item = { value: itemValue };
+          }
+        }
+        return item;
+      };
+      return { items: items2, loading, search, prepareSelectedItem };
+    }
+    const _sfc_main$n = /* @__PURE__ */ defineComponent$1({
+      props: {
+        icon: {
+          type: String,
+          required: true
+        }
+      },
+      setup(props) {
+        const isUrl = computed(() => props.icon.startsWith("http://") || props.icon.startsWith("https://"));
+        const isSVG = computed(() => props.icon.startsWith("<?xml") || props.icon.startsWith("<svg"));
+        return () => {
+          if (isUrl.value) {
+            return h("img", { src: props.icon, style: "height:100%;width:100%;" });
+          } else if (isSVG.value) {
+            return h("div", { innerHTML: props.icon.replace("<svg ", '<svg class="v-icon__svg" '), class: "v-icon" });
+          } else {
+            return h(VIcon, null, () => props.icon);
+          }
+        };
+      }
+    });
+    const _sfc_main$m = {
+      __name: "select-item",
+      props: {
+        multiple: {
+          type: Boolean,
+          default: false
+        },
+        itemProps: {
+          type: Object,
+          required: true
+        },
+        item: {
+          /** @type import('vue').PropType<import('@json-layout/vocabulary').SelectItem> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(unref(VListItem), normalizeProps(guardReactiveProps(__props.itemProps)), createSlots({ _: 2 }, [
+            __props.item.icon || __props.multiple ? {
+              name: "prepend",
+              fn: withCtx(({ isSelected }) => [
+                __props.multiple ? (openBlock(), createBlock(unref(VCheckboxBtn), {
+                  key: __props.item.key,
+                  ripple: false,
+                  tabindex: "-1",
+                  "model-value": isSelected
+                }, null, 8, ["model-value"])) : createCommentVNode("", true),
+                __props.item.icon ? (openBlock(), createBlock(_sfc_main$n, {
+                  key: 1,
+                  icon: __props.item.icon
+                }, null, 8, ["icon"])) : createCommentVNode("", true)
+              ]),
+              key: "0"
+            } : void 0
+          ]), 1040);
+        };
+      }
+    };
+    const _hoisted_1$3 = { class: "v-select__selection-text" };
+    const _hoisted_2$1 = {
+      key: 1,
+      class: "v-select__selection-comma"
+    };
+    const _sfc_main$l = {
+      __name: "select-selection",
+      props: {
+        multiple: {
+          type: Boolean,
+          default: false
+        },
+        last: {
+          type: Boolean,
+          default: false
+        },
+        item: {
+          /** @type import('vue').PropType<import('@json-layout/vocabulary').SelectItem> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        return (_ctx, _cache) => {
+          return openBlock(), createElementBlock("span", _hoisted_1$3, [
+            __props.item.icon ? (openBlock(), createBlock(_sfc_main$n, {
+              key: 0,
+              icon: __props.item.icon
+            }, null, 8, ["icon"])) : createCommentVNode("", true),
+            createTextVNode(" " + toDisplayString(__props.item.title ?? __props.item.key ?? __props.item.value) + " ", 1),
+            __props.multiple && !__props.last ? (openBlock(), createElementBlock("span", _hoisted_2$1, ",")) : createCommentVNode("", true)
+          ]);
+        };
+      }
+    };
+    const _sfc_main$k = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfSelectNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(props) {
+        useDefaults({}, "VjsfSelect");
+        const getItems = useGetItems(props);
+        const fieldProps = computed(() => {
+          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
+          if (props.modelValue.options.readOnly)
+            fieldProps2.menuProps = { modelValue: false };
+          fieldProps2.loading = getItems.loading.value;
+          fieldProps2.items = getItems.items.value;
+          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
+          return fieldProps2;
+        });
+        const fieldSlots = computed(() => {
+          const slots = getCompSlots(props.modelValue, props.statefulLayout);
+          if (!slots.item) {
+            slots.item = (context) => h(_sfc_main$m, {
+              multiple: props.modelValue.layout.multiple,
+              itemProps: context.props,
+              item: context.item.raw
+            });
+          }
+          if (!slots.selection) {
+            slots.selection = (context) => h(_sfc_main$l, {
+              multiple: props.modelValue.layout.multiple,
+              last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
+              item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
+            });
+          }
+          return slots;
+        });
+        return () => h(VSelect, fieldProps.value, fieldSlots.value);
+      }
+    });
+    const defaultFilter = (value, query, item) => {
+      if (value == null || query == null)
+        return -1;
+      return value.toString().toLocaleLowerCase().indexOf(query.toString().toLocaleLowerCase());
+    };
+    const makeFilterProps = propsFactory({
+      customFilter: Function,
+      customKeyFilter: Object,
+      filterKeys: [Array, String],
+      filterMode: {
+        type: String,
+        default: "intersection"
+      },
+      noFilter: Boolean
+    }, "filter");
+    function filterItems(items2, query, options) {
+      var _a2;
+      const array = [];
+      const filter = (options == null ? void 0 : options.default) ?? defaultFilter;
+      const keys2 = (options == null ? void 0 : options.filterKeys) ? wrapInArray(options.filterKeys) : false;
+      const customFiltersLength = Object.keys((options == null ? void 0 : options.customKeyFilter) ?? {}).length;
+      if (!(items2 == null ? void 0 : items2.length))
+        return array;
+      loop:
+        for (let i2 = 0; i2 < items2.length; i2++) {
+          const [item, transformed = item] = wrapInArray(items2[i2]);
+          const customMatches = {};
+          const defaultMatches = {};
+          let match = -1;
+          if ((query || customFiltersLength > 0) && !(options == null ? void 0 : options.noFilter)) {
+            if (typeof item === "object") {
+              const filterKeys = keys2 || Object.keys(transformed);
+              for (const key of filterKeys) {
+                const value = getPropertyFromItem(transformed, key);
+                const keyFilter = (_a2 = options == null ? void 0 : options.customKeyFilter) == null ? void 0 : _a2[key];
+                match = keyFilter ? keyFilter(value, query, item) : filter(value, query, item);
+                if (match !== -1 && match !== false) {
+                  if (keyFilter)
+                    customMatches[key] = match;
+                  else
+                    defaultMatches[key] = match;
+                } else if ((options == null ? void 0 : options.filterMode) === "every") {
+                  continue loop;
+                }
+              }
+            } else {
+              match = filter(item, query, item);
+              if (match !== -1 && match !== false) {
+                defaultMatches.title = match;
+              }
+            }
+            const defaultMatchesLength = Object.keys(defaultMatches).length;
+            const customMatchesLength = Object.keys(customMatches).length;
+            if (!defaultMatchesLength && !customMatchesLength)
+              continue;
+            if ((options == null ? void 0 : options.filterMode) === "union" && customMatchesLength !== customFiltersLength && !defaultMatchesLength)
+              continue;
+            if ((options == null ? void 0 : options.filterMode) === "intersection" && (customMatchesLength !== customFiltersLength || !defaultMatchesLength))
+              continue;
+          }
+          array.push({
+            index: i2,
+            matches: {
+              ...defaultMatches,
+              ...customMatches
+            }
+          });
+        }
+      return array;
+    }
+    function useFilter(props, items2, query, options) {
+      const filteredItems = ref$1([]);
+      const filteredMatches = ref$1(/* @__PURE__ */ new Map());
+      const transformedItems = computed(() => (options == null ? void 0 : options.transform) ? unref(items2).map((item) => [item, options.transform(item)]) : unref(items2));
+      watchEffect(() => {
+        const _query = typeof query === "function" ? query() : unref(query);
+        const strQuery = typeof _query !== "string" && typeof _query !== "number" ? "" : String(_query);
+        const results = filterItems(transformedItems.value, strQuery, {
+          customKeyFilter: {
+            ...props.customKeyFilter,
+            ...unref(options == null ? void 0 : options.customKeyFilter)
+          },
+          default: props.customFilter,
+          filterKeys: props.filterKeys,
+          filterMode: props.filterMode,
+          noFilter: props.noFilter
+        });
+        const originalItems = unref(items2);
+        const _filteredItems = [];
+        const _filteredMatches = /* @__PURE__ */ new Map();
+        results.forEach((_ref) => {
+          let {
+            index,
+            matches
+          } = _ref;
+          const item = originalItems[index];
+          _filteredItems.push(item);
+          _filteredMatches.set(item.value, matches);
+        });
+        filteredItems.value = _filteredItems;
+        filteredMatches.value = _filteredMatches;
+      });
+      function getMatches(item) {
+        return filteredMatches.value.get(item.value);
+      }
+      return {
+        filteredItems,
+        filteredMatches,
+        getMatches
+      };
+    }
+    function highlightResult$1(text2, matches, length) {
+      if (matches == null)
+        return text2;
+      if (Array.isArray(matches))
+        throw new Error("Multiple matches is not implemented");
+      return typeof matches === "number" && ~matches ? createVNode(Fragment, null, [createVNode("span", {
+        "class": "v-autocomplete__unmask"
+      }, [text2.substr(0, matches)]), createVNode("span", {
+        "class": "v-autocomplete__mask"
+      }, [text2.substr(matches, length)]), createVNode("span", {
+        "class": "v-autocomplete__unmask"
+      }, [text2.substr(matches + length)])]) : text2;
+    }
+    const makeVAutocompleteProps = propsFactory({
+      autoSelectFirst: {
+        type: [Boolean, String]
+      },
+      clearOnSelect: Boolean,
+      search: String,
+      ...makeFilterProps({
+        filterKeys: ["title"]
+      }),
+      ...makeSelectProps(),
+      ...omit$1(makeVTextFieldProps({
+        modelValue: null,
+        role: "combobox"
+      }), ["validationValue", "dirty", "appendInnerIcon"]),
+      ...makeTransitionProps({
+        transition: false
+      })
+    }, "VAutocomplete");
+    const VAutocomplete = genericComponent()({
+      name: "VAutocomplete",
+      props: makeVAutocompleteProps(),
+      emits: {
+        "update:focused": (focused) => true,
+        "update:search": (value) => true,
+        "update:modelValue": (value) => true,
+        "update:menu": (value) => true
+      },
+      setup(props, _ref) {
+        let {
           slots
         } = _ref;
         const {
           t
         } = useLocale();
-        const model = useProxiedModel(props, "modelValue", props.modelValue, (val) => wrapInArray(val), (val) => props.multiple || Array.isArray(props.modelValue) ? val : val[0] ?? null);
+        const vTextFieldRef = ref$1();
+        const isFocused = shallowRef(false);
+        const isPristine = shallowRef(true);
+        const listHasFocus = shallowRef(false);
+        const vMenuRef = ref$1();
+        const vVirtualScrollRef = ref$1();
+        const _menu = useProxiedModel(props, "menu");
+        const menu = computed({
+          get: () => _menu.value,
+          set: (v) => {
+            var _a2;
+            if (_menu.value && !v && ((_a2 = vMenuRef.value) == null ? void 0 : _a2.ΨopenChildren))
+              return;
+            _menu.value = v;
+          }
+        });
+        const selectionIndex = shallowRef(-1);
+        const color = computed(() => {
+          var _a2;
+          return (_a2 = vTextFieldRef.value) == null ? void 0 : _a2.color;
+        });
+        const label = computed(() => menu.value ? props.closeText : props.openText);
         const {
-          isFocused,
-          focus,
-          blur
-        } = useFocus(props);
-        const base2 = computed(() => typeof props.showSize !== "boolean" ? props.showSize : void 0);
-        const totalBytes = computed(() => (model.value ?? []).reduce((bytes, _ref2) => {
-          let {
-            size: size2 = 0
-          } = _ref2;
-          return bytes + size2;
-        }, 0));
-        const totalBytesReadable = computed(() => humanReadableFileSize(totalBytes.value, base2.value));
-        const fileNames = computed(() => (model.value ?? []).map((file) => {
-          const {
-            name = "",
-            size: size2 = 0
-          } = file;
-          return !props.showSize ? name : `${name} (${humanReadableFileSize(size2, base2.value)})`;
-        }));
+          items: items2,
+          transformIn,
+          transformOut
+        } = useItems(props);
+        const {
+          textColorClasses,
+          textColorStyles
+        } = useTextColor(color);
+        const search = useProxiedModel(props, "search", "");
+        const model = useProxiedModel(props, "modelValue", [], (v) => transformIn(v === null ? [null] : wrapInArray(v)), (v) => {
+          const transformed = transformOut(v);
+          return props.multiple ? transformed : transformed[0] ?? null;
+        });
         const counterValue = computed(() => {
-          var _a2;
-          const fileCount = ((_a2 = model.value) == null ? void 0 : _a2.length) ?? 0;
-          if (props.showSize)
-            return t(props.counterSizeString, fileCount, totalBytesReadable.value);
-          else
-            return t(props.counterString, fileCount);
+          return typeof props.counterValue === "function" ? props.counterValue(model.value) : typeof props.counterValue === "number" ? props.counterValue : model.value.length;
         });
-        const vInputRef = ref$1();
-        const vFieldRef = ref$1();
-        const inputRef = ref$1();
-        const isActive = computed(() => isFocused.value || props.active);
-        const isPlainOrUnderlined = computed(() => ["plain", "underlined"].includes(props.variant));
-        function onFocus() {
-          var _a2;
-          if (inputRef.value !== document.activeElement) {
-            (_a2 = inputRef.value) == null ? void 0 : _a2.focus();
+        const form = useForm();
+        const {
+          filteredItems,
+          getMatches
+        } = useFilter(props, items2, () => isPristine.value ? "" : search.value);
+        const displayItems = computed(() => {
+          if (props.hideSelected) {
+            return filteredItems.value.filter((filteredItem) => !model.value.some((s) => s.value === filteredItem.value));
           }
-          if (!isFocused.value)
-            focus();
-        }
-        function onClickPrepend(e) {
+          return filteredItems.value;
+        });
+        const hasChips = computed(() => !!(props.chips || slots.chip));
+        const hasSelectionSlot = computed(() => hasChips.value || !!slots.selection);
+        const selectedValues = computed(() => model.value.map((selection) => selection.props.value));
+        const highlightFirst = computed(() => {
           var _a2;
-          (_a2 = inputRef.value) == null ? void 0 : _a2.click();
-        }
-        function onControlMousedown(e) {
-          emit2("mousedown:control", e);
-        }
-        function onControlClick(e) {
-          var _a2;
-          (_a2 = inputRef.value) == null ? void 0 : _a2.click();
-          emit2("click:control", e);
-        }
+          const selectFirst = props.autoSelectFirst === true || props.autoSelectFirst === "exact" && search.value === ((_a2 = displayItems.value[0]) == null ? void 0 : _a2.title);
+          return selectFirst && displayItems.value.length > 0 && !isPristine.value && !listHasFocus.value;
+        });
+        const menuDisabled = computed(() => props.hideNoData && !displayItems.value.length || props.readonly || (form == null ? void 0 : form.isReadonly.value));
+        const listRef = ref$1();
+        const {
+          onListScroll,
+          onListKeydown
+        } = useScrolling(listRef, vTextFieldRef);
         function onClear(e) {
-          e.stopPropagation();
-          onFocus();
-          nextTick(() => {
-            model.value = [];
-            callEvent(props["onClick:clear"], e);
-          });
-        }
-        watch(model, (newValue) => {
-          const hasModelReset = !Array.isArray(newValue) || !newValue.length;
-          if (hasModelReset && inputRef.value) {
-            inputRef.value.value = "";
+          if (props.openOnClear) {
+            menu.value = true;
           }
-        });
-        useRender(() => {
-          const hasCounter = !!(slots.counter || props.counter);
-          const hasDetails = !!(hasCounter || slots.details);
-          const [rootAttrs, inputAttrs] = filterInputAttrs(attrs);
-          const {
-            modelValue: _,
-            ...inputProps
-          } = VInput.filterProps(props);
-          const fieldProps = filterFieldProps(props);
-          return createVNode(VInput, mergeProps({
-            "ref": vInputRef,
-            "modelValue": model.value,
-            "onUpdate:modelValue": ($event) => model.value = $event,
-            "class": ["v-file-input", {
-              "v-file-input--chips": !!props.chips,
-              "v-file-input--hide": props.hideInput,
-              "v-input--plain-underlined": isPlainOrUnderlined.value
-            }, props.class],
-            "style": props.style,
-            "onClick:prepend": onClickPrepend
-          }, rootAttrs, inputProps, {
-            "centerAffix": !isPlainOrUnderlined.value,
-            "focused": isFocused.value
-          }), {
-            ...slots,
-            default: (_ref3) => {
-              let {
-                id: id2,
-                isDisabled,
-                isDirty,
-                isReadonly: isReadonly2,
-                isValid: isValid2
-              } = _ref3;
-              return createVNode(VField, mergeProps({
-                "ref": vFieldRef,
-                "prepend-icon": props.prependIcon,
-                "onMousedown": onControlMousedown,
-                "onClick": onControlClick,
-                "onClick:clear": onClear,
-                "onClick:prependInner": props["onClick:prependInner"],
-                "onClick:appendInner": props["onClick:appendInner"]
-              }, fieldProps, {
-                "id": id2.value,
-                "active": isActive.value || isDirty.value,
-                "dirty": isDirty.value || props.dirty,
-                "disabled": isDisabled.value,
-                "focused": isFocused.value,
-                "error": isValid2.value === false
-              }), {
-                ...slots,
-                default: (_ref4) => {
-                  var _a2;
-                  let {
-                    props: {
-                      class: fieldClass,
-                      ...slotProps
-                    }
-                  } = _ref4;
-                  return createVNode(Fragment, null, [createVNode("input", mergeProps({
-                    "ref": inputRef,
-                    "type": "file",
-                    "readonly": isReadonly2.value,
-                    "disabled": isDisabled.value,
-                    "multiple": props.multiple,
-                    "name": props.name,
-                    "onClick": (e) => {
-                      e.stopPropagation();
-                      if (isReadonly2.value)
-                        e.preventDefault();
-                      onFocus();
-                    },
-                    "onChange": (e) => {
-                      if (!e.target)
-                        return;
-                      const target2 = e.target;
-                      model.value = [...target2.files ?? []];
-                    },
-                    "onFocus": onFocus,
-                    "onBlur": blur
-                  }, slotProps, inputAttrs), null), createVNode("div", {
-                    "class": fieldClass
-                  }, [!!((_a2 = model.value) == null ? void 0 : _a2.length) && !props.hideInput && (slots.selection ? slots.selection({
-                    fileNames: fileNames.value,
-                    totalBytes: totalBytes.value,
-                    totalBytesReadable: totalBytesReadable.value
-                  }) : props.chips ? fileNames.value.map((text2) => createVNode(VChip, {
-                    "key": text2,
-                    "size": "small",
-                    "text": text2
-                  }, null)) : fileNames.value.join(", "))])]);
-                }
-              });
-            },
-            details: hasDetails ? (slotProps) => {
-              var _a2, _b;
-              return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
-                "active": !!((_b = model.value) == null ? void 0 : _b.length),
-                "value": counterValue.value,
-                "disabled": props.disabled
-              }, slots.counter)])]);
-            } : void 0
-          });
-        });
-        return forwardRefs({}, vInputRef, vFieldRef, inputRef);
-      }
-    });
-    const makeVFormProps = propsFactory({
-      ...makeComponentProps(),
-      ...makeFormProps()
-    }, "VForm");
-    const VForm = genericComponent()({
-      name: "VForm",
-      props: makeVFormProps(),
-      emits: {
-        "update:modelValue": (val) => true,
-        submit: (e) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots,
-          emit: emit2
-        } = _ref;
-        const form = createForm(props);
-        const formRef = ref$1();
-        function onReset(e) {
-          e.preventDefault();
-          form.reset();
+          search.value = "";
         }
-        function onSubmit(_e) {
-          const e = _e;
-          const ready = form.validate();
-          e.then = ready.then.bind(ready);
-          e.catch = ready.catch.bind(ready);
-          e.finally = ready.finally.bind(ready);
-          emit2("submit", e);
-          if (!e.defaultPrevented) {
-            ready.then((_ref2) => {
-              var _a2;
-              let {
-                valid
-              } = _ref2;
-              if (valid) {
-                (_a2 = formRef.value) == null ? void 0 : _a2.submit();
-              }
+        function onMousedownControl() {
+          if (menuDisabled.value)
+            return;
+          menu.value = true;
+        }
+        function onMousedownMenuIcon(e) {
+          if (menuDisabled.value)
+            return;
+          if (isFocused.value) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          menu.value = !menu.value;
+        }
+        function onKeydown(e) {
+          var _a2, _b, _c;
+          if (props.readonly || (form == null ? void 0 : form.isReadonly.value))
+            return;
+          const selectionStart = vTextFieldRef.value.selectionStart;
+          const length = model.value.length;
+          if (selectionIndex.value > -1 || ["Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
+            e.preventDefault();
+          }
+          if (["Enter", "ArrowDown"].includes(e.key)) {
+            menu.value = true;
+          }
+          if (["Escape"].includes(e.key)) {
+            menu.value = false;
+          }
+          if (highlightFirst.value && ["Enter", "Tab"].includes(e.key) && !model.value.some((_ref2) => {
+            let {
+              value
+            } = _ref2;
+            return value === displayItems.value[0].value;
+          })) {
+            select(displayItems.value[0]);
+          }
+          if (e.key === "ArrowDown" && highlightFirst.value) {
+            (_a2 = listRef.value) == null ? void 0 : _a2.focus("next");
+          }
+          if (["Backspace", "Delete"].includes(e.key)) {
+            if (!props.multiple && hasSelectionSlot.value && model.value.length > 0 && !search.value)
+              return select(model.value[0], false);
+            if (~selectionIndex.value) {
+              const originalSelectionIndex = selectionIndex.value;
+              select(model.value[selectionIndex.value], false);
+              selectionIndex.value = originalSelectionIndex >= length - 1 ? length - 2 : originalSelectionIndex;
+            } else if (e.key === "Backspace" && !search.value) {
+              selectionIndex.value = length - 1;
+            }
+          }
+          if (!props.multiple)
+            return;
+          if (e.key === "ArrowLeft") {
+            if (selectionIndex.value < 0 && selectionStart > 0)
+              return;
+            const prev = selectionIndex.value > -1 ? selectionIndex.value - 1 : length - 1;
+            if (model.value[prev]) {
+              selectionIndex.value = prev;
+            } else {
+              selectionIndex.value = -1;
+              vTextFieldRef.value.setSelectionRange((_b = search.value) == null ? void 0 : _b.length, (_c = search.value) == null ? void 0 : _c.length);
+            }
+          }
+          if (e.key === "ArrowRight") {
+            if (selectionIndex.value < 0)
+              return;
+            const next2 = selectionIndex.value + 1;
+            if (model.value[next2]) {
+              selectionIndex.value = next2;
+            } else {
+              selectionIndex.value = -1;
+              vTextFieldRef.value.setSelectionRange(0, 0);
+            }
+          }
+        }
+        function onChange(e) {
+          if (matchesSelector(vTextFieldRef.value, ":autofill") || matchesSelector(vTextFieldRef.value, ":-webkit-autofill")) {
+            const item = items2.value.find((item2) => item2.title === e.target.value);
+            if (item) {
+              select(item);
+            }
+          }
+        }
+        function onAfterLeave() {
+          var _a2;
+          if (isFocused.value) {
+            isPristine.value = true;
+            (_a2 = vTextFieldRef.value) == null ? void 0 : _a2.focus();
+          }
+        }
+        function onFocusin(e) {
+          isFocused.value = true;
+          setTimeout(() => {
+            listHasFocus.value = true;
+          });
+        }
+        function onFocusout(e) {
+          listHasFocus.value = false;
+        }
+        function onUpdateModelValue(v) {
+          if (v == null || v === "" && !props.multiple && !hasSelectionSlot.value)
+            model.value = [];
+        }
+        const isSelecting = shallowRef(false);
+        function select(item) {
+          let set2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+          if (!item || item.props.disabled)
+            return;
+          if (props.multiple) {
+            const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
+            const add2 = set2 == null ? !~index : set2;
+            if (~index) {
+              const value = add2 ? [...model.value, item] : [...model.value];
+              value.splice(index, 1);
+              model.value = value;
+            } else if (add2) {
+              model.value = [...model.value, item];
+            }
+            if (props.clearOnSelect) {
+              search.value = "";
+            }
+          } else {
+            const add2 = set2 !== false;
+            model.value = add2 ? [item] : [];
+            search.value = add2 && !hasSelectionSlot.value ? item.title : "";
+            nextTick(() => {
+              menu.value = false;
+              isPristine.value = true;
             });
           }
-          e.preventDefault();
         }
-        useRender(() => {
+        watch(isFocused, (val, oldVal) => {
           var _a2;
-          return createVNode("form", {
-            "ref": formRef,
-            "class": ["v-form", props.class],
-            "style": props.style,
-            "novalidate": true,
-            "onReset": onReset,
-            "onSubmit": onSubmit
-          }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots, form)]);
+          if (val === oldVal)
+            return;
+          if (val) {
+            isSelecting.value = true;
+            search.value = props.multiple || hasSelectionSlot.value ? "" : String(((_a2 = model.value.at(-1)) == null ? void 0 : _a2.props.title) ?? "");
+            isPristine.value = true;
+            nextTick(() => isSelecting.value = false);
+          } else {
+            if (!props.multiple && search.value == null)
+              model.value = [];
+            menu.value = false;
+            if (!model.value.some((_ref3) => {
+              let {
+                title: title2
+              } = _ref3;
+              return title2 === search.value;
+            }))
+              search.value = "";
+            selectionIndex.value = -1;
+          }
         });
-        return forwardRefs(form, formRef);
+        watch(search, (val) => {
+          if (!isFocused.value || isSelecting.value)
+            return;
+          if (val)
+            menu.value = true;
+          isPristine.value = !val;
+        });
+        watch(menu, () => {
+          if (!props.hideSelected && menu.value && model.value.length) {
+            const index = displayItems.value.findIndex((item) => model.value.some((s) => item.value === s.value));
+            IN_BROWSER && window.requestAnimationFrame(() => {
+              var _a2;
+              index >= 0 && ((_a2 = vVirtualScrollRef.value) == null ? void 0 : _a2.scrollToIndex(index));
+            });
+          }
+        });
+        watch(() => props.items, (newVal, oldVal) => {
+          if (menu.value)
+            return;
+          if (isFocused.value && !oldVal.length && newVal.length) {
+            menu.value = true;
+          }
+        });
+        useRender(() => {
+          const hasList = !!(!props.hideNoData || displayItems.value.length || slots["prepend-item"] || slots["append-item"] || slots["no-data"]);
+          const isDirty = model.value.length > 0;
+          const textFieldProps = VTextField.filterProps(props);
+          return createVNode(VTextField, mergeProps({
+            "ref": vTextFieldRef
+          }, textFieldProps, {
+            "modelValue": search.value,
+            "onUpdate:modelValue": [($event) => search.value = $event, onUpdateModelValue],
+            "focused": isFocused.value,
+            "onUpdate:focused": ($event) => isFocused.value = $event,
+            "validationValue": model.externalValue,
+            "counterValue": counterValue.value,
+            "dirty": isDirty,
+            "onChange": onChange,
+            "class": ["v-autocomplete", `v-autocomplete--${props.multiple ? "multiple" : "single"}`, {
+              "v-autocomplete--active-menu": menu.value,
+              "v-autocomplete--chips": !!props.chips,
+              "v-autocomplete--selection-slot": !!hasSelectionSlot.value,
+              "v-autocomplete--selecting-index": selectionIndex.value > -1
+            }, props.class],
+            "style": props.style,
+            "readonly": props.readonly,
+            "placeholder": isDirty ? void 0 : props.placeholder,
+            "onClick:clear": onClear,
+            "onMousedown:control": onMousedownControl,
+            "onKeydown": onKeydown
+          }), {
+            ...slots,
+            default: () => createVNode(Fragment, null, [createVNode(VMenu, mergeProps({
+              "ref": vMenuRef,
+              "modelValue": menu.value,
+              "onUpdate:modelValue": ($event) => menu.value = $event,
+              "activator": "parent",
+              "contentClass": "v-autocomplete__content",
+              "disabled": menuDisabled.value,
+              "eager": props.eager,
+              "maxHeight": 310,
+              "openOnClick": false,
+              "closeOnContentClick": false,
+              "transition": props.transition,
+              "onAfterLeave": onAfterLeave
+            }, props.menuProps), {
+              default: () => [hasList && createVNode(VList, mergeProps({
+                "ref": listRef,
+                "selected": selectedValues.value,
+                "selectStrategy": props.multiple ? "independent" : "single-independent",
+                "onMousedown": (e) => e.preventDefault(),
+                "onKeydown": onListKeydown,
+                "onFocusin": onFocusin,
+                "onFocusout": onFocusout,
+                "onScrollPassive": onListScroll,
+                "tabindex": "-1",
+                "aria-live": "polite",
+                "color": props.itemColor ?? props.color
+              }, props.listProps), {
+                default: () => {
+                  var _a2, _b, _c;
+                  return [(_a2 = slots["prepend-item"]) == null ? void 0 : _a2.call(slots), !displayItems.value.length && !props.hideNoData && (((_b = slots["no-data"]) == null ? void 0 : _b.call(slots)) ?? createVNode(VListItem, {
+                    "title": t(props.noDataText)
+                  }, null)), createVNode(VVirtualScroll, {
+                    "ref": vVirtualScrollRef,
+                    "renderless": true,
+                    "items": displayItems.value
+                  }, {
+                    default: (_ref4) => {
+                      var _a3;
+                      let {
+                        item,
+                        index,
+                        itemRef
+                      } = _ref4;
+                      const itemProps = mergeProps(item.props, {
+                        ref: itemRef,
+                        key: index,
+                        active: highlightFirst.value && index === 0 ? true : void 0,
+                        onClick: () => select(item, null)
+                      });
+                      return ((_a3 = slots.item) == null ? void 0 : _a3.call(slots, {
+                        item,
+                        index,
+                        props: itemProps
+                      })) ?? createVNode(VListItem, mergeProps(itemProps, {
+                        "role": "option"
+                      }), {
+                        prepend: (_ref5) => {
+                          let {
+                            isSelected
+                          } = _ref5;
+                          return createVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
+                            "key": item.value,
+                            "modelValue": isSelected,
+                            "ripple": false,
+                            "tabindex": "-1"
+                          }, null) : void 0, item.props.prependAvatar && createVNode(VAvatar, {
+                            "image": item.props.prependAvatar
+                          }, null), item.props.prependIcon && createVNode(VIcon, {
+                            "icon": item.props.prependIcon
+                          }, null)]);
+                        },
+                        title: () => {
+                          var _a4, _b2;
+                          return isPristine.value ? item.title : highlightResult$1(item.title, (_a4 = getMatches(item)) == null ? void 0 : _a4.title, ((_b2 = search.value) == null ? void 0 : _b2.length) ?? 0);
+                        }
+                      });
+                    }
+                  }), (_c = slots["append-item"]) == null ? void 0 : _c.call(slots)];
+                }
+              })]
+            }), model.value.map((item, index) => {
+              function onChipClose(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                select(item, false);
+              }
+              const slotProps = {
+                "onClick:close": onChipClose,
+                onKeydown(e) {
+                  if (e.key !== "Enter" && e.key !== " ")
+                    return;
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onChipClose(e);
+                },
+                onMousedown(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                },
+                modelValue: true,
+                "onUpdate:modelValue": void 0
+              };
+              const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
+              const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
+                item,
+                index,
+                props: slotProps
+              }) : slots.selection({
+                item,
+                index
+              })) : void 0;
+              if (hasSlot && !slotContent)
+                return void 0;
+              return createVNode("div", {
+                "key": item.value,
+                "class": ["v-autocomplete__selection", index === selectionIndex.value && ["v-autocomplete__selection--selected", textColorClasses.value]],
+                "style": index === selectionIndex.value ? textColorStyles.value : {}
+              }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
+                "key": "chip",
+                "closable": props.closableChips,
+                "size": "small",
+                "text": item.title,
+                "disabled": item.props.disabled
+              }, slotProps), null) : createVNode(VDefaultsProvider, {
+                "key": "chip-defaults",
+                "defaults": {
+                  VChip: {
+                    closable: props.closableChips,
+                    size: "small",
+                    text: item.title
+                  }
+                }
+              }, {
+                default: () => [slotContent]
+              }) : slotContent ?? createVNode("span", {
+                "class": "v-autocomplete__selection-text"
+              }, [item.title, props.multiple && index < model.value.length - 1 && createVNode("span", {
+                "class": "v-autocomplete__selection-comma"
+              }, [createTextVNode(",")])])]);
+            })]),
+            "append-inner": function() {
+              var _a2;
+              for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+              }
+              return createVNode(Fragment, null, [(_a2 = slots["append-inner"]) == null ? void 0 : _a2.call(slots, ...args), props.menuIcon ? createVNode(VIcon, {
+                "class": "v-autocomplete__menu-icon",
+                "icon": props.menuIcon,
+                "onMousedown": onMousedownMenuIcon,
+                "onClick": noop$1,
+                "aria-label": t(label.value),
+                "title": t(label.value),
+                "tabindex": "-1"
+              }, null) : void 0]);
+            }
+          });
+        });
+        return forwardRefs({
+          isFocused,
+          isPristine,
+          menu,
+          search,
+          filteredItems,
+          select
+        }, vTextFieldRef);
+      }
+    });
+    const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfSelectNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(props) {
+        useDefaults({}, "VjsfAutocomplete");
+        const getItems = useGetItems(props);
+        const fieldProps = computed(() => {
+          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
+          if (props.modelValue.options.readOnly)
+            fieldProps2.menuProps = { modelValue: false };
+          fieldProps2.noFilter = true;
+          fieldProps2["onUpdate:search"] = (searchValue) => {
+            getItems.search.value = searchValue;
+          };
+          fieldProps2.items = getItems.items.value;
+          fieldProps2.loading = getItems.loading.value;
+          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
+          return fieldProps2;
+        });
+        const fieldSlots = computed(() => {
+          const slots = getCompSlots(props.modelValue, props.statefulLayout);
+          if (!slots.item) {
+            slots.item = (context) => h(_sfc_main$m, {
+              multiple: props.modelValue.layout.multiple,
+              itemProps: context.props,
+              item: context.item.raw
+            });
+          }
+          if (!slots.selection) {
+            slots.selection = (context) => h(_sfc_main$l, {
+              multiple: props.modelValue.layout.multiple,
+              last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
+              item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
+            });
+          }
+          return slots;
+        });
+        return () => h(VAutocomplete, fieldProps.value, fieldSlots.value);
       }
     });
     const makeVRadioProps = propsFactory({
@@ -76099,2161 +77014,6 @@ Reason: ${error2}`);
           }, [isLoading ? items2.value : (_a2 = slots.default) == null ? void 0 : _a2.call(slots)]);
         });
         return {};
-      }
-    });
-    const VStepperSymbol = Symbol.for("vuetify:v-stepper");
-    const makeVStepperActionsProps = propsFactory({
-      color: String,
-      disabled: {
-        type: [Boolean, String],
-        default: false
-      },
-      prevText: {
-        type: String,
-        default: "$vuetify.stepper.prev"
-      },
-      nextText: {
-        type: String,
-        default: "$vuetify.stepper.next"
-      }
-    }, "VStepperActions");
-    const VStepperActions = genericComponent()({
-      name: "VStepperActions",
-      props: makeVStepperActionsProps(),
-      emits: {
-        "click:prev": () => true,
-        "click:next": () => true
-      },
-      setup(props, _ref) {
-        let {
-          emit: emit2,
-          slots
-        } = _ref;
-        const {
-          t
-        } = useLocale();
-        function onClickPrev() {
-          emit2("click:prev");
-        }
-        function onClickNext() {
-          emit2("click:next");
-        }
-        useRender(() => {
-          const prevSlotProps = {
-            onClick: onClickPrev
-          };
-          const nextSlotProps = {
-            onClick: onClickNext
-          };
-          return createVNode("div", {
-            "class": "v-stepper-actions"
-          }, [createVNode(VDefaultsProvider, {
-            "defaults": {
-              VBtn: {
-                disabled: ["prev", true].includes(props.disabled),
-                text: t(props.prevText),
-                variant: "text"
-              }
-            }
-          }, {
-            default: () => {
-              var _a2;
-              return [((_a2 = slots.prev) == null ? void 0 : _a2.call(slots, {
-                props: prevSlotProps
-              })) ?? createVNode(VBtn, prevSlotProps, null)];
-            }
-          }), createVNode(VDefaultsProvider, {
-            "defaults": {
-              VBtn: {
-                color: props.color,
-                disabled: ["next", true].includes(props.disabled),
-                text: t(props.nextText),
-                variant: "tonal"
-              }
-            }
-          }, {
-            default: () => {
-              var _a2;
-              return [((_a2 = slots.next) == null ? void 0 : _a2.call(slots, {
-                props: nextSlotProps
-              })) ?? createVNode(VBtn, nextSlotProps, null)];
-            }
-          })]);
-        });
-        return {};
-      }
-    });
-    const VStepperHeader = createSimpleFunctional("v-stepper-header");
-    const makeStepperItemProps = propsFactory({
-      color: String,
-      title: String,
-      subtitle: String,
-      complete: Boolean,
-      completeIcon: {
-        type: String,
-        default: "$complete"
-      },
-      editable: Boolean,
-      editIcon: {
-        type: String,
-        default: "$edit"
-      },
-      error: Boolean,
-      errorIcon: {
-        type: String,
-        default: "$error"
-      },
-      icon: String,
-      ripple: {
-        type: [Boolean, Object],
-        default: true
-      },
-      rules: {
-        type: Array,
-        default: () => []
-      }
-    }, "StepperItem");
-    const makeVStepperItemProps = propsFactory({
-      ...makeStepperItemProps(),
-      ...makeGroupItemProps()
-    }, "VStepperItem");
-    const VStepperItem = genericComponent()({
-      name: "VStepperItem",
-      directives: {
-        Ripple
-      },
-      props: makeVStepperItemProps(),
-      emits: {
-        "group:selected": (val) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const group = useGroupItem(props, VStepperSymbol, true);
-        const step = computed(() => (group == null ? void 0 : group.value.value) ?? props.value);
-        const isValid2 = computed(() => props.rules.every((handler) => handler() === true));
-        const isClickable = computed(() => !props.disabled && props.editable);
-        const canEdit = computed(() => !props.disabled && props.editable);
-        const hasError = computed(() => props.error || !isValid2.value);
-        const hasCompleted = computed(() => props.complete || props.rules.length > 0 && isValid2.value);
-        const icon = computed(() => {
-          if (hasError.value)
-            return props.errorIcon;
-          if (hasCompleted.value)
-            return props.completeIcon;
-          if (group.isSelected.value && props.editable)
-            return props.editIcon;
-          return props.icon;
-        });
-        const slotProps = computed(() => ({
-          canEdit: canEdit.value,
-          hasError: hasError.value,
-          hasCompleted: hasCompleted.value,
-          title: props.title,
-          subtitle: props.subtitle,
-          step: step.value,
-          value: props.value
-        }));
-        useRender(() => {
-          var _a2, _b, _c;
-          const hasColor = (!group || group.isSelected.value || hasCompleted.value || canEdit.value) && !hasError.value && !props.disabled;
-          const hasTitle = !!(props.title != null || slots.title);
-          const hasSubtitle = !!(props.subtitle != null || slots.subtitle);
-          function onClick() {
-            group == null ? void 0 : group.toggle();
-          }
-          return withDirectives(createVNode("button", {
-            "class": ["v-stepper-item", {
-              "v-stepper-item--complete": hasCompleted.value,
-              "v-stepper-item--disabled": props.disabled,
-              "v-stepper-item--error": hasError.value
-            }, group == null ? void 0 : group.selectedClass.value],
-            "disabled": !props.editable,
-            "onClick": onClick
-          }, [isClickable.value && genOverlays(true, "v-stepper-item"), createVNode(VAvatar, {
-            "key": "stepper-avatar",
-            "class": "v-stepper-item__avatar",
-            "color": hasColor ? props.color : void 0,
-            "size": 24
-          }, {
-            default: () => {
-              var _a3;
-              return [((_a3 = slots.icon) == null ? void 0 : _a3.call(slots, slotProps.value)) ?? (icon.value ? createVNode(VIcon, {
-                "icon": icon.value
-              }, null) : step.value)];
-            }
-          }), createVNode("div", {
-            "class": "v-stepper-item__content"
-          }, [hasTitle && createVNode("div", {
-            "key": "title",
-            "class": "v-stepper-item__title"
-          }, [((_a2 = slots.title) == null ? void 0 : _a2.call(slots, slotProps.value)) ?? props.title]), hasSubtitle && createVNode("div", {
-            "key": "subtitle",
-            "class": "v-stepper-item__subtitle"
-          }, [((_b = slots.subtitle) == null ? void 0 : _b.call(slots, slotProps.value)) ?? props.subtitle]), (_c = slots.default) == null ? void 0 : _c.call(slots, slotProps.value)])]), [[resolveDirective("ripple"), props.ripple && props.editable, null]]);
-        });
-        return {};
-      }
-    });
-    const makeVStepperWindowProps = propsFactory({
-      ...omit$1(makeVWindowProps(), ["continuous", "nextIcon", "prevIcon", "showArrows", "touch", "mandatory"])
-    }, "VStepperWindow");
-    const VStepperWindow = genericComponent()({
-      name: "VStepperWindow",
-      props: makeVStepperWindowProps(),
-      emits: {
-        "update:modelValue": (v) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const group = inject$1(VStepperSymbol, null);
-        const _model = useProxiedModel(props, "modelValue");
-        const model = computed({
-          get() {
-            var _a2;
-            if (_model.value != null || !group)
-              return _model.value;
-            return (_a2 = group.items.value.find((item) => group.selected.value.includes(item.id))) == null ? void 0 : _a2.value;
-          },
-          set(val) {
-            _model.value = val;
-          }
-        });
-        useRender(() => {
-          const windowProps = VWindow.filterProps(props);
-          return createVNode(VWindow, mergeProps({
-            "_as": "VStepperWindow"
-          }, windowProps, {
-            "modelValue": model.value,
-            "onUpdate:modelValue": ($event) => model.value = $event,
-            "class": ["v-stepper-window", props.class],
-            "style": props.style,
-            "mandatory": false,
-            "touch": false
-          }), slots);
-        });
-        return {};
-      }
-    });
-    const makeVStepperWindowItemProps = propsFactory({
-      ...makeVWindowItemProps()
-    }, "VStepperWindowItem");
-    const VStepperWindowItem = genericComponent()({
-      name: "VStepperWindowItem",
-      props: makeVStepperWindowItemProps(),
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        useRender(() => {
-          const windowItemProps = VWindowItem.filterProps(props);
-          return createVNode(VWindowItem, mergeProps({
-            "_as": "VStepperWindowItem"
-          }, windowItemProps, {
-            "class": ["v-stepper-window-item", props.class],
-            "style": props.style
-          }), slots);
-        });
-        return {};
-      }
-    });
-    const makeStepperProps = propsFactory({
-      altLabels: Boolean,
-      bgColor: String,
-      completeIcon: String,
-      editIcon: String,
-      editable: Boolean,
-      errorIcon: String,
-      hideActions: Boolean,
-      items: {
-        type: Array,
-        default: () => []
-      },
-      itemTitle: {
-        type: String,
-        default: "title"
-      },
-      itemValue: {
-        type: String,
-        default: "value"
-      },
-      nonLinear: Boolean,
-      flat: Boolean,
-      ...makeDisplayProps()
-    }, "Stepper");
-    const makeVStepperProps = propsFactory({
-      ...makeStepperProps(),
-      ...makeGroupProps({
-        mandatory: "force",
-        selectedClass: "v-stepper-item--selected"
-      }),
-      ...makeVSheetProps(),
-      ...only(makeVStepperActionsProps(), ["prevText", "nextText"])
-    }, "VStepper");
-    const VStepper = genericComponent()({
-      name: "VStepper",
-      props: makeVStepperProps(),
-      emits: {
-        "update:modelValue": (v) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots
-        } = _ref;
-        const {
-          items: _items,
-          next: next2,
-          prev,
-          selected
-        } = useGroup(props, VStepperSymbol);
-        const {
-          displayClasses,
-          mobile
-        } = useDisplay(props);
-        const {
-          completeIcon,
-          editIcon,
-          errorIcon,
-          color,
-          editable,
-          prevText,
-          nextText
-        } = toRefs(props);
-        const items2 = computed(() => props.items.map((item, index) => {
-          const title2 = getPropertyFromItem(item, props.itemTitle, item);
-          const value = getPropertyFromItem(item, props.itemValue, index + 1);
-          return {
-            title: title2,
-            value,
-            raw: item
-          };
-        }));
-        const activeIndex = computed(() => {
-          return _items.value.findIndex((item) => selected.value.includes(item.id));
-        });
-        const disabled = computed(() => {
-          if (props.disabled)
-            return props.disabled;
-          if (activeIndex.value === 0)
-            return "prev";
-          if (activeIndex.value === _items.value.length - 1)
-            return "next";
-          return false;
-        });
-        provideDefaults({
-          VStepperItem: {
-            editable,
-            errorIcon,
-            completeIcon,
-            editIcon,
-            prevText,
-            nextText
-          },
-          VStepperActions: {
-            color,
-            disabled,
-            prevText,
-            nextText
-          }
-        });
-        useRender(() => {
-          const sheetProps = VSheet.filterProps(props);
-          const hasHeader = !!(slots.header || props.items.length);
-          const hasWindow = props.items.length > 0;
-          const hasActions = !props.hideActions && !!(hasWindow || slots.actions);
-          return createVNode(VSheet, mergeProps(sheetProps, {
-            "color": props.bgColor,
-            "class": ["v-stepper", {
-              "v-stepper--alt-labels": props.altLabels,
-              "v-stepper--flat": props.flat,
-              "v-stepper--non-linear": props.nonLinear,
-              "v-stepper--mobile": mobile.value
-            }, displayClasses.value, props.class],
-            "style": props.style
-          }), {
-            default: () => {
-              var _a2, _b;
-              return [hasHeader && createVNode(VStepperHeader, {
-                "key": "stepper-header"
-              }, {
-                default: () => [items2.value.map((_ref2, index) => {
-                  let {
-                    raw,
-                    ...item
-                  } = _ref2;
-                  return createVNode(Fragment, null, [!!index && createVNode(VDivider, null, null), createVNode(VStepperItem, item, {
-                    default: slots[`header-item.${item.value}`] ?? slots.header,
-                    icon: slots.icon,
-                    title: slots.title,
-                    subtitle: slots.subtitle
-                  })]);
-                })]
-              }), hasWindow && createVNode(VStepperWindow, {
-                "key": "stepper-window"
-              }, {
-                default: () => [items2.value.map((item) => createVNode(VStepperWindowItem, {
-                  "value": item.value
-                }, {
-                  default: () => {
-                    var _a3, _b2;
-                    return ((_a3 = slots[`item.${item.value}`]) == null ? void 0 : _a3.call(slots, item)) ?? ((_b2 = slots.item) == null ? void 0 : _b2.call(slots, item));
-                  }
-                }))]
-              }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots, {
-                prev,
-                next: next2
-              }), hasActions && (((_b = slots.actions) == null ? void 0 : _b.call(slots, {
-                next: next2,
-                prev
-              })) ?? createVNode(VStepperActions, {
-                "key": "stepper-actions",
-                "onClick:prev": prev,
-                "onClick:next": next2
-              }, slots))];
-            }
-          });
-        });
-        return {
-          prev,
-          next: next2
-        };
-      }
-    });
-    const makeVSwitchProps = propsFactory({
-      indeterminate: Boolean,
-      inset: Boolean,
-      flat: Boolean,
-      loading: {
-        type: [Boolean, String],
-        default: false
-      },
-      ...makeVInputProps(),
-      ...makeVSelectionControlProps()
-    }, "VSwitch");
-    const VSwitch = genericComponent()({
-      name: "VSwitch",
-      inheritAttrs: false,
-      props: makeVSwitchProps(),
-      emits: {
-        "update:focused": (focused) => true,
-        "update:modelValue": (value) => true,
-        "update:indeterminate": (value) => true
-      },
-      setup(props, _ref) {
-        let {
-          attrs,
-          slots
-        } = _ref;
-        const indeterminate = useProxiedModel(props, "indeterminate");
-        const model = useProxiedModel(props, "modelValue");
-        const {
-          loaderClasses
-        } = useLoader(props);
-        const {
-          isFocused,
-          focus,
-          blur
-        } = useFocus(props);
-        const control = ref$1();
-        const isForcedColorsModeActive = IN_BROWSER && window.matchMedia("(forced-colors: active)").matches;
-        const loaderColor = computed(() => {
-          return typeof props.loading === "string" && props.loading !== "" ? props.loading : props.color;
-        });
-        const uid2 = getUid();
-        const id2 = computed(() => props.id || `switch-${uid2}`);
-        function onChange() {
-          if (indeterminate.value) {
-            indeterminate.value = false;
-          }
-        }
-        function onTrackClick(e) {
-          var _a2, _b;
-          e.stopPropagation();
-          e.preventDefault();
-          (_b = (_a2 = control.value) == null ? void 0 : _a2.input) == null ? void 0 : _b.click();
-        }
-        useRender(() => {
-          const [rootAttrs, controlAttrs] = filterInputAttrs(attrs);
-          const inputProps = VInput.filterProps(props);
-          const controlProps = VSelectionControl.filterProps(props);
-          return createVNode(VInput, mergeProps({
-            "class": ["v-switch", {
-              "v-switch--flat": props.flat
-            }, {
-              "v-switch--inset": props.inset
-            }, {
-              "v-switch--indeterminate": indeterminate.value
-            }, loaderClasses.value, props.class]
-          }, rootAttrs, inputProps, {
-            "modelValue": model.value,
-            "onUpdate:modelValue": ($event) => model.value = $event,
-            "id": id2.value,
-            "focused": isFocused.value,
-            "style": props.style
-          }), {
-            ...slots,
-            default: (_ref2) => {
-              let {
-                id: id3,
-                messagesId,
-                isDisabled,
-                isReadonly: isReadonly2,
-                isValid: isValid2
-              } = _ref2;
-              const slotProps = {
-                model,
-                isValid: isValid2
-              };
-              return createVNode(VSelectionControl, mergeProps({
-                "ref": control
-              }, controlProps, {
-                "modelValue": model.value,
-                "onUpdate:modelValue": [($event) => model.value = $event, onChange],
-                "id": id3.value,
-                "aria-describedby": messagesId.value,
-                "type": "checkbox",
-                "aria-checked": indeterminate.value ? "mixed" : void 0,
-                "disabled": isDisabled.value,
-                "readonly": isReadonly2.value,
-                "onFocus": focus,
-                "onBlur": blur
-              }, controlAttrs), {
-                ...slots,
-                default: (_ref3) => {
-                  let {
-                    backgroundColorClasses,
-                    backgroundColorStyles
-                  } = _ref3;
-                  return createVNode("div", {
-                    "class": ["v-switch__track", !isForcedColorsModeActive ? backgroundColorClasses.value : void 0],
-                    "style": backgroundColorStyles.value,
-                    "onClick": onTrackClick
-                  }, [slots["track-true"] && createVNode("div", {
-                    "key": "prepend",
-                    "class": "v-switch__track-true"
-                  }, [slots["track-true"](slotProps)]), slots["track-false"] && createVNode("div", {
-                    "key": "append",
-                    "class": "v-switch__track-false"
-                  }, [slots["track-false"](slotProps)])]);
-                },
-                input: (_ref4) => {
-                  let {
-                    inputNode,
-                    icon,
-                    backgroundColorClasses,
-                    backgroundColorStyles
-                  } = _ref4;
-                  return createVNode(Fragment, null, [inputNode, createVNode("div", {
-                    "class": ["v-switch__thumb", {
-                      "v-switch__thumb--filled": icon || props.loading
-                    }, props.inset || isForcedColorsModeActive ? void 0 : backgroundColorClasses.value],
-                    "style": props.inset ? void 0 : backgroundColorStyles.value
-                  }, [slots.thumb ? createVNode(VDefaultsProvider, {
-                    "defaults": {
-                      VIcon: {
-                        icon,
-                        size: "x-small"
-                      }
-                    }
-                  }, {
-                    default: () => [slots.thumb({
-                      ...slotProps,
-                      icon
-                    })]
-                  }) : createVNode(VScaleTransition, null, {
-                    default: () => [!props.loading ? icon && createVNode(VIcon, {
-                      "key": String(icon),
-                      "icon": icon,
-                      "size": "x-small"
-                    }, null) : createVNode(LoaderSlot, {
-                      "name": "v-switch",
-                      "active": true,
-                      "color": isValid2.value === false ? void 0 : loaderColor.value
-                    }, {
-                      default: (slotProps2) => slots.loader ? slots.loader(slotProps2) : createVNode(VProgressCircular, {
-                        "active": slotProps2.isActive,
-                        "color": slotProps2.color,
-                        "indeterminate": true,
-                        "size": "16",
-                        "width": "2"
-                      }, null)
-                    })]
-                  })])]);
-                }
-              });
-            }
-          });
-        });
-        return {};
-      }
-    });
-    const makeVTextareaProps = propsFactory({
-      autoGrow: Boolean,
-      autofocus: Boolean,
-      counter: [Boolean, Number, String],
-      counterValue: Function,
-      prefix: String,
-      placeholder: String,
-      persistentPlaceholder: Boolean,
-      persistentCounter: Boolean,
-      noResize: Boolean,
-      rows: {
-        type: [Number, String],
-        default: 5,
-        validator: (v) => !isNaN(parseFloat(v))
-      },
-      maxRows: {
-        type: [Number, String],
-        validator: (v) => !isNaN(parseFloat(v))
-      },
-      suffix: String,
-      modelModifiers: Object,
-      ...makeVInputProps(),
-      ...makeVFieldProps()
-    }, "VTextarea");
-    const VTextarea = genericComponent()({
-      name: "VTextarea",
-      directives: {
-        Intersect: Intersect$1
-      },
-      inheritAttrs: false,
-      props: makeVTextareaProps(),
-      emits: {
-        "click:control": (e) => true,
-        "mousedown:control": (e) => true,
-        "update:focused": (focused) => true,
-        "update:modelValue": (val) => true
-      },
-      setup(props, _ref) {
-        let {
-          attrs,
-          emit: emit2,
-          slots
-        } = _ref;
-        const model = useProxiedModel(props, "modelValue");
-        const {
-          isFocused,
-          focus,
-          blur
-        } = useFocus(props);
-        const counterValue = computed(() => {
-          return typeof props.counterValue === "function" ? props.counterValue(model.value) : (model.value || "").toString().length;
-        });
-        const max = computed(() => {
-          if (attrs.maxlength)
-            return attrs.maxlength;
-          if (!props.counter || typeof props.counter !== "number" && typeof props.counter !== "string")
-            return void 0;
-          return props.counter;
-        });
-        function onIntersect(isIntersecting, entries) {
-          var _a2, _b;
-          if (!props.autofocus || !isIntersecting)
-            return;
-          (_b = (_a2 = entries[0].target) == null ? void 0 : _a2.focus) == null ? void 0 : _b.call(_a2);
-        }
-        const vInputRef = ref$1();
-        const vFieldRef = ref$1();
-        const controlHeight = shallowRef("");
-        const textareaRef = ref$1();
-        const isActive = computed(() => props.persistentPlaceholder || isFocused.value || props.active);
-        function onFocus() {
-          var _a2;
-          if (textareaRef.value !== document.activeElement) {
-            (_a2 = textareaRef.value) == null ? void 0 : _a2.focus();
-          }
-          if (!isFocused.value)
-            focus();
-        }
-        function onControlClick(e) {
-          onFocus();
-          emit2("click:control", e);
-        }
-        function onControlMousedown(e) {
-          emit2("mousedown:control", e);
-        }
-        function onClear(e) {
-          e.stopPropagation();
-          onFocus();
-          nextTick(() => {
-            model.value = "";
-            callEvent(props["onClick:clear"], e);
-          });
-        }
-        function onInput(e) {
-          var _a2;
-          const el2 = e.target;
-          model.value = el2.value;
-          if ((_a2 = props.modelModifiers) == null ? void 0 : _a2.trim) {
-            const caretPosition = [el2.selectionStart, el2.selectionEnd];
-            nextTick(() => {
-              el2.selectionStart = caretPosition[0];
-              el2.selectionEnd = caretPosition[1];
-            });
-          }
-        }
-        const sizerRef = ref$1();
-        const rows = ref$1(+props.rows);
-        const isPlainOrUnderlined = computed(() => ["plain", "underlined"].includes(props.variant));
-        watchEffect(() => {
-          if (!props.autoGrow)
-            rows.value = +props.rows;
-        });
-        function calculateInputHeight() {
-          if (!props.autoGrow)
-            return;
-          nextTick(() => {
-            if (!sizerRef.value || !vFieldRef.value)
-              return;
-            const style = getComputedStyle(sizerRef.value);
-            const fieldStyle = getComputedStyle(vFieldRef.value.$el);
-            const padding = parseFloat(style.getPropertyValue("--v-field-padding-top")) + parseFloat(style.getPropertyValue("--v-input-padding-top")) + parseFloat(style.getPropertyValue("--v-field-padding-bottom"));
-            const height = sizerRef.value.scrollHeight;
-            const lineHeight = parseFloat(style.lineHeight);
-            const minHeight = Math.max(parseFloat(props.rows) * lineHeight + padding, parseFloat(fieldStyle.getPropertyValue("--v-input-control-height")));
-            const maxHeight = parseFloat(props.maxRows) * lineHeight + padding || Infinity;
-            const newHeight = clamp(height ?? 0, minHeight, maxHeight);
-            rows.value = Math.floor((newHeight - padding) / lineHeight);
-            controlHeight.value = convertToUnit(newHeight);
-          });
-        }
-        onMounted(calculateInputHeight);
-        watch(model, calculateInputHeight);
-        watch(() => props.rows, calculateInputHeight);
-        watch(() => props.maxRows, calculateInputHeight);
-        watch(() => props.density, calculateInputHeight);
-        let observer;
-        watch(sizerRef, (val) => {
-          if (val) {
-            observer = new ResizeObserver(calculateInputHeight);
-            observer.observe(sizerRef.value);
-          } else {
-            observer == null ? void 0 : observer.disconnect();
-          }
-        });
-        onBeforeUnmount(() => {
-          observer == null ? void 0 : observer.disconnect();
-        });
-        useRender(() => {
-          const hasCounter = !!(slots.counter || props.counter || props.counterValue);
-          const hasDetails = !!(hasCounter || slots.details);
-          const [rootAttrs, inputAttrs] = filterInputAttrs(attrs);
-          const {
-            modelValue: _,
-            ...inputProps
-          } = VInput.filterProps(props);
-          const fieldProps = filterFieldProps(props);
-          return createVNode(VInput, mergeProps({
-            "ref": vInputRef,
-            "modelValue": model.value,
-            "onUpdate:modelValue": ($event) => model.value = $event,
-            "class": ["v-textarea v-text-field", {
-              "v-textarea--prefixed": props.prefix,
-              "v-textarea--suffixed": props.suffix,
-              "v-text-field--prefixed": props.prefix,
-              "v-text-field--suffixed": props.suffix,
-              "v-textarea--auto-grow": props.autoGrow,
-              "v-textarea--no-resize": props.noResize || props.autoGrow,
-              "v-input--plain-underlined": isPlainOrUnderlined.value
-            }, props.class],
-            "style": props.style
-          }, rootAttrs, inputProps, {
-            "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
-            "focused": isFocused.value
-          }), {
-            ...slots,
-            default: (_ref2) => {
-              let {
-                id: id2,
-                isDisabled,
-                isDirty,
-                isReadonly: isReadonly2,
-                isValid: isValid2
-              } = _ref2;
-              return createVNode(VField, mergeProps({
-                "ref": vFieldRef,
-                "style": {
-                  "--v-textarea-control-height": controlHeight.value
-                },
-                "onClick": onControlClick,
-                "onMousedown": onControlMousedown,
-                "onClick:clear": onClear,
-                "onClick:prependInner": props["onClick:prependInner"],
-                "onClick:appendInner": props["onClick:appendInner"]
-              }, fieldProps, {
-                "id": id2.value,
-                "active": isActive.value || isDirty.value,
-                "centerAffix": rows.value === 1 && !isPlainOrUnderlined.value,
-                "dirty": isDirty.value || props.dirty,
-                "disabled": isDisabled.value,
-                "focused": isFocused.value,
-                "error": isValid2.value === false
-              }), {
-                ...slots,
-                default: (_ref3) => {
-                  let {
-                    props: {
-                      class: fieldClass,
-                      ...slotProps
-                    }
-                  } = _ref3;
-                  return createVNode(Fragment, null, [props.prefix && createVNode("span", {
-                    "class": "v-text-field__prefix"
-                  }, [props.prefix]), withDirectives(createVNode("textarea", mergeProps({
-                    "ref": textareaRef,
-                    "class": fieldClass,
-                    "value": model.value,
-                    "onInput": onInput,
-                    "autofocus": props.autofocus,
-                    "readonly": isReadonly2.value,
-                    "disabled": isDisabled.value,
-                    "placeholder": props.placeholder,
-                    "rows": props.rows,
-                    "name": props.name,
-                    "onFocus": onFocus,
-                    "onBlur": blur
-                  }, slotProps, inputAttrs), null), [[resolveDirective("intersect"), {
-                    handler: onIntersect
-                  }, null, {
-                    once: true
-                  }]]), props.autoGrow && withDirectives(createVNode("textarea", {
-                    "class": [fieldClass, "v-textarea__sizer"],
-                    "id": `${slotProps.id}-sizer`,
-                    "onUpdate:modelValue": ($event) => model.value = $event,
-                    "ref": sizerRef,
-                    "readonly": true,
-                    "aria-hidden": "true"
-                  }, null), [[vModelText, model.value]]), props.suffix && createVNode("span", {
-                    "class": "v-text-field__suffix"
-                  }, [props.suffix])]);
-                }
-              });
-            },
-            details: hasDetails ? (slotProps) => {
-              var _a2;
-              return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
-                "active": props.persistentCounter || isFocused.value,
-                "value": counterValue.value,
-                "max": max.value,
-                "disabled": props.disabled
-              }, slots.counter)])]);
-            } : void 0
-          });
-        });
-        return forwardRefs({}, vInputRef, vFieldRef, textareaRef);
-      }
-    });
-    const _sfc_main$D = {
-      props: {
-        layoutSlot: {
-          /** @type import('vue').PropType<import('@json-layout/vocabulary').Slot> */
-          type: Object,
-          required: true
-        },
-        node: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        },
-        tag: {
-          /** @type import('vue').PropType<string> */
-          type: String,
-          default: null
-        }
-      },
-      render() {
-        const renderTag = this.tag ?? (isTextSlot(this.layoutSlot) ? "p" : "div");
-        if (isTextSlot(this.layoutSlot)) {
-          return h(renderTag, this.layoutSlot.text);
-        }
-        if (isMarkdownSlot(this.layoutSlot)) {
-          return h(renderTag, { innerHTML: this.layoutSlot.markdown });
-        }
-        if (isNameSlot(this.layoutSlot)) {
-          if (!this.statefulLayout.options.vjsfSlots[this.layoutSlot.name]) {
-            console.error(`vjsf: layout references a code slot "${this.layoutSlot.name}" that was not provided.`);
-          } else {
-            return h(renderTag, this.statefulLayout.options.vjsfSlots[this.layoutSlot.name]({ node: this.node, statefulLayout: this.statefulLayout }));
-          }
-        }
-        return null;
-      }
-    };
-    const _hoisted_1$5 = ["innerHTML"];
-    const _sfc_main$C = {
-      __name: "help-message",
-      props: {
-        node: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        const show = ref$1(false);
-        return (_ctx, _cache) => {
-          return openBlock(), createElementBlock("div", {
-            class: normalizeClass(`vjsf-help-message vjsf-help-message-${__props.node.options.density}`)
-          }, [
-            createVNode(unref(VSlideXReverseTransition), null, {
-              default: withCtx(() => [
-                withDirectives(createVNode(unref(VAlert), { color: "info" }, {
-                  default: withCtx(() => [
-                    createBaseVNode("div", {
-                      innerHTML: __props.node.layout.help
-                    }, null, 8, _hoisted_1$5)
-                  ]),
-                  _: 1
-                }, 512), [
-                  [vShow, show.value]
-                ])
-              ]),
-              _: 1
-            }),
-            createVNode(unref(VBtn), {
-              color: "info",
-              class: normalizeClass(`vjsf-help-message-toggle vjsf-help-message-toggle-${__props.node.options.density}`),
-              icon: show.value ? "mdi-close" : "mdi-information-symbol",
-              border: 0,
-              elevation: show.value ? 0 : 2,
-              density: "compact",
-              size: __props.node.options.density === "default" ? 28 : 24,
-              title: show.value ? "" : __props.node.messages.showHelp,
-              onClick: _cache[0] || (_cache[0] = ($event) => show.value = !show.value)
-            }, null, 8, ["class", "icon", "elevation", "size", "title"])
-          ], 2);
-        };
-      }
-    };
-    const _sfc_main$B = {
-      __name: "node",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../types.js').VjsfNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        useDefaults({}, "VjsfNode");
-        const props = __props;
-        const beforeAfterClasses = {
-          compact: "my-1",
-          comfortable: "my-2",
-          default: "my-3"
-        };
-        const theme = useTheme();
-        const indent = computed(() => {
-          if (props.modelValue.parentFullKey === null)
-            return 0;
-          if (!props.modelValue.options.indent)
-            return 0;
-          if (props.modelValue.layout.comp !== "section")
-            return 0;
-          if (!props.modelValue.layout.title)
-            return 0;
-          if (typeof props.modelValue.options.indent === "number")
-            return props.modelValue.options.indent;
-          if (props.modelValue.options.density === "compact")
-            return 2;
-          if (props.modelValue.options.density === "comfortable")
-            return 4;
-          return 6;
-        });
-        const nodeClasses = computed(() => {
-          let classes = `vjsf-node vjsf-node-${props.modelValue.layout.comp} vjsf-density-${props.modelValue.options.density}`;
-          if (props.modelValue.options.readOnly)
-            classes += " vjsf-readonly";
-          if (props.modelValue.options.summary)
-            classes += " vjsf-summary";
-          if (theme.current.value.dark)
-            classes += " vjsf-dark";
-          if (indent.value)
-            classes += " ml-" + indent.value;
-          return classes;
-        });
-        if (props.modelValue.layout.comp !== "none" && !props.statefulLayout.options.nodeComponents[props.modelValue.layout.comp]) {
-          console.error(`vjsf: missing component to render vjsf node "${props.modelValue.layout.comp}", maybe you forgot to register a component from a plugin ?`);
-        }
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VDefaultsProvider), {
-            defaults: { global: { density: props.modelValue.options.density } }
-          }, {
-            default: withCtx(() => [
-              __props.modelValue.layout.comp !== "none" ? (openBlock(), createBlock(unref(VCol), {
-                key: 0,
-                cols: __props.modelValue.cols,
-                class: normalizeClass(nodeClasses.value)
-              }, {
-                default: withCtx(() => {
-                  var _a2, _b, _c, _d, _e, _f;
-                  return [
-                    ((_a2 = __props.modelValue.layout.slots) == null ? void 0 : _a2.before) ? (openBlock(), createBlock(_sfc_main$D, {
-                      key: "before",
-                      "layout-slot": (_b = __props.modelValue.layout.slots) == null ? void 0 : _b.before,
-                      node: __props.modelValue,
-                      "stateful-layout": __props.statefulLayout,
-                      class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
-                    }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true),
-                    __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$C, {
-                      key: 1,
-                      node: __props.modelValue
-                    }, null, 8, ["node"])) : createCommentVNode("", true),
-                    ((_c = __props.modelValue.layout.slots) == null ? void 0 : _c.component) ? (openBlock(), createBlock(_sfc_main$D, {
-                      key: "component",
-                      "layout-slot": (_d = __props.modelValue.layout.slots) == null ? void 0 : _d.component,
-                      node: __props.modelValue,
-                      "stateful-layout": __props.statefulLayout
-                    }, null, 8, ["layout-slot", "node", "stateful-layout"])) : (openBlock(), createBlock(resolveDynamicComponent(props.statefulLayout.options.nodeComponents[__props.modelValue.layout.comp]), {
-                      key: 3,
-                      "model-value": __props.modelValue,
-                      "stateful-layout": __props.statefulLayout
-                    }, null, 8, ["model-value", "stateful-layout"])),
-                    ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$D, {
-                      key: "after",
-                      "layout-slot": (_f = __props.modelValue.layout.slots) == null ? void 0 : _f.after,
-                      node: __props.modelValue,
-                      "stateful-layout": __props.statefulLayout,
-                      class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
-                    }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true)
-                  ];
-                }),
-                _: 1
-              }, 8, ["cols", "class"])) : createCommentVNode("", true)
-            ]),
-            _: 1
-          }, 8, ["defaults"]);
-        };
-      }
-    };
-    const _sfc_main$A = {
-      __name: "tree",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('@json-layout/core').StateTree> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VRow), { class: "vjsf-tree" }, {
-            default: withCtx(() => [
-              createVNode(_sfc_main$B, {
-                "stateful-layout": __props.statefulLayout,
-                "model-value": (
-                  /** @type import('../types.js').VjsfNode */
-                  __props.modelValue.root
-                )
-              }, null, 8, ["stateful-layout", "model-value"])
-            ]),
-            _: 1
-          });
-        };
-      }
-    };
-    function tryOnScopeDispose(fn) {
-      if (getCurrentScope$1()) {
-        onScopeDispose(fn);
-        return true;
-      }
-      return false;
-    }
-    function toValue(r2) {
-      return typeof r2 === "function" ? r2() : unref(r2);
-    }
-    const isClient = typeof window !== "undefined" && typeof document !== "undefined";
-    typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
-    function getLifeCycleTarget(target2) {
-      return target2 || getCurrentInstance$1();
-    }
-    function tryOnMounted(fn, sync = true, target2) {
-      const instance = getLifeCycleTarget();
-      if (instance)
-        onMounted(fn, target2);
-      else if (sync)
-        fn();
-      else
-        nextTick(fn);
-    }
-    function unrefElement(elRef) {
-      var _a2;
-      const plain = toValue(elRef);
-      return (_a2 = plain == null ? void 0 : plain.$el) != null ? _a2 : plain;
-    }
-    const defaultWindow = isClient ? window : void 0;
-    function useMounted() {
-      const isMounted = ref$1(false);
-      if (getCurrentInstance$1()) {
-        onMounted(() => {
-          isMounted.value = true;
-        });
-      }
-      return isMounted;
-    }
-    function useSupported(callback) {
-      const isMounted = useMounted();
-      return computed(() => {
-        isMounted.value;
-        return Boolean(callback());
-      });
-    }
-    function useResizeObserver(target2, callback, options = {}) {
-      const { window: window2 = defaultWindow, ...observerOptions } = options;
-      let observer;
-      const isSupported = useSupported(() => window2 && "ResizeObserver" in window2);
-      const cleanup = () => {
-        if (observer) {
-          observer.disconnect();
-          observer = void 0;
-        }
-      };
-      const targets = computed(() => Array.isArray(target2) ? target2.map((el2) => unrefElement(el2)) : [unrefElement(target2)]);
-      const stopWatch = watch(
-        targets,
-        (els2) => {
-          cleanup();
-          if (isSupported.value && window2) {
-            observer = new ResizeObserver(callback);
-            for (const _el of els2)
-              _el && observer.observe(_el, observerOptions);
-          }
-        },
-        { immediate: true, flush: "post", deep: true }
-      );
-      const stop = () => {
-        cleanup();
-        stopWatch();
-      };
-      tryOnScopeDispose(stop);
-      return {
-        isSupported,
-        stop
-      };
-    }
-    function useElementSize(target2, initialSize = { width: 0, height: 0 }, options = {}) {
-      const { window: window2 = defaultWindow, box = "content-box" } = options;
-      const isSVG = computed(() => {
-        var _a2, _b;
-        return (_b = (_a2 = unrefElement(target2)) == null ? void 0 : _a2.namespaceURI) == null ? void 0 : _b.includes("svg");
-      });
-      const width = ref$1(initialSize.width);
-      const height = ref$1(initialSize.height);
-      const { stop: stop1 } = useResizeObserver(
-        target2,
-        ([entry]) => {
-          const boxSize = box === "border-box" ? entry.borderBoxSize : box === "content-box" ? entry.contentBoxSize : entry.devicePixelContentBoxSize;
-          if (window2 && isSVG.value) {
-            const $elem = unrefElement(target2);
-            if ($elem) {
-              const styles = window2.getComputedStyle($elem);
-              width.value = Number.parseFloat(styles.width);
-              height.value = Number.parseFloat(styles.height);
-            }
-          } else {
-            if (boxSize) {
-              const formatBoxSize = Array.isArray(boxSize) ? boxSize : [boxSize];
-              width.value = formatBoxSize.reduce((acc, { inlineSize }) => acc + inlineSize, 0);
-              height.value = formatBoxSize.reduce((acc, { blockSize }) => acc + blockSize, 0);
-            } else {
-              width.value = entry.contentRect.width;
-              height.value = entry.contentRect.height;
-            }
-          }
-        },
-        options
-      );
-      tryOnMounted(() => {
-        const ele = unrefElement(target2);
-        if (ele) {
-          width.value = "offsetWidth" in ele ? ele.offsetWidth : initialSize.width;
-          height.value = "offsetHeight" in ele ? ele.offsetHeight : initialSize.height;
-        }
-      });
-      const stop2 = watch(
-        () => unrefElement(target2),
-        (ele) => {
-          width.value = ele ? initialSize.width : 0;
-          height.value = ele ? initialSize.height : 0;
-        }
-      );
-      function stop() {
-        stop1();
-        stop2();
-      }
-      return {
-        width,
-        height,
-        stop
-      };
-    }
-    const defaultOptions = {
-      nodeComponents: {},
-      plugins: [],
-      pluginsOptions: {}
-    };
-    const getFullOptions = (options, form, width, slots, defaultNodeComponents, onData, onUpdate, onAutofocus) => {
-      const components = { ...options == null ? void 0 : options.components };
-      const nodeComponents = { ...defaultNodeComponents, ...options == null ? void 0 : options.nodeComponents };
-      if (options == null ? void 0 : options.plugins) {
-        for (const plugin of options.plugins) {
-          components[plugin.info.name] = plugin.info;
-          nodeComponents[plugin.info.name] = plugin.nodeComponent;
-        }
-      }
-      const fullOptions = {
-        ...defaultOptions,
-        readOnly: !!(form && (form.isDisabled.value || form.isReadonly.value)),
-        ...options,
-        onData,
-        onUpdate,
-        onAutofocus,
-        context: (options == null ? void 0 : options.context) ? JSON.parse(JSON.stringify(options.context)) : {},
-        width: Math.round(width ?? 0),
-        vjsfSlots: { ...slots },
-        components,
-        nodeComponents
-      };
-      return (
-        /** @type import('../types.js').VjsfOptions */
-        fullOptions
-      );
-    };
-    const debug = Debug("vjsf:use-vjsf");
-    setAutoFreeze(false);
-    const emits = {
-      /**
-       * @arg {any} data
-      */
-      "update:modelValue": (data) => true,
-      /**
-       * @arg {import('../types.js').VjsfStatefulLayout} state
-      */
-      "update:state": (state) => true
-    };
-    const useVjsf = (schema2, modelValue, options, nodeComponents, emit2, compile2, precompiledLayout) => {
-      const el2 = ref$1(null);
-      const { width } = useElementSize(el2);
-      const statefulLayout = shallowRef(null);
-      const stateTree = shallowRef(null);
-      const form = inject$1(Symbol.for("vuetify:form"));
-      if (form) {
-        form.register({
-          id: "vjsf",
-          // TODO: a unique random id ?
-          validate: () => {
-            var _a2, _b;
-            (_a2 = statefulLayout.value) == null ? void 0 : _a2.validate();
-            return (_b = statefulLayout.value) == null ? void 0 : _b.errors;
-          },
-          reset: () => {
-            var _a2;
-            return (_a2 = statefulLayout.value) == null ? void 0 : _a2.resetValidation();
-          },
-          // TODO: also empty the data ?
-          resetValidation: () => {
-            var _a2;
-            return (_a2 = statefulLayout.value) == null ? void 0 : _a2.resetValidation();
-          }
-        });
-      }
-      const slots = useSlots();
-      const onStatefulLayoutUpdate = (statefulLayout2) => {
-        debug("onStatefulLayoutUpdate", statefulLayout2);
-        if (!statefulLayout2)
-          return;
-        stateTree.value = statefulLayout2.stateTree;
-        debug("  -> emit update:state");
-        emit2("update:state", statefulLayout2);
-        if (form) {
-          if (statefulLayout2.valid)
-            form.update("vjsf", true, []);
-          else if (statefulLayout2.hasHiddenError)
-            form.update("vjsf", null, []);
-          else
-            form.update("vjsf", false, []);
-        }
-      };
-      const onDataUpdate = (data) => {
-        debug("onDataUpdate", data);
-        debug("  -> emit update:modelValue");
-        emit2("update:modelValue", data);
-      };
-      const onAutofocus = () => {
-        if (!el2.value)
-          return;
-        const autofocusNodeElement = el2.value.querySelector(".vjsf-input--autofocus");
-        debug("onAutofocus", autofocusNodeElement);
-        if (autofocusNodeElement) {
-          const autofocusInputElement = autofocusNodeElement.querySelector("input") ?? autofocusNodeElement.querySelector('textarea:not([style*="display: none"]');
-          if (autofocusInputElement)
-            autofocusInputElement.focus();
-        }
-      };
-      const fullOptions = computed(() => getFullOptions(options.value, form, width.value, slots, { ...nodeComponents }, onDataUpdate, onStatefulLayoutUpdate, onAutofocus));
-      const compileOptions = ref$1({});
-      watch(fullOptions, (newOptions) => {
-        if (precompiledLayout == null ? void 0 : precompiledLayout.value)
-          return;
-        const newCompileOptions = produceCompileOptions(compileOptions.value, newOptions);
-        if (newCompileOptions !== compileOptions.value) {
-          debug("new compileOptions", newCompileOptions);
-          compileOptions.value = newCompileOptions;
-        }
-      }, { immediate: true });
-      const compiledLayout = computed(() => {
-        if (precompiledLayout == null ? void 0 : precompiledLayout.value)
-          return precompiledLayout == null ? void 0 : precompiledLayout.value;
-        if (!compile2)
-          throw new Error("compile function is not available");
-        const compiledLayout2 = compile2(schema2.value, compileOptions.value);
-        return compiledLayout2;
-      });
-      const initStatefulLayout = () => {
-        if (!width.value)
-          return;
-        statefulLayout.value = /** @type {import('../types.js').VjsfStatefulLayout} */
-        new StatefulLayout(
-          toRaw(compiledLayout.value),
-          toRaw(compiledLayout.value.skeletonTrees[compiledLayout.value.mainTree]),
-          toRaw(fullOptions.value),
-          toRaw(modelValue.value)
-        );
-      };
-      watch(fullOptions, (newOptions) => {
-        debug("watch fullOptions", fullOptions);
-        if (statefulLayout.value) {
-          debug("  -> update statefulLayout options");
-          statefulLayout.value.options = toRaw(newOptions);
-        } else {
-          debug("  -> init statefulLayout");
-          initStatefulLayout();
-        }
-      });
-      watch(modelValue, (newData) => {
-        const rawData = toRaw(newData);
-        if (statefulLayout.value && statefulLayout.value.data !== rawData) {
-          debug("modelValue changed from outside", rawData);
-          debug("  -> update statefulLayout data");
-          statefulLayout.value.data = toRaw(rawData);
-        }
-      });
-      watch(compiledLayout, (newCompiledLayout) => {
-        debug("watch compiledLayout", newCompiledLayout);
-        debug("  -> init statefulLayout");
-        initStatefulLayout();
-      });
-      return { el: el2, statefulLayout, stateTree };
-    };
-    const _hoisted_1$4 = ["innerHTML"];
-    const _sfc_main$z = {
-      __name: "section-header",
-      props: {
-        node: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
-          type: Object,
-          required: true
-        },
-        hideTitle: {
-          type: Boolean,
-          default: false
-        }
-      },
-      setup(__props) {
-        const props = __props;
-        const titleDepthBase = computed(() => {
-          if (props.node.options.density === "compact")
-            return 6;
-          if (props.node.options.density === "comfortable")
-            return 7;
-          return 8;
-        });
-        const classes = ["text-h1", "text-h2", "text-h3", "text-h4", "text-h5", "text-h6", "text-subtitle-1", "text-subtitle-2"];
-        const titleClass = computed(() => {
-          const index = props.node.options.titleDepth;
-          if (props.node.options.density === "compact")
-            return classes[index + 2];
-          if (props.node.options.density === "comfortable")
-            return classes[index + 1];
-          return classes[index];
-        });
-        return (_ctx, _cache) => {
-          return __props.node.layout.title && !__props.hideTitle || __props.node.layout.subtitle || __props.node.error && __props.node.validated ? (openBlock(), createElementBlock("div", {
-            key: 0,
-            class: normalizeClass(`mb-${titleDepthBase.value - __props.node.options.titleDepth} mt-${titleDepthBase.value - __props.node.options.titleDepth}`)
-          }, [
-            __props.node.layout.title && !__props.hideTitle ? (openBlock(), createBlock(resolveDynamicComponent(`h${__props.node.options.titleDepth}`), {
-              key: 0,
-              class: normalizeClass(`${titleClass.value}`)
-            }, {
-              default: withCtx(() => [
-                createTextVNode(toDisplayString(__props.node.layout.title), 1)
-              ]),
-              _: 1
-            }, 8, ["class"])) : createCommentVNode("", true),
-            __props.node.layout.subtitle ? (openBlock(), createElementBlock("p", {
-              key: 1,
-              class: normalizeClass(`text-subtitle mt-${titleDepthBase.value - __props.node.options.titleDepth}`),
-              innerHTML: __props.node.layout.subtitle
-            }, null, 10, _hoisted_1$4)) : createCommentVNode("", true),
-            __props.node.error && __props.node.validated ? (openBlock(), createBlock(unref(VAlert), {
-              key: 2,
-              type: "error",
-              class: normalizeClass(`mt-${titleDepthBase.value - __props.node.options.titleDepth}`)
-            }, {
-              default: withCtx(() => [
-                createTextVNode(toDisplayString(__props.node.error), 1)
-              ]),
-              _: 1
-            }, 8, ["class"])) : createCommentVNode("", true)
-          ], 2)) : createCommentVNode("", true);
-        };
-      }
-    };
-    const _sfc_main$y = {
-      __name: "section",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfSectionNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        useDefaults({}, "VjsfSection");
-        return (_ctx, _cache) => {
-          var _a2, _b;
-          return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$z, { node: __props.modelValue }, null, 8, ["node"]),
-            createVNode(unref(VRow), {
-              dense: ((_a2 = __props.modelValue.options) == null ? void 0 : _a2.density) === "compact" || ((_b = __props.modelValue.options) == null ? void 0 : _b.density) === "comfortable"
-            }, {
-              default: withCtx(() => [
-                (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child) => {
-                  return openBlock(), createBlock(_sfc_main$B, {
-                    key: child.fullKey,
-                    "model-value": (
-                      /** @type import('../../types.js').VjsfNode */
-                      child
-                    ),
-                    "stateful-layout": __props.statefulLayout
-                  }, null, 8, ["model-value", "stateful-layout"]);
-                }), 128))
-              ]),
-              _: 1
-            }, 8, ["dense"])
-          ], 64);
-        };
-      }
-    };
-    function moveArrayItem(array, fromIndex, toIndex) {
-      if (fromIndex === toIndex || fromIndex === -1 || toIndex === -1)
-        return array;
-      const newArray = [...array];
-      const element = newArray[fromIndex];
-      newArray.splice(fromIndex, 1);
-      newArray.splice(toIndex, 0, element);
-      return newArray;
-    }
-    const padTimeComponent = (val) => {
-      const s = "" + val;
-      return s.length === 1 ? "0" + s : s;
-    };
-    const getDateTimeParts = (date2) => {
-      return [`${date2.getFullYear()}-${padTimeComponent(date2.getMonth() + 1)}-${padTimeComponent(date2.getDate())}`, `${padTimeComponent(date2.getHours())}:${padTimeComponent(date2.getMinutes())}`];
-    };
-    const defaultProps = {
-      fieldPropsCompact: {
-        hideDetails: "auto"
-      },
-      fieldPropsReadOnly: { hideDetails: "auto", variant: "plain" },
-      fieldPropsSummary: { hideDetails: true }
-    };
-    function mergePropsLevels(propsLevels) {
-      const fullProps = { class: [] };
-      for (const propsLevel of propsLevels) {
-        if (propsLevel) {
-          for (const key of Object.keys(propsLevel)) {
-            if (key === "class") {
-              if (Array.isArray(propsLevel.class))
-                fullProps.class = fullProps.class.concat(propsLevel.class);
-              else
-                fullProps.class = [propsLevel.class];
-            } else {
-              fullProps[camelize(key)] = propsLevel[key];
-            }
-          }
-        }
-      }
-      return fullProps;
-    }
-    function getInputProps(node, statefulLayout, layoutPropsMap, isMainComp = true) {
-      const options = node.options;
-      const propsLevels = [];
-      if (options.density === "compact")
-        propsLevels.push(defaultProps.fieldPropsCompact);
-      if (node.options.readOnly)
-        propsLevels.push(defaultProps.fieldPropsReadOnly);
-      if (isMainComp && node.props)
-        propsLevels.push(node.props);
-      const fullProps = mergePropsLevels(propsLevels);
-      fullProps.label = node.layout.label;
-      if (node.error && node.validated) {
-        fullProps.errorMessages = node.error;
-      }
-      fullProps.modelValue = typeof node.data === "string" && node.layout.separator ? node.data.split(
-        /** @type {string} */
-        node.layout.separator
-      ) : node.data;
-      if (node.options.readOnly) {
-        fullProps.disabled = true;
-        fullProps.class.push("vjsf-input--readonly");
-      }
-      if (node.autofocus) {
-        fullProps.class.push("vjsf-input--autofocus");
-      }
-      if (layoutPropsMap) {
-        for (const propMap2 of layoutPropsMap) {
-          if (typeof propMap2 === "string")
-            fullProps[propMap2] = node.layout[propMap2];
-          else
-            fullProps[propMap2[0]] = node.layout[propMap2[1]];
-        }
-      }
-      if (isMainComp) {
-        fullProps["onUpdate:modelValue"] = (value) => {
-          return statefulLayout.input(node, Array.isArray(value) && node.layout.separator ? value.join(
-            /** @type {string} */
-            node.layout.separator
-          ) : value);
-        };
-        fullProps.onBlur = () => statefulLayout.blur(node);
-      }
-      return fullProps;
-    }
-    function getCompProps(node, isMainComp = true) {
-      const options = (
-        /** @type import('../types.js').VjsfOptions */
-        node.options
-      );
-      const propsLevels = [{ density: options.density }];
-      if (isMainComp)
-        propsLevels.push(node.layout.props);
-      const fullProps = mergePropsLevels(propsLevels);
-      return fullProps;
-    }
-    function getCompSlots(node, statefulLayout) {
-      if (!node.layout.slots)
-        return {};
-      const slots = {};
-      for (const [key, layoutSlot] of Object.entries(node.layout.slots)) {
-        slots[key] = () => h(_sfc_main$D, { layoutSlot, node, statefulLayout });
-      }
-      return slots;
-    }
-    const _sfc_main$x = /* @__PURE__ */ defineComponent$1({
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfTextFieldNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(props) {
-        useDefaults({}, "VjsfTextField");
-        const fieldProps = computed(() => getInputProps(props.modelValue, props.statefulLayout, ["placeholder"]));
-        const fieldSlots = computed(() => getCompSlots(props.modelValue, props.statefulLayout));
-        return () => h(VTextField, fieldProps.value, fieldSlots.value);
-      }
-    });
-    const _sfc_main$w = /* @__PURE__ */ defineComponent$1({
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfTextareaNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(props) {
-        useDefaults({}, "VjsfTextArea");
-        const textarea = ref$1(null);
-        const fieldProps = computed(() => {
-          const inputProps = getInputProps(props.modelValue, props.statefulLayout, ["placeholder"]);
-          inputProps.ref = textarea;
-          if (props.modelValue.options.readOnly && props.modelValue.options.summary)
-            inputProps.rows = 3;
-          return inputProps;
-        });
-        const fieldSlots = computed(() => getCompSlots(props.modelValue, props.statefulLayout));
-        watch(() => props.modelValue.options.readOnly, (readOnly) => {
-          if (readOnly && textarea.value) {
-            textarea.value.scrollTop = 0;
-          }
-        });
-        return () => h(VTextarea, fieldProps.value, fieldSlots.value);
-      }
-    });
-    const _sfc_main$v = {
-      __name: "checkbox",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfCheckboxNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        useDefaults({}, "VjsfCheckbox");
-        const props = __props;
-        const fieldProps = computed(() => {
-          const inputProps = getInputProps(props.modelValue, props.statefulLayout);
-          if (!("hideDetails" in inputProps))
-            inputProps.hideDetails = "auto";
-          return inputProps;
-        });
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VCheckbox), mergeProps(fieldProps.value, {
-            "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value))
-          }), null, 16);
-        };
-      }
-    };
-    const _sfc_main$u = {
-      __name: "switch",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfSwitchNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        useDefaults({}, "VjsfSwitch");
-        const props = __props;
-        const fieldProps = computed(() => {
-          const inputProps = getInputProps(props.modelValue, props.statefulLayout);
-          if (!("hideDetails" in inputProps))
-            inputProps.hideDetails = "auto";
-          return inputProps;
-        });
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VSwitch), mergeProps(fieldProps.value, {
-            "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value))
-          }), null, 16);
-        };
-      }
-    };
-    const _sfc_main$t = /* @__PURE__ */ defineComponent$1({
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfNumberFieldNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(props) {
-        useDefaults({}, "VjsfNumberField");
-        const fieldProps = computed(() => {
-          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["step", "min", "max", "placeholder"]);
-          fieldProps2.type = "number";
-          fieldProps2["onUpdate:modelValue"] = (value) => props.statefulLayout.input(props.modelValue, value && Number(value));
-          return fieldProps2;
-        });
-        const fieldSlots = computed(() => getCompSlots(props.modelValue, props.statefulLayout));
-        return () => h(VTextField, fieldProps.value, fieldSlots.value);
-      }
-    });
-    const _sfc_main$s = {
-      __name: "slider",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfSliderNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        useDefaults({}, "VjsfSlider");
-        const props = __props;
-        const fieldProps = computed(() => {
-          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout);
-          if ("step" in props.modelValue.layout)
-            fieldProps2.step = props.modelValue.layout.step;
-          fieldProps2.min = props.modelValue.layout.min;
-          fieldProps2.max = props.modelValue.layout.max;
-          return fieldProps2;
-        });
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VSlider), mergeProps({ type: "number" }, fieldProps.value, {
-            "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value && Number(value)))
-          }), null, 16);
-        };
-      }
-    };
-    const _sfc_main$r = {
-      __name: "text-field-menu",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        },
-        formattedValue: {
-          /** @type import('vue').PropType<string | null> */
-          type: String,
-          default: null
-        }
-      },
-      setup(__props) {
-        const props = __props;
-        const fieldProps = computed(() => {
-          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, [], false);
-          fieldProps2.readonly = true;
-          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
-          fieldProps2["onClick:clear"] = () => {
-            props.statefulLayout.input(props.modelValue, null);
-          };
-          return fieldProps2;
-        });
-        const menuProps = computed(() => {
-          const menuProps2 = getCompProps(props.modelValue);
-          menuProps2.closeOnContentClick = false;
-          menuProps2.disabled = true;
-          return menuProps2;
-        });
-        const textField = ref$1(null);
-        const menuOpened = ref$1(false);
-        return (_ctx, _cache) => {
-          return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(unref(VTextField), mergeProps({
-              ref_key: "textField",
-              ref: textField
-            }, fieldProps.value, {
-              "model-value": __props.formattedValue ?? __props.modelValue.data,
-              "onClick:control": _cache[0] || (_cache[0] = (e) => {
-                menuOpened.value = !menuOpened.value;
-                e.stopPropagation();
-              })
-            }), {
-              "prepend-inner": withCtx(() => [
-                renderSlot(_ctx.$slots, "prepend-inner")
-              ]),
-              _: 3
-            }, 16, ["model-value"]),
-            textField.value ? (openBlock(), createBlock(unref(VMenu), mergeProps({ key: 0 }, menuProps.value, {
-              modelValue: menuOpened.value,
-              "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => menuOpened.value = $event),
-              class: "vjsf-text-field-menu",
-              activator: textField.value
-            }), {
-              default: withCtx(() => [
-                renderSlot(_ctx.$slots, "default", {
-                  close: () => menuOpened.value = false
-                })
-              ]),
-              _: 3
-            }, 16, ["modelValue", "activator"])) : createCommentVNode("", true)
-          ], 64);
-        };
-      }
-    };
-    const _sfc_main$q = {
-      __name: "date-picker",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfDatePickerNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        useDefaults({}, "VjsfDatePicker");
-        const props = __props;
-        const vDate = useDate();
-        const datePickerProps = computed(() => {
-          const datePickerProps2 = getCompProps(props.modelValue, true);
-          datePickerProps2.hideActions = true;
-          if (props.modelValue.data)
-            datePickerProps2.modelValue = new Date(props.modelValue.data);
-          return datePickerProps2;
-        });
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(_sfc_main$r, {
-            "model-value": __props.modelValue,
-            "stateful-layout": __props.statefulLayout,
-            "formatted-value": __props.modelValue.data && unref(vDate).format(__props.modelValue.data, "fullDateWithWeekday")
-          }, {
-            default: withCtx(({ close }) => [
-              createVNode(unref(VDatePicker), mergeProps(datePickerProps.value, {
-                "onUpdate:modelValue": (value) => {
-                  __props.statefulLayout.input(__props.modelValue, value && unref(getDateTimeParts)(
-                    /** @type Date */
-                    /** @type unknown */
-                    value
-                  )[0]);
-                  close();
-                }
-              }), null, 16, ["onUpdate:modelValue"])
-            ]),
-            _: 1
-          }, 8, ["model-value", "stateful-layout", "formatted-value"]);
-        };
-      }
-    };
-    const _sfc_main$p = {
-      __name: "date-time-picker",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfDateTimePickerNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        useDefaults({}, "VjsfDateTimePicker");
-        return (_ctx, _cache) => {
-          return " TODO date-time ";
-        };
-      }
-    };
-    const _sfc_main$o = {
-      __name: "color-picker",
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfColorPickerNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        useDefaults({}, "VjsfColorPicker");
-        const props = __props;
-        const colorPickerProps = computed(() => {
-          const colorPickerProps2 = getCompProps(props.modelValue, true);
-          colorPickerProps2.modelValue = props.modelValue.data;
-          return colorPickerProps2;
-        });
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(_sfc_main$r, {
-            "model-value": __props.modelValue,
-            "stateful-layout": __props.statefulLayout,
-            "formatted-value": __props.modelValue.data
-          }, createSlots({
-            default: withCtx(() => [
-              createVNode(unref(VColorPicker), mergeProps(colorPickerProps.value, {
-                "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => __props.statefulLayout.input(__props.modelValue, value))
-              }), null, 16)
-            ]),
-            _: 2
-          }, [
-            __props.modelValue.data ? {
-              name: "prepend-inner",
-              fn: withCtx(() => [
-                createBaseVNode("div", {
-                  style: normalizeStyle(`height:30px; width: 30px; border-radius: 40px; margin-right:6px; background: ${__props.modelValue.data};`)
-                }, null, 4)
-              ]),
-              key: "0"
-            } : void 0
-          ]), 1032, ["model-value", "stateful-layout", "formatted-value"]);
-        };
-      }
-    };
-    function useGetItems(props) {
-      const items2 = shallowRef([]);
-      const loading = ref$1(false);
-      const search = ref$1("");
-      const fetchItems = async () => {
-        loading.value = true;
-        items2.value = await props.statefulLayout.getItems(props.modelValue, search.value);
-        loading.value = false;
-      };
-      watch(() => props.modelValue.itemsCacheKey, (newValue, oldValue) => {
-        if (newValue === oldValue)
-          return;
-        fetchItems();
-      }, { immediate: true });
-      watch(search, () => {
-        fetchItems();
-      });
-      const prepareSelectedItem = (selectedItem, itemValue) => {
-        let item = selectedItem;
-        if (selectedItem === itemValue) {
-          try {
-            item = props.statefulLayout.prepareSelectItem(props.modelValue, selectedItem);
-            if (item.value === void 0)
-              item.value = itemValue;
-          } catch (e) {
-            item = { value: itemValue };
-          }
-        }
-        return item;
-      };
-      return { items: items2, loading, search, prepareSelectedItem };
-    }
-    const _sfc_main$n = /* @__PURE__ */ defineComponent$1({
-      props: {
-        icon: {
-          type: String,
-          required: true
-        }
-      },
-      setup(props) {
-        const isUrl = computed(() => props.icon.startsWith("http://") || props.icon.startsWith("https://"));
-        const isSVG = computed(() => props.icon.startsWith("<?xml") || props.icon.startsWith("<svg"));
-        return () => {
-          if (isUrl.value) {
-            return h("img", { src: props.icon, style: "height:100%;width:100%;" });
-          } else if (isSVG.value) {
-            return h("div", { innerHTML: props.icon.replace("<svg ", '<svg class="v-icon__svg" '), class: "v-icon" });
-          } else {
-            return h(VIcon, null, () => props.icon);
-          }
-        };
-      }
-    });
-    const _sfc_main$m = {
-      __name: "select-item",
-      props: {
-        multiple: {
-          type: Boolean,
-          default: false
-        },
-        itemProps: {
-          type: Object,
-          required: true
-        },
-        item: {
-          /** @type import('vue').PropType<import('@json-layout/vocabulary').SelectItem> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VListItem), normalizeProps(guardReactiveProps(__props.itemProps)), createSlots({ _: 2 }, [
-            __props.item.icon || __props.multiple ? {
-              name: "prepend",
-              fn: withCtx(({ isSelected }) => [
-                __props.multiple ? (openBlock(), createBlock(unref(VCheckboxBtn), {
-                  key: __props.item.key,
-                  ripple: false,
-                  tabindex: "-1",
-                  "model-value": isSelected
-                }, null, 8, ["model-value"])) : createCommentVNode("", true),
-                __props.item.icon ? (openBlock(), createBlock(_sfc_main$n, {
-                  key: 1,
-                  icon: __props.item.icon
-                }, null, 8, ["icon"])) : createCommentVNode("", true)
-              ]),
-              key: "0"
-            } : void 0
-          ]), 1040);
-        };
-      }
-    };
-    const _hoisted_1$3 = { class: "v-select__selection-text" };
-    const _hoisted_2$1 = {
-      key: 1,
-      class: "v-select__selection-comma"
-    };
-    const _sfc_main$l = {
-      __name: "select-selection",
-      props: {
-        multiple: {
-          type: Boolean,
-          default: false
-        },
-        last: {
-          type: Boolean,
-          default: false
-        },
-        item: {
-          /** @type import('vue').PropType<import('@json-layout/vocabulary').SelectItem> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        return (_ctx, _cache) => {
-          return openBlock(), createElementBlock("span", _hoisted_1$3, [
-            __props.item.icon ? (openBlock(), createBlock(_sfc_main$n, {
-              key: 0,
-              icon: __props.item.icon
-            }, null, 8, ["icon"])) : createCommentVNode("", true),
-            createTextVNode(" " + toDisplayString(__props.item.title ?? __props.item.key ?? __props.item.value) + " ", 1),
-            __props.multiple && !__props.last ? (openBlock(), createElementBlock("span", _hoisted_2$1, ",")) : createCommentVNode("", true)
-          ]);
-        };
-      }
-    };
-    const _sfc_main$k = /* @__PURE__ */ defineComponent$1({
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfSelectNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(props) {
-        useDefaults({}, "VjsfSelect");
-        const getItems = useGetItems(props);
-        const fieldProps = computed(() => {
-          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
-          if (props.modelValue.options.readOnly)
-            fieldProps2.menuProps = { modelValue: false };
-          fieldProps2.loading = getItems.loading.value;
-          fieldProps2.items = getItems.items.value;
-          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
-          return fieldProps2;
-        });
-        const fieldSlots = computed(() => {
-          const slots = getCompSlots(props.modelValue, props.statefulLayout);
-          if (!slots.item) {
-            slots.item = (context) => h(_sfc_main$m, {
-              multiple: props.modelValue.layout.multiple,
-              itemProps: context.props,
-              item: context.item.raw
-            });
-          }
-          if (!slots.selection) {
-            slots.selection = (context) => h(_sfc_main$l, {
-              multiple: props.modelValue.layout.multiple,
-              last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
-              item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
-            });
-          }
-          return slots;
-        });
-        return () => h(VSelect, fieldProps.value, fieldSlots.value);
-      }
-    });
-    const _sfc_main$j = /* @__PURE__ */ defineComponent$1({
-      props: {
-        modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfSelectNode> */
-          type: Object,
-          required: true
-        },
-        statefulLayout: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(props) {
-        useDefaults({}, "VjsfAutocomplete");
-        const getItems = useGetItems(props);
-        const fieldProps = computed(() => {
-          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
-          if (props.modelValue.options.readOnly)
-            fieldProps2.menuProps = { modelValue: false };
-          fieldProps2.noFilter = true;
-          fieldProps2["onUpdate:search"] = (searchValue) => {
-            getItems.search.value = searchValue;
-          };
-          fieldProps2.items = getItems.items.value;
-          fieldProps2.loading = getItems.loading.value;
-          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
-          return fieldProps2;
-        });
-        const fieldSlots = computed(() => {
-          const slots = getCompSlots(props.modelValue, props.statefulLayout);
-          if (!slots.item) {
-            slots.item = (context) => h(_sfc_main$m, {
-              multiple: props.modelValue.layout.multiple,
-              itemProps: context.props,
-              item: context.item.raw
-            });
-          }
-          if (!slots.selection) {
-            slots.selection = (context) => h(_sfc_main$l, {
-              multiple: props.modelValue.layout.multiple,
-              last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
-              item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
-            });
-          }
-          return slots;
-        });
-        return () => h(VAutocomplete, fieldProps.value, fieldSlots.value);
       }
     });
     const _sfc_main$i = /* @__PURE__ */ defineComponent$1({
@@ -78751,6 +77511,540 @@ Reason: ${error2}`);
         };
       }
     };
+    function highlightResult(text2, matches, length) {
+      if (matches == null)
+        return text2;
+      if (Array.isArray(matches))
+        throw new Error("Multiple matches is not implemented");
+      return typeof matches === "number" && ~matches ? createVNode(Fragment, null, [createVNode("span", {
+        "class": "v-combobox__unmask"
+      }, [text2.substr(0, matches)]), createVNode("span", {
+        "class": "v-combobox__mask"
+      }, [text2.substr(matches, length)]), createVNode("span", {
+        "class": "v-combobox__unmask"
+      }, [text2.substr(matches + length)])]) : text2;
+    }
+    const makeVComboboxProps = propsFactory({
+      autoSelectFirst: {
+        type: [Boolean, String]
+      },
+      clearOnSelect: {
+        type: Boolean,
+        default: true
+      },
+      delimiters: Array,
+      ...makeFilterProps({
+        filterKeys: ["title"]
+      }),
+      ...makeSelectProps({
+        hideNoData: true,
+        returnObject: true
+      }),
+      ...omit$1(makeVTextFieldProps({
+        modelValue: null,
+        role: "combobox"
+      }), ["validationValue", "dirty", "appendInnerIcon"]),
+      ...makeTransitionProps({
+        transition: false
+      })
+    }, "VCombobox");
+    const VCombobox = genericComponent()({
+      name: "VCombobox",
+      props: makeVComboboxProps(),
+      emits: {
+        "update:focused": (focused) => true,
+        "update:modelValue": (value) => true,
+        "update:search": (value) => true,
+        "update:menu": (value) => true
+      },
+      setup(props, _ref) {
+        var _a2;
+        let {
+          emit: emit2,
+          slots
+        } = _ref;
+        const {
+          t
+        } = useLocale();
+        const vTextFieldRef = ref$1();
+        const isFocused = shallowRef(false);
+        const isPristine = shallowRef(true);
+        const listHasFocus = shallowRef(false);
+        const vMenuRef = ref$1();
+        const vVirtualScrollRef = ref$1();
+        const _menu = useProxiedModel(props, "menu");
+        const menu = computed({
+          get: () => _menu.value,
+          set: (v) => {
+            var _a3;
+            if (_menu.value && !v && ((_a3 = vMenuRef.value) == null ? void 0 : _a3.ΨopenChildren))
+              return;
+            _menu.value = v;
+          }
+        });
+        const selectionIndex = shallowRef(-1);
+        let cleared = false;
+        const color = computed(() => {
+          var _a3;
+          return (_a3 = vTextFieldRef.value) == null ? void 0 : _a3.color;
+        });
+        const label = computed(() => menu.value ? props.closeText : props.openText);
+        const {
+          items: items2,
+          transformIn,
+          transformOut
+        } = useItems(props);
+        const {
+          textColorClasses,
+          textColorStyles
+        } = useTextColor(color);
+        const model = useProxiedModel(props, "modelValue", [], (v) => transformIn(wrapInArray(v)), (v) => {
+          const transformed = transformOut(v);
+          return props.multiple ? transformed : transformed[0] ?? null;
+        });
+        const form = useForm();
+        const hasChips = computed(() => !!(props.chips || slots.chip));
+        const hasSelectionSlot = computed(() => hasChips.value || !!slots.selection);
+        const _search = shallowRef(!props.multiple && !hasSelectionSlot.value ? ((_a2 = model.value[0]) == null ? void 0 : _a2.title) ?? "" : "");
+        const search = computed({
+          get: () => {
+            return _search.value;
+          },
+          set: (val) => {
+            var _a3;
+            _search.value = val ?? "";
+            if (!props.multiple && !hasSelectionSlot.value) {
+              model.value = [transformItem$1(props, val)];
+            }
+            if (val && props.multiple && ((_a3 = props.delimiters) == null ? void 0 : _a3.length)) {
+              const values = val.split(new RegExp(`(?:${props.delimiters.join("|")})+`));
+              if (values.length > 1) {
+                values.forEach((v) => {
+                  v = v.trim();
+                  if (v)
+                    select(transformItem$1(props, v));
+                });
+                _search.value = "";
+              }
+            }
+            if (!val)
+              selectionIndex.value = -1;
+            isPristine.value = !val;
+          }
+        });
+        const counterValue = computed(() => {
+          return typeof props.counterValue === "function" ? props.counterValue(model.value) : typeof props.counterValue === "number" ? props.counterValue : props.multiple ? model.value.length : search.value.length;
+        });
+        watch(_search, (value) => {
+          if (cleared) {
+            nextTick(() => cleared = false);
+          } else if (isFocused.value && !menu.value) {
+            menu.value = true;
+          }
+          emit2("update:search", value);
+        });
+        watch(model, (value) => {
+          var _a3;
+          if (!props.multiple && !hasSelectionSlot.value) {
+            _search.value = ((_a3 = value[0]) == null ? void 0 : _a3.title) ?? "";
+          }
+        });
+        const {
+          filteredItems,
+          getMatches
+        } = useFilter(props, items2, () => isPristine.value ? "" : search.value);
+        const displayItems = computed(() => {
+          if (props.hideSelected) {
+            return filteredItems.value.filter((filteredItem) => !model.value.some((s) => s.value === filteredItem.value));
+          }
+          return filteredItems.value;
+        });
+        const selectedValues = computed(() => model.value.map((selection) => selection.value));
+        const highlightFirst = computed(() => {
+          var _a3;
+          const selectFirst = props.autoSelectFirst === true || props.autoSelectFirst === "exact" && search.value === ((_a3 = displayItems.value[0]) == null ? void 0 : _a3.title);
+          return selectFirst && displayItems.value.length > 0 && !isPristine.value && !listHasFocus.value;
+        });
+        const menuDisabled = computed(() => props.hideNoData && !displayItems.value.length || props.readonly || (form == null ? void 0 : form.isReadonly.value));
+        const listRef = ref$1();
+        const {
+          onListScroll,
+          onListKeydown
+        } = useScrolling(listRef, vTextFieldRef);
+        function onClear(e) {
+          cleared = true;
+          if (props.openOnClear) {
+            menu.value = true;
+          }
+        }
+        function onMousedownControl() {
+          if (menuDisabled.value)
+            return;
+          menu.value = true;
+        }
+        function onMousedownMenuIcon(e) {
+          if (menuDisabled.value)
+            return;
+          if (isFocused.value) {
+            e.preventDefault();
+            e.stopPropagation();
+          }
+          menu.value = !menu.value;
+        }
+        function onKeydown(e) {
+          var _a3;
+          if (isComposingIgnoreKey(e) || props.readonly || (form == null ? void 0 : form.isReadonly.value))
+            return;
+          const selectionStart = vTextFieldRef.value.selectionStart;
+          const length = model.value.length;
+          if (selectionIndex.value > -1 || ["Enter", "ArrowDown", "ArrowUp"].includes(e.key)) {
+            e.preventDefault();
+          }
+          if (["Enter", "ArrowDown"].includes(e.key)) {
+            menu.value = true;
+          }
+          if (["Escape"].includes(e.key)) {
+            menu.value = false;
+          }
+          if (["Enter", "Escape", "Tab"].includes(e.key)) {
+            if (highlightFirst.value && ["Enter", "Tab"].includes(e.key) && !model.value.some((_ref2) => {
+              let {
+                value
+              } = _ref2;
+              return value === displayItems.value[0].value;
+            })) {
+              select(filteredItems.value[0]);
+            }
+            isPristine.value = true;
+          }
+          if (e.key === "ArrowDown" && highlightFirst.value) {
+            (_a3 = listRef.value) == null ? void 0 : _a3.focus("next");
+          }
+          if (e.key === "Enter" && search.value) {
+            select(transformItem$1(props, search.value));
+            if (hasSelectionSlot.value)
+              _search.value = "";
+          }
+          if (["Backspace", "Delete"].includes(e.key)) {
+            if (!props.multiple && hasSelectionSlot.value && model.value.length > 0 && !search.value)
+              return select(model.value[0], false);
+            if (~selectionIndex.value) {
+              const originalSelectionIndex = selectionIndex.value;
+              select(model.value[selectionIndex.value], false);
+              selectionIndex.value = originalSelectionIndex >= length - 1 ? length - 2 : originalSelectionIndex;
+            } else if (e.key === "Backspace" && !search.value) {
+              selectionIndex.value = length - 1;
+            }
+          }
+          if (!props.multiple)
+            return;
+          if (e.key === "ArrowLeft") {
+            if (selectionIndex.value < 0 && selectionStart > 0)
+              return;
+            const prev = selectionIndex.value > -1 ? selectionIndex.value - 1 : length - 1;
+            if (model.value[prev]) {
+              selectionIndex.value = prev;
+            } else {
+              selectionIndex.value = -1;
+              vTextFieldRef.value.setSelectionRange(search.value.length, search.value.length);
+            }
+          }
+          if (e.key === "ArrowRight") {
+            if (selectionIndex.value < 0)
+              return;
+            const next2 = selectionIndex.value + 1;
+            if (model.value[next2]) {
+              selectionIndex.value = next2;
+            } else {
+              selectionIndex.value = -1;
+              vTextFieldRef.value.setSelectionRange(0, 0);
+            }
+          }
+        }
+        function onAfterLeave() {
+          var _a3;
+          if (isFocused.value) {
+            isPristine.value = true;
+            (_a3 = vTextFieldRef.value) == null ? void 0 : _a3.focus();
+          }
+        }
+        function select(item) {
+          let set2 = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : true;
+          if (!item || item.props.disabled)
+            return;
+          if (props.multiple) {
+            const index = model.value.findIndex((selection) => props.valueComparator(selection.value, item.value));
+            const add2 = set2 == null ? !~index : set2;
+            if (~index) {
+              const value = add2 ? [...model.value, item] : [...model.value];
+              value.splice(index, 1);
+              model.value = value;
+            } else if (add2) {
+              model.value = [...model.value, item];
+            }
+            if (props.clearOnSelect) {
+              search.value = "";
+            }
+          } else {
+            const add2 = set2 !== false;
+            model.value = add2 ? [item] : [];
+            _search.value = add2 && !hasSelectionSlot.value ? item.title : "";
+            nextTick(() => {
+              menu.value = false;
+              isPristine.value = true;
+            });
+          }
+        }
+        function onFocusin(e) {
+          isFocused.value = true;
+          setTimeout(() => {
+            listHasFocus.value = true;
+          });
+        }
+        function onFocusout(e) {
+          listHasFocus.value = false;
+        }
+        function onUpdateModelValue(v) {
+          if (v == null || v === "" && !props.multiple && !hasSelectionSlot.value)
+            model.value = [];
+        }
+        watch(isFocused, (val, oldVal) => {
+          if (val || val === oldVal)
+            return;
+          selectionIndex.value = -1;
+          menu.value = false;
+          if (search.value) {
+            if (props.multiple) {
+              select(transformItem$1(props, search.value));
+              return;
+            }
+            if (!hasSelectionSlot.value)
+              return;
+            if (model.value.some((_ref3) => {
+              let {
+                title: title2
+              } = _ref3;
+              return title2 === search.value;
+            })) {
+              _search.value = "";
+            } else {
+              select(transformItem$1(props, search.value));
+            }
+          }
+        });
+        watch(menu, () => {
+          if (!props.hideSelected && menu.value && model.value.length) {
+            const index = displayItems.value.findIndex((item) => model.value.some((s) => props.valueComparator(s.value, item.value)));
+            IN_BROWSER && window.requestAnimationFrame(() => {
+              var _a3;
+              index >= 0 && ((_a3 = vVirtualScrollRef.value) == null ? void 0 : _a3.scrollToIndex(index));
+            });
+          }
+        });
+        watch(() => props.items, (newVal, oldVal) => {
+          if (menu.value)
+            return;
+          if (isFocused.value && !oldVal.length && newVal.length) {
+            menu.value = true;
+          }
+        });
+        useRender(() => {
+          const hasList = !!(!props.hideNoData || displayItems.value.length || slots["prepend-item"] || slots["append-item"] || slots["no-data"]);
+          const isDirty = model.value.length > 0;
+          const textFieldProps = VTextField.filterProps(props);
+          return createVNode(VTextField, mergeProps({
+            "ref": vTextFieldRef
+          }, textFieldProps, {
+            "modelValue": search.value,
+            "onUpdate:modelValue": [($event) => search.value = $event, onUpdateModelValue],
+            "focused": isFocused.value,
+            "onUpdate:focused": ($event) => isFocused.value = $event,
+            "validationValue": model.externalValue,
+            "counterValue": counterValue.value,
+            "dirty": isDirty,
+            "class": ["v-combobox", {
+              "v-combobox--active-menu": menu.value,
+              "v-combobox--chips": !!props.chips,
+              "v-combobox--selection-slot": !!hasSelectionSlot.value,
+              "v-combobox--selecting-index": selectionIndex.value > -1,
+              [`v-combobox--${props.multiple ? "multiple" : "single"}`]: true
+            }, props.class],
+            "style": props.style,
+            "readonly": props.readonly,
+            "placeholder": isDirty ? void 0 : props.placeholder,
+            "onClick:clear": onClear,
+            "onMousedown:control": onMousedownControl,
+            "onKeydown": onKeydown
+          }), {
+            ...slots,
+            default: () => createVNode(Fragment, null, [createVNode(VMenu, mergeProps({
+              "ref": vMenuRef,
+              "modelValue": menu.value,
+              "onUpdate:modelValue": ($event) => menu.value = $event,
+              "activator": "parent",
+              "contentClass": "v-combobox__content",
+              "disabled": menuDisabled.value,
+              "eager": props.eager,
+              "maxHeight": 310,
+              "openOnClick": false,
+              "closeOnContentClick": false,
+              "transition": props.transition,
+              "onAfterLeave": onAfterLeave
+            }, props.menuProps), {
+              default: () => [hasList && createVNode(VList, mergeProps({
+                "ref": listRef,
+                "selected": selectedValues.value,
+                "selectStrategy": props.multiple ? "independent" : "single-independent",
+                "onMousedown": (e) => e.preventDefault(),
+                "onKeydown": onListKeydown,
+                "onFocusin": onFocusin,
+                "onFocusout": onFocusout,
+                "onScrollPassive": onListScroll,
+                "tabindex": "-1",
+                "aria-live": "polite",
+                "color": props.itemColor ?? props.color
+              }, props.listProps), {
+                default: () => {
+                  var _a3, _b, _c;
+                  return [(_a3 = slots["prepend-item"]) == null ? void 0 : _a3.call(slots), !displayItems.value.length && !props.hideNoData && (((_b = slots["no-data"]) == null ? void 0 : _b.call(slots)) ?? createVNode(VListItem, {
+                    "title": t(props.noDataText)
+                  }, null)), createVNode(VVirtualScroll, {
+                    "ref": vVirtualScrollRef,
+                    "renderless": true,
+                    "items": displayItems.value
+                  }, {
+                    default: (_ref4) => {
+                      var _a4;
+                      let {
+                        item,
+                        index,
+                        itemRef
+                      } = _ref4;
+                      const itemProps = mergeProps(item.props, {
+                        ref: itemRef,
+                        key: index,
+                        active: highlightFirst.value && index === 0 ? true : void 0,
+                        onClick: () => select(item, null)
+                      });
+                      return ((_a4 = slots.item) == null ? void 0 : _a4.call(slots, {
+                        item,
+                        index,
+                        props: itemProps
+                      })) ?? createVNode(VListItem, mergeProps(itemProps, {
+                        "role": "option"
+                      }), {
+                        prepend: (_ref5) => {
+                          let {
+                            isSelected
+                          } = _ref5;
+                          return createVNode(Fragment, null, [props.multiple && !props.hideSelected ? createVNode(VCheckboxBtn, {
+                            "key": item.value,
+                            "modelValue": isSelected,
+                            "ripple": false,
+                            "tabindex": "-1"
+                          }, null) : void 0, item.props.prependAvatar && createVNode(VAvatar, {
+                            "image": item.props.prependAvatar
+                          }, null), item.props.prependIcon && createVNode(VIcon, {
+                            "icon": item.props.prependIcon
+                          }, null)]);
+                        },
+                        title: () => {
+                          var _a5, _b2;
+                          return isPristine.value ? item.title : highlightResult(item.title, (_a5 = getMatches(item)) == null ? void 0 : _a5.title, ((_b2 = search.value) == null ? void 0 : _b2.length) ?? 0);
+                        }
+                      });
+                    }
+                  }), (_c = slots["append-item"]) == null ? void 0 : _c.call(slots)];
+                }
+              })]
+            }), model.value.map((item, index) => {
+              function onChipClose(e) {
+                e.stopPropagation();
+                e.preventDefault();
+                select(item, false);
+              }
+              const slotProps = {
+                "onClick:close": onChipClose,
+                onKeydown(e) {
+                  if (e.key !== "Enter" && e.key !== " ")
+                    return;
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onChipClose(e);
+                },
+                onMousedown(e) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                },
+                modelValue: true,
+                "onUpdate:modelValue": void 0
+              };
+              const hasSlot = hasChips.value ? !!slots.chip : !!slots.selection;
+              const slotContent = hasSlot ? ensureValidVNode(hasChips.value ? slots.chip({
+                item,
+                index,
+                props: slotProps
+              }) : slots.selection({
+                item,
+                index
+              })) : void 0;
+              if (hasSlot && !slotContent)
+                return void 0;
+              return createVNode("div", {
+                "key": item.value,
+                "class": ["v-combobox__selection", index === selectionIndex.value && ["v-combobox__selection--selected", textColorClasses.value]],
+                "style": index === selectionIndex.value ? textColorStyles.value : {}
+              }, [hasChips.value ? !slots.chip ? createVNode(VChip, mergeProps({
+                "key": "chip",
+                "closable": props.closableChips,
+                "size": "small",
+                "text": item.title,
+                "disabled": item.props.disabled
+              }, slotProps), null) : createVNode(VDefaultsProvider, {
+                "key": "chip-defaults",
+                "defaults": {
+                  VChip: {
+                    closable: props.closableChips,
+                    size: "small",
+                    text: item.title
+                  }
+                }
+              }, {
+                default: () => [slotContent]
+              }) : slotContent ?? createVNode("span", {
+                "class": "v-combobox__selection-text"
+              }, [item.title, props.multiple && index < model.value.length - 1 && createVNode("span", {
+                "class": "v-combobox__selection-comma"
+              }, [createTextVNode(",")])])]);
+            })]),
+            "append-inner": function() {
+              var _a3;
+              for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+                args[_key] = arguments[_key];
+              }
+              return createVNode(Fragment, null, [(_a3 = slots["append-inner"]) == null ? void 0 : _a3.call(slots, ...args), (!props.hideNoData || props.items.length) && props.menuIcon ? createVNode(VIcon, {
+                "class": "v-combobox__menu-icon",
+                "icon": props.menuIcon,
+                "onMousedown": onMousedownMenuIcon,
+                "onClick": noop$1,
+                "aria-label": t(label.value),
+                "title": t(label.value),
+                "tabindex": "-1"
+              }, null) : void 0]);
+            }
+          });
+        });
+        return forwardRefs({
+          isFocused,
+          isPristine,
+          menu,
+          search,
+          selectionIndex,
+          filteredItems,
+          select
+        }, vTextFieldRef);
+      }
+    });
     const _sfc_main$a = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
@@ -78953,6 +78247,427 @@ Reason: ${error2}`);
         };
       }
     };
+    const VStepperSymbol = Symbol.for("vuetify:v-stepper");
+    const makeVStepperActionsProps = propsFactory({
+      color: String,
+      disabled: {
+        type: [Boolean, String],
+        default: false
+      },
+      prevText: {
+        type: String,
+        default: "$vuetify.stepper.prev"
+      },
+      nextText: {
+        type: String,
+        default: "$vuetify.stepper.next"
+      }
+    }, "VStepperActions");
+    const VStepperActions = genericComponent()({
+      name: "VStepperActions",
+      props: makeVStepperActionsProps(),
+      emits: {
+        "click:prev": () => true,
+        "click:next": () => true
+      },
+      setup(props, _ref) {
+        let {
+          emit: emit2,
+          slots
+        } = _ref;
+        const {
+          t
+        } = useLocale();
+        function onClickPrev() {
+          emit2("click:prev");
+        }
+        function onClickNext() {
+          emit2("click:next");
+        }
+        useRender(() => {
+          const prevSlotProps = {
+            onClick: onClickPrev
+          };
+          const nextSlotProps = {
+            onClick: onClickNext
+          };
+          return createVNode("div", {
+            "class": "v-stepper-actions"
+          }, [createVNode(VDefaultsProvider, {
+            "defaults": {
+              VBtn: {
+                disabled: ["prev", true].includes(props.disabled),
+                text: t(props.prevText),
+                variant: "text"
+              }
+            }
+          }, {
+            default: () => {
+              var _a2;
+              return [((_a2 = slots.prev) == null ? void 0 : _a2.call(slots, {
+                props: prevSlotProps
+              })) ?? createVNode(VBtn, prevSlotProps, null)];
+            }
+          }), createVNode(VDefaultsProvider, {
+            "defaults": {
+              VBtn: {
+                color: props.color,
+                disabled: ["next", true].includes(props.disabled),
+                text: t(props.nextText),
+                variant: "tonal"
+              }
+            }
+          }, {
+            default: () => {
+              var _a2;
+              return [((_a2 = slots.next) == null ? void 0 : _a2.call(slots, {
+                props: nextSlotProps
+              })) ?? createVNode(VBtn, nextSlotProps, null)];
+            }
+          })]);
+        });
+        return {};
+      }
+    });
+    const VStepperHeader = createSimpleFunctional("v-stepper-header");
+    const makeStepperItemProps = propsFactory({
+      color: String,
+      title: String,
+      subtitle: String,
+      complete: Boolean,
+      completeIcon: {
+        type: String,
+        default: "$complete"
+      },
+      editable: Boolean,
+      editIcon: {
+        type: String,
+        default: "$edit"
+      },
+      error: Boolean,
+      errorIcon: {
+        type: String,
+        default: "$error"
+      },
+      icon: String,
+      ripple: {
+        type: [Boolean, Object],
+        default: true
+      },
+      rules: {
+        type: Array,
+        default: () => []
+      }
+    }, "StepperItem");
+    const makeVStepperItemProps = propsFactory({
+      ...makeStepperItemProps(),
+      ...makeGroupItemProps()
+    }, "VStepperItem");
+    const VStepperItem = genericComponent()({
+      name: "VStepperItem",
+      directives: {
+        Ripple
+      },
+      props: makeVStepperItemProps(),
+      emits: {
+        "group:selected": (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const group = useGroupItem(props, VStepperSymbol, true);
+        const step = computed(() => (group == null ? void 0 : group.value.value) ?? props.value);
+        const isValid2 = computed(() => props.rules.every((handler) => handler() === true));
+        const isClickable = computed(() => !props.disabled && props.editable);
+        const canEdit = computed(() => !props.disabled && props.editable);
+        const hasError = computed(() => props.error || !isValid2.value);
+        const hasCompleted = computed(() => props.complete || props.rules.length > 0 && isValid2.value);
+        const icon = computed(() => {
+          if (hasError.value)
+            return props.errorIcon;
+          if (hasCompleted.value)
+            return props.completeIcon;
+          if (group.isSelected.value && props.editable)
+            return props.editIcon;
+          return props.icon;
+        });
+        const slotProps = computed(() => ({
+          canEdit: canEdit.value,
+          hasError: hasError.value,
+          hasCompleted: hasCompleted.value,
+          title: props.title,
+          subtitle: props.subtitle,
+          step: step.value,
+          value: props.value
+        }));
+        useRender(() => {
+          var _a2, _b, _c;
+          const hasColor = (!group || group.isSelected.value || hasCompleted.value || canEdit.value) && !hasError.value && !props.disabled;
+          const hasTitle = !!(props.title != null || slots.title);
+          const hasSubtitle = !!(props.subtitle != null || slots.subtitle);
+          function onClick() {
+            group == null ? void 0 : group.toggle();
+          }
+          return withDirectives(createVNode("button", {
+            "class": ["v-stepper-item", {
+              "v-stepper-item--complete": hasCompleted.value,
+              "v-stepper-item--disabled": props.disabled,
+              "v-stepper-item--error": hasError.value
+            }, group == null ? void 0 : group.selectedClass.value],
+            "disabled": !props.editable,
+            "onClick": onClick
+          }, [isClickable.value && genOverlays(true, "v-stepper-item"), createVNode(VAvatar, {
+            "key": "stepper-avatar",
+            "class": "v-stepper-item__avatar",
+            "color": hasColor ? props.color : void 0,
+            "size": 24
+          }, {
+            default: () => {
+              var _a3;
+              return [((_a3 = slots.icon) == null ? void 0 : _a3.call(slots, slotProps.value)) ?? (icon.value ? createVNode(VIcon, {
+                "icon": icon.value
+              }, null) : step.value)];
+            }
+          }), createVNode("div", {
+            "class": "v-stepper-item__content"
+          }, [hasTitle && createVNode("div", {
+            "key": "title",
+            "class": "v-stepper-item__title"
+          }, [((_a2 = slots.title) == null ? void 0 : _a2.call(slots, slotProps.value)) ?? props.title]), hasSubtitle && createVNode("div", {
+            "key": "subtitle",
+            "class": "v-stepper-item__subtitle"
+          }, [((_b = slots.subtitle) == null ? void 0 : _b.call(slots, slotProps.value)) ?? props.subtitle]), (_c = slots.default) == null ? void 0 : _c.call(slots, slotProps.value)])]), [[resolveDirective("ripple"), props.ripple && props.editable, null]]);
+        });
+        return {};
+      }
+    });
+    const makeVStepperWindowProps = propsFactory({
+      ...omit$1(makeVWindowProps(), ["continuous", "nextIcon", "prevIcon", "showArrows", "touch", "mandatory"])
+    }, "VStepperWindow");
+    const VStepperWindow = genericComponent()({
+      name: "VStepperWindow",
+      props: makeVStepperWindowProps(),
+      emits: {
+        "update:modelValue": (v) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const group = inject$1(VStepperSymbol, null);
+        const _model = useProxiedModel(props, "modelValue");
+        const model = computed({
+          get() {
+            var _a2;
+            if (_model.value != null || !group)
+              return _model.value;
+            return (_a2 = group.items.value.find((item) => group.selected.value.includes(item.id))) == null ? void 0 : _a2.value;
+          },
+          set(val) {
+            _model.value = val;
+          }
+        });
+        useRender(() => {
+          const windowProps = VWindow.filterProps(props);
+          return createVNode(VWindow, mergeProps({
+            "_as": "VStepperWindow"
+          }, windowProps, {
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "class": ["v-stepper-window", props.class],
+            "style": props.style,
+            "mandatory": false,
+            "touch": false
+          }), slots);
+        });
+        return {};
+      }
+    });
+    const makeVStepperWindowItemProps = propsFactory({
+      ...makeVWindowItemProps()
+    }, "VStepperWindowItem");
+    const VStepperWindowItem = genericComponent()({
+      name: "VStepperWindowItem",
+      props: makeVStepperWindowItemProps(),
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        useRender(() => {
+          const windowItemProps = VWindowItem.filterProps(props);
+          return createVNode(VWindowItem, mergeProps({
+            "_as": "VStepperWindowItem"
+          }, windowItemProps, {
+            "class": ["v-stepper-window-item", props.class],
+            "style": props.style
+          }), slots);
+        });
+        return {};
+      }
+    });
+    const makeStepperProps = propsFactory({
+      altLabels: Boolean,
+      bgColor: String,
+      completeIcon: String,
+      editIcon: String,
+      editable: Boolean,
+      errorIcon: String,
+      hideActions: Boolean,
+      items: {
+        type: Array,
+        default: () => []
+      },
+      itemTitle: {
+        type: String,
+        default: "title"
+      },
+      itemValue: {
+        type: String,
+        default: "value"
+      },
+      nonLinear: Boolean,
+      flat: Boolean,
+      ...makeDisplayProps()
+    }, "Stepper");
+    const makeVStepperProps = propsFactory({
+      ...makeStepperProps(),
+      ...makeGroupProps({
+        mandatory: "force",
+        selectedClass: "v-stepper-item--selected"
+      }),
+      ...makeVSheetProps(),
+      ...only(makeVStepperActionsProps(), ["prevText", "nextText"])
+    }, "VStepper");
+    const VStepper = genericComponent()({
+      name: "VStepper",
+      props: makeVStepperProps(),
+      emits: {
+        "update:modelValue": (v) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots
+        } = _ref;
+        const {
+          items: _items,
+          next: next2,
+          prev,
+          selected
+        } = useGroup(props, VStepperSymbol);
+        const {
+          displayClasses,
+          mobile
+        } = useDisplay(props);
+        const {
+          completeIcon,
+          editIcon,
+          errorIcon,
+          color,
+          editable,
+          prevText,
+          nextText
+        } = toRefs(props);
+        const items2 = computed(() => props.items.map((item, index) => {
+          const title2 = getPropertyFromItem(item, props.itemTitle, item);
+          const value = getPropertyFromItem(item, props.itemValue, index + 1);
+          return {
+            title: title2,
+            value,
+            raw: item
+          };
+        }));
+        const activeIndex = computed(() => {
+          return _items.value.findIndex((item) => selected.value.includes(item.id));
+        });
+        const disabled = computed(() => {
+          if (props.disabled)
+            return props.disabled;
+          if (activeIndex.value === 0)
+            return "prev";
+          if (activeIndex.value === _items.value.length - 1)
+            return "next";
+          return false;
+        });
+        provideDefaults({
+          VStepperItem: {
+            editable,
+            errorIcon,
+            completeIcon,
+            editIcon,
+            prevText,
+            nextText
+          },
+          VStepperActions: {
+            color,
+            disabled,
+            prevText,
+            nextText
+          }
+        });
+        useRender(() => {
+          const sheetProps = VSheet.filterProps(props);
+          const hasHeader = !!(slots.header || props.items.length);
+          const hasWindow = props.items.length > 0;
+          const hasActions = !props.hideActions && !!(hasWindow || slots.actions);
+          return createVNode(VSheet, mergeProps(sheetProps, {
+            "color": props.bgColor,
+            "class": ["v-stepper", {
+              "v-stepper--alt-labels": props.altLabels,
+              "v-stepper--flat": props.flat,
+              "v-stepper--non-linear": props.nonLinear,
+              "v-stepper--mobile": mobile.value
+            }, displayClasses.value, props.class],
+            "style": props.style
+          }), {
+            default: () => {
+              var _a2, _b;
+              return [hasHeader && createVNode(VStepperHeader, {
+                "key": "stepper-header"
+              }, {
+                default: () => [items2.value.map((_ref2, index) => {
+                  let {
+                    raw,
+                    ...item
+                  } = _ref2;
+                  return createVNode(Fragment, null, [!!index && createVNode(VDivider, null, null), createVNode(VStepperItem, item, {
+                    default: slots[`header-item.${item.value}`] ?? slots.header,
+                    icon: slots.icon,
+                    title: slots.title,
+                    subtitle: slots.subtitle
+                  })]);
+                })]
+              }), hasWindow && createVNode(VStepperWindow, {
+                "key": "stepper-window"
+              }, {
+                default: () => [items2.value.map((item) => createVNode(VStepperWindowItem, {
+                  "value": item.value
+                }, {
+                  default: () => {
+                    var _a3, _b2;
+                    return ((_a3 = slots[`item.${item.value}`]) == null ? void 0 : _a3.call(slots, item)) ?? ((_b2 = slots.item) == null ? void 0 : _b2.call(slots, item));
+                  }
+                }))]
+              }), (_a2 = slots.default) == null ? void 0 : _a2.call(slots, {
+                prev,
+                next: next2
+              }), hasActions && (((_b = slots.actions) == null ? void 0 : _b.call(slots, {
+                next: next2,
+                prev
+              })) ?? createVNode(VStepperActions, {
+                "key": "stepper-actions",
+                "onClick:prev": prev,
+                "onClick:next": next2
+              }, slots))];
+            }
+          });
+        });
+        return {
+          prev,
+          next: next2
+        };
+      }
+    });
     const _sfc_main$7 = {
       __name: "stepper",
       props: {
@@ -79419,6 +79134,233 @@ Reason: ${error2}`);
         };
       }
     };
+    const makeVFileInputProps = propsFactory({
+      chips: Boolean,
+      counter: Boolean,
+      counterSizeString: {
+        type: String,
+        default: "$vuetify.fileInput.counterSize"
+      },
+      counterString: {
+        type: String,
+        default: "$vuetify.fileInput.counter"
+      },
+      hideInput: Boolean,
+      multiple: Boolean,
+      showSize: {
+        type: [Boolean, Number, String],
+        default: false,
+        validator: (v) => {
+          return typeof v === "boolean" || [1e3, 1024].includes(Number(v));
+        }
+      },
+      ...makeVInputProps({
+        prependIcon: "$file"
+      }),
+      modelValue: {
+        type: [Array, Object],
+        default: (props) => props.multiple ? [] : null,
+        validator: (val) => {
+          return wrapInArray(val).every((v) => v != null && typeof v === "object");
+        }
+      },
+      ...makeVFieldProps({
+        clearable: true
+      })
+    }, "VFileInput");
+    const VFileInput = genericComponent()({
+      name: "VFileInput",
+      inheritAttrs: false,
+      props: makeVFileInputProps(),
+      emits: {
+        "click:control": (e) => true,
+        "mousedown:control": (e) => true,
+        "update:focused": (focused) => true,
+        "update:modelValue": (files) => true
+      },
+      setup(props, _ref) {
+        let {
+          attrs,
+          emit: emit2,
+          slots
+        } = _ref;
+        const {
+          t
+        } = useLocale();
+        const model = useProxiedModel(props, "modelValue", props.modelValue, (val) => wrapInArray(val), (val) => props.multiple || Array.isArray(props.modelValue) ? val : val[0] ?? null);
+        const {
+          isFocused,
+          focus,
+          blur
+        } = useFocus(props);
+        const base2 = computed(() => typeof props.showSize !== "boolean" ? props.showSize : void 0);
+        const totalBytes = computed(() => (model.value ?? []).reduce((bytes, _ref2) => {
+          let {
+            size: size2 = 0
+          } = _ref2;
+          return bytes + size2;
+        }, 0));
+        const totalBytesReadable = computed(() => humanReadableFileSize(totalBytes.value, base2.value));
+        const fileNames = computed(() => (model.value ?? []).map((file) => {
+          const {
+            name = "",
+            size: size2 = 0
+          } = file;
+          return !props.showSize ? name : `${name} (${humanReadableFileSize(size2, base2.value)})`;
+        }));
+        const counterValue = computed(() => {
+          var _a2;
+          const fileCount = ((_a2 = model.value) == null ? void 0 : _a2.length) ?? 0;
+          if (props.showSize)
+            return t(props.counterSizeString, fileCount, totalBytesReadable.value);
+          else
+            return t(props.counterString, fileCount);
+        });
+        const vInputRef = ref$1();
+        const vFieldRef = ref$1();
+        const inputRef = ref$1();
+        const isActive = computed(() => isFocused.value || props.active);
+        const isPlainOrUnderlined = computed(() => ["plain", "underlined"].includes(props.variant));
+        function onFocus() {
+          var _a2;
+          if (inputRef.value !== document.activeElement) {
+            (_a2 = inputRef.value) == null ? void 0 : _a2.focus();
+          }
+          if (!isFocused.value)
+            focus();
+        }
+        function onClickPrepend(e) {
+          var _a2;
+          (_a2 = inputRef.value) == null ? void 0 : _a2.click();
+        }
+        function onControlMousedown(e) {
+          emit2("mousedown:control", e);
+        }
+        function onControlClick(e) {
+          var _a2;
+          (_a2 = inputRef.value) == null ? void 0 : _a2.click();
+          emit2("click:control", e);
+        }
+        function onClear(e) {
+          e.stopPropagation();
+          onFocus();
+          nextTick(() => {
+            model.value = [];
+            callEvent(props["onClick:clear"], e);
+          });
+        }
+        watch(model, (newValue) => {
+          const hasModelReset = !Array.isArray(newValue) || !newValue.length;
+          if (hasModelReset && inputRef.value) {
+            inputRef.value.value = "";
+          }
+        });
+        useRender(() => {
+          const hasCounter = !!(slots.counter || props.counter);
+          const hasDetails = !!(hasCounter || slots.details);
+          const [rootAttrs, inputAttrs] = filterInputAttrs(attrs);
+          const {
+            modelValue: _,
+            ...inputProps
+          } = VInput.filterProps(props);
+          const fieldProps = filterFieldProps(props);
+          return createVNode(VInput, mergeProps({
+            "ref": vInputRef,
+            "modelValue": model.value,
+            "onUpdate:modelValue": ($event) => model.value = $event,
+            "class": ["v-file-input", {
+              "v-file-input--chips": !!props.chips,
+              "v-file-input--hide": props.hideInput,
+              "v-input--plain-underlined": isPlainOrUnderlined.value
+            }, props.class],
+            "style": props.style,
+            "onClick:prepend": onClickPrepend
+          }, rootAttrs, inputProps, {
+            "centerAffix": !isPlainOrUnderlined.value,
+            "focused": isFocused.value
+          }), {
+            ...slots,
+            default: (_ref3) => {
+              let {
+                id: id2,
+                isDisabled,
+                isDirty,
+                isReadonly: isReadonly2,
+                isValid: isValid2
+              } = _ref3;
+              return createVNode(VField, mergeProps({
+                "ref": vFieldRef,
+                "prepend-icon": props.prependIcon,
+                "onMousedown": onControlMousedown,
+                "onClick": onControlClick,
+                "onClick:clear": onClear,
+                "onClick:prependInner": props["onClick:prependInner"],
+                "onClick:appendInner": props["onClick:appendInner"]
+              }, fieldProps, {
+                "id": id2.value,
+                "active": isActive.value || isDirty.value,
+                "dirty": isDirty.value || props.dirty,
+                "disabled": isDisabled.value,
+                "focused": isFocused.value,
+                "error": isValid2.value === false
+              }), {
+                ...slots,
+                default: (_ref4) => {
+                  var _a2;
+                  let {
+                    props: {
+                      class: fieldClass,
+                      ...slotProps
+                    }
+                  } = _ref4;
+                  return createVNode(Fragment, null, [createVNode("input", mergeProps({
+                    "ref": inputRef,
+                    "type": "file",
+                    "readonly": isReadonly2.value,
+                    "disabled": isDisabled.value,
+                    "multiple": props.multiple,
+                    "name": props.name,
+                    "onClick": (e) => {
+                      e.stopPropagation();
+                      if (isReadonly2.value)
+                        e.preventDefault();
+                      onFocus();
+                    },
+                    "onChange": (e) => {
+                      if (!e.target)
+                        return;
+                      const target2 = e.target;
+                      model.value = [...target2.files ?? []];
+                    },
+                    "onFocus": onFocus,
+                    "onBlur": blur
+                  }, slotProps, inputAttrs), null), createVNode("div", {
+                    "class": fieldClass
+                  }, [!!((_a2 = model.value) == null ? void 0 : _a2.length) && !props.hideInput && (slots.selection ? slots.selection({
+                    fileNames: fileNames.value,
+                    totalBytes: totalBytes.value,
+                    totalBytesReadable: totalBytesReadable.value
+                  }) : props.chips ? fileNames.value.map((text2) => createVNode(VChip, {
+                    "key": text2,
+                    "size": "small",
+                    "text": text2
+                  }, null)) : fileNames.value.join(", "))])]);
+                }
+              });
+            },
+            details: hasDetails ? (slotProps) => {
+              var _a2, _b;
+              return createVNode(Fragment, null, [(_a2 = slots.details) == null ? void 0 : _a2.call(slots, slotProps), hasCounter && createVNode(Fragment, null, [createVNode("span", null, null), createVNode(VCounter, {
+                "active": !!((_b = model.value) == null ? void 0 : _b.length),
+                "value": counterValue.value,
+                "disabled": props.disabled
+              }, slots.counter)])]);
+            } : void 0
+          });
+        });
+        return forwardRefs({}, vInputRef, vFieldRef, inputRef);
+      }
+    });
     const _sfc_main$5 = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
@@ -79685,6 +79627,62 @@ Reason: ${error2}`);
           delete_connection,
           delete_module_instance
         };
+      }
+    });
+    const makeVFormProps = propsFactory({
+      ...makeComponentProps(),
+      ...makeFormProps()
+    }, "VForm");
+    const VForm = genericComponent()({
+      name: "VForm",
+      props: makeVFormProps(),
+      emits: {
+        "update:modelValue": (val) => true,
+        submit: (e) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots,
+          emit: emit2
+        } = _ref;
+        const form = createForm(props);
+        const formRef = ref$1();
+        function onReset(e) {
+          e.preventDefault();
+          form.reset();
+        }
+        function onSubmit(_e) {
+          const e = _e;
+          const ready = form.validate();
+          e.then = ready.then.bind(ready);
+          e.catch = ready.catch.bind(ready);
+          e.finally = ready.finally.bind(ready);
+          emit2("submit", e);
+          if (!e.defaultPrevented) {
+            ready.then((_ref2) => {
+              var _a2;
+              let {
+                valid
+              } = _ref2;
+              if (valid) {
+                (_a2 = formRef.value) == null ? void 0 : _a2.submit();
+              }
+            });
+          }
+          e.preventDefault();
+        }
+        useRender(() => {
+          var _a2;
+          return createVNode("form", {
+            "ref": formRef,
+            "class": ["v-form", props.class],
+            "style": props.style,
+            "novalidate": true,
+            "onReset": onReset,
+            "onSubmit": onSubmit
+          }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots, form)]);
+        });
+        return forwardRefs(form, formRef);
       }
     });
     const _hoisted_1 = { class: "font-weight-bold" };
