@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-BfIMZaJT.js"(exports, module) {
+  "assets/index-6ZCb6Qvn.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -68690,7 +68690,12 @@ Reason: ${error2}`);
         }
       },
       {
-        name: "one-of-select"
+        name: "one-of-select",
+        schema: {
+          properties: {
+            emptyData: { type: "boolean" }
+          }
+        }
       }
     ];
     function getComponentSchema(component) {
@@ -71675,12 +71680,26 @@ Reason: ${error2}`);
        * @param {number} key
        */
       activateItem(node, key) {
+        var _a2, _b;
         this.activatedItems = produce(this.activatedItems, (draft) => {
           draft[node.fullKey] = key;
         });
         this._autofocusTarget = node.fullKey + "/" + key;
         if (node.key === "$oneOf") {
-          this.input(node, void 0);
+          if (node.layout.emptyData && node.data && typeof node.data === "object" && ((_a2 = node.children) == null ? void 0 : _a2[0])) {
+            const parentNode = this._lastCreateStateTreeContext.nodes.find((p2) => p2.fullKey === node.parentFullKey);
+            if (!parentNode)
+              throw new Error(`parent with key "${node.parentFullKey}" not found`);
+            if (!parentNode.data || typeof parentNode.data !== "object")
+              throw new Error(`parent with key "${node.parentFullKey}" is missing data object`);
+            const newParentData = { ...parentNode.data };
+            for (const propertyKey of (_b = node.children) == null ? void 0 : _b[0].skeleton.propertyKeys) {
+              delete newParentData[propertyKey];
+            }
+            this.input(parentNode, newParentData);
+          } else {
+            this.input(node, void 0);
+          }
         } else {
           this.updateState();
         }
