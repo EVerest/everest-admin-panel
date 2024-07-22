@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-p5S2g_f-.js"(exports, module) {
+  "assets/index-BfIMZaJT.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -69594,6 +69594,9 @@ Reason: ${error2}`);
         node.condition = { type: "js-eval", expr: condition, pure: true };
         pushExpression(expressions, node.condition);
       }
+      if (schema2.oneOf) {
+        rawSchema.errorMessage.oneOf = options.messages.errorOneOf;
+      }
       if (type2 === "object") {
         if (schema2.properties) {
           node.children = node.children ?? [];
@@ -69739,7 +69742,6 @@ Reason: ${error2}`);
           }
           node.children = node.children ?? [];
           node.children.push(oneOfPointer);
-          rawSchema.errorMessage.oneOf = options.messages.errorOneOf;
         }
         if (schema2.if) {
           validates.push(`${pointer}/if`);
@@ -70618,6 +70620,7 @@ Reason: ${error2}`);
       const display = cols === 12 ? parentDisplay : new Display(Math.round(parentDisplay.width * (cols / 12)));
       return [display, cols];
     }
+    const logStateNode = Debug("jl:state-node");
     const isDataEmpty = (data) => {
       if (data === "" || data === void 0)
         return true;
@@ -70786,19 +70789,23 @@ Reason: ${error2}`);
     };
     function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentContext, validationState, reusedNode) {
       var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
+      logStateNode("createStateNode", fullKey);
       let cacheKey = null;
       if (skeleton.pure && !(reusedNode == null ? void 0 : reusedNode.error) && !(reusedNode == null ? void 0 : reusedNode.childError)) {
         const validatedCacheKey = validationState.validatedForm || validationState.validatedChildren.includes(fullKey);
         cacheKey = [parentOptions, compiledLayout, fullKey, skeleton, childDefinition, parentDisplay.width, validatedCacheKey, context.activatedItems, context.initial, data];
         if (reusedNode && context.cacheKeys[fullKey] && shallowEqualArray(context.cacheKeys[fullKey], cacheKey)) {
+          logStateNode("createStateNode cache hit", fullKey);
           if (context._debugCache)
             context._debugCache[fullKey] = (context._debugCache[fullKey] ?? []).concat(["hit"]);
           return reusedNode;
         } else {
+          logStateNode("createStateNode cache miss", fullKey);
           if (context._debugCache)
             context._debugCache[fullKey] = (context._debugCache[fullKey] ?? []).concat(["miss"]);
         }
       } else {
+        logStateNode("createStateNode cache skip", fullKey);
         if (context._debugCache)
           context._debugCache[fullKey] = (context._debugCache[fullKey] ?? []).concat(["skip"]);
       }
@@ -70871,12 +70878,14 @@ Reason: ${error2}`);
           context.errors = (_e = context.errors) == null ? void 0 : _e.filter((error3) => {
             var _a3, _b2;
             const originalError = ((_b2 = (_a3 = error3.params) == null ? void 0 : _a3.errors) == null ? void 0 : _b2[0]) ?? error3;
-            if ((originalError.schemaPath === skeleton.pointer || originalError.schemaPath === skeleton.refPointer) && originalError.keyword === "oneOf")
+            if (matchError(error3, skeleton, dataPath, parentDataPath))
               return false;
-            if (originalError.schemaPath.startsWith(skeleton.pointer) && !originalError.schemaPath.startsWith(skeleton.pointer + "/" + activeChildTreeIndex))
-              return false;
-            if (originalError.schemaPath.startsWith(skeleton.refPointer) && !originalError.schemaPath.startsWith(skeleton.refPointer + "/" + activeChildTreeIndex))
-              return false;
+            if (matchChildError(error3, skeleton, dataPath)) {
+              if (originalError.schemaPath.startsWith(skeleton.pointer) && !originalError.schemaPath.startsWith(skeleton.pointer + "/" + activeChildTreeIndex))
+                return false;
+              if (originalError.schemaPath.startsWith(skeleton.refPointer) && !originalError.schemaPath.startsWith(skeleton.refPointer + "/" + activeChildTreeIndex))
+                return false;
+            }
             return true;
           });
           const activeChildKey = `${fullKey}/${activeChildTreeIndex}`;
@@ -70945,7 +70954,7 @@ Reason: ${error2}`);
       }
       let error2 = (_k = context.errors) == null ? void 0 : _k.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath));
       if (!error2) {
-        error2 = (_l = context.errors) == null ? void 0 : _l.find((error3) => matchChildError(error3, skeleton, dataPath));
+        error2 = (_l = context.errors) == null ? void 0 : _l.findLast((error3) => matchChildError(error3, skeleton, dataPath));
       }
       if (layout.comp !== "none") {
         if (error2) {
@@ -71083,7 +71092,7 @@ Reason: ${error2}`);
           if (error2.keyword !== "errorMessage")
             compiledLayout.localizeErrors([error2]);
         }
-        context.errors = validate2.errors;
+        context.errors = context.allErrors = validate2.errors;
         if (context.errors.length) {
           for (const error2 of context.errors) {
             const originalError = ((_b = (_a2 = error2.params) == null ? void 0 : _a2.errors) == null ? void 0 : _b[0]) ?? error2;
@@ -71347,6 +71356,9 @@ Reason: ${error2}`);
           this._data = this._stateTree.root.data ?? null;
           this._autofocusTarget = this._lastCreateStateTreeContext.autofocusTarget;
           this.createStateTree(true);
+        }
+        if (!this._stateTree.valid && !this._stateTree.root.error && !this._stateTree.root.childError) {
+          console.error("JSON layout failed to assign validation error to a node", this._lastCreateStateTreeContext.allErrors);
         }
         logDataBinding("emit update event", this._data, this._stateTree);
         this.options.onUpdate(this);
