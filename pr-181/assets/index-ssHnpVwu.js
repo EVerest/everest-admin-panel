@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-6ZCb6Qvn.js"(exports, module) {
+  "assets/index-ssHnpVwu.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.33
+    * @vue/shared v3.4.34
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -661,7 +661,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.33
+    * @vue/reactivity v3.4.34
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -1706,7 +1706,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.33
+    * @vue/runtime-core v3.4.34
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -7123,9 +7123,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.33";
+    const version$2 = "3.4.34";
     /**
-    * @vue/runtime-dom v3.4.33
+    * @vue/runtime-dom v3.4.34
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
