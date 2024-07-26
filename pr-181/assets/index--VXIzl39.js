@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-UP3w4kQm.js"(exports, module) {
+  "assets/index--VXIzl39.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -68286,7 +68286,8 @@ Reason: ${error2}`);
           "required": [
             "type",
             "expr",
-            "pure"
+            "pure",
+            "dataAlias"
           ],
           "properties": {
             "type": {
@@ -68302,6 +68303,9 @@ Reason: ${error2}`);
             },
             "pure": {
               "type": "boolean"
+            },
+            "dataAlias": {
+              "type": "string"
             },
             "ref": {
               "type": "integer",
@@ -68990,11 +68994,16 @@ Reason: ${error2}`);
         return { children: layoutKeyword };
       return {};
     }
-    function normalizeExpression(expression, defaultType = "js-eval") {
+    function looksPure(expression) {
+      const expr = typeof expression === "string" ? expression : expression.expr;
+      return !expr.includes("rootData.") && !expr.includes("rootData[") && !expr.includes("parent.data") && !expr.includes("parent.parent");
+    }
+    function normalizeExpression(expression, defaultType = "js-eval", defaultDataAlias = "value") {
+      const defaultPure = looksPure(expression);
       if (typeof expression === "string")
-        return { type: defaultType, expr: expression, pure: true };
+        return { type: defaultType, expr: expression, pure: defaultPure, dataAlias: defaultDataAlias };
       else
-        return { pure: true, type: defaultType, ...expression };
+        return { pure: defaultPure, type: defaultType, dataAlias: defaultDataAlias, ...expression };
     }
     function getItemsFromSchema(schemaFragment) {
       if (!schemaFragment)
@@ -69160,16 +69169,21 @@ Reason: ${error2}`);
       if (partial.getItems && isPartialGetItemsObj(partial.getItems)) {
         if (type2 === "object")
           partial.getItems.returnObjects = true;
+        if (type2 === "array") {
+          const { type: itemsType } = getSchemaFragmentType(schemaFragment.items);
+          if (itemsType === "object")
+            partial.getItems.returnObjects = true;
+        }
         if (partial.getItems.itemTitle)
-          partial.getItems.itemTitle = normalizeExpression(partial.getItems.itemTitle);
+          partial.getItems.itemTitle = normalizeExpression(partial.getItems.itemTitle, "js-eval", "item");
         if (partial.getItems.itemKey)
-          partial.getItems.itemKey = normalizeExpression(partial.getItems.itemKey);
+          partial.getItems.itemKey = normalizeExpression(partial.getItems.itemKey, "js-eval", "item");
         if (partial.getItems.itemValue)
-          partial.getItems.itemValue = normalizeExpression(partial.getItems.itemValue);
+          partial.getItems.itemValue = normalizeExpression(partial.getItems.itemValue, "js-eval", "item");
         if (partial.getItems.itemIcon)
-          partial.getItems.itemIcon = normalizeExpression(partial.getItems.itemIcon);
+          partial.getItems.itemIcon = normalizeExpression(partial.getItems.itemIcon, "js-eval", "item");
         if (partial.getItems.itemsResults)
-          partial.getItems.itemsResults = normalizeExpression(partial.getItems.itemsResults);
+          partial.getItems.itemsResults = normalizeExpression(partial.getItems.itemsResults, "js-eval", "body");
       }
       if (partial.getItems && isPartialGetItemsFetch(partial.getItems)) {
         partial.getItems.url = normalizeExpression(partial.getItems.url, "js-tpl");
@@ -69552,21 +69566,21 @@ Reason: ${error2}`);
         if (schema2.const !== void 0 && compObject.constData === void 0)
           compObject.constData = schema2.const;
         if (compObject.constData !== void 0 && !compObject.getConstData)
-          compObject.getConstData = { type: "js-eval", expr: "layout.constData", pure: true };
+          compObject.getConstData = { type: "js-eval", expr: "layout.constData", pure: true, dataAlias: "value" };
         if (compObject.getConstData)
           pushExpression(expressions, compObject.getConstData);
         if (defaultData !== void 0 && compObject.defaultData === void 0)
           compObject.defaultData = defaultData;
         if (compObject.defaultData !== void 0 && !compObject.getDefaultData)
-          compObject.getDefaultData = { type: "js-eval", expr: "layout.defaultData", pure: true };
+          compObject.getDefaultData = { type: "js-eval", expr: "layout.defaultData", pure: true, dataAlias: "value" };
         if (compObject.getDefaultData)
           pushExpression(expressions, compObject.getDefaultData);
         if (compObject.options !== void 0 && !compObject.getOptions)
-          compObject.getOptions = { type: "js-eval", expr: "layout.options", pure: true };
+          compObject.getOptions = { type: "js-eval", expr: "layout.options", pure: true, dataAlias: "value" };
         if (compObject.getOptions)
           pushExpression(expressions, compObject.getOptions);
         if (compObject.props !== void 0 && !compObject.getProps)
-          compObject.getProps = { type: "js-eval", expr: "layout.props", pure: true };
+          compObject.getProps = { type: "js-eval", expr: "layout.props", pure: true, dataAlias: "value" };
         if (compObject.getProps)
           pushExpression(expressions, compObject.getProps);
         if (compObject.transformData)
@@ -69601,7 +69615,7 @@ Reason: ${error2}`);
       if (condition) {
         if (isSwitchStruct(normalizedLayout))
           throw new Error("Switch struct not allowed in conditional schema");
-        node.condition = { type: "js-eval", expr: condition, pure: true };
+        node.condition = { type: "js-eval", expr: condition, pure: true, dataAlias: "value" };
         pushExpression(expressions, node.condition);
       }
       if (schema2.oneOf) {
@@ -70039,7 +70053,7 @@ Reason: ${error2}`);
       }
       const expressions = [];
       for (const expression of expressionsDefinitions) {
-        const expressionsParams = expression.pure ? ["data", "options", "context", "display", "layout", "validates"] : ["data", "options", "context", "display", "layout", "validates", "rootData", "parent"];
+        const expressionsParams = expression.pure ? ["data", expression.dataAlias, "options", "context", "display", "layout", "validates"] : ["data", expression.dataAlias, "options", "context", "display", "layout", "validates", "rootData", "parent"];
         if (expression.type === "js-fn") {
           expressions.push(
             /** @type {CompiledExpression} */
@@ -70681,6 +70695,28 @@ Reason: ${error2}`);
     const produceStateNodeMessages = produce((draft, layoutMessages, options) => {
       Object.assign(draft, options.messages, layoutMessages);
     });
+    const produceStateNodeDataChildrenArray = produce((draft, children) => {
+      for (const child of children) {
+        const key = (
+          /** @type {number} */
+          child.key
+        );
+        if (child.data === void 0)
+          delete draft[key];
+        else
+          draft[key] = child.data;
+      }
+      while (draft.length && draft[draft.length - 1] === void 0) {
+        draft.pop();
+      }
+    });
+    const produceStateNodeDataArray = produce((draft, parentDataPath, additionalPropertiesErrors, propertyKeys, removePropertyKeys) => {
+      for (let i2 = 0; i2 < draft.length; i2++) {
+        if (!(draft[i2] instanceof File)) {
+          draft[i2] = produceStateNodeData(draft[i2], parentDataPath + "/" + i2, void 0, additionalPropertiesErrors, propertyKeys, removePropertyKeys);
+        }
+      }
+    });
     const produceStateNodeData = produce((draft, parentDataPath, children, additionalPropertiesErrors, propertyKeys, removePropertyKeys) => {
       if (propertyKeys && (propertyKeys.length || (children == null ? void 0 : children.length))) {
         for (const key of Object.keys(draft)) {
@@ -70770,12 +70806,18 @@ Reason: ${error2}`);
       const compiledExpression = expressions[expression.ref];
       try {
         if (expression.pure) {
-          return compiledExpression(data, options, options.context, display, layout, validates);
+          return compiledExpression(data, data, options, options.context, display, layout, validates);
         } else {
-          return compiledExpression(data, options, options.context, display, layout, validates, rootData, parentContext);
+          return compiledExpression(data, data, options, options.context, display, layout, validates, rootData, parentContext);
         }
       } catch (err) {
-        console.warn("json-layout: failed to evaluate expression", err, { expression, data, context: options.context, display, rootData, parent: parentContext });
+        const info = { expression, data, context: options.context, display };
+        info[expression.dataAlias] = data;
+        if (!expression.pure) {
+          info.rootData = rootData;
+          info.parent = parentContext;
+        }
+        console.warn("json-layout: failed to evaluate expression", err, info);
         throw new Error("json-layout: failed to evaluate expression");
       }
     }
@@ -70798,7 +70840,7 @@ Reason: ${error2}`);
       return { comp: "none" };
     };
     function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentContext, validationState, reusedNode) {
-      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
+      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
       logStateNode("createStateNode", fullKey);
       let cacheKey = null;
       if (skeleton.pure && !(reusedNode == null ? void 0 : reusedNode.error) && !(reusedNode == null ? void 0 : reusedNode.childError)) {
@@ -70977,22 +71019,39 @@ Reason: ${error2}`);
       if (nodeData === null && !layout.nullable)
         nodeData = void 0;
       const validated = validationState.validatedForm || validationState.validatedChildren.includes(fullKey) || validationState.initialized === false && options.initialValidation === "always" || validationState.initialized === false && options.initialValidation === "withData" && !isDataEmpty(nodeData);
-      if ((typeof nodeData === "object" || nodeData === void 0 && (children == null ? void 0 : children.length)) && !(nodeData instanceof File)) {
+      if (typeof ((_n = children == null ? void 0 : children[0]) == null ? void 0 : _n.key) === "number" && layout.comp !== "one-of-select") {
+        nodeData = produceStateNodeDataChildrenArray(
+          /** @type {unknown[]} */
+          nodeData ?? [],
+          children
+        );
+      } else if (Array.isArray(nodeData)) {
+        const itemsSkeletonTree = ((_o = skeleton.childrenTrees) == null ? void 0 : _o[0]) && compiledLayout.skeletonTrees[(_p = skeleton.childrenTrees) == null ? void 0 : _p[0]];
+        const itemsSkeletonNode = itemsSkeletonTree && compiledLayout.skeletonNodes[itemsSkeletonTree.root] || null;
+        nodeData = produceStateNodeDataArray(
+          /** @type {Record<string, unknown>[]} */
+          nodeData ?? [],
+          dataPath,
+          context.additionalPropertiesErrors,
+          [true, "unknown"].includes(options.removeAdditional) ? itemsSkeletonNode == null ? void 0 : itemsSkeletonNode.propertyKeys : void 0,
+          options.readOnlyPropertiesMode === "remove" ? itemsSkeletonNode == null ? void 0 : itemsSkeletonNode.roPropertyKeys : void 0
+        );
+      } else if ((typeof nodeData === "object" || nodeData === void 0 && (children == null ? void 0 : children.length)) && !(nodeData instanceof File)) {
         nodeData = produceStateNodeData(
           /** @type {Record<string, unknown>} */
-          nodeData ?? (typeof ((_n = children == null ? void 0 : children[0]) == null ? void 0 : _n.key) === "number" ? [] : {}),
+          nodeData ?? {},
           dataPath,
           children,
           context.additionalPropertiesErrors,
           [true, "unknown"].includes(options.removeAdditional) ? skeleton.propertyKeys : void 0,
           options.readOnlyPropertiesMode === "remove" ? skeleton.roPropertyKeys : void 0
         );
-        if (nodeData !== data) {
-          if (Array.isArray(data) && Array.isArray(nodeData))
-            nodeData = shallowProduceArray(data, nodeData);
-          else if (typeof data === "object" && typeof nodeData === "object")
-            nodeData = shallowProduceObject(data, nodeData);
-        }
+      }
+      if (nodeData !== data) {
+        if (Array.isArray(data) && Array.isArray(nodeData))
+          nodeData = shallowProduceArray(data, nodeData);
+        else if (typeof data === "object" && typeof nodeData === "object")
+          nodeData = shallowProduceObject(data, nodeData);
       }
       if (layout.getConstData) {
         if (!context.rehydrate) {
@@ -71026,7 +71085,7 @@ Reason: ${error2}`);
       if (isItemsLayout(layout, compiledLayout.components)) {
         if (layout.items)
           itemsCacheKey = layout.items;
-        else if (((_o = layout.getItems) == null ? void 0 : _o.immutable) && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey))
+        else if (((_q = layout.getItems) == null ? void 0 : _q.immutable) && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey))
           itemsCacheKey = reusedNode.itemsCacheKey;
         else if (layout.getItems && isGetItemsExpression(layout.getItems)) {
           if (layout.getItems.immutable && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey)) {
@@ -72452,6 +72511,128 @@ Reason: ${error2}`);
       const fullProps = mergePropsLevels(propsLevels);
       return fullProps;
     }
+    function getSelectProps(node, statefulLayout) {
+      const fullProps = getInputProps(node, statefulLayout, ["multiple"], false);
+      if (node.options.readOnly)
+        fullProps.menuProps = { modelValue: false };
+      fullProps.clearable = fullProps.clearable ?? !node.skeleton.required;
+      fullProps.valueComparator = (a, b) => {
+        const aKey = typeof a === "object" ? statefulLayout.prepareSelectItem(node, a).key : a;
+        const bKey = typeof b === "object" ? statefulLayout.prepareSelectItem(node, b).key : b;
+        return aKey === bKey;
+      };
+      fullProps["onUpdate:modelValue"] = (value) => {
+        if (Array.isArray(value) && Array.isArray(node.data)) {
+          for (let i2 = 0; i2 < node.data.length; i2++) {
+            if (typeof node.data[i2] === "object" && typeof value[i2] === "string") {
+              value[i2] = node.data[i2];
+            }
+          }
+        }
+        return statefulLayout.input(node, Array.isArray(value) && node.layout.separator ? value.join(
+          /** @type {string} */
+          node.layout.separator
+        ) : value);
+      };
+      fullProps.onBlur = () => statefulLayout.blur(node);
+      return fullProps;
+    }
+    const _sfc_main$x = /* @__PURE__ */ defineComponent$1({
+      props: {
+        icon: {
+          type: String,
+          required: true
+        }
+      },
+      setup(props) {
+        const isUrl = computed(() => props.icon.startsWith("http://") || props.icon.startsWith("https://"));
+        const isSVG = computed(() => props.icon.startsWith("<?xml") || props.icon.startsWith("<svg"));
+        return () => {
+          if (isUrl.value) {
+            return h("img", { src: props.icon, style: "height:100%;width:100%;" });
+          } else if (isSVG.value) {
+            return h("div", { innerHTML: props.icon.replace("<svg ", '<svg class="v-icon__svg" '), class: "v-icon" });
+          } else {
+            return h(VIcon, null, () => props.icon);
+          }
+        };
+      }
+    });
+    const _sfc_main$w = {
+      __name: "select-item",
+      props: {
+        multiple: {
+          type: Boolean,
+          default: false
+        },
+        itemProps: {
+          type: Object,
+          required: true
+        },
+        item: {
+          /** @type import('vue').PropType<import('@json-layout/vocabulary').SelectItem> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(unref(VListItem), normalizeProps(guardReactiveProps(__props.itemProps)), createSlots({ _: 2 }, [
+            __props.item.icon || __props.multiple ? {
+              name: "prepend",
+              fn: withCtx(({ isSelected }) => [
+                __props.multiple ? (openBlock(), createBlock(unref(VCheckboxBtn), {
+                  key: __props.item.key,
+                  ripple: false,
+                  tabindex: "-1",
+                  "model-value": isSelected
+                }, null, 8, ["model-value"])) : createCommentVNode("", true),
+                __props.item.icon ? (openBlock(), createBlock(_sfc_main$x, {
+                  key: 1,
+                  icon: __props.item.icon
+                }, null, 8, ["icon"])) : createCommentVNode("", true)
+              ]),
+              key: "0"
+            } : void 0
+          ]), 1040);
+        };
+      }
+    };
+    const _hoisted_1$3 = { class: "v-select__selection-text" };
+    const _hoisted_2$1 = {
+      key: 1,
+      class: "v-select__selection-comma"
+    };
+    const _sfc_main$v = {
+      __name: "select-selection",
+      props: {
+        multiple: {
+          type: Boolean,
+          default: false
+        },
+        last: {
+          type: Boolean,
+          default: false
+        },
+        item: {
+          /** @type import('vue').PropType<import('@json-layout/vocabulary').SelectItem> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        return (_ctx, _cache) => {
+          return openBlock(), createElementBlock("span", _hoisted_1$3, [
+            __props.item.icon ? (openBlock(), createBlock(_sfc_main$x, {
+              key: 0,
+              icon: __props.item.icon
+            }, null, 8, ["icon"])) : createCommentVNode("", true),
+            createTextVNode(" " + toDisplayString(__props.item.title ?? __props.item.key ?? __props.item.value) + " ", 1),
+            __props.multiple && !__props.last ? (openBlock(), createElementBlock("span", _hoisted_2$1, ",")) : createCommentVNode("", true)
+          ]);
+        };
+      }
+    };
     function getCompSlots(node, statefulLayout) {
       if (!node.layout.slots)
         return {};
@@ -72461,7 +72642,25 @@ Reason: ${error2}`);
       }
       return slots;
     }
-    const _sfc_main$x = /* @__PURE__ */ defineComponent$1({
+    function getSelectSlots(node, statefulLayout, getItems) {
+      const slots = getCompSlots(node, statefulLayout);
+      if (!slots.item) {
+        slots.item = (context) => h(_sfc_main$w, {
+          multiple: node.layout.multiple,
+          itemProps: context.props,
+          item: context.item.raw
+        });
+      }
+      if (!slots.selection) {
+        slots.selection = (context) => h(_sfc_main$v, {
+          multiple: node.layout.multiple,
+          last: node.layout.multiple && context.index === node.data.length - 1,
+          item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
+        });
+      }
+      return slots;
+    }
+    const _sfc_main$u = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfTextFieldNode> */
@@ -72737,7 +72936,7 @@ Reason: ${error2}`);
         return forwardRefs({}, vInputRef, vFieldRef, textareaRef);
       }
     });
-    const _sfc_main$w = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$t = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfTextareaNode> */
@@ -72769,7 +72968,7 @@ Reason: ${error2}`);
         return () => h(VTextarea, fieldProps.value, fieldSlots.value);
       }
     });
-    const _sfc_main$v = {
+    const _sfc_main$s = {
       __name: "checkbox",
       props: {
         modelValue: {
@@ -72967,7 +73166,7 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _sfc_main$u = {
+    const _sfc_main$r = {
       __name: "switch",
       props: {
         modelValue: {
@@ -72997,7 +73196,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$t = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$q = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfNumberFieldNode> */
@@ -73730,7 +73929,7 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _sfc_main$s = {
+    const _sfc_main$p = {
       __name: "slider",
       props: {
         modelValue: {
@@ -73762,7 +73961,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$r = {
+    const _sfc_main$o = {
       __name: "text-field-menu",
       props: {
         modelValue: {
@@ -74811,7 +75010,7 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _sfc_main$q = {
+    const _sfc_main$n = {
       __name: "date-picker",
       props: {
         modelValue: {
@@ -74837,7 +75036,7 @@ Reason: ${error2}`);
           return datePickerProps2;
         });
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(_sfc_main$r, {
+          return openBlock(), createBlock(_sfc_main$o, {
             "model-value": __props.modelValue,
             "stateful-layout": __props.statefulLayout,
             "formatted-value": __props.modelValue.data && unref(vDate).format(__props.modelValue.data, "fullDateWithWeekday")
@@ -74859,7 +75058,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$p = {
+    const _sfc_main$m = {
       __name: "date-time-picker",
       props: {
         modelValue: {
@@ -75944,7 +76143,7 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _sfc_main$o = {
+    const _sfc_main$l = {
       __name: "color-picker",
       props: {
         modelValue: {
@@ -75967,7 +76166,7 @@ Reason: ${error2}`);
           return colorPickerProps2;
         });
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(_sfc_main$r, {
+          return openBlock(), createBlock(_sfc_main$o, {
             "model-value": __props.modelValue,
             "stateful-layout": __props.statefulLayout,
             "formatted-value": __props.modelValue.data
@@ -76024,102 +76223,6 @@ Reason: ${error2}`);
       };
       return { items: items2, loading, search, prepareSelectedItem };
     }
-    const _sfc_main$n = /* @__PURE__ */ defineComponent$1({
-      props: {
-        icon: {
-          type: String,
-          required: true
-        }
-      },
-      setup(props) {
-        const isUrl = computed(() => props.icon.startsWith("http://") || props.icon.startsWith("https://"));
-        const isSVG = computed(() => props.icon.startsWith("<?xml") || props.icon.startsWith("<svg"));
-        return () => {
-          if (isUrl.value) {
-            return h("img", { src: props.icon, style: "height:100%;width:100%;" });
-          } else if (isSVG.value) {
-            return h("div", { innerHTML: props.icon.replace("<svg ", '<svg class="v-icon__svg" '), class: "v-icon" });
-          } else {
-            return h(VIcon, null, () => props.icon);
-          }
-        };
-      }
-    });
-    const _sfc_main$m = {
-      __name: "select-item",
-      props: {
-        multiple: {
-          type: Boolean,
-          default: false
-        },
-        itemProps: {
-          type: Object,
-          required: true
-        },
-        item: {
-          /** @type import('vue').PropType<import('@json-layout/vocabulary').SelectItem> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        return (_ctx, _cache) => {
-          return openBlock(), createBlock(unref(VListItem), normalizeProps(guardReactiveProps(__props.itemProps)), createSlots({ _: 2 }, [
-            __props.item.icon || __props.multiple ? {
-              name: "prepend",
-              fn: withCtx(({ isSelected }) => [
-                __props.multiple ? (openBlock(), createBlock(unref(VCheckboxBtn), {
-                  key: __props.item.key,
-                  ripple: false,
-                  tabindex: "-1",
-                  "model-value": isSelected
-                }, null, 8, ["model-value"])) : createCommentVNode("", true),
-                __props.item.icon ? (openBlock(), createBlock(_sfc_main$n, {
-                  key: 1,
-                  icon: __props.item.icon
-                }, null, 8, ["icon"])) : createCommentVNode("", true)
-              ]),
-              key: "0"
-            } : void 0
-          ]), 1040);
-        };
-      }
-    };
-    const _hoisted_1$3 = { class: "v-select__selection-text" };
-    const _hoisted_2$1 = {
-      key: 1,
-      class: "v-select__selection-comma"
-    };
-    const _sfc_main$l = {
-      __name: "select-selection",
-      props: {
-        multiple: {
-          type: Boolean,
-          default: false
-        },
-        last: {
-          type: Boolean,
-          default: false
-        },
-        item: {
-          /** @type import('vue').PropType<import('@json-layout/vocabulary').SelectItem> */
-          type: Object,
-          required: true
-        }
-      },
-      setup(__props) {
-        return (_ctx, _cache) => {
-          return openBlock(), createElementBlock("span", _hoisted_1$3, [
-            __props.item.icon ? (openBlock(), createBlock(_sfc_main$n, {
-              key: 0,
-              icon: __props.item.icon
-            }, null, 8, ["icon"])) : createCommentVNode("", true),
-            createTextVNode(" " + toDisplayString(__props.item.title ?? __props.item.key ?? __props.item.value) + " ", 1),
-            __props.multiple && !__props.last ? (openBlock(), createElementBlock("span", _hoisted_2$1, ",")) : createCommentVNode("", true)
-          ]);
-        };
-      }
-    };
     const _sfc_main$k = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
@@ -76137,33 +76240,12 @@ Reason: ${error2}`);
         useDefaults({}, "VjsfSelect");
         const getItems = useGetItems(props);
         const fieldProps = computed(() => {
-          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
-          if (props.modelValue.options.readOnly)
-            fieldProps2.menuProps = { modelValue: false };
+          const fieldProps2 = getSelectProps(props.modelValue, props.statefulLayout);
           fieldProps2.loading = getItems.loading.value;
           fieldProps2.items = getItems.items.value;
-          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
           return fieldProps2;
         });
-        const fieldSlots = computed(() => {
-          const slots = getCompSlots(props.modelValue, props.statefulLayout);
-          if (!slots.item) {
-            slots.item = (context) => h(_sfc_main$m, {
-              multiple: props.modelValue.layout.multiple,
-              itemProps: context.props,
-              item: context.item.raw
-            });
-          }
-          if (!slots.selection) {
-            slots.selection = (context) => h(_sfc_main$l, {
-              multiple: props.modelValue.layout.multiple,
-              last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
-              item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
-            });
-          }
-          return slots;
-        });
-        return () => h(VSelect, fieldProps.value, fieldSlots.value);
+        return () => h(VSelect, fieldProps.value, getSelectSlots(props.modelValue, props.statefulLayout, getItems));
       }
     });
     const defaultFilter = (value, query, item) => {
@@ -76785,37 +76867,16 @@ Reason: ${error2}`);
         useDefaults({}, "VjsfAutocomplete");
         const getItems = useGetItems(props);
         const fieldProps = computed(() => {
-          const fieldProps2 = getInputProps(props.modelValue, props.statefulLayout, ["multiple"]);
-          if (props.modelValue.options.readOnly)
-            fieldProps2.menuProps = { modelValue: false };
+          const fieldProps2 = getSelectProps(props.modelValue, props.statefulLayout);
           fieldProps2.noFilter = true;
           fieldProps2["onUpdate:search"] = (searchValue) => {
             getItems.search.value = searchValue;
           };
           fieldProps2.items = getItems.items.value;
           fieldProps2.loading = getItems.loading.value;
-          fieldProps2.clearable = fieldProps2.clearable ?? !props.modelValue.skeleton.required;
           return fieldProps2;
         });
-        const fieldSlots = computed(() => {
-          const slots = getCompSlots(props.modelValue, props.statefulLayout);
-          if (!slots.item) {
-            slots.item = (context) => h(_sfc_main$m, {
-              multiple: props.modelValue.layout.multiple,
-              itemProps: context.props,
-              item: context.item.raw
-            });
-          }
-          if (!slots.selection) {
-            slots.selection = (context) => h(_sfc_main$l, {
-              multiple: props.modelValue.layout.multiple,
-              last: props.modelValue.layout.multiple && context.index === props.modelValue.data.length - 1,
-              item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
-            });
-          }
-          return slots;
-        });
-        return () => h(VAutocomplete, fieldProps.value, fieldSlots.value);
+        return () => h(VAutocomplete, fieldProps.value, getSelectSlots(props.modelValue, props.statefulLayout, getItems));
       }
     });
     const makeVRadioProps = propsFactory({
@@ -79508,15 +79569,15 @@ Reason: ${error2}`);
       setup(__props, { emit: __emit }) {
         const nodeComponents = {
           section: _sfc_main$y,
-          "text-field": _sfc_main$x,
-          textarea: _sfc_main$w,
-          checkbox: _sfc_main$v,
-          switch: _sfc_main$u,
-          "number-field": _sfc_main$t,
-          slider: _sfc_main$s,
-          "date-picker": _sfc_main$q,
-          "date-time-picker": _sfc_main$p,
-          "color-picker": _sfc_main$o,
+          "text-field": _sfc_main$u,
+          textarea: _sfc_main$t,
+          checkbox: _sfc_main$s,
+          switch: _sfc_main$r,
+          "number-field": _sfc_main$q,
+          slider: _sfc_main$p,
+          "date-picker": _sfc_main$n,
+          "date-time-picker": _sfc_main$m,
+          "color-picker": _sfc_main$l,
           select: _sfc_main$k,
           autocomplete: _sfc_main$j,
           "radio-group": _sfc_main$i,
