@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-ssHnpVwu.js"(exports, module) {
+  "assets/index-UP3w4kQm.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -26910,8 +26910,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$5]]);
     var isVue2 = false;
     /*!
-     * pinia v2.1.7
-     * (c) 2023 Eduardo San Martin Morote
+     * pinia v2.2.0
+     * (c) 2024 Eduardo San Martin Morote
      * @license MIT
      */
     let activePinia;
@@ -26985,11 +26985,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       });
     }
     const fallbackRunWithContext = (fn) => fn();
+    const ACTION_MARKER = Symbol();
+    const ACTION_NAME = Symbol();
     function mergeReactiveObjects(target2, patchToApply) {
       if (target2 instanceof Map && patchToApply instanceof Map) {
         patchToApply.forEach((value, key) => target2.set(key, value));
-      }
-      if (target2 instanceof Set && patchToApply instanceof Set) {
+      } else if (target2 instanceof Set && patchToApply instanceof Set) {
         patchToApply.forEach(target2.add, target2);
       }
       for (const key in patchToApply) {
@@ -27042,10 +27043,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function createSetupStore($id2, setup2, options = {}, pinia2, hot, isOptionsStore) {
       let scope2;
       const optionsForPlugin = assign$2({ actions: {} }, options);
-      const $subscribeOptions = {
-        deep: true
-        // flush: 'post',
-      };
+      const $subscribeOptions = { deep: true };
       let isListening;
       let isSyncListening;
       let subscriptions = [];
@@ -27103,8 +27101,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         actionSubscriptions = [];
         pinia2._s.delete($id2);
       }
-      function wrapAction(name, action) {
-        return function() {
+      const action = (fn, name = "") => {
+        if (ACTION_MARKER in fn) {
+          fn[ACTION_NAME] = name;
+          return fn;
+        }
+        const wrappedAction = function() {
           setActivePinia(pinia2);
           const args = Array.from(arguments);
           const afterCallbackList = [];
@@ -27117,14 +27119,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
           triggerSubscriptions(actionSubscriptions, {
             args,
-            name,
+            name: wrappedAction[ACTION_NAME],
             store,
             after,
             onError
           });
           let ret;
           try {
-            ret = action.apply(this && this.$id === $id2 ? this : store, args);
+            ret = fn.apply(this && this.$id === $id2 ? this : store, args);
           } catch (error2) {
             triggerSubscriptions(onErrorCallbackList, error2);
             throw error2;
@@ -27141,7 +27143,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           triggerSubscriptions(afterCallbackList, ret);
           return ret;
         };
-      }
+        wrappedAction[ACTION_MARKER] = true;
+        wrappedAction[ACTION_NAME] = name;
+        return wrappedAction;
+      };
       const partialStore = {
         _p: pinia2,
         // _s: scope,
@@ -27167,7 +27172,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const store = reactive(partialStore);
       pinia2._s.set($id2, store);
       const runWithContext = pinia2._a && pinia2._a.runWithContext || fallbackRunWithContext;
-      const setupStore = runWithContext(() => pinia2._e.run(() => (scope2 = effectScope()).run(setup2)));
+      const setupStore = runWithContext(() => pinia2._e.run(() => (scope2 = effectScope()).run(() => setup2({ action }))));
       for (const key in setupStore) {
         const prop2 = setupStore[key];
         if (isRef(prop2) && !isComputed(prop2) || isReactive(prop2)) {
@@ -27184,7 +27189,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }
           }
         } else if (typeof prop2 === "function") {
-          const actionValue = wrapAction(key, prop2);
+          const actionValue = action(prop2, key);
           {
             setupStore[key] = actionValue;
           }
