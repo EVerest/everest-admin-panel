@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-sg9SNVFJ.js"(exports, module) {
+  "assets/index-dHquv6gs.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -1655,6 +1655,27 @@ var require_index_001 = __commonJS({
     function proxyRefs(objectWithRefs) {
       return isReactive(objectWithRefs) ? objectWithRefs : new Proxy(objectWithRefs, shallowUnwrapHandlers);
     }
+    class CustomRefImpl {
+      constructor(factory) {
+        this.dep = void 0;
+        this.__v_isRef = true;
+        const { get: get2, set: set2 } = factory(
+          () => trackRefValue(this),
+          () => triggerRefValue(this)
+        );
+        this._get = get2;
+        this._set = set2;
+      }
+      get value() {
+        return this._get();
+      }
+      set value(newVal) {
+        this._set(newVal);
+      }
+    }
+    function customRef(factory) {
+      return new CustomRefImpl(factory);
+    }
     function toRefs(object) {
       const ret = isArray$1(object) ? new Array(object.length) : {};
       for (const key in object) {
@@ -2812,6 +2833,13 @@ var require_index_001 = __commonJS({
         (normalized, p2) => (normalized[p2] = null, normalized),
         {}
       ) : props;
+    }
+    function mergeModels(a, b) {
+      if (!a || !b)
+        return a || b;
+      if (isArray$1(a) && isArray$1(b))
+        return a.concat(b);
+      return extend$1({}, normalizePropsOrEmits(a), normalizePropsOrEmits(b));
     }
     let shouldCacheAccess = true;
     function applyOptions(instance) {
@@ -5387,6 +5415,13 @@ var require_index_001 = __commonJS({
     function watchEffect(effect2, options) {
       return doWatch(effect2, null, options);
     }
+    function watchSyncEffect(effect2, options) {
+      return doWatch(
+        effect2,
+        null,
+        { flush: "sync" }
+      );
+    }
     const INITIAL_WATCHER_VALUE = {};
     function watch(source2, cb, options) {
       return doWatch(source2, cb, options);
@@ -5599,6 +5634,61 @@ var require_index_001 = __commonJS({
         }
       }
       return value;
+    }
+    function useModel(props, name, options = EMPTY_OBJ) {
+      const i2 = getCurrentInstance$1();
+      const camelizedName = camelize(name);
+      const hyphenatedName = hyphenate(name);
+      const modifiers = getModelModifiers(props, name);
+      const res = customRef((track2, trigger2) => {
+        let localValue;
+        let prevSetValue = EMPTY_OBJ;
+        let prevEmittedValue;
+        watchSyncEffect(() => {
+          const propValue = props[name];
+          if (hasChanged(localValue, propValue)) {
+            localValue = propValue;
+            trigger2();
+          }
+        });
+        return {
+          get() {
+            track2();
+            return options.get ? options.get(localValue) : localValue;
+          },
+          set(value) {
+            if (!hasChanged(value, localValue) && !(prevSetValue !== EMPTY_OBJ && hasChanged(value, prevSetValue))) {
+              return;
+            }
+            const rawProps = i2.vnode.props;
+            if (!(rawProps && // check if parent has passed v-model
+            (name in rawProps || camelizedName in rawProps || hyphenatedName in rawProps) && (`onUpdate:${name}` in rawProps || `onUpdate:${camelizedName}` in rawProps || `onUpdate:${hyphenatedName}` in rawProps))) {
+              localValue = value;
+              trigger2();
+            }
+            const emittedValue = options.set ? options.set(value) : value;
+            i2.emit(`update:${name}`, emittedValue);
+            if (hasChanged(value, emittedValue) && hasChanged(value, prevSetValue) && !hasChanged(emittedValue, prevEmittedValue)) {
+              trigger2();
+            }
+            prevSetValue = value;
+            prevEmittedValue = emittedValue;
+          }
+        };
+      });
+      res[Symbol.iterator] = () => {
+        let i22 = 0;
+        return {
+          next() {
+            if (i22 < 2) {
+              return { value: i22++ ? modifiers || EMPTY_OBJ : res, done: false };
+            } else {
+              return { done: true };
+            }
+          }
+        };
+      };
+      return res;
     }
     const getModelModifiers = (props, modelName) => {
       return modelName === "modelValue" || modelName === "model-value" ? props.modelModifiers : props[`${modelName}Modifiers`] || props[`${camelize(modelName)}Modifiers`] || props[`${hyphenate(modelName)}Modifiers`];
@@ -8066,7 +8156,7 @@ var require_index_001 = __commonJS({
       }
       return container;
     }
-    const _sfc_main$L = {
+    const _sfc_main$M = {
       name: "App"
     };
     const _export_sfc = (sfc, props) => {
@@ -8080,7 +8170,7 @@ var require_index_001 = __commonJS({
       const _component_router_view = resolveComponent("router-view");
       return openBlock(), createBlock(_component_router_view);
     }
-    const App = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$7]]);
+    const App = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$7]]);
     /*!
       * vue-router v4.4.0
       * (c) 2024 Eduardo San Martin Morote
@@ -9927,7 +10017,7 @@ var require_index_001 = __commonJS({
     let evbc$1;
     let router$1;
     let notyf$1;
-    const _sfc_main$K = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$L = /* @__PURE__ */ defineComponent$1({
       data: () => ({
         drawer: false,
         evbc_disconnected: false,
@@ -10235,7 +10325,7 @@ var require_index_001 = __commonJS({
       let char = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "0";
       return str2 + char.repeat(Math.max(0, length - str2.length));
     }
-    function padStart$1(str2, length) {
+    function padStart$2(str2, length) {
       let char = arguments.length > 2 && arguments[2] !== void 0 ? arguments[2] : "0";
       return char.repeat(Math.max(0, length - str2.length)) + str2;
     }
@@ -18519,8 +18609,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function toISO(adapter, value) {
       const date2 = adapter.toJsDate(value);
       const year = date2.getFullYear();
-      const month = padStart$1(String(date2.getMonth() + 1), 2, "0");
-      const day = padStart$1(String(date2.getDate()), 2, "0");
+      const month = padStart$2(String(date2.getMonth() + 1), 2, "0");
+      const day = padStart$2(String(date2.getDate()), 2, "0");
       return `${year}-${month}-${day}`;
     }
     function parseISO(value) {
@@ -20890,7 +20980,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
+    const MainPanel = /* @__PURE__ */ _export_sfc(_sfc_main$L, [["render", _sfc_render$6], ["__scopeId", "data-v-bf17ecd4"]]);
     /**
       * vee-validate v4.13.2
       * (c) 2024 Abdelrahman Awad
@@ -22955,7 +23045,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       ComponentViews2[ComponentViews2["ADD"] = 2] = "ADD";
       return ComponentViews2;
     })(ComponentViews || {});
-    const _sfc_main$J = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$K = /* @__PURE__ */ defineComponent$1({
       setup() {
         const evbc2 = inject$1("evbc");
         const servers = reactive([
@@ -26907,7 +26997,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         _: 1
       });
     }
-    const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["render", _sfc_render$5]]);
+    const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$5]]);
     var isVue2 = false;
     /*!
      * pinia v2.2.0
@@ -39929,7 +40019,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         // relative position
       };
     }
-    function padStart(string, max) {
+    function padStart$1(string, max) {
       return common$1.repeat(" ", max - string.length) + string;
     }
     function makeSnippet(mark, options) {
@@ -39971,10 +40061,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           mark.position - (lineStarts[foundLineNo] - lineStarts[foundLineNo - i2]),
           maxLineLength
         );
-        result = common$1.repeat(" ", options.indent) + padStart((mark.line - i2 + 1).toString(), lineNoLength) + " | " + line.str + "\n" + result;
+        result = common$1.repeat(" ", options.indent) + padStart$1((mark.line - i2 + 1).toString(), lineNoLength) + " | " + line.str + "\n" + result;
       }
       line = getLine$1(mark.buffer, lineStarts[foundLineNo], lineEnds[foundLineNo], mark.position, maxLineLength);
-      result += common$1.repeat(" ", options.indent) + padStart((mark.line + 1).toString(), lineNoLength) + " | " + line.str + "\n";
+      result += common$1.repeat(" ", options.indent) + padStart$1((mark.line + 1).toString(), lineNoLength) + " | " + line.str + "\n";
       result += common$1.repeat("-", options.indent + lineNoLength + 3 + line.pos) + "^\n";
       for (i2 = 1; i2 <= options.linesAfter; i2++) {
         if (foundLineNo + i2 >= lineEnds.length)
@@ -39986,7 +40076,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           mark.position - (lineStarts[foundLineNo] - lineStarts[foundLineNo + i2]),
           maxLineLength
         );
-        result += common$1.repeat(" ", options.indent) + padStart((mark.line + i2 + 1).toString(), lineNoLength) + " | " + line.str + "\n";
+        result += common$1.repeat(" ", options.indent) + padStart$1((mark.line + i2 + 1).toString(), lineNoLength) + " | " + line.str + "\n";
       }
       return result.replace(/\n$/, "");
     }
@@ -44947,7 +45037,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         highlightjs: o.component
       }
     };
-    const _sfc_main$I = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$J = /* @__PURE__ */ defineComponent$1({
       ...__default__,
       __name: "ConfigPreview",
       props: {
@@ -45092,8 +45182,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
-    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["__scopeId", "data-v-82fa1853"]]);
-    const _sfc_main$H = /* @__PURE__ */ defineComponent$1({
+    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$J, [["__scopeId", "data-v-82fa1853"]]);
+    const _sfc_main$I = /* @__PURE__ */ defineComponent$1({
       components: { ConfigPreview },
       setup() {
         const evbcStore2 = useEvbcStore();
@@ -45273,8 +45363,8 @@ Reason: ${error2}`);
         _: 1
       });
     }
-    const EvConfigCanvas = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$4]]);
-    const _sfc_main$G = /* @__PURE__ */ defineComponent$1({
+    const EvConfigCanvas = /* @__PURE__ */ _export_sfc(_sfc_main$I, [["render", _sfc_render$4]]);
+    const _sfc_main$H = /* @__PURE__ */ defineComponent$1({
       props: {
         show_dialog: {
           type: Boolean,
@@ -45363,7 +45453,7 @@ Reason: ${error2}`);
         _: 1
       }, 8, ["model-value", "onClick:outside"]);
     }
-    const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["render", _sfc_render$3]]);
+    const EvDialog = /* @__PURE__ */ _export_sfc(_sfc_main$H, [["render", _sfc_render$3]]);
     var ajv$1 = { exports: {} };
     var core$3 = {};
     var validate = {};
@@ -51502,7 +51592,7 @@ Reason: ${error2}`);
     const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
     const _hoisted_4 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Abort", -1));
     const _hoisted_5 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
-    const _sfc_main$F = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$G = /* @__PURE__ */ defineComponent$1({
       __name: "CreateConfig",
       emits: ["createConfig"],
       setup(__props, { emit: __emit }) {
@@ -51743,11 +51833,11 @@ Reason: ${error2}`);
         };
       }
     });
-    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["__scopeId", "data-v-a578a337"]]);
+    const CreateConfig = /* @__PURE__ */ _export_sfc(_sfc_main$G, [["__scopeId", "data-v-a578a337"]]);
     let evbcStore;
     let evbc;
     let notyf;
-    const _sfc_main$E = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$F = /* @__PURE__ */ defineComponent$1({
       data: () => {
         return {
           show_dialog: false,
@@ -52298,7 +52388,7 @@ Reason: ${error2}`);
         _: 1
       }, 8, ["modelValue"]);
     }
-    const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$E, [["render", _sfc_render$2]]);
+    const EvModuleList = /* @__PURE__ */ _export_sfc(_sfc_main$F, [["render", _sfc_render$2]]);
     var _2019 = { exports: {} };
     var dynamic$1 = {};
     var dynamicAnchor$1 = {};
@@ -71793,7 +71883,7 @@ Reason: ${error2}`);
         }
       }
     }
-    const _sfc_main$D = {
+    const _sfc_main$E = {
       props: {
         layoutSlot: {
           /** @type import('vue').PropType<import('@json-layout/vocabulary').Slot> */
@@ -71835,7 +71925,7 @@ Reason: ${error2}`);
       }
     };
     const _hoisted_1$5 = ["innerHTML"];
-    const _sfc_main$C = {
+    const _sfc_main$D = {
       __name: "help-message",
       props: {
         node: {
@@ -71880,7 +71970,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$B = {
+    const _sfc_main$C = {
       __name: "node",
       props: {
         modelValue: {
@@ -71948,18 +72038,18 @@ Reason: ${error2}`);
                 default: withCtx(() => {
                   var _a2, _b, _c, _d, _e, _f;
                   return [
-                    ((_a2 = __props.modelValue.layout.slots) == null ? void 0 : _a2.before) ? (openBlock(), createBlock(_sfc_main$D, {
+                    ((_a2 = __props.modelValue.layout.slots) == null ? void 0 : _a2.before) ? (openBlock(), createBlock(_sfc_main$E, {
                       key: "before",
                       "layout-slot": (_b = __props.modelValue.layout.slots) == null ? void 0 : _b.before,
                       node: __props.modelValue,
                       "stateful-layout": __props.statefulLayout,
                       class: normalizeClass(beforeAfterClasses[__props.modelValue.options.density])
                     }, null, 8, ["layout-slot", "node", "stateful-layout", "class"])) : createCommentVNode("", true),
-                    __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$C, {
+                    __props.modelValue.layout.help && !__props.modelValue.options.summary ? (openBlock(), createBlock(_sfc_main$D, {
                       key: 1,
                       node: __props.modelValue
                     }, null, 8, ["node"])) : createCommentVNode("", true),
-                    ((_c = __props.modelValue.layout.slots) == null ? void 0 : _c.component) ? (openBlock(), createBlock(_sfc_main$D, {
+                    ((_c = __props.modelValue.layout.slots) == null ? void 0 : _c.component) ? (openBlock(), createBlock(_sfc_main$E, {
                       key: "component",
                       "layout-slot": (_d = __props.modelValue.layout.slots) == null ? void 0 : _d.component,
                       node: __props.modelValue,
@@ -71969,7 +72059,7 @@ Reason: ${error2}`);
                       "model-value": __props.modelValue,
                       "stateful-layout": __props.statefulLayout
                     }, null, 8, ["model-value", "stateful-layout"])),
-                    ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$D, {
+                    ((_e = __props.modelValue.layout.slots) == null ? void 0 : _e.after) ? (openBlock(), createBlock(_sfc_main$E, {
                       key: "after",
                       "layout-slot": (_f = __props.modelValue.layout.slots) == null ? void 0 : _f.after,
                       node: __props.modelValue,
@@ -71986,7 +72076,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$A = {
+    const _sfc_main$B = {
       __name: "tree",
       props: {
         modelValue: {
@@ -72004,7 +72094,7 @@ Reason: ${error2}`);
         return (_ctx, _cache) => {
           return openBlock(), createBlock(unref(VRow), { class: "vjsf-tree" }, {
             default: withCtx(() => [
-              createVNode(_sfc_main$B, {
+              createVNode(_sfc_main$C, {
                 "stateful-layout": __props.statefulLayout,
                 "model-value": (
                   /** @type import('../types.js').VjsfNode */
@@ -72311,7 +72401,7 @@ Reason: ${error2}`);
       return { el: el2, statefulLayout, stateTree };
     };
     const _hoisted_1$4 = ["innerHTML"];
-    const _sfc_main$z = {
+    const _sfc_main$A = {
       __name: "section-header",
       props: {
         node: {
@@ -72375,7 +72465,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$y = {
+    const _sfc_main$z = {
       __name: "section",
       props: {
         modelValue: {
@@ -72394,13 +72484,13 @@ Reason: ${error2}`);
         return (_ctx, _cache) => {
           var _a2, _b;
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$z, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$A, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VRow), {
               dense: ((_a2 = __props.modelValue.options) == null ? void 0 : _a2.density) === "compact" || ((_b = __props.modelValue.options) == null ? void 0 : _b.density) === "comfortable"
             }, {
               default: withCtx(() => [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child) => {
-                  return openBlock(), createBlock(_sfc_main$B, {
+                  return openBlock(), createBlock(_sfc_main$C, {
                     key: child.fullKey,
                     "model-value": (
                       /** @type import('../../types.js').VjsfNode */
@@ -72429,8 +72519,28 @@ Reason: ${error2}`);
       const s = "" + val;
       return s.length === 1 ? "0" + s : s;
     };
+    const getDateTimeWithOffset = (date2) => {
+      const offsetMinutes = date2.getTimezoneOffset();
+      const offsetAbs = `${padTimeComponent(Math.abs(offsetMinutes / 60))}:${padTimeComponent(Math.abs(offsetMinutes % 60))}`;
+      let offset;
+      if (offsetMinutes < 0)
+        offset = `+${offsetAbs}`;
+      else if (offsetMinutes > 0)
+        offset = `-${offsetAbs}`;
+      else
+        offset = "Z";
+      return `${date2.getFullYear()}-${padTimeComponent(date2.getMonth() + 1)}-${padTimeComponent(date2.getDate())}T${padTimeComponent(date2.getHours())}:${padTimeComponent(date2.getMinutes())}:${padTimeComponent(date2.getSeconds())}${offset}`;
+    };
     const getDateTimeParts = (date2) => {
       return [`${date2.getFullYear()}-${padTimeComponent(date2.getMonth() + 1)}-${padTimeComponent(date2.getDate())}`, `${padTimeComponent(date2.getHours())}:${padTimeComponent(date2.getMinutes())}`];
+    };
+    const getShortTime = (time) => {
+      if (!time)
+        return "";
+      return time.slice(0, 5);
+    };
+    const getLongTime = (time) => {
+      return time + ":00Z";
     };
     const defaultProps = {
       fieldPropsCompact: {
@@ -72538,7 +72648,7 @@ Reason: ${error2}`);
       fullProps.onBlur = () => statefulLayout.blur(node);
       return fullProps;
     }
-    const _sfc_main$x = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$y = /* @__PURE__ */ defineComponent$1({
       props: {
         icon: {
           type: String,
@@ -72559,7 +72669,7 @@ Reason: ${error2}`);
         };
       }
     });
-    const _sfc_main$w = {
+    const _sfc_main$x = {
       __name: "select-item",
       props: {
         multiple: {
@@ -72588,7 +72698,7 @@ Reason: ${error2}`);
                   tabindex: "-1",
                   "model-value": isSelected
                 }, null, 8, ["model-value"])) : createCommentVNode("", true),
-                __props.item.icon ? (openBlock(), createBlock(_sfc_main$x, {
+                __props.item.icon ? (openBlock(), createBlock(_sfc_main$y, {
                   key: 1,
                   icon: __props.item.icon
                 }, null, 8, ["icon"])) : createCommentVNode("", true)
@@ -72604,7 +72714,7 @@ Reason: ${error2}`);
       key: 1,
       class: "v-select__selection-comma"
     };
-    const _sfc_main$v = {
+    const _sfc_main$w = {
       __name: "select-selection",
       props: {
         multiple: {
@@ -72624,7 +72734,7 @@ Reason: ${error2}`);
       setup(__props) {
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock("span", _hoisted_1$3, [
-            __props.item.icon ? (openBlock(), createBlock(_sfc_main$x, {
+            __props.item.icon ? (openBlock(), createBlock(_sfc_main$y, {
               key: 0,
               icon: __props.item.icon
             }, null, 8, ["icon"])) : createCommentVNode("", true),
@@ -72639,21 +72749,21 @@ Reason: ${error2}`);
         return {};
       const slots = {};
       for (const [key, layoutSlot] of Object.entries(node.layout.slots)) {
-        slots[key] = () => h(_sfc_main$D, { layoutSlot, node, statefulLayout });
+        slots[key] = () => h(_sfc_main$E, { layoutSlot, node, statefulLayout });
       }
       return slots;
     }
     function getSelectSlots(node, statefulLayout, getItems) {
       const slots = getCompSlots(node, statefulLayout);
       if (!slots.item) {
-        slots.item = (context) => h(_sfc_main$w, {
+        slots.item = (context) => h(_sfc_main$x, {
           multiple: node.layout.multiple,
           itemProps: context.props,
           item: context.item.raw
         });
       }
       if (!slots.selection) {
-        slots.selection = (context) => h(_sfc_main$v, {
+        slots.selection = (context) => h(_sfc_main$w, {
           multiple: node.layout.multiple,
           last: node.layout.multiple && context.index === node.data.length - 1,
           item: getItems.prepareSelectedItem(context.item.raw, context.item.value)
@@ -72661,7 +72771,7 @@ Reason: ${error2}`);
       }
       return slots;
     }
-    const _sfc_main$u = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$v = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfTextFieldNode> */
@@ -72937,7 +73047,7 @@ Reason: ${error2}`);
         return forwardRefs({}, vInputRef, vFieldRef, textareaRef);
       }
     });
-    const _sfc_main$t = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$u = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfTextareaNode> */
@@ -72969,7 +73079,7 @@ Reason: ${error2}`);
         return () => h(VTextarea, fieldProps.value, fieldSlots.value);
       }
     });
-    const _sfc_main$s = {
+    const _sfc_main$t = {
       __name: "checkbox",
       props: {
         modelValue: {
@@ -73167,7 +73277,7 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _sfc_main$r = {
+    const _sfc_main$s = {
       __name: "switch",
       props: {
         modelValue: {
@@ -73197,7 +73307,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$q = /* @__PURE__ */ defineComponent$1({
+    const _sfc_main$r = /* @__PURE__ */ defineComponent$1({
       props: {
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfNumberFieldNode> */
@@ -73930,7 +74040,7 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _sfc_main$p = {
+    const _sfc_main$q = {
       __name: "slider",
       props: {
         modelValue: {
@@ -73962,9 +74072,9 @@ Reason: ${error2}`);
         };
       }
     };
-    const _sfc_main$o = {
+    const _sfc_main$p = {
       __name: "text-field-menu",
-      props: {
+      props: /* @__PURE__ */ mergeModels({
         modelValue: {
           /** @type import('vue').PropType<import('../../types.js').VjsfNode> */
           type: Object,
@@ -73980,7 +74090,11 @@ Reason: ${error2}`);
           type: String,
           default: null
         }
-      },
+      }, {
+        "menuOpened": { type: Boolean, default: false },
+        "menuOpenedModifiers": {}
+      }),
+      emits: ["update:menuOpened"],
       setup(__props) {
         const props = __props;
         const fieldProps = computed(() => {
@@ -73999,7 +74113,7 @@ Reason: ${error2}`);
           return menuProps2;
         });
         const textField = ref$1(null);
-        const menuOpened = ref$1(false);
+        const menuOpened = useModel(__props, "menuOpened");
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
             createVNode(unref(VTextField), mergeProps({
@@ -75011,7 +75125,7 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _sfc_main$n = {
+    const _sfc_main$o = {
       __name: "date-picker",
       props: {
         modelValue: {
@@ -75029,41 +75143,688 @@ Reason: ${error2}`);
         useDefaults({}, "VjsfDatePicker");
         const props = __props;
         const vDate = useDate();
+        const menuOpened = ref$1(false);
         const datePickerProps = computed(() => {
           const datePickerProps2 = getCompProps(props.modelValue, true);
           datePickerProps2.hideActions = true;
           if (props.modelValue.data)
             datePickerProps2.modelValue = new Date(props.modelValue.data);
+          datePickerProps2["onUpdate:modelValue"] = (value) => {
+            if (!value)
+              return;
+            if (props.modelValue.layout.format === "date-time") {
+              props.statefulLayout.input(props.modelValue, getDateTimeWithOffset(value));
+            } else {
+              props.statefulLayout.input(props.modelValue, getDateTimeParts(
+                /** @type Date */
+                /** @type unknown */
+                value
+              )[0]);
+            }
+            menuOpened.value = false;
+          };
           return datePickerProps2;
         });
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(_sfc_main$o, {
+          return openBlock(), createBlock(_sfc_main$p, {
+            "menu-opened": menuOpened.value,
+            "onUpdate:menuOpened": _cache[0] || (_cache[0] = ($event) => menuOpened.value = $event),
             "model-value": __props.modelValue,
             "stateful-layout": __props.statefulLayout,
             "formatted-value": __props.modelValue.data && unref(vDate).format(__props.modelValue.data, "fullDateWithWeekday")
           }, {
-            default: withCtx(({ close }) => [
-              createVNode(unref(VDatePicker), mergeProps(datePickerProps.value, {
-                "onUpdate:modelValue": (value) => {
-                  __props.statefulLayout.input(__props.modelValue, value && unref(getDateTimeParts)(
-                    /** @type Date */
-                    /** @type unknown */
-                    value
-                  )[0]);
-                  close();
-                }
-              }), null, 16, ["onUpdate:modelValue"])
+            default: withCtx(() => [
+              createVNode(unref(VDatePicker), normalizeProps(guardReactiveProps(datePickerProps.value)), null, 16)
             ]),
             _: 1
-          }, 8, ["model-value", "stateful-layout", "formatted-value"]);
+          }, 8, ["menu-opened", "model-value", "stateful-layout", "formatted-value"]);
         };
       }
     };
-    const _sfc_main$m = {
-      __name: "date-time-picker",
+    const makeVTimePickerClockProps = propsFactory({
+      allowedValues: Function,
+      ampm: Boolean,
+      color: String,
+      disabled: Boolean,
+      displayedValue: null,
+      double: Boolean,
+      format: {
+        type: Function,
+        default: (val) => val
+      },
+      max: {
+        type: Number,
+        required: true
+      },
+      min: {
+        type: Number,
+        required: true
+      },
+      scrollable: Boolean,
+      readonly: Boolean,
+      rotate: {
+        type: Number,
+        default: 0
+      },
+      step: {
+        type: Number,
+        default: 1
+      },
+      modelValue: {
+        type: Number
+      }
+    }, "VTimePickerClock");
+    const VTimePickerClock = genericComponent()({
+      name: "VTimePickerClock",
+      props: makeVTimePickerClockProps(),
+      emits: {
+        change: (val) => true,
+        input: (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          emit: emit2
+        } = _ref;
+        const clockRef = ref$1(null);
+        const innerClockRef = ref$1(null);
+        const inputValue = ref$1(void 0);
+        const isDragging = ref$1(false);
+        const valueOnMouseDown = ref$1(null);
+        const valueOnMouseUp = ref$1(null);
+        const {
+          textColorClasses,
+          textColorStyles
+        } = useTextColor(toRef(props, "color"));
+        const {
+          backgroundColorClasses,
+          backgroundColorStyles
+        } = useBackgroundColor(toRef(props, "color"));
+        const count = computed(() => props.max - props.min + 1);
+        const roundCount = computed(() => props.double ? count.value / 2 : count.value);
+        const degreesPerUnit = computed(() => 360 / roundCount.value);
+        const degrees = computed(() => degreesPerUnit.value * Math.PI / 180);
+        const displayedValue = computed(() => props.modelValue == null ? props.min : props.modelValue);
+        const innerRadiusScale = computed(() => 0.62);
+        const genChildren = computed(() => {
+          const children = [];
+          for (let value = props.min; value <= props.max; value = value + props.step) {
+            children.push(value);
+          }
+          return children;
+        });
+        watch(() => props.modelValue, (val) => {
+          inputValue.value = val;
+        });
+        function update(value) {
+          if (inputValue.value !== value) {
+            inputValue.value = value;
+          }
+          emit2("input", value);
+        }
+        function isAllowed(value) {
+          return !props.allowedValues || props.allowedValues(value);
+        }
+        function wheel(e) {
+          if (!props.scrollable || props.disabled)
+            return;
+          e.preventDefault();
+          const delta2 = Math.sign(-e.deltaY || 1);
+          let value = displayedValue.value;
+          do {
+            value = value + delta2;
+            value = (value - props.min + count.value) % count.value + props.min;
+          } while (!isAllowed(value) && value !== displayedValue.value);
+          if (value !== props.displayedValue) {
+            update(value);
+          }
+        }
+        function isInner(value) {
+          return props.double && value - props.min >= roundCount.value;
+        }
+        function handScale(value) {
+          return isInner(value) ? innerRadiusScale.value : 1;
+        }
+        function getPosition2(value) {
+          const rotateRadians = props.rotate * Math.PI / 180;
+          return {
+            x: Math.sin((value - props.min) * degrees.value + rotateRadians) * handScale(value),
+            y: -Math.cos((value - props.min) * degrees.value + rotateRadians) * handScale(value)
+          };
+        }
+        function angleToValue(angle3, insideClick) {
+          const value = (Math.round(angle3 / degreesPerUnit.value) + (insideClick ? roundCount.value : 0)) % count.value + props.min;
+          if (angle3 < 360 - degreesPerUnit.value / 2)
+            return value;
+          return insideClick ? props.max - roundCount.value + 1 : props.min;
+        }
+        function getTransform(i2) {
+          const {
+            x: x2,
+            y
+          } = getPosition2(i2);
+          return {
+            left: `${50 + x2 * 50}%`,
+            top: `${50 + y * 50}%`
+          };
+        }
+        function euclidean(p0, p1) {
+          const dx = p1.x - p0.x;
+          const dy = p1.y - p0.y;
+          return Math.sqrt(dx * dx + dy * dy);
+        }
+        function angle2(center, p1) {
+          const value = 2 * Math.atan2(p1.y - center.y - euclidean(center, p1), p1.x - center.x);
+          return Math.abs(value * 180 / Math.PI);
+        }
+        function setMouseDownValue(value) {
+          if (valueOnMouseDown.value === null) {
+            valueOnMouseDown.value = value;
+          }
+          valueOnMouseUp.value = value;
+          update(value);
+        }
+        function onDragMove(e) {
+          var _a2, _b;
+          e.preventDefault();
+          if (!isDragging.value && e.type !== "click" || !clockRef.value)
+            return;
+          const {
+            width,
+            top: top2,
+            left
+          } = (_a2 = clockRef.value) == null ? void 0 : _a2.getBoundingClientRect();
+          const {
+            width: innerWidth
+          } = ((_b = innerClockRef.value) == null ? void 0 : _b.getBoundingClientRect()) ?? {
+            width: 0
+          };
+          const {
+            clientX,
+            clientY
+          } = "touches" in e ? e.touches[0] : e;
+          const center = {
+            x: width / 2,
+            y: -width / 2
+          };
+          const coords = {
+            x: clientX - left,
+            y: top2 - clientY
+          };
+          const handAngle = Math.round(angle2(center, coords) - props.rotate + 360) % 360;
+          const insideClick = props.double && euclidean(center, coords) < (innerWidth + innerWidth * innerRadiusScale.value) / 4;
+          const checksCount = Math.ceil(15 / degreesPerUnit.value);
+          let value;
+          for (let i2 = 0; i2 < checksCount; i2++) {
+            value = angleToValue(handAngle + i2 * degreesPerUnit.value, insideClick);
+            if (isAllowed(value))
+              return setMouseDownValue(value);
+            value = angleToValue(handAngle - i2 * degreesPerUnit.value, insideClick);
+            if (isAllowed(value))
+              return setMouseDownValue(value);
+          }
+        }
+        function onMouseDown(e) {
+          if (props.disabled)
+            return;
+          e.preventDefault();
+          window.addEventListener("mousemove", onDragMove);
+          window.addEventListener("touchmove", onDragMove);
+          window.addEventListener("mouseup", onMouseUp);
+          window.addEventListener("touchend", onMouseUp);
+          valueOnMouseDown.value = null;
+          valueOnMouseUp.value = null;
+          isDragging.value = true;
+          onDragMove(e);
+        }
+        function onMouseUp(e) {
+          e.stopPropagation();
+          window.removeEventListener("mousemove", onDragMove);
+          window.removeEventListener("touchmove", onDragMove);
+          window.removeEventListener("mouseup", onMouseUp);
+          window.removeEventListener("touchend", onMouseUp);
+          isDragging.value = false;
+          if (valueOnMouseUp.value !== null && isAllowed(valueOnMouseUp.value)) {
+            emit2("change", valueOnMouseUp.value);
+          }
+        }
+        useRender(() => {
+          return createVNode("div", {
+            "class": [{
+              "v-time-picker-clock": true,
+              "v-time-picker-clock--indeterminate": props.modelValue == null,
+              "v-time-picker-clock--readonly": props.readonly
+            }],
+            "onMousedown": onMouseDown,
+            "onTouchstart": onMouseDown,
+            "onWheel": wheel,
+            "ref": clockRef
+          }, [createVNode("div", {
+            "class": "v-time-picker-clock__inner",
+            "ref": innerClockRef
+          }, [createVNode("div", {
+            "class": [{
+              "v-time-picker-clock__hand": true,
+              "v-time-picker-clock__hand--inner": isInner(props.modelValue)
+            }, textColorClasses.value],
+            "style": [{
+              transform: `rotate(${props.rotate + degreesPerUnit.value * (displayedValue.value - props.min)}deg) scaleY(${handScale(displayedValue.value)})`
+            }, textColorStyles.value]
+          }, null), genChildren.value.map((value) => {
+            const isActive = value === displayedValue.value;
+            return createVNode("div", {
+              "class": [{
+                "v-time-picker-clock__item": true,
+                "v-time-picker-clock__item--active": isActive,
+                "v-time-picker-clock__item--disabled": props.disabled || !isAllowed(value)
+              }, isActive && backgroundColorClasses.value],
+              "style": [getTransform(value), isActive && backgroundColorStyles.value]
+            }, [createVNode("span", null, [props.format(value)])]);
+          })])]);
+        });
+      }
+    });
+    const padStart = (string, targetLength, padString) => {
+      targetLength = targetLength >> 0;
+      string = String(string);
+      padString = String(padString);
+      if (string.length > targetLength) {
+        return String(string);
+      }
+      targetLength = targetLength - string.length;
+      if (targetLength > padString.length) {
+        padString += padString.repeat(targetLength / padString.length);
+      }
+      return padString.slice(0, targetLength) + String(string);
+    };
+    const pad = function(n) {
+      let length = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : 2;
+      return padStart(n, length, "0");
+    };
+    var SelectingTimes = /* @__PURE__ */ function(SelectingTimes2) {
+      SelectingTimes2[SelectingTimes2["Hour"] = 1] = "Hour";
+      SelectingTimes2[SelectingTimes2["Minute"] = 2] = "Minute";
+      SelectingTimes2[SelectingTimes2["Second"] = 3] = "Second";
+      return SelectingTimes2;
+    }(SelectingTimes || {});
+    const makeVTimePickerControlsProps = propsFactory({
+      ampm: Boolean,
+      ampmInTitle: Boolean,
+      ampmReadonly: Boolean,
+      color: String,
+      disabled: Boolean,
+      hour: Number,
+      minute: Number,
+      second: Number,
+      period: String,
+      readonly: Boolean,
+      useSeconds: Boolean,
+      selecting: Number,
+      value: Number
+    }, "VTimePickerControls");
+    const VTimePickerControls = genericComponent()({
+      name: "VTimePickerControls",
+      props: makeVTimePickerControlsProps(),
+      emits: {
+        "update:period": (data) => true,
+        "update:selecting": (data) => true
+      },
+      setup(props, _ref) {
+        let {
+          emit: emit2,
+          slots
+        } = _ref;
+        const {
+          t
+        } = useLocale();
+        useRender(() => {
+          let hour = props.hour;
+          if (props.ampm) {
+            hour = hour ? (hour - 1) % 12 + 1 : 12;
+          }
+          return createVNode("div", {
+            "class": "v-time-picker-controls"
+          }, [createVNode("div", {
+            "class": {
+              "v-time-picker-controls__time": true,
+              "v-time-picker-controls__time--with-seconds": props.useSeconds
+            }
+          }, [createVNode(VBtn, {
+            "active": props.selecting === 1,
+            "color": props.selecting === 1 ? props.color : void 0,
+            "disabled": props.disabled,
+            "variant": "tonal",
+            "class": {
+              "v-time-picker-controls__time__btn": true,
+              "v-time-picker-controls__time--with-ampm__btn": props.ampm,
+              "v-time-picker-controls__time--with-seconds__btn": props.useSeconds
+            },
+            "text": props.hour == null ? "--" : pad(`${hour}`),
+            "onClick": () => emit2("update:selecting", SelectingTimes.Hour)
+          }, null), createVNode("span", {
+            "class": ["v-time-picker-controls__time__separator", {
+              "v-time-picker-controls--with-seconds__time__separator": props.useSeconds
+            }]
+          }, [createTextVNode(":")]), createVNode(VBtn, {
+            "active": props.selecting === 2,
+            "color": props.selecting === 2 ? props.color : void 0,
+            "class": {
+              "v-time-picker-controls__time__btn": true,
+              "v-time-picker-controls__time__btn__active": props.selecting === 2,
+              "v-time-picker-controls__time--with-ampm__btn": props.ampm,
+              "v-time-picker-controls__time--with-seconds__btn": props.useSeconds
+            },
+            "disabled": props.disabled,
+            "variant": "tonal",
+            "text": props.minute == null ? "--" : pad(props.minute),
+            "onClick": () => emit2("update:selecting", SelectingTimes.Minute)
+          }, null), props.useSeconds && createVNode("span", {
+            "class": ["v-time-picker-controls__time__separator", {
+              "v-time-picker-controls--with-seconds__time__separator": props.useSeconds
+            }],
+            "key": "secondsDivider"
+          }, [createTextVNode(":")]), props.useSeconds && createVNode(VBtn, {
+            "key": "secondsVal",
+            "variant": "tonal",
+            "onClick": () => emit2("update:selecting", SelectingTimes.Second),
+            "class": {
+              "v-time-picker-controls__time__btn": true,
+              "v-time-picker-controls__time__btn__active": props.selecting === 3,
+              "v-time-picker-controls__time--with-seconds__btn": props.useSeconds
+            },
+            "disabled": props.disabled,
+            "text": props.second == null ? "--" : pad(props.second)
+          }, null), props.ampm && props.ampmInTitle && createVNode("div", {
+            "class": ["v-time-picker-controls__ampm", {
+              "v-time-picker-controls__ampm--readonly": props.ampmReadonly
+            }]
+          }, [createVNode(VBtn, {
+            "active": props.period === "am",
+            "color": props.period === "am" ? props.color : void 0,
+            "class": {
+              "v-time-picker-controls__ampm__am": true,
+              "v-time-picker-controls__ampm__btn": true,
+              "v-time-picker-controls__ampm__btn__active": props.period === "am"
+            },
+            "disabled": props.disabled,
+            "text": t("$vuetify.timePicker.am"),
+            "variant": props.disabled && props.period === "am" ? "elevated" : "tonal",
+            "onClick": () => props.period !== "am" ? emit2("update:period", "am") : null
+          }, null), createVNode(VBtn, {
+            "active": props.period === "pm",
+            "color": props.period === "pm" ? props.color : void 0,
+            "class": {
+              "v-time-picker-controls__ampm__pm": true,
+              "v-time-picker-controls__ampm__btn": true,
+              "v-time-picker-controls__ampm__btn__active": props.period === "pm"
+            },
+            "disabled": props.disabled,
+            "text": t("$vuetify.timePicker.pm"),
+            "variant": props.disabled && props.period === "pm" ? "elevated" : "tonal",
+            "onClick": () => props.period !== "pm" ? emit2("update:period", "pm") : null
+          }, null)])])]);
+        });
+        return {};
+      }
+    });
+    const rangeHours24 = createRange(24);
+    const rangeHours12am = createRange(12);
+    const rangeHours12pm = rangeHours12am.map((v) => v + 12);
+    const range60 = createRange(60);
+    const selectingNames = {
+      1: "hour",
+      2: "minute",
+      3: "second"
+    };
+    const makeVTimePickerProps = propsFactory({
+      allowedHours: [Function, Array],
+      allowedMinutes: [Function, Array],
+      allowedSeconds: [Function, Array],
+      ampmInTitle: Boolean,
+      disabled: Boolean,
+      format: {
+        type: String,
+        default: "ampm"
+      },
+      max: String,
+      min: String,
+      modelValue: null,
+      readonly: Boolean,
+      scrollable: Boolean,
+      useSeconds: Boolean,
+      ...omit$1(makeVPickerProps({
+        title: "$vuetify.timePicker.title"
+      }), ["landscape"])
+    }, "VTimePicker");
+    const VTimePicker = genericComponent()({
+      name: "VTimePicker",
+      props: makeVTimePickerProps(),
+      emits: {
+        "update:hour": (val) => true,
+        "update:minute": (val) => true,
+        "update:period": (val) => true,
+        "update:second": (val) => true,
+        "update:modelValue": (val) => true
+      },
+      setup(props, _ref) {
+        let {
+          emit: emit2,
+          slots
+        } = _ref;
+        const {
+          t
+        } = useLocale();
+        const inputHour = ref$1(null);
+        const inputMinute = ref$1(null);
+        const inputSecond = ref$1(null);
+        const lazyInputHour = ref$1(null);
+        const lazyInputMinute = ref$1(null);
+        const lazyInputSecond = ref$1(null);
+        const period2 = ref$1("am");
+        const selecting = ref$1(SelectingTimes.Hour);
+        const controlsRef = ref$1(null);
+        const clockRef = ref$1(null);
+        const isAllowedHourCb = computed(() => {
+          let cb;
+          if (props.allowedHours instanceof Array) {
+            cb = (val) => props.allowedHours.includes(val);
+          } else {
+            cb = props.allowedHours;
+          }
+          if (!props.min && !props.max)
+            return cb;
+          const minHour = props.min ? Number(props.min.split(":")[0]) : 0;
+          const maxHour = props.max ? Number(props.max.split(":")[0]) : 23;
+          return (val) => {
+            return val >= minHour * 1 && val <= maxHour * 1 && (!cb || cb(val));
+          };
+        });
+        const isAllowedMinuteCb = computed(() => {
+          let cb;
+          const isHourAllowed = !isAllowedHourCb.value || inputHour.value === null || isAllowedHourCb.value(inputHour.value);
+          if (props.allowedMinutes instanceof Array) {
+            cb = (val) => props.allowedMinutes.includes(val);
+          } else {
+            cb = props.allowedMinutes;
+          }
+          if (!props.min && !props.max) {
+            return isHourAllowed ? cb : () => false;
+          }
+          const [minHour, minMinute] = props.min ? props.min.split(":").map(Number) : [0, 0];
+          const [maxHour, maxMinute] = props.max ? props.max.split(":").map(Number) : [23, 59];
+          const minTime = minHour * 60 + minMinute * 1;
+          const maxTime = maxHour * 60 + maxMinute * 1;
+          return (val) => {
+            const time = 60 * inputHour.value + val;
+            return time >= minTime && time <= maxTime && isHourAllowed && (!cb || cb(val));
+          };
+        });
+        const isAllowedSecondCb = computed(() => {
+          let cb;
+          const isHourAllowed = !isAllowedHourCb.value || inputHour.value === null || isAllowedHourCb.value(inputHour.value);
+          const isMinuteAllowed = isHourAllowed && (!isAllowedMinuteCb.value || inputMinute.value === null || isAllowedMinuteCb.value(inputMinute.value));
+          if (props.allowedSeconds instanceof Array) {
+            cb = (val) => props.allowedSeconds.includes(val);
+          } else {
+            cb = props.allowedSeconds;
+          }
+          if (!props.min && !props.max) {
+            return isMinuteAllowed ? cb : () => false;
+          }
+          const [minHour, minMinute, minSecond] = props.min ? props.min.split(":").map(Number) : [0, 0, 0];
+          const [maxHour, maxMinute, maxSecond] = props.max ? props.max.split(":").map(Number) : [23, 59, 59];
+          const minTime = minHour * 3600 + minMinute * 60 + (minSecond || 0) * 1;
+          const maxTime = maxHour * 3600 + maxMinute * 60 + (maxSecond || 0) * 1;
+          return (val) => {
+            const time = 3600 * inputHour.value + 60 * inputMinute.value + val;
+            return time >= minTime && time <= maxTime && isMinuteAllowed && (!cb || cb(val));
+          };
+        });
+        const isAmPm = computed(() => {
+          return props.format === "ampm";
+        });
+        watch(() => props.modelValue, (val) => setInputData(val));
+        onMounted(() => {
+          setInputData(props.modelValue);
+        });
+        function genValue() {
+          if (inputHour.value != null && inputMinute.value != null && (!props.useSeconds || inputSecond.value != null)) {
+            return `${pad(inputHour.value)}:${pad(inputMinute.value)}` + (props.useSeconds ? `:${pad(inputSecond.value)}` : "");
+          }
+          return null;
+        }
+        function emitValue() {
+          const value = genValue();
+          if (value !== null)
+            emit2("update:modelValue", value);
+        }
+        function convert24to12(hour) {
+          return hour ? (hour - 1) % 12 + 1 : 12;
+        }
+        function convert12to24(hour, period3) {
+          return hour % 12 + (period3 === "pm" ? 12 : 0);
+        }
+        function setInputData(value) {
+          if (value == null || value === "") {
+            inputHour.value = null;
+            inputMinute.value = null;
+            inputSecond.value = null;
+          } else if (value instanceof Date) {
+            inputHour.value = value.getHours();
+            inputMinute.value = value.getMinutes();
+            inputSecond.value = value.getSeconds();
+          } else {
+            const [hour, , minute, , second, period3] = value.trim().toLowerCase().match(/^(\d+):(\d+)(:(\d+))?([ap]m)?$/) || new Array(6);
+            inputHour.value = period3 ? convert12to24(parseInt(hour, 10), period3) : parseInt(hour, 10);
+            inputMinute.value = parseInt(minute, 10);
+            inputSecond.value = parseInt(second || 0, 10);
+          }
+          period2.value = inputHour.value == null || inputHour.value < 12 ? "am" : "pm";
+        }
+        function firstAllowed(type2, value) {
+          const allowedFn = type2 === "hour" ? isAllowedHourCb.value : type2 === "minute" ? isAllowedMinuteCb.value : isAllowedSecondCb.value;
+          if (!allowedFn)
+            return value;
+          const range2 = type2 === "minute" ? range60 : type2 === "second" ? range60 : isAmPm.value ? value < 12 ? rangeHours12am : rangeHours12pm : rangeHours24;
+          const first = range2.find((v) => allowedFn((v + value) % range2.length + range2[0]));
+          return ((first || 0) + value) % range2.length + range2[0];
+        }
+        function setPeriod(val) {
+          period2.value = val;
+          if (inputHour.value != null) {
+            const newHour = inputHour.value + (period2.value === "am" ? -12 : 12);
+            inputHour.value = firstAllowed("hour", newHour);
+          }
+          emit2("update:period", val);
+          emitValue();
+          return true;
+        }
+        function onInput(value) {
+          if (selecting.value === SelectingTimes.Hour) {
+            inputHour.value = isAmPm.value ? convert12to24(value, period2.value) : value;
+          } else if (selecting.value === SelectingTimes.Minute) {
+            inputMinute.value = value;
+          } else {
+            inputSecond.value = value;
+          }
+        }
+        function onChange(value) {
+          switch (selectingNames[selecting.value]) {
+            case "hour":
+              emit2("update:hour", value);
+              break;
+            case "minute":
+              emit2("update:minute", value);
+              break;
+            case "second":
+              emit2("update:second", value);
+              break;
+          }
+          const emitChange = selecting.value === (props.useSeconds ? SelectingTimes.Second : SelectingTimes.Minute);
+          if (selecting.value === SelectingTimes.Hour) {
+            selecting.value = SelectingTimes.Minute;
+          } else if (props.useSeconds && selecting.value === SelectingTimes.Minute) {
+            selecting.value = SelectingTimes.Second;
+          }
+          if (inputHour.value === lazyInputHour.value && inputMinute.value === lazyInputMinute.value && (!props.useSeconds || inputSecond.value === lazyInputSecond.value))
+            return;
+          const time = genValue();
+          if (time === null)
+            return;
+          lazyInputHour.value = inputHour.value;
+          lazyInputMinute.value = inputMinute.value;
+          props.useSeconds && (lazyInputSecond.value = inputSecond.value);
+          emitChange && emitValue();
+        }
+        useRender(() => {
+          const pickerProps = VPicker.filterProps(props);
+          const timePickerControlsProps = VTimePickerControls.filterProps(props);
+          const timePickerClockProps = VTimePickerClock.filterProps(omit$1(props, ["format", "modelValue", "min", "max"]));
+          return createVNode(VPicker, mergeProps(pickerProps, {
+            "color": void 0,
+            "class": ["v-time-picker", props.class],
+            "style": props.style
+          }), {
+            title: () => {
+              var _a2;
+              return ((_a2 = slots.title) == null ? void 0 : _a2.call(slots)) ?? createVNode("div", {
+                "class": "v-time-picker__title"
+              }, [t(props.title)]);
+            },
+            header: () => createVNode(VTimePickerControls, mergeProps(timePickerControlsProps, {
+              "ampm": isAmPm.value || props.ampmInTitle,
+              "ampmReadonly": isAmPm.value && !props.ampmInTitle,
+              "hour": inputHour.value,
+              "minute": inputMinute.value,
+              "period": period2.value,
+              "second": inputSecond.value,
+              "selecting": selecting.value,
+              "onUpdate:period": (val) => setPeriod(val),
+              "onUpdate:selecting": (value) => selecting.value = value,
+              "ref": controlsRef
+            }), null),
+            default: () => createVNode(VTimePickerClock, mergeProps(timePickerClockProps, {
+              "allowedValues": selecting.value === SelectingTimes.Hour ? isAllowedHourCb.value : selecting.value === SelectingTimes.Minute ? isAllowedMinuteCb.value : isAllowedSecondCb.value,
+              "double": selecting.value === SelectingTimes.Hour && !isAmPm.value,
+              "format": selecting.value === SelectingTimes.Hour ? isAmPm.value ? convert24to12 : (val) => val : (val) => pad(val, 2),
+              "max": selecting.value === SelectingTimes.Hour ? isAmPm.value && period2.value === "am" ? 11 : 23 : 59,
+              "min": selecting.value === SelectingTimes.Hour && isAmPm.value && period2.value === "pm" ? 12 : 0,
+              "size": 20,
+              "step": selecting.value === SelectingTimes.Hour ? 1 : 5,
+              "modelValue": selecting.value === SelectingTimes.Hour ? inputHour.value : selecting.value === SelectingTimes.Minute ? inputMinute.value : inputSecond.value,
+              "onChange": onChange,
+              "onInput": onInput,
+              "ref": clockRef
+            }), null),
+            actions: slots.actions
+          });
+        });
+      }
+    });
+    const _sfc_main$n = {
+      __name: "time-picker",
       props: {
         modelValue: {
-          /** @type import('vue').PropType<import('../../types.js').VjsfDateTimePickerNode> */
+          /** @type import('vue').PropType<import('../../types.js').VjsfDatePickerNode> */
           type: Object,
           required: true
         },
@@ -75074,9 +75835,163 @@ Reason: ${error2}`);
         }
       },
       setup(__props) {
-        useDefaults({}, "VjsfDateTimePicker");
+        useDefaults({}, "VjsfDatePicker");
+        const props = __props;
+        const vDate = useDate();
+        const timePickerProps = computed(() => {
+          const timePickerProps2 = getCompProps(props.modelValue, true);
+          timePickerProps2["ampm-in-title"] = true;
+          if (props.modelValue.data)
+            timePickerProps2.modelValue = getShortTime(props.modelValue.data);
+          return timePickerProps2;
+        });
         return (_ctx, _cache) => {
-          return " TODO date-time ";
+          return openBlock(), createBlock(_sfc_main$p, {
+            "model-value": __props.modelValue,
+            "stateful-layout": __props.statefulLayout,
+            "formatted-value": timePickerProps.value.modelValue && unref(vDate).format("2010-04-13T" + timePickerProps.value.modelValue, "fullTime")
+          }, {
+            default: withCtx(() => [
+              createVNode(unref(VTimePicker), mergeProps(timePickerProps.value, {
+                "onUpdate:modelValue": _cache[0] || (_cache[0] = (value) => {
+                  __props.statefulLayout.input(__props.modelValue, value && unref(getLongTime)(value));
+                })
+              }), null, 16)
+            ]),
+            _: 1
+          }, 8, ["model-value", "stateful-layout", "formatted-value"]);
+        };
+      }
+    };
+    const _sfc_main$m = {
+      __name: "date-time-picker",
+      props: {
+        modelValue: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfDatePickerNode> */
+          type: Object,
+          required: true
+        },
+        statefulLayout: {
+          /** @type import('vue').PropType<import('../../types.js').VjsfStatefulLayout> */
+          type: Object,
+          required: true
+        }
+      },
+      setup(__props) {
+        useDefaults({}, "VjsfDatePicker");
+        const props = __props;
+        const vDate = useDate();
+        const tab = ref$1("date");
+        const menuOpened = ref$1(false);
+        watch(menuOpened, () => {
+          tab.value = "date";
+        });
+        const datePickerProps = computed(() => {
+          const datePickerProps2 = getCompProps(props.modelValue, false);
+          datePickerProps2.hideActions = true;
+          if (props.modelValue.data)
+            datePickerProps2.modelValue = new Date(props.modelValue.data);
+          datePickerProps2["onUpdate:modelValue"] = (value) => {
+            if (!value)
+              return;
+            if (props.modelValue.data) {
+              const datePart = value && getDateTimeParts(
+                /** @type Date */
+                /** @type unknown */
+                value
+              )[0];
+              props.statefulLayout.input(props.modelValue, datePart + props.modelValue.data.slice(10));
+            } else {
+              props.statefulLayout.input(props.modelValue, getDateTimeWithOffset(value));
+            }
+            tab.value = "time";
+          };
+          return datePickerProps2;
+        });
+        const timePickerProps = computed(() => {
+          const timePickerProps2 = getCompProps(props.modelValue, false);
+          timePickerProps2["ampm-in-title"] = true;
+          if (props.modelValue.data)
+            timePickerProps2.modelValue = getShortTime(props.modelValue.data.slice(11));
+          timePickerProps2["onUpdate:modelValue"] = (value) => {
+            if (!props.modelValue.data)
+              return;
+            console.log("set time", value, props.modelValue.data.slice(0, 10), props.modelValue.data.slice(15));
+            props.statefulLayout.input(props.modelValue, props.modelValue.data.slice(0, 11) + value + props.modelValue.data.slice(16));
+          };
+          return timePickerProps2;
+        });
+        return (_ctx, _cache) => {
+          return openBlock(), createBlock(_sfc_main$p, {
+            "menu-opened": menuOpened.value,
+            "onUpdate:menuOpened": _cache[2] || (_cache[2] = ($event) => menuOpened.value = $event),
+            "model-value": __props.modelValue,
+            "stateful-layout": __props.statefulLayout,
+            "formatted-value": __props.modelValue.data && unref(vDate).format(__props.modelValue.data, "fullDateTime")
+          }, {
+            default: withCtx(() => [
+              createVNode(unref(VSheet), { style: { "width": "328px" } }, {
+                default: withCtx(() => [
+                  createVNode(unref(VTabs), {
+                    modelValue: tab.value,
+                    "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => tab.value = $event),
+                    "align-tabs": "center"
+                  }, {
+                    default: withCtx(() => [
+                      createVNode(unref(VTab), { value: "date" }, {
+                        default: withCtx(() => [
+                          createVNode(unref(VIcon), null, {
+                            default: withCtx(() => [
+                              createTextVNode("mdi-calendar")
+                            ]),
+                            _: 1
+                          })
+                        ]),
+                        _: 1
+                      }),
+                      createVNode(unref(VTab), {
+                        value: "time",
+                        disabled: !__props.modelValue.data
+                      }, {
+                        default: withCtx(() => [
+                          createVNode(unref(VIcon), null, {
+                            default: withCtx(() => [
+                              createTextVNode("mdi-clock")
+                            ]),
+                            _: 1
+                          })
+                        ]),
+                        _: 1
+                      }, 8, ["disabled"])
+                    ]),
+                    _: 1
+                  }, 8, ["modelValue"]),
+                  createVNode(unref(VTabsWindow), {
+                    modelValue: tab.value,
+                    "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => tab.value = $event)
+                  }, {
+                    default: withCtx(() => [
+                      createVNode(unref(VTabsWindowItem), { value: "date" }, {
+                        default: withCtx(() => [
+                          createVNode(unref(VDatePicker), normalizeProps(guardReactiveProps(datePickerProps.value)), null, 16)
+                        ]),
+                        _: 1
+                      }),
+                      createVNode(unref(VTabsWindowItem), { value: "time" }, {
+                        default: withCtx(() => [
+                          createVNode(unref(VTimePicker), normalizeProps(guardReactiveProps(timePickerProps.value)), null, 16)
+                        ]),
+                        _: 1
+                      })
+                    ]),
+                    _: 1
+                  }, 8, ["modelValue"])
+                ]),
+                _: 1
+              })
+            ]),
+            _: 1
+          }, 8, ["menu-opened", "model-value", "stateful-layout", "formatted-value"]);
         };
       }
     };
@@ -76167,7 +77082,7 @@ Reason: ${error2}`);
           return colorPickerProps2;
         });
         return (_ctx, _cache) => {
-          return openBlock(), createBlock(_sfc_main$o, {
+          return openBlock(), createBlock(_sfc_main$p, {
             "model-value": __props.modelValue,
             "stateful-layout": __props.statefulLayout,
             "formatted-value": __props.modelValue.data
@@ -77341,7 +78256,7 @@ Reason: ${error2}`);
                   _: 1
                 })) : createCommentVNode("", true),
                 ((_a2 = __props.modelValue.children) == null ? void 0 : _a2[0]) ? (openBlock(true), createElementBlock(Fragment, { key: 1 }, renderList(unref(isSection)((_b = __props.modelValue.children) == null ? void 0 : _b[0]) ? (_c = __props.modelValue.children) == null ? void 0 : _c[0].children : __props.modelValue.children, (grandChild) => {
-                  return openBlock(), createBlock(_sfc_main$B, {
+                  return openBlock(), createBlock(_sfc_main$C, {
                     key: grandChild.fullKey,
                     "model-value": (
                       /** @type import('../../types.js').VjsfNode */
@@ -77417,7 +78332,7 @@ Reason: ${error2}`);
         const tab = ref$1(0);
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$z, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$A, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VSheet), normalizeProps(guardReactiveProps(unref(vSheetProps))), {
               default: withCtx(() => [
                 createVNode(unref(VTabs), {
@@ -77471,7 +78386,7 @@ Reason: ${error2}`);
                                 }, {
                                   default: withCtx(() => [
                                     (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                      return openBlock(), createBlock(_sfc_main$B, {
+                                      return openBlock(), createBlock(_sfc_main$C, {
                                         key: grandChild.fullKey,
                                         "model-value": (
                                           /** @type import('../../types.js').VjsfNode */
@@ -77522,7 +78437,7 @@ Reason: ${error2}`);
         const tab = ref$1(0);
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$z, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$A, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VSheet), normalizeProps(guardReactiveProps(unref(vSheetProps))), {
               default: withCtx(() => [
                 createBaseVNode("div", _hoisted_1$1, [
@@ -77578,7 +78493,7 @@ Reason: ${error2}`);
                                   }, {
                                     default: withCtx(() => [
                                       (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                        return openBlock(), createBlock(_sfc_main$B, {
+                                        return openBlock(), createBlock(_sfc_main$C, {
                                           key: grandChild.fullKey,
                                           "model-value": (
                                             /** @type import('../../types.js').VjsfNode */
@@ -78278,7 +79193,7 @@ Reason: ${error2}`);
         useDefaults({}, "VjsfExpansionPanels");
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$z, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$A, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VExpansionPanels), normalizeProps(guardReactiveProps(unref(getCompProps)(__props.modelValue, true))), {
               default: withCtx(() => [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child, i2) => {
@@ -78315,7 +79230,7 @@ Reason: ${error2}`);
                                 }, {
                                   default: withCtx(() => [
                                     (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                      return openBlock(), createBlock(_sfc_main$B, {
+                                      return openBlock(), createBlock(_sfc_main$C, {
                                         key: grandChild.fullKey,
                                         "model-value": (
                                           /** @type import('../../types.js').VjsfNode */
@@ -78796,7 +79711,7 @@ Reason: ${error2}`);
         };
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createVNode(_sfc_main$z, { node: __props.modelValue }, null, 8, ["node"]),
+            createVNode(_sfc_main$A, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VStepper), {
               modelValue: step.value,
               "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => step.value = $event)
@@ -78844,7 +79759,7 @@ Reason: ${error2}`);
                                 }, {
                                   default: withCtx(() => [
                                     (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                      return openBlock(), createBlock(_sfc_main$B, {
+                                      return openBlock(), createBlock(_sfc_main$C, {
                                         key: grandChild.fullKey,
                                         "model-value": (
                                           /** @type import('../../types.js').VjsfNode */
@@ -79057,7 +79972,7 @@ Reason: ${error2}`);
                           createVNode(unref(VRow), { class: "ma-0" }, {
                             default: withCtx(() => [
                               (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
-                                return openBlock(), createBlock(_sfc_main$B, {
+                                return openBlock(), createBlock(_sfc_main$C, {
                                   key: grandChild.fullKey,
                                   "model-value": (
                                     /** @type import('../../types.js').VjsfNode */
@@ -79513,7 +80428,7 @@ Reason: ${error2}`);
                 default: withCtx(() => {
                   var _a2, _b;
                   return [
-                    createVNode(_sfc_main$z, {
+                    createVNode(_sfc_main$A, {
                       node: __props.modelValue,
                       "hide-title": ""
                     }, null, 8, ["node"]),
@@ -79522,7 +80437,7 @@ Reason: ${error2}`);
                     }, {
                       default: withCtx(() => [
                         (openBlock(true), createElementBlock(Fragment, null, renderList(__props.modelValue.children, (child) => {
-                          return openBlock(), createBlock(_sfc_main$B, {
+                          return openBlock(), createBlock(_sfc_main$C, {
                             key: child.fullKey,
                             "model-value": (
                               /** @type import('../../types.js').VjsfNode */
@@ -79569,14 +80484,15 @@ Reason: ${error2}`);
       emits,
       setup(__props, { emit: __emit }) {
         const nodeComponents = {
-          section: _sfc_main$y,
-          "text-field": _sfc_main$u,
-          textarea: _sfc_main$t,
-          checkbox: _sfc_main$s,
-          switch: _sfc_main$r,
-          "number-field": _sfc_main$q,
-          slider: _sfc_main$p,
-          "date-picker": _sfc_main$n,
+          section: _sfc_main$z,
+          "text-field": _sfc_main$v,
+          textarea: _sfc_main$u,
+          checkbox: _sfc_main$t,
+          switch: _sfc_main$s,
+          "number-field": _sfc_main$r,
+          slider: _sfc_main$q,
+          "date-picker": _sfc_main$o,
+          "time-picker": _sfc_main$n,
           "date-time-picker": _sfc_main$m,
           "color-picker": _sfc_main$l,
           select: _sfc_main$k,
@@ -79612,7 +80528,7 @@ Reason: ${error2}`);
             ref: el2,
             class: "vjsf"
           }, [
-            unref(statefulLayout) && unref(stateTree) ? (openBlock(), createBlock(_sfc_main$A, {
+            unref(statefulLayout) && unref(stateTree) ? (openBlock(), createBlock(_sfc_main$B, {
               key: 0,
               "model-value": unref(stateTree),
               "stateful-layout": unref(statefulLayout)
