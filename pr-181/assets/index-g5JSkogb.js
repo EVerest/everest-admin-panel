@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-f71dkKLp.js"(exports, module) {
+  "assets/index-g5JSkogb.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -15420,7 +15420,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 "width": "2"
               }, null)])];
             }
-          }), [[Ripple, !isDisabled.value && !!props.ripple, "", {
+          }), [[Ripple, !isDisabled.value && props.ripple, "", {
             center: !!props.icon
           }]]);
         });
@@ -15554,7 +15554,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "defaults": {
               VImg: {
                 cover: true,
-                image: props.image
+                src: props.image
               },
               VIcon: {
                 icon: props.icon
@@ -16778,7 +16778,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               children.value.set(parent, list2.filter((child) => child !== id2));
             }
             parents.value.delete(id2);
-            opened.value.delete(id2);
           },
           open: (id2, value, event) => {
             vm.emit("click:open", {
@@ -25159,7 +25158,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           },
           closeParents(e) {
             setTimeout(() => {
-              if (!openChildren.value && !props.persistent && (e == null || e && !isClickInsideElement(e, overlay.value.contentEl))) {
+              var _a2;
+              if (!openChildren.value && !props.persistent && (e == null || ((_a2 = overlay.value) == null ? void 0 : _a2.contentEl) && !isClickInsideElement(e, overlay.value.contentEl))) {
                 isActive.value = false;
                 parent == null ? void 0 : parent.closeParents();
               }
@@ -38997,7 +38997,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.13";
+    const version$1 = "3.6.14";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -78019,16 +78019,17 @@ Reason: ${error2}`);
         useRender(() => {
           var _a2;
           const isLoading = !slots.default || props.loading;
-          return createVNode("div", {
+          const loadingProps = props.boilerplate || !isLoading ? {} : {
+            ariaLive: "polite",
+            ariaLabel: t(props.loadingText),
+            role: "alert"
+          };
+          return createVNode("div", mergeProps({
             "class": ["v-skeleton-loader", {
               "v-skeleton-loader--boilerplate": props.boilerplate
             }, themeClasses.value, backgroundColorClasses.value, elevationClasses.value],
-            "style": [backgroundColorStyles.value, isLoading ? dimensionStyles.value : {}],
-            "aria-busy": !props.boilerplate ? isLoading : void 0,
-            "aria-live": !props.boilerplate ? "polite" : void 0,
-            "aria-label": !props.boilerplate ? t(props.loadingText) : void 0,
-            "role": !props.boilerplate ? "alert" : void 0
-          }, [isLoading ? items2.value : (_a2 = slots.default) == null ? void 0 : _a2.call(slots)]);
+            "style": [backgroundColorStyles.value, isLoading ? dimensionStyles.value : {}]
+          }, loadingProps), [isLoading ? items2.value : (_a2 = slots.default) == null ? void 0 : _a2.call(slots)]);
         });
         return {};
       }
