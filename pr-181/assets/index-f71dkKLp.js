@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-dHquv6gs.js"(exports, module) {
+  "assets/index-f71dkKLp.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.34
+    * @vue/shared v3.4.35
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -661,7 +661,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.34
+    * @vue/reactivity v3.4.35
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -1727,7 +1727,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.34
+    * @vue/runtime-core v3.4.35
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -3572,20 +3572,33 @@ var require_index_001 = __commonJS({
           if (validatePropName(normalizedKey)) {
             const opt = raw[key];
             const prop2 = normalized[normalizedKey] = isArray$1(opt) || isFunction$1(opt) ? { type: opt } : extend$1({}, opt);
-            if (prop2) {
-              const booleanIndex = getTypeIndex(Boolean, prop2.type);
-              const stringIndex = getTypeIndex(String, prop2.type);
-              prop2[
-                0
-                /* shouldCast */
-              ] = booleanIndex > -1;
-              prop2[
-                1
-                /* shouldCastTrue */
-              ] = stringIndex < 0 || booleanIndex < stringIndex;
-              if (booleanIndex > -1 || hasOwn(prop2, "default")) {
-                needCastKeys.push(normalizedKey);
+            const propType = prop2.type;
+            let shouldCast = false;
+            let shouldCastTrue = true;
+            if (isArray$1(propType)) {
+              for (let index = 0; index < propType.length; ++index) {
+                const type2 = propType[index];
+                const typeName = isFunction$1(type2) && type2.name;
+                if (typeName === "Boolean") {
+                  shouldCast = true;
+                  break;
+                } else if (typeName === "String") {
+                  shouldCastTrue = false;
+                }
               }
+            } else {
+              shouldCast = isFunction$1(propType) && propType.name === "Boolean";
+            }
+            prop2[
+              0
+              /* shouldCast */
+            ] = shouldCast;
+            prop2[
+              1
+              /* shouldCastTrue */
+            ] = shouldCastTrue;
+            if (shouldCast || hasOwn(prop2, "default")) {
+              needCastKeys.push(normalizedKey);
             }
           }
         }
@@ -3601,29 +3614,6 @@ var require_index_001 = __commonJS({
         return true;
       }
       return false;
-    }
-    function getType(ctor) {
-      if (ctor === null) {
-        return "null";
-      }
-      if (typeof ctor === "function") {
-        return ctor.name || "";
-      } else if (typeof ctor === "object") {
-        const name = ctor.constructor && ctor.constructor.name;
-        return name || "";
-      }
-      return "";
-    }
-    function isSameType(a, b) {
-      return getType(a) === getType(b);
-    }
-    function getTypeIndex(type2, expectedTypes) {
-      if (isArray$1(expectedTypes)) {
-        return expectedTypes.findIndex((t) => isSameType(t, type2));
-      } else if (isFunction$1(expectedTypes)) {
-        return isSameType(expectedTypes, type2) ? 0 : -1;
-      }
-      return -1;
     }
     const isInternalKey = (key) => key[0] === "_" || key === "$stable";
     const normalizeSlotValue = (value) => isArray$1(value) ? value.map(normalizeVNode) : [normalizeVNode(value)];
@@ -3822,15 +3812,11 @@ var require_index_001 = __commonJS({
         if (n1 == null) {
           const placeholder = n2.el = createText("");
           const mainAnchor = n2.anchor = createText("");
-          const target2 = n2.target = resolveTarget(n2.props, querySelector);
-          const targetStart = n2.targetStart = createText("");
-          const targetAnchor = n2.targetAnchor = createText("");
           insert(placeholder, container, anchor);
           insert(mainAnchor, container, anchor);
-          targetStart[TeleportEndKey] = targetAnchor;
+          const target2 = n2.target = resolveTarget(n2.props, querySelector);
+          const targetAnchor = prepareAnchor(target2, n2, createText, insert);
           if (target2) {
-            insert(targetStart, target2);
-            insert(targetAnchor, target2);
             if (namespace === "svg" || isTargetSVG(target2)) {
               namespace = "svg";
             } else if (namespace === "mathml" || isTargetMathML(target2)) {
@@ -3994,7 +3980,7 @@ var require_index_001 = __commonJS({
       }
     }
     function hydrateTeleport(node, vnode, parentComponent, parentSuspense, slotScopeIds, optimized, {
-      o: { nextSibling, parentNode, querySelector }
+      o: { nextSibling, parentNode, querySelector, insert, createText }
     }, hydrateChildren) {
       const target2 = vnode.target = resolveTarget(
         vnode.props,
@@ -4013,20 +3999,28 @@ var require_index_001 = __commonJS({
               slotScopeIds,
               optimized
             );
-            vnode.targetAnchor = targetNode;
+            vnode.targetStart = targetNode;
+            vnode.targetAnchor = targetNode && nextSibling(targetNode);
           } else {
             vnode.anchor = nextSibling(node);
             let targetAnchor = targetNode;
             while (targetAnchor) {
-              targetAnchor = nextSibling(targetAnchor);
-              if (targetAnchor && targetAnchor.nodeType === 8 && targetAnchor.data === "teleport anchor") {
-                vnode.targetAnchor = targetAnchor;
-                target2._lpa = vnode.targetAnchor && nextSibling(vnode.targetAnchor);
-                break;
+              if (targetAnchor && targetAnchor.nodeType === 8) {
+                if (targetAnchor.data === "teleport start anchor") {
+                  vnode.targetStart = targetAnchor;
+                } else if (targetAnchor.data === "teleport anchor") {
+                  vnode.targetAnchor = targetAnchor;
+                  target2._lpa = vnode.targetAnchor && nextSibling(vnode.targetAnchor);
+                  break;
+                }
               }
+              targetAnchor = nextSibling(targetAnchor);
+            }
+            if (!vnode.targetAnchor) {
+              prepareAnchor(target2, vnode, createText, insert);
             }
             hydrateChildren(
-              targetNode,
+              targetNode && nextSibling(targetNode),
               vnode,
               target2,
               parentComponent,
@@ -4052,6 +4046,16 @@ var require_index_001 = __commonJS({
         }
         ctx.ut();
       }
+    }
+    function prepareAnchor(target2, vnode, createText, insert) {
+      const targetStart = vnode.targetStart = createText("");
+      const targetAnchor = vnode.targetAnchor = createText("");
+      targetStart[TeleportEndKey] = targetAnchor;
+      if (target2) {
+        insert(targetStart, target2);
+        insert(targetAnchor, target2);
+      }
+      return targetAnchor;
     }
     const queuePostRenderEffect = queueEffectWithSuspense;
     function createRenderer(options) {
@@ -7213,9 +7217,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.34";
+    const version$2 = "3.4.35";
     /**
-    * @vue/runtime-dom v3.4.34
+    * @vue/runtime-dom v3.4.35
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
