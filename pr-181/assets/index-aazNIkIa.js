@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-EC0Bdu6o.js"(exports, module) {
+  "assets/index-aazNIkIa.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -8176,7 +8176,7 @@ var require_index_001 = __commonJS({
     }
     const App = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$7]]);
     /*!
-      * vue-router v4.4.1
+      * vue-router v4.4.2
       * (c) 2024 Eduardo San Martin Morote
       * @license MIT
       */
@@ -69630,17 +69630,6 @@ Reason: ${error2}`);
         }
       }
       const normalizedLayout = normalizedLayouts[pointer];
-      let defaultData;
-      if ("default" in schema2)
-        defaultData = schema2.default;
-      else if (required2) {
-        if (nullable)
-          defaultData = null;
-        else if (type2 === "object")
-          defaultData = {};
-        else if (type2 === "array")
-          defaultData = [];
-      }
       let pure = !dependent;
       const pushExpression = (expressions2, expression) => {
         if (!expression.pure)
@@ -69663,6 +69652,17 @@ Reason: ${error2}`);
           compObject.getConstData = { type: "js-eval", expr: "layout.constData", pure: true, dataAlias: "value" };
         if (compObject.getConstData)
           pushExpression(expressions, compObject.getConstData);
+        let defaultData;
+        if ("default" in schema2)
+          defaultData = schema2.default;
+        else if (required2) {
+          if (nullable)
+            defaultData = null;
+          else if (type2 === "object" && isCompositeLayout(compObject, options.components))
+            defaultData = {};
+          else if (type2 === "array")
+            defaultData = [];
+        }
         if (defaultData !== void 0 && compObject.defaultData === void 0)
           compObject.defaultData = defaultData;
         if (compObject.defaultData !== void 0 && !compObject.getDefaultData)
