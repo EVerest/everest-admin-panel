@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-aazNIkIa.js"(exports, module) {
+  "assets/index-prrPPXbM.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
