@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-ZftHWqxG.js"(exports, module) {
+  "assets/index-BthnZOMc.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -508,10 +508,10 @@ var require_index_001 = __commonJS({
       ",key,ref,ref_for,ref_key,onVnodeBeforeMount,onVnodeMounted,onVnodeBeforeUpdate,onVnodeUpdated,onVnodeBeforeUnmount,onVnodeUnmounted"
     );
     const cacheStringFunction = (fn) => {
-      const cache = /* @__PURE__ */ Object.create(null);
+      const cache2 = /* @__PURE__ */ Object.create(null);
       return (str2) => {
-        const hit = cache[str2];
-        return hit || (cache[str2] = fn(str2));
+        const hit = cache2[str2];
+        return hit || (cache2[str2] = fn(str2));
       };
     };
     const camelizeRE = /-(\w)/g;
@@ -2595,9 +2595,9 @@ var require_index_001 = __commonJS({
     function resolve$3(registry, name) {
       return registry && (registry[name] || registry[camelize(name)] || registry[capitalize(camelize(name))]);
     }
-    function renderList(source2, renderItem, cache, index) {
+    function renderList(source2, renderItem, cache2, index) {
       let ret;
-      const cached = cache && cache[index];
+      const cached = cache2 && cache2[index];
       if (isArray$1(source2) || isString$1(source2)) {
         ret = new Array(source2.length);
         for (let i2 = 0, l = source2.length; i2 < l; i2++) {
@@ -2625,8 +2625,8 @@ var require_index_001 = __commonJS({
       } else {
         ret = [];
       }
-      if (cache) {
-        cache[index] = ret;
+      if (cache2) {
+        cache2[index] = ret;
       }
       return ret;
     }
@@ -3045,10 +3045,10 @@ var require_index_001 = __commonJS({
       const { mixins, extends: extendsOptions } = base2;
       const {
         mixins: globalMixins,
-        optionsCache: cache,
+        optionsCache: cache2,
         config: { optionMergeStrategies }
       } = instance.appContext;
-      const cached = cache.get(base2);
+      const cached = cache2.get(base2);
       let resolved;
       if (cached) {
         resolved = cached;
@@ -3066,7 +3066,7 @@ var require_index_001 = __commonJS({
         mergeOptions$1(resolved, base2, optionMergeStrategies);
       }
       if (isObject$4(base2)) {
-        cache.set(base2, resolved);
+        cache2.set(base2, resolved);
       }
       return resolved;
     }
@@ -3526,8 +3526,8 @@ var require_index_001 = __commonJS({
     }
     const mixinPropsCache = /* @__PURE__ */ new WeakMap();
     function normalizePropsOptions(comp2, appContext, asMixin = false) {
-      const cache = asMixin ? mixinPropsCache : appContext.propsCache;
-      const cached = cache.get(comp2);
+      const cache2 = asMixin ? mixinPropsCache : appContext.propsCache;
+      const cached = cache2.get(comp2);
       if (cached) {
         return cached;
       }
@@ -3555,7 +3555,7 @@ var require_index_001 = __commonJS({
       }
       if (!raw && !hasExtends) {
         if (isObject$4(comp2)) {
-          cache.set(comp2, EMPTY_ARR);
+          cache2.set(comp2, EMPTY_ARR);
         }
         return EMPTY_ARR;
       }
@@ -3605,7 +3605,7 @@ var require_index_001 = __commonJS({
       }
       const res = [normalized, needCastKeys];
       if (isObject$4(comp2)) {
-        cache.set(comp2, res);
+        cache2.set(comp2, res);
       }
       return res;
     }
@@ -5743,8 +5743,8 @@ var require_index_001 = __commonJS({
       }
     }
     function normalizeEmitsOptions(comp2, appContext, asMixin = false) {
-      const cache = appContext.emitsCache;
-      const cached = cache.get(comp2);
+      const cache2 = appContext.emitsCache;
+      const cached = cache2.get(comp2);
       if (cached !== void 0) {
         return cached;
       }
@@ -5771,7 +5771,7 @@ var require_index_001 = __commonJS({
       }
       if (!raw && !hasExtends) {
         if (isObject$4(comp2)) {
-          cache.set(comp2, null);
+          cache2.set(comp2, null);
         }
         return null;
       }
@@ -5781,7 +5781,7 @@ var require_index_001 = __commonJS({
         extend$1(normalized, raw);
       }
       if (isObject$4(comp2)) {
-        cache.set(comp2, normalized);
+        cache2.set(comp2, normalized);
       }
       return normalized;
     }
@@ -8108,15 +8108,37 @@ var require_index_001 = __commonJS({
       exact: (e, modifiers) => systemModifiers.some((m) => e[`${m}Key`] && !modifiers.includes(m))
     };
     const withModifiers = (fn, modifiers) => {
-      const cache = fn._withMods || (fn._withMods = {});
+      const cache2 = fn._withMods || (fn._withMods = {});
       const cacheKey = modifiers.join(".");
-      return cache[cacheKey] || (cache[cacheKey] = (event, ...args) => {
+      return cache2[cacheKey] || (cache2[cacheKey] = (event, ...args) => {
         for (let i2 = 0; i2 < modifiers.length; i2++) {
           const guard = modifierGuards[modifiers[i2]];
           if (guard && guard(event, modifiers))
             return;
         }
         return fn(event, ...args);
+      });
+    };
+    const keyNames = {
+      esc: "escape",
+      space: " ",
+      up: "arrow-up",
+      left: "arrow-left",
+      right: "arrow-right",
+      down: "arrow-down",
+      delete: "backspace"
+    };
+    const withKeys = (fn, modifiers) => {
+      const cache2 = fn._withKeys || (fn._withKeys = {});
+      const cacheKey = modifiers.join(".");
+      return cache2[cacheKey] || (cache2[cacheKey] = (event) => {
+        if (!("key" in event)) {
+          return;
+        }
+        const eventKey = hyphenate(event.key);
+        if (modifiers.some((k) => k === eventKey || keyNames[k] === eventKey)) {
+          return fn(event);
+        }
       });
     };
     const rendererOptions = /* @__PURE__ */ extend$1({ patchProp }, nodeOps);
@@ -8176,7 +8198,7 @@ var require_index_001 = __commonJS({
     }
     const App = /* @__PURE__ */ _export_sfc(_sfc_main$M, [["render", _sfc_render$7]]);
     /*!
-      * vue-router v4.4.2
+      * vue-router v4.4.3
       * (c) 2024 Eduardo San Martin Morote
       * @license MIT
       */
@@ -26705,7 +26727,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }, vTextFieldRef);
       }
     });
-    const _hoisted_1$9 = {
+    const _hoisted_1$a = {
       key: 0,
       class: "pt-10 text-center font-weight-medium text-h6"
     };
@@ -26967,7 +26989,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                                     }, null, 8, ["text", "modelValue"]),
                                     createVNode(Transition, null, {
                                       default: withCtx(() => [
-                                        _ctx.connecting ? (openBlock(), createElementBlock("p", _hoisted_1$9, toDisplayString(_ctx.connectionStatus), 1)) : createCommentVNode("", true)
+                                        _ctx.connecting ? (openBlock(), createElementBlock("p", _hoisted_1$a, toDisplayString(_ctx.connectionStatus), 1)) : createCommentVNode("", true)
                                       ]),
                                       _: 1
                                     }),
@@ -29390,14 +29412,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
       }
       _getCache(attr, privateGetter) {
-        var cache = this._cache.get(attr);
+        var cache2 = this._cache.get(attr);
         var isTransform = attr === TRANSFORM || attr === ABSOLUTE_TRANSFORM;
-        var invalid = cache === void 0 || isTransform && cache.dirty === true;
+        var invalid = cache2 === void 0 || isTransform && cache2.dirty === true;
         if (invalid) {
-          cache = privateGetter.call(this);
-          this._cache.set(attr, cache);
+          cache2 = privateGetter.call(this);
+          this._cache.set(attr, cache2);
         }
-        return cache;
+        return cache2;
       }
       _calculate(name, deps, getter) {
         if (!this._attachedDepsListeners.get(name)) {
@@ -45034,7 +45056,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return {};
       }
     });
-    const _hoisted_1$8 = { class: "title-content" };
+    const _hoisted_1$9 = { class: "title-content" };
     const _hoisted_2$4 = { class: "controls" };
     const __default__ = {
       components: {
@@ -45104,7 +45126,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 default: withCtx(() => [
                   createVNode(VCardTitle, null, {
                     default: withCtx(() => [
-                      createBaseVNode("div", _hoisted_1$8, [
+                      createBaseVNode("div", _hoisted_1$9, [
                         createBaseVNode("div", _hoisted_2$4, [
                           createVNode(VBtn, {
                             icon: "mdi-download",
@@ -45292,7 +45314,7 @@ Reason: ${error2}`);
         return {};
       }
     });
-    const _hoisted_1$7 = /* @__PURE__ */ createBaseVNode("div", { id: "konva-stage" }, null, -1);
+    const _hoisted_1$8 = /* @__PURE__ */ createBaseVNode("div", { id: "konva-stage" }, null, -1);
     const _hoisted_2$3 = { id: "stage-controls" };
     const _hoisted_3$2 = /* @__PURE__ */ createBaseVNode("span", null, "Show config preview", -1);
     const _hoisted_4$1 = /* @__PURE__ */ createBaseVNode("span", null, "Reset View", -1);
@@ -45306,7 +45328,7 @@ Reason: ${error2}`);
         elevation: "0"
       }, {
         default: withCtx(() => [
-          _hoisted_1$7,
+          _hoisted_1$8,
           createBaseVNode("div", _hoisted_2$3, [
             _ctx.current_config ? (openBlock(), createBlock(_component_config_preview, {
               key: 0,
@@ -51591,7 +51613,7 @@ Reason: ${error2}`);
       }
     }
     const _withScopeId = (n) => (pushScopeId("data-v-a578a337"), n = n(), popScopeId(), n);
-    const _hoisted_1$6 = { class: "btn-container" };
+    const _hoisted_1$7 = { class: "btn-container" };
     const _hoisted_2$2 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Upload Config", -1));
     const _hoisted_3$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Create Config", -1));
     const _hoisted_4 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createBaseVNode("span", null, "Abort", -1));
@@ -51695,7 +51717,7 @@ Reason: ${error2}`);
         }
         return (_ctx, _cache) => {
           return openBlock(), createElementBlock(Fragment, null, [
-            createBaseVNode("div", _hoisted_1$6, [
+            createBaseVNode("div", _hoisted_1$7, [
               state.value == 0 ? (openBlock(), createBlock(VTooltip, {
                 key: 0,
                 location: "right",
@@ -62089,26 +62111,26 @@ Reason: ${error2}`);
     var mdurl$1 = {};
     var encodeCache = {};
     function getEncodeCache(exclude) {
-      var i2, ch, cache = encodeCache[exclude];
-      if (cache) {
-        return cache;
+      var i2, ch, cache2 = encodeCache[exclude];
+      if (cache2) {
+        return cache2;
       }
-      cache = encodeCache[exclude] = [];
+      cache2 = encodeCache[exclude] = [];
       for (i2 = 0; i2 < 128; i2++) {
         ch = String.fromCharCode(i2);
         if (/^[0-9a-z]$/i.test(ch)) {
-          cache.push(ch);
+          cache2.push(ch);
         } else {
-          cache.push("%" + ("0" + i2.toString(16).toUpperCase()).slice(-2));
+          cache2.push("%" + ("0" + i2.toString(16).toUpperCase()).slice(-2));
         }
       }
       for (i2 = 0; i2 < exclude.length; i2++) {
-        cache[exclude.charCodeAt(i2)] = exclude[i2];
+        cache2[exclude.charCodeAt(i2)] = exclude[i2];
       }
-      return cache;
+      return cache2;
     }
     function encode$1(string, exclude, keepEscaped) {
-      var i2, l, code2, nextCode, cache, result = "";
+      var i2, l, code2, nextCode, cache2, result = "";
       if (typeof exclude !== "string") {
         keepEscaped = exclude;
         exclude = encode$1.defaultChars;
@@ -62116,7 +62138,7 @@ Reason: ${error2}`);
       if (typeof keepEscaped === "undefined") {
         keepEscaped = true;
       }
-      cache = getEncodeCache(exclude);
+      cache2 = getEncodeCache(exclude);
       for (i2 = 0, l = string.length; i2 < l; i2++) {
         code2 = string.charCodeAt(i2);
         if (keepEscaped && code2 === 37 && i2 + 2 < l) {
@@ -62127,7 +62149,7 @@ Reason: ${error2}`);
           }
         }
         if (code2 < 128) {
-          result += cache[code2];
+          result += cache2[code2];
           continue;
         }
         if (code2 >= 55296 && code2 <= 57343) {
@@ -62151,33 +62173,33 @@ Reason: ${error2}`);
     var encode_1 = encode$1;
     var decodeCache = {};
     function getDecodeCache(exclude) {
-      var i2, ch, cache = decodeCache[exclude];
-      if (cache) {
-        return cache;
+      var i2, ch, cache2 = decodeCache[exclude];
+      if (cache2) {
+        return cache2;
       }
-      cache = decodeCache[exclude] = [];
+      cache2 = decodeCache[exclude] = [];
       for (i2 = 0; i2 < 128; i2++) {
         ch = String.fromCharCode(i2);
-        cache.push(ch);
+        cache2.push(ch);
       }
       for (i2 = 0; i2 < exclude.length; i2++) {
         ch = exclude.charCodeAt(i2);
-        cache[ch] = "%" + ("0" + ch.toString(16).toUpperCase()).slice(-2);
+        cache2[ch] = "%" + ("0" + ch.toString(16).toUpperCase()).slice(-2);
       }
-      return cache;
+      return cache2;
     }
     function decode$1(string, exclude) {
-      var cache;
+      var cache2;
       if (typeof exclude !== "string") {
         exclude = decode$1.defaultChars;
       }
-      cache = getDecodeCache(exclude);
+      cache2 = getDecodeCache(exclude);
       return string.replace(/(%[a-f0-9]{2})+/gi, function(seq2) {
         var i2, l, b1, b2, b3, b4, chr, result = "";
         for (i2 = 0, l = seq2.length; i2 < l; i2 += 3) {
           b1 = parseInt(seq2.slice(i2 + 1, i2 + 3), 16);
           if (b1 < 128) {
-            result += cache[b1];
+            result += cache2[b1];
             continue;
           }
           if ((b1 & 224) === 192 && i2 + 3 < l) {
@@ -65806,9 +65828,9 @@ Reason: ${error2}`);
       }
     }
     ParserInline$1.prototype.skipToken = function(state) {
-      var ok, i2, pos = state.pos, rules2 = this.ruler.getRules(""), len = rules2.length, maxNesting = state.md.options.maxNesting, cache = state.cache;
-      if (typeof cache[pos] !== "undefined") {
-        state.pos = cache[pos];
+      var ok, i2, pos = state.pos, rules2 = this.ruler.getRules(""), len = rules2.length, maxNesting = state.md.options.maxNesting, cache2 = state.cache;
+      if (typeof cache2[pos] !== "undefined") {
+        state.pos = cache2[pos];
         return;
       }
       if (state.level < maxNesting) {
@@ -65829,7 +65851,7 @@ Reason: ${error2}`);
       if (!ok) {
         state.pos++;
       }
-      cache[pos] = state.pos;
+      cache2[pos] = state.pos;
     };
     ParserInline$1.prototype.tokenize = function(state) {
       var ok, i2, prevPos, rules2 = this.ruler.getRules(""), len = rules2.length, end = state.posMax, maxNesting = state.md.options.maxNesting;
@@ -68651,6 +68673,7 @@ Reason: ${error2}`);
             listActions: { type: "array", items: { type: "string", enum: ["add", "edit", "delete", "sort", "duplicate"] } },
             itemTitle: { $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/expression" },
             itemSubtitle: { $ref: "https://json-layout.github.io/normalized-layout-keyword#/$defs/expression" },
+            indexed: { type: "array", items: { type: "string" } },
             messages: {
               type: "object",
               additionalProperties: false,
@@ -68907,6 +68930,9 @@ Reason: ${error2}`);
       var _a2;
       return !!((_a2 = components[layout.comp]) == null ? void 0 : _a2.composite);
     }
+    function isListLayout(layout) {
+      return layout.comp === "list";
+    }
     function isFocusableLayout(layout, components) {
       var _a2;
       return !!((_a2 = components[layout.comp]) == null ? void 0 : _a2.focusable);
@@ -68945,6 +68971,9 @@ Reason: ${error2}`);
                 children.push({ key: `$deps-${key2}` });
               }
             }
+          }
+          if (key === "patternProperties") {
+            children.push({ key: "$patternProperties" });
           }
           if (key === "allOf") {
             if ((_b = schemaFragment.allOf) == null ? void 0 : _b.length) {
@@ -69013,10 +69042,12 @@ Reason: ${error2}`);
         }
       });
     }
-    function getDefaultComp(partial, schemaFragment, type2, arrayChild) {
+    function getDefaultComp(partial, schemaFragment, type2, schemaChild) {
       const hasSimpleType = type2 && ["string", "integer", "number"].includes(type2);
-      if (arrayChild === "oneOf")
+      if (schemaChild === "oneOf")
         return "one-of-select";
+      if (schemaChild === "patternProperties")
+        return "list";
       if (hasSimpleType && schemaFragment.enum)
         return schemaFragment.enum.length > 20 ? "autocomplete" : "select";
       if (hasSimpleType && schemaFragment.oneOf)
@@ -69136,7 +69167,7 @@ Reason: ${error2}`);
         const type2 = schemaFragment.type.find((t) => t !== "null");
         return { type: type2, nullable: true };
       }
-      if (!schemaFragment.type && schemaFragment.properties) {
+      if (!schemaFragment.type && (schemaFragment.properties || schemaFragment.patternProperties)) {
         return { type: "object", nullable: false };
       }
       if (!schemaFragment.type) {
@@ -69155,8 +69186,7 @@ Reason: ${error2}`);
       }
       return { type: schemaFragment.type, nullable: false };
     };
-    function getCompObject$1(layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild) {
-      const key = schemaPath.slice(schemaPath.lastIndexOf("/") + 1);
+    function getCompObject$1(key, layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, schemaChild) {
       if ("const" in schemaFragment)
         return { comp: "none" };
       if (!type2)
@@ -69166,7 +69196,7 @@ Reason: ${error2}`);
         return { comp: "none" };
       }
       if (!partial.comp) {
-        partial.comp = getDefaultComp(partial, schemaFragment, type2, arrayChild);
+        partial.comp = getDefaultComp(partial, schemaFragment, type2, schemaChild);
       }
       const component = components[partial.comp];
       if (!component) {
@@ -69177,17 +69207,42 @@ Reason: ${error2}`);
       if (nullable)
         partial.nullable = nullable;
       if (component.composite) {
-        if (!("title" in partial))
-          partial.title = schemaFragment.title ?? null;
-        partial.children = getChildren(getDefaultChildren(schemaFragment, type2), partial.children);
+        const children = getChildren(getDefaultChildren(schemaFragment, type2), partial.children);
+        partial.children = children;
+        if (!("title" in partial)) {
+          if (children.length === 1 && children[0].key === "$patternProperties")
+            ;
+          else {
+            partial.title = schemaFragment.title ?? null;
+          }
+        }
       } else if (partial.comp === "list") {
-        if (!("title" in partial))
-          partial.title = schemaFragment.title ?? key;
-        partial.listEditMode = partial.listEditMode ?? (schemaFragment.items.type === "object" ? "inline-single" : "inline");
-        partial.listActions = partial.listActions ?? ["add", "edit", "delete", "duplicate", "sort"];
+        if (schemaChild === "patternProperties") {
+          if (!("title" in partial)) {
+            const children = getChildren(getDefaultChildren(schemaFragment, type2), partial.children);
+            if (children.length === 1 && children[0].key === "$patternProperties") {
+              partial.title = schemaFragment.title ?? null;
+            }
+          }
+          let hasObjectChild = false;
+          for (const patternSchema of Object.values(schemaFragment.patternProperties ?? {})) {
+            const { type: patternType } = getSchemaFragmentType(patternSchema);
+            if (patternType === "object")
+              hasObjectChild = true;
+          }
+          partial.listEditMode = partial.listEditMode ?? (hasObjectChild ? "inline-single" : "inline");
+          partial.listActions = partial.listActions ?? ["add", "edit", "delete"];
+          partial.indexed = Object.keys(schemaFragment.patternProperties ?? {});
+        } else {
+          if (!("title" in partial))
+            partial.title = schemaFragment.title ?? "" + key;
+          const { type: itemsType } = getSchemaFragmentType(schemaFragment.items);
+          partial.listEditMode = partial.listEditMode ?? (itemsType === "object" ? "inline-single" : "inline");
+          partial.listActions = partial.listActions ?? ["add", "edit", "delete", "duplicate", "sort"];
+        }
       } else {
-        if (!("label" in partial) && partial.comp !== "one-of-select") {
-          partial.label = schemaFragment.title ?? key;
+        if (!("label" in partial) && !schemaChild) {
+          partial.label = schemaFragment.title ?? "" + key;
         }
       }
       if (component.itemsBased && !partial.items) {
@@ -69323,7 +69378,7 @@ Reason: ${error2}`);
           if (partial.subtitle === void 0) {
             partial.subtitle = schemaFragment.description;
           }
-        } else if (partial.help === void 0 && arrayChild !== "oneOf") {
+        } else if (partial.help === void 0 && schemaChild !== "oneOf") {
           partial.help = schemaFragment.description;
         }
       }
@@ -69346,7 +69401,7 @@ Reason: ${error2}`);
         partial
       );
     }
-    function getNormalizedLayout(layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild) {
+    function getNormalizedLayout(key, layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, schemaChild) {
       if (isPartialSwitch(layoutKeyword)) {
         const normalizedSwitchCases = [];
         const switchCases = [...layoutKeyword.switch];
@@ -69355,12 +69410,12 @@ Reason: ${error2}`);
         }
         for (let i2 = 0; i2 < switchCases.length; i2++) {
           const switchCase = switchCases[i2];
-          const compObjectResult = getCompObject$1(switchCase, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
+          const compObjectResult = getCompObject$1(key, switchCase, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, schemaChild);
           normalizedSwitchCases.push(compObjectResult);
         }
         return { switch: normalizedSwitchCases };
       } else {
-        return getCompObject$1(layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
+        return getCompObject$1(key, layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, schemaChild);
       }
     }
     function matchValidationError(error2, fn) {
@@ -69389,11 +69444,13 @@ Reason: ${error2}`);
       return messages;
     }
     const defaultOptionsKeys = ["readOnly", "summary", "titleDepth", "density", "removeAdditional", "validateOn", "updateOne", "debounceInputMs", "initialValidation", "defaultOn", "readOnlyPropertiesMode"];
-    function normalizeValidLayoutFragment(schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild) {
+    function normalizeValidLayoutFragment(key, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, schemaChild) {
       optionsKeys = optionsKeys ? optionsKeys.concat(defaultOptionsKeys) : defaultOptionsKeys;
       let layoutKeyword;
-      if (arrayChild === "oneOf") {
+      if (schemaChild === "oneOf") {
         layoutKeyword = schemaFragment.oneOfLayout ?? {};
+      } else if (schemaChild === "patternProperties") {
+        layoutKeyword = schemaFragment.patternPropertiesLayout ?? {};
       } else {
         layoutKeyword = schemaFragment.layout ?? {};
       }
@@ -69402,7 +69459,7 @@ Reason: ${error2}`);
         error2.cause = lighterValidationErrors(validateLayoutKeyword.errors);
         throw error2;
       }
-      const normalizedLayout = getNormalizedLayout(layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
+      const normalizedLayout = getNormalizedLayout(key, layoutKeyword, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, schemaChild);
       if (!validateNormalizedLayout(normalizedLayout)) {
         const error2 = new Error("normalized layout validation errors at path");
         error2.cause = lighterValidationErrors(validateNormalizedLayout.errors);
@@ -69410,11 +69467,11 @@ Reason: ${error2}`);
       }
       return normalizedLayout;
     }
-    function normalizeLayoutFragment(schemaFragment, schemaPath, components, markdown = (src) => src, optionsKeys, arrayChild, knownType, knownNullable) {
+    function normalizeLayoutFragment(key, schemaFragment, schemaPath, components, markdown = (src) => src, optionsKeys, schemaChild, knownType, knownNullable) {
       const { type: type2, nullable } = knownType ? { type: knownType, nullable: knownNullable ?? false } : getSchemaFragmentType(schemaFragment);
       const errors2 = [];
       try {
-        const layout = normalizeValidLayoutFragment(schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
+        const layout = normalizeValidLayoutFragment(key, schemaFragment, type2, nullable, schemaPath, components, markdown, optionsKeys, schemaChild);
         return { layout, errors: errors2 };
       } catch (err) {
         try {
@@ -69422,7 +69479,7 @@ Reason: ${error2}`);
           if (err.cause && Array.isArray(err.cause))
             errors2.push(...err.cause);
           errors2.push("failed to normalize layout, use default component");
-          const layout = normalizeValidLayoutFragment({ ...schemaFragment, layout: {} }, type2, nullable, schemaPath, components, markdown, optionsKeys, arrayChild);
+          const layout = normalizeValidLayoutFragment(key, { ...schemaFragment, layout: {} }, type2, nullable, schemaPath, components, markdown, optionsKeys, schemaChild);
           return { layout, errors: errors2 };
         } catch (err2) {
           errors2.push(err2.message);
@@ -69597,7 +69654,7 @@ Reason: ${error2}`);
       return clonedSchema ?? schema2;
     }
     function makeSkeletonNode(rawSchema, sourceSchemaId, options, getJSONRef, skeletonTrees, skeletonNodes, validates, validationErrors, normalizedLayouts, expressions, key, pointer, required2, condition, dependent, knownType) {
-      var _a2, _b, _c, _d, _e, _f, _g, _h, _i;
+      var _a2, _b, _c, _d, _e, _f, _g, _h;
       let schemaId = sourceSchemaId;
       let schema2 = rawSchema;
       let refPointer = pointer;
@@ -69610,10 +69667,13 @@ Reason: ${error2}`);
         delete schema2.$ref;
       }
       const resolvedSchema = partialResolveRefs(schema2, schemaId, getJSONRef);
-      const { type: type2, nullable } = knownType ? { type: knownType, nullable: false } : getSchemaFragmentType(resolvedSchema);
+      let { type: type2, nullable } = getSchemaFragmentType(resolvedSchema);
+      if (knownType)
+        type2 = knownType;
       rawSchema.errorMessage = rawSchema.errorMessage ?? {};
       if (!normalizedLayouts[pointer]) {
         const normalizationResult = normalizeLayoutFragment(
+          key,
           /** @type {import('@json-layout/vocabulary').SchemaFragment} */
           resolvedSchema,
           pointer,
@@ -69807,6 +69867,7 @@ Reason: ${error2}`);
           const oneOfPointer = `${pointer}/oneOf`;
           if (!normalizedLayouts[oneOfPointer]) {
             const normalizationResult = normalizeLayoutFragment(
+              "",
               schema2,
               oneOfPointer,
               options.components,
@@ -69853,13 +69914,82 @@ Reason: ${error2}`);
               pointer: oneOfPointer,
               refPointer: oneOfPointer,
               childrenTrees,
-              pure: skeletonNodes[(_f = skeletonTrees[childrenTrees[0]]) == null ? void 0 : _f.root].pure,
+              pure: !childrenTrees.some((childTree) => {
+                var _a3;
+                return !skeletonNodes[(_a3 = skeletonTrees[childTree]) == null ? void 0 : _a3.root].pure;
+              }),
               propertyKeys: [],
               roPropertyKeys: []
             };
           }
           node.children = node.children ?? [];
           node.children.push(oneOfPointer);
+        }
+        if (schema2.patternProperties) {
+          const patternPropertiesPointer = `${pointer}/patternProperties`;
+          if (!normalizedLayouts[patternPropertiesPointer]) {
+            const normalizationResult = normalizeLayoutFragment(
+              "",
+              schema2,
+              patternPropertiesPointer,
+              options.components,
+              options.markdown,
+              options.optionsKeys,
+              "patternProperties",
+              type2,
+              nullable
+            );
+            normalizedLayouts[patternPropertiesPointer] = normalizationResult.layout;
+            if (normalizationResult.errors.length) {
+              validationErrors[patternPropertiesPointer.replace("_jl#", "/")] = normalizationResult.errors;
+            }
+          }
+          const childrenTrees = [];
+          for (const pattern2 of Object.keys(schema2.patternProperties)) {
+            const childTreePointer = `${patternPropertiesPointer}/${pattern2}`;
+            if (!skeletonTrees[childTreePointer]) {
+              skeletonTrees[childTreePointer] = "recursing";
+              skeletonTrees[childTreePointer] = makeSkeletonTree(
+                schema2.patternProperties[pattern2],
+                schemaId,
+                options,
+                getJSONRef,
+                skeletonTrees,
+                skeletonNodes,
+                validates,
+                validationErrors,
+                normalizedLayouts,
+                expressions,
+                childTreePointer,
+                "pattern " + pattern2
+              );
+              const childLayout = normalizedLayouts[skeletonNodes[skeletonTrees[childTreePointer].root].pointer];
+              if (isSwitchStruct(childLayout)) {
+                for (const switchCase of childLayout.switch) {
+                  switchCase.nullable = true;
+                }
+              } else {
+                childLayout.nullable = true;
+              }
+            }
+            childrenTrees.push(childTreePointer);
+          }
+          if (!skeletonNodes[patternPropertiesPointer]) {
+            skeletonNodes[patternPropertiesPointer] = {
+              key: "$patternProperties",
+              pointer: patternPropertiesPointer,
+              refPointer: patternPropertiesPointer,
+              childrenTrees,
+              pure: !childrenTrees.some((childTree) => {
+                var _a3;
+                return !skeletonNodes[(_a3 = skeletonTrees[childTree]) == null ? void 0 : _a3.root].pure;
+              }),
+              propertyKeys: [],
+              roPropertyKeys: []
+            };
+          }
+          node.children = node.children ?? [];
+          node.children.push(patternPropertiesPointer);
         }
         if (schema2.if) {
           validates.push(`${pointer}/if`);
@@ -69917,7 +70047,7 @@ Reason: ${error2}`);
           }
         }
         for (const propertyKey of node.propertyKeys) {
-          if ((_g = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _g.includes(propertyKey)) {
+          if ((_f = schema2 == null ? void 0 : schema2.required) == null ? void 0 : _f.includes(propertyKey)) {
             rawSchema.errorMessage.required = rawSchema.errorMessage.required ?? {};
             rawSchema.errorMessage.required[propertyKey] = options.messages.errorRequired;
           }
@@ -69972,6 +70102,14 @@ Reason: ${error2}`);
             );
           }
           node.childrenTrees = [childTreePointer];
+          const childLayout = normalizedLayouts[skeletonNodes[skeletonTrees[childTreePointer].root].pointer];
+          if (isSwitchStruct(childLayout)) {
+            for (const switchCase of childLayout.switch) {
+              switchCase.nullable = true;
+            }
+          } else {
+            childLayout.nullable = true;
+          }
         }
       }
       for (const childPointer of node.children || []) {
@@ -69980,7 +70118,7 @@ Reason: ${error2}`);
           node.pure = false;
       }
       for (const childTree of node.childrenTrees || []) {
-        if (!((_i = skeletonNodes[(_h = skeletonTrees[childTree]) == null ? void 0 : _h.root]) == null ? void 0 : _i.pure))
+        if (!((_h = skeletonNodes[(_g = skeletonTrees[childTree]) == null ? void 0 : _g.root]) == null ? void 0 : _h.pure))
           node.pure = false;
       }
       return node;
@@ -70739,6 +70877,11 @@ Reason: ${error2}`);
       const display = cols === 12 ? parentDisplay : new Display(Math.round(parentDisplay.width * (cols / 12)));
       return [display, cols];
     }
+    const cache = {};
+    function getRegexp(str2) {
+      cache[str2] = cache[str2] ?? new RegExp(str2);
+      return cache[str2];
+    }
     const logStateNode = Debug("jl:state-node");
     const isDataEmpty = (data) => {
       if (data === "" || data === void 0)
@@ -70837,11 +70980,6 @@ Reason: ${error2}`);
               draft[child.key] = child.data;
           }
         }
-        if (Array.isArray(draft)) {
-          while (draft.length && draft[draft.length - 1] === void 0) {
-            draft.pop();
-          }
-        }
       }
       if (additionalPropertiesErrors) {
         for (const error2 of additionalPropertiesErrors) {
@@ -70854,6 +70992,19 @@ Reason: ${error2}`);
             delete draft[error2.params.unevaluatedProperty];
           }
         }
+      }
+    });
+    const producePatternPropertiesData = produce((draft, parentData, propertyKeys, patterns) => {
+      for (const key of Object.keys(parentData)) {
+        if (propertyKeys.includes(key))
+          continue;
+        if (!patterns.some((p2) => !!key.match(getRegexp(p2))))
+          continue;
+        draft[key] = parentData[key];
+      }
+      for (const key of Object.keys(draft)) {
+        if (!(key in parentData))
+          delete draft[key];
       }
     });
     const produceNodeOptions = produce((draft, parentNodeOptions, nodeOptions = {}) => {
@@ -70935,7 +71086,7 @@ Reason: ${error2}`);
       return { comp: "none" };
     };
     function createStateNode(context, parentOptions, compiledLayout, key, fullKey, parentFullKey, dataPath, parentDataPath, skeleton, childDefinition, parentDisplay, data, parentContext, validationState, reusedNode) {
-      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
+      var _a2, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x;
       logStateNode("createStateNode", fullKey);
       let cacheKey = null;
       if (skeleton.pure && !(reusedNode == null ? void 0 : reusedNode.error) && !(reusedNode == null ? void 0 : reusedNode.childError)) {
@@ -70993,10 +71144,25 @@ Reason: ${error2}`);
               continue;
             }
           }
-          const isSameData = typeof childLayout.key === "string" && childLayout.key.startsWith("$");
+          const isSameDataPath = typeof childLayout.key === "string" && childLayout.key.startsWith("$");
           const childFullKey = `${fullKey}/${childLayout.key}`;
           if (focusChild2)
             context.autofocusTarget = childFullKey;
+          let childData = isSameDataPath ? objectData : objectData[childLayout.key];
+          if (childLayout.key === "$patternProperties") {
+            const childNormalizedLayout = (
+              /** @type {import('@json-layout/vocabulary').List} */
+              compiledLayout.normalizedLayouts[childSkeleton.pointer]
+            );
+            childData = producePatternPropertiesData(
+              /** @type {Record<string, unknown>} */
+              ((_d = (_c = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _c.find((c) => c.key === "$patternProperties")) == null ? void 0 : _d.data) ?? {},
+              /** @type {Record<string, unknown>} */
+              objectData,
+              skeleton.propertyKeys,
+              childNormalizedLayout.indexed ?? []
+            );
+          }
           const child = createStateNode(
             context,
             childrenOptions,
@@ -71004,15 +71170,15 @@ Reason: ${error2}`);
             childLayout.key,
             childFullKey,
             fullKey,
-            isSameData ? dataPath : `${dataPath}/${childLayout.key}`,
+            isSameDataPath ? dataPath : `${dataPath}/${childLayout.key}`,
             dataPath,
             childSkeleton,
             childLayout,
             display,
-            isSameData ? objectData : objectData[childLayout.key],
+            childData,
             { parent: parentContext, data: objectData },
             validationState,
-            (_c = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _c.find((c) => c.fullKey === childFullKey)
+            (_e = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _e.find((c) => c.fullKey === childFullKey)
           );
           if (child.autofocus || child.autofocusChild !== void 0)
             focusChild2 = false;
@@ -71020,9 +71186,12 @@ Reason: ${error2}`);
         }
       }
       if (key === "$oneOf" && skeleton.childrenTrees) {
-        const activeChildTreeIndex = fullKey in context.activatedItems ? context.activatedItems[fullKey] : (_d = skeleton.childrenTrees) == null ? void 0 : _d.findIndex((childTree) => compiledLayout.validates[compiledLayout.skeletonTrees[childTree].root](data));
+        const activeChildTreeIndex = (
+          /** @type {number} */
+          fullKey in context.activatedItems ? context.activatedItems[fullKey] : (_f = skeleton.childrenTrees) == null ? void 0 : _f.findIndex((childTree) => compiledLayout.validates[compiledLayout.skeletonTrees[childTree].root](data))
+        );
         if (activeChildTreeIndex !== -1) {
-          context.errors = (_e = context.errors) == null ? void 0 : _e.filter((error3) => {
+          context.errors = (_g = context.errors) == null ? void 0 : _g.filter((error3) => {
             var _a3, _b2;
             const originalError = ((_b2 = (_a3 = error3.params) == null ? void 0 : _a3.errors) == null ? void 0 : _b2[0]) ?? error3;
             if (matchError(error3, skeleton, dataPath, parentDataPath))
@@ -71055,57 +71224,113 @@ Reason: ${error2}`);
               data,
               { parent: parentContext, data },
               validationState,
-              (_f = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _f[0]
+              (_h = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _h[0]
             )
           ];
         }
       }
-      if (layout.comp === "list") {
-        const arrayData = (
-          /** @type {unknown[]} */
-          data ?? []
-        );
-        const childSkeleton = (
-          /** @type {import('../index.js').SkeletonNode} */
-          ((_g = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _g[0]) && compiledLayout.skeletonNodes[(_i = compiledLayout.skeletonTrees[(_h = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _h[0]]) == null ? void 0 : _i.root]
-        );
-        const listItemOptions = layout.listEditMode === "inline" ? options : produceReadonlyArrayItemOptions(options);
-        children = [];
-        let focusChild2 = context.autofocusTarget === fullKey;
-        for (let i2 = 0; i2 < arrayData.length; i2++) {
-          const itemData = arrayData[i2];
-          const childFullKey = `${fullKey}/${i2}`;
-          if (focusChild2)
-            context.autofocusTarget = childFullKey;
-          const child = createStateNode(
-            context,
-            layout.listEditMode === "inline-single" && context.activatedItems[fullKey] === i2 ? options : listItemOptions,
-            compiledLayout,
-            i2,
-            childFullKey,
-            fullKey,
-            `${dataPath}/${i2}`,
-            dataPath,
-            childSkeleton,
-            null,
-            display,
-            itemData,
-            { parent: parentContext, data: arrayData },
-            validationState,
-            (_j = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _j[i2]
+      if (isListLayout(layout)) {
+        if (layout.indexed) {
+          const objectData = (
+            /** @type {Record<string, unknown>} */
+            data ?? []
           );
-          if (child.autofocus || child.autofocusChild !== void 0)
-            focusChild2 = false;
-          children.push(child);
+          const listItemOptions = layout.listEditMode === "inline" ? options : produceReadonlyArrayItemOptions(options);
+          children = [];
+          let focusChild2 = context.autofocusTarget === fullKey;
+          const childrenKeys = Object.keys(objectData);
+          for (let i2 = 0; i2 < childrenKeys.length; i2++) {
+            const childKey = childrenKeys[i2];
+            let valueChildSkeleton = (
+              /** @type {import('../index.js').SkeletonNode | null} */
+              null
+            );
+            if (((_i = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _i.length) === 1) {
+              valueChildSkeleton = compiledLayout.skeletonNodes[(_j = compiledLayout.skeletonTrees[skeleton == null ? void 0 : skeleton.childrenTrees[0]]) == null ? void 0 : _j.root];
+            } else {
+              for (let p2 = 0; p2 < layout.indexed.length; p2++) {
+                const pattern2 = layout.indexed[p2];
+                const childTreeKey = (_k = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _k[p2];
+                if (!childTreeKey)
+                  throw new Error(`missing skeleton tree for pattern ${pattern2}`);
+                if (childKey.match(getRegexp(pattern2))) {
+                  valueChildSkeleton = compiledLayout.skeletonNodes[(_l = compiledLayout.skeletonTrees[childTreeKey]) == null ? void 0 : _l.root];
+                }
+              }
+            }
+            if (valueChildSkeleton) {
+              const childFullKey = `${fullKey}/${childKey}`;
+              if (focusChild2)
+                context.autofocusTarget = childFullKey;
+              const valueChild = createStateNode(
+                context,
+                layout.listEditMode === "inline-single" && context.activatedItems[fullKey] === i2 ? options : listItemOptions,
+                compiledLayout,
+                childKey,
+                childFullKey,
+                fullKey,
+                `${dataPath}/${childKey}`,
+                dataPath,
+                valueChildSkeleton,
+                null,
+                display,
+                objectData[childKey],
+                { parent: parentContext, data: objectData },
+                validationState,
+                (_m = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _m.find((c) => c.key === childKey)
+              );
+              if (valueChild.autofocus || valueChild.autofocusChild !== void 0)
+                focusChild2 = false;
+              children.push(valueChild);
+            }
+          }
+        } else {
+          const arrayData = (
+            /** @type {unknown[]} */
+            data ?? []
+          );
+          const childSkeleton = (
+            /** @type {import('../index.js').SkeletonNode} */
+            ((_n = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _n[0]) && compiledLayout.skeletonNodes[(_p = compiledLayout.skeletonTrees[(_o = skeleton == null ? void 0 : skeleton.childrenTrees) == null ? void 0 : _o[0]]) == null ? void 0 : _p.root]
+          );
+          const listItemOptions = layout.listEditMode === "inline" ? options : produceReadonlyArrayItemOptions(options);
+          children = [];
+          let focusChild2 = context.autofocusTarget === fullKey;
+          for (let i2 = 0; i2 < arrayData.length; i2++) {
+            const itemData = arrayData[i2];
+            const childFullKey = `${fullKey}/${i2}`;
+            if (focusChild2)
+              context.autofocusTarget = childFullKey;
+            const child = createStateNode(
+              context,
+              layout.listEditMode === "inline-single" && context.activatedItems[fullKey] === i2 ? options : listItemOptions,
+              compiledLayout,
+              i2,
+              childFullKey,
+              fullKey,
+              `${dataPath}/${i2}`,
+              dataPath,
+              childSkeleton,
+              null,
+              display,
+              itemData,
+              { parent: parentContext, data: arrayData },
+              validationState,
+              (_q = reusedNode == null ? void 0 : reusedNode.children) == null ? void 0 : _q[i2]
+            );
+            if (child.autofocus || child.autofocusChild !== void 0)
+              focusChild2 = false;
+            children.push(child);
+          }
         }
       }
-      let error2 = (_k = context.errors) == null ? void 0 : _k.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath));
+      let error2 = (_r = context.errors) == null ? void 0 : _r.find((error3) => matchError(error3, skeleton, dataPath, parentDataPath));
       if (!error2) {
-        error2 = (_l = context.errors) == null ? void 0 : _l.findLast((error3) => matchChildError(error3, skeleton, dataPath));
+        error2 = (_s = context.errors) == null ? void 0 : _s.findLast((error3) => matchChildError(error3, skeleton, dataPath));
       }
       if (layout.comp !== "none") {
         if (error2) {
-          context.errors = (_m = context.errors) == null ? void 0 : _m.filter((error3) => {
+          context.errors = (_t = context.errors) == null ? void 0 : _t.filter((error3) => {
             return !matchError(error3, skeleton, dataPath, parentDataPath) && !matchChildError(error3, skeleton, dataPath);
           });
         }
@@ -71114,14 +71339,14 @@ Reason: ${error2}`);
       if (nodeData === null && !layout.nullable)
         nodeData = void 0;
       const validated = validationState.validatedForm || validationState.validatedChildren.includes(fullKey) || validationState.initialized === false && options.initialValidation === "always" || validationState.initialized === false && options.initialValidation === "withData" && !isDataEmpty(nodeData);
-      if (typeof ((_n = children == null ? void 0 : children[0]) == null ? void 0 : _n.key) === "number" && layout.comp !== "one-of-select") {
+      if (typeof ((_u = children == null ? void 0 : children[0]) == null ? void 0 : _u.key) === "number" && layout.comp !== "one-of-select" && !layout.indexed) {
         nodeData = produceStateNodeDataChildrenArray(
           /** @type {unknown[]} */
           nodeData ?? [],
           children
         );
       } else if (Array.isArray(nodeData)) {
-        const itemsSkeletonTree = ((_o = skeleton.childrenTrees) == null ? void 0 : _o[0]) && compiledLayout.skeletonTrees[(_p = skeleton.childrenTrees) == null ? void 0 : _p[0]];
+        const itemsSkeletonTree = ((_v = skeleton.childrenTrees) == null ? void 0 : _v[0]) && compiledLayout.skeletonTrees[(_w = skeleton.childrenTrees) == null ? void 0 : _w[0]];
         const itemsSkeletonNode = itemsSkeletonTree && compiledLayout.skeletonNodes[itemsSkeletonTree.root] || null;
         nodeData = produceStateNodeDataArray(
           /** @type {Record<string, unknown>[]} */
@@ -71132,13 +71357,14 @@ Reason: ${error2}`);
           options.readOnlyPropertiesMode === "remove" ? itemsSkeletonNode == null ? void 0 : itemsSkeletonNode.roPropertyKeys : void 0
         );
       } else if ((typeof nodeData === "object" || nodeData === void 0 && (children == null ? void 0 : children.length)) && !(nodeData instanceof File)) {
+        const removeAdditional = [true, "unknown"].includes(options.removeAdditional) || (children == null ? void 0 : children.some((c) => c.key === "$patternProperties"));
         nodeData = produceStateNodeData(
           /** @type {Record<string, unknown>} */
           nodeData ?? {},
           dataPath,
           children,
           context.additionalPropertiesErrors,
-          [true, "unknown"].includes(options.removeAdditional) ? skeleton.propertyKeys : void 0,
+          removeAdditional ? skeleton.propertyKeys : void 0,
           options.readOnlyPropertiesMode === "remove" ? skeleton.roPropertyKeys : void 0
         );
       }
@@ -71180,7 +71406,7 @@ Reason: ${error2}`);
       if (isItemsLayout(layout, compiledLayout.components)) {
         if (layout.items)
           itemsCacheKey = layout.items;
-        else if (((_q = layout.getItems) == null ? void 0 : _q.immutable) && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey))
+        else if (((_x = layout.getItems) == null ? void 0 : _x.immutable) && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey))
           itemsCacheKey = reusedNode.itemsCacheKey;
         else if (layout.getItems && isGetItemsExpression(layout.getItems)) {
           if (layout.getItems.immutable && (reusedNode == null ? void 0 : reusedNode.itemsCacheKey)) {
@@ -71229,6 +71455,13 @@ Reason: ${error2}`);
     const producePatchedData = produce((draft, node, data) => {
       if (node.dataPath === node.parentDataPath) {
         Object.assign(draft, data);
+        if (node.data && typeof data === "object" && data !== null) {
+          for (const key of Object.keys(node.data)) {
+            if (!(key in data)) {
+              delete draft[key];
+            }
+          }
+        }
       } else {
         draft[node.key] = data;
       }
@@ -71928,7 +72161,7 @@ Reason: ${error2}`);
         return null;
       }
     };
-    const _hoisted_1$5 = ["innerHTML"];
+    const _hoisted_1$6 = ["innerHTML"];
     const _sfc_main$D = {
       __name: "help-message",
       props: {
@@ -71950,7 +72183,7 @@ Reason: ${error2}`);
                   default: withCtx(() => [
                     createBaseVNode("div", {
                       innerHTML: __props.node.layout.help
-                    }, null, 8, _hoisted_1$5)
+                    }, null, 8, _hoisted_1$6)
                   ]),
                   _: 1
                 }, 512), [
@@ -72404,7 +72637,7 @@ Reason: ${error2}`);
       });
       return { el: el2, statefulLayout, stateTree };
     };
-    const _hoisted_1$4 = ["innerHTML"];
+    const _hoisted_1$5 = ["innerHTML"];
     const _sfc_main$A = {
       __name: "section-header",
       props: {
@@ -72454,7 +72687,7 @@ Reason: ${error2}`);
               key: 1,
               class: normalizeClass(`text-subtitle mt-${titleDepthBase.value - __props.node.options.titleDepth}`),
               innerHTML: __props.node.layout.subtitle
-            }, null, 10, _hoisted_1$4)) : createCommentVNode("", true),
+            }, null, 10, _hoisted_1$5)) : createCommentVNode("", true),
             __props.node.error && __props.node.validated ? (openBlock(), createBlock(unref(VAlert), {
               key: 2,
               type: "error",
@@ -72510,14 +72743,37 @@ Reason: ${error2}`);
         };
       }
     };
-    function moveArrayItem(array, fromIndex, toIndex) {
+    function moveDataItem(data, fromIndex, toIndex) {
       if (fromIndex === toIndex || fromIndex === -1 || toIndex === -1)
-        return array;
-      const newArray = [...array];
+        return data;
+      if (!Array.isArray(data) && typeof data === "object")
+        return moveObjectItem(data, fromIndex, toIndex);
+      return moveArrayItem(data, fromIndex, toIndex);
+    }
+    function moveArrayItem(data, fromIndex, toIndex) {
+      if (fromIndex === toIndex || fromIndex === -1 || toIndex === -1)
+        return data;
+      if (!Array.isArray(data) && typeof data === "object")
+        return moveObjectItem(data, fromIndex, toIndex);
+      const newArray = [...data];
       const element = newArray[fromIndex];
       newArray.splice(fromIndex, 1);
       newArray.splice(toIndex, 0, element);
       return newArray;
+    }
+    function moveObjectItem(data, fromIndex, toIndex) {
+      if (fromIndex === toIndex || fromIndex === -1 || toIndex === -1)
+        return data;
+      const newKeys = (
+        /** @type {string[] } */
+        moveArrayItem(Object.keys(data), fromIndex, toIndex)
+      );
+      const newData = {};
+      for (const key of newKeys) {
+        newData[key] = data[key];
+      }
+      console.log(newData);
+      return newData;
     }
     const padTimeComponent = (val) => {
       const s = "" + val;
@@ -72713,7 +72969,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _hoisted_1$3 = { class: "v-select__selection-text" };
+    const _hoisted_1$4 = { class: "v-select__selection-text" };
     const _hoisted_2$1 = {
       key: 1,
       class: "v-select__selection-comma"
@@ -72737,7 +72993,7 @@ Reason: ${error2}`);
       },
       setup(__props) {
         return (_ctx, _cache) => {
-          return openBlock(), createElementBlock("span", _hoisted_1$3, [
+          return openBlock(), createElementBlock("span", _hoisted_1$4, [
             __props.item.icon ? (openBlock(), createBlock(_sfc_main$y, {
               key: 0,
               icon: __props.item.icon
@@ -78277,7 +78533,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _hoisted_1$2 = ["innerHTML"];
+    const _hoisted_1$3 = ["innerHTML"];
     const _sfc_main$d = {
       __name: "child-subtitle",
       props: {
@@ -78301,7 +78557,7 @@ Reason: ${error2}`);
             key: 0,
             class: normalizeClass(`text-subtitle ${pClass.value}`),
             innerHTML: __props.modelValue.layout.subtitle
-          }, null, 10, _hoisted_1$2)) : createCommentVNode("", true);
+          }, null, 10, _hoisted_1$3)) : createCommentVNode("", true);
         };
       }
     };
@@ -78421,7 +78677,7 @@ Reason: ${error2}`);
         };
       }
     };
-    const _hoisted_1$1 = { class: "d-flex flex-row" };
+    const _hoisted_1$2 = { class: "d-flex flex-row" };
     const _sfc_main$b = {
       __name: "vertical-tabs",
       props: {
@@ -78445,7 +78701,7 @@ Reason: ${error2}`);
             createVNode(_sfc_main$A, { node: __props.modelValue }, null, 8, ["node"]),
             createVNode(unref(VSheet), normalizeProps(guardReactiveProps(unref(vSheetProps))), {
               default: withCtx(() => [
-                createBaseVNode("div", _hoisted_1$1, [
+                createBaseVNode("div", _hoisted_1$2, [
                   createVNode(unref(VTabs), {
                     modelValue: tab.value,
                     "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => tab.value = $event),
@@ -79823,6 +80079,62 @@ Reason: ${error2}`);
         };
       }
     };
+    const makeVFormProps = propsFactory({
+      ...makeComponentProps(),
+      ...makeFormProps()
+    }, "VForm");
+    const VForm = genericComponent()({
+      name: "VForm",
+      props: makeVFormProps(),
+      emits: {
+        "update:modelValue": (val) => true,
+        submit: (e) => true
+      },
+      setup(props, _ref) {
+        let {
+          slots,
+          emit: emit2
+        } = _ref;
+        const form = createForm(props);
+        const formRef = ref$1();
+        function onReset(e) {
+          e.preventDefault();
+          form.reset();
+        }
+        function onSubmit(_e) {
+          const e = _e;
+          const ready = form.validate();
+          e.then = ready.then.bind(ready);
+          e.catch = ready.catch.bind(ready);
+          e.finally = ready.finally.bind(ready);
+          emit2("submit", e);
+          if (!e.defaultPrevented) {
+            ready.then((_ref2) => {
+              var _a2;
+              let {
+                valid
+              } = _ref2;
+              if (valid) {
+                (_a2 = formRef.value) == null ? void 0 : _a2.submit();
+              }
+            });
+          }
+          e.preventDefault();
+        }
+        useRender(() => {
+          var _a2;
+          return createVNode("form", {
+            "ref": formRef,
+            "class": ["v-form", props.class],
+            "style": props.style,
+            "novalidate": true,
+            "onReset": onReset,
+            "onSubmit": onSubmit
+          }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots, form)]);
+        });
+        return forwardRefs(form, formRef);
+      }
+    });
     function useDnd(array, callback) {
       const activeDnd = computed(() => {
         if (!("draggable" in document.createElement("div")))
@@ -79877,6 +80189,7 @@ Reason: ${error2}`);
         handleBind
       };
     }
+    const _hoisted_1$1 = { class: "vjsf-list-item-actions-wrapper" };
     const _sfc_main$6 = {
       __name: "list",
       props: {
@@ -79897,7 +80210,16 @@ Reason: ${error2}`);
         const props = __props;
         const theme = useTheme();
         const { activeDnd, sortableArray, draggable, hovered, dragging, itemBind, handleBind } = useDnd(props.modelValue.children, () => {
-          props.statefulLayout.input(props.modelValue, sortableArray.value.map((child) => child.data));
+          const newData = props.modelValue.layout.indexed ? sortableArray.value.reduce(
+            (a, child) => {
+              a[child.key] = child.data;
+              return a;
+            },
+            /** @type {Record<string, any>} */
+            {}
+          ) : sortableArray.value.map((child) => child.data);
+          console.log(newData);
+          props.statefulLayout.input(props.modelValue, newData);
         });
         watch(() => props.modelValue.children, (array) => {
           sortableArray.value = array;
@@ -79928,9 +80250,41 @@ Reason: ${error2}`);
             props.statefulLayout.activateItem(props.modelValue, newData.length - 1);
           }
         };
-        const deleteItem = (childIndex) => {
-          const newData = [...props.modelValue.data.slice(0, childIndex), ...props.modelValue.data.slice(childIndex + 1)];
+        const newKey = ref$1("");
+        const newKeyForm = ref$1(null);
+        const pushEmptyIndexedItem = () => {
+          var _a2;
+          if (!newKey.value)
+            return;
+          if (!newKeyForm.value)
+            return;
+          if (!newKeyForm.value.isValid)
+            return;
+          const newData = { ...props.modelValue.data ?? {}, [newKey.value]: null };
           props.statefulLayout.input(props.modelValue, newData);
+          if (props.modelValue.layout.listEditMode === "inline-single") {
+            props.statefulLayout.activateItem(props.modelValue, Object.keys(newData).length - 1);
+          }
+          newKey.value = "";
+          (_a2 = newKeyForm.value) == null ? void 0 : _a2.reset();
+        };
+        const deleteItem = (childIndex) => {
+          if (props.modelValue.layout.indexed) {
+            const oldData = (
+              /** @type {Record<string, any>} */
+              props.modelValue.data
+            );
+            const keys2 = Object.keys(props.modelValue.data);
+            const newData = {};
+            for (let i2 = 0; i2 < keys2.length; i2++) {
+              if (i2 !== childIndex)
+                newData[keys2[i2]] = oldData[keys2[i2]];
+            }
+            props.statefulLayout.input(props.modelValue, newData);
+          } else {
+            const newData = [...props.modelValue.data.slice(0, childIndex), ...props.modelValue.data.slice(childIndex + 1)];
+            props.statefulLayout.input(props.modelValue, newData);
+          }
           menuOpened.value = -1;
         };
         const duplicateItem = (child, childIndex) => {
@@ -79955,7 +80309,7 @@ Reason: ${error2}`);
         return (_ctx, _cache) => {
           return openBlock(), createBlock(unref(VSheet), normalizeProps(guardReactiveProps(unref(vSheetProps))), {
             default: withCtx(() => [
-              createVNode(unref(VList), null, {
+              createVNode(unref(VList), { class: "py-0" }, {
                 default: withCtx(() => [
                   __props.modelValue.layout.title ? (openBlock(), createBlock(unref(VListSubheader), { key: 0 }, {
                     default: withCtx(() => [
@@ -79974,6 +80328,15 @@ Reason: ${error2}`);
                         class: "pa-1 vjsf-list-item"
                       }), createSlots({
                         default: withCtx(() => [
+                          __props.modelValue.layout.indexed ? (openBlock(), createBlock(unref(VListItemTitle), {
+                            key: 0,
+                            class: "pl-4 pt-2"
+                          }, {
+                            default: withCtx(() => [
+                              createTextVNode(toDisplayString(child.key), 1)
+                            ]),
+                            _: 2
+                          }, 1024)) : createCommentVNode("", true),
                           createVNode(unref(VRow), { class: "ma-0" }, {
                             default: withCtx(() => [
                               (openBlock(true), createElementBlock(Fragment, null, renderList(unref(isSection)(child) ? child.children : [child], (grandChild) => {
@@ -79995,7 +80358,7 @@ Reason: ${error2}`);
                         !__props.modelValue.options.readOnly && __props.modelValue.layout.listActions.length ? {
                           name: "append",
                           fn: withCtx(() => [
-                            createBaseVNode("div", null, [
+                            createBaseVNode("div", _hoisted_1$1, [
                               activeItem.value !== childIndex ? (openBlock(), createBlock(unref(VListItemAction), { key: 0 }, {
                                 default: withCtx(() => [
                                   createVNode(unref(VBtn), {
@@ -80087,7 +80450,7 @@ Reason: ${error2}`);
                                             }, 1032, ["onClick"])) : createCommentVNode("", true),
                                             __props.modelValue.layout.listActions.includes("sort") ? (openBlock(), createBlock(unref(VListItem), {
                                               key: 2,
-                                              onClick: ($event) => __props.statefulLayout.input(__props.modelValue, unref(moveArrayItem)(__props.modelValue.data, childIndex, childIndex - 1))
+                                              onClick: ($event) => __props.statefulLayout.input(__props.modelValue, unref(moveDataItem)(__props.modelValue.data, childIndex, childIndex - 1))
                                             }, {
                                               prepend: withCtx(() => [
                                                 createVNode(unref(VIcon), { icon: "mdi-arrow-up" })
@@ -80099,7 +80462,7 @@ Reason: ${error2}`);
                                             }, 1032, ["onClick"])) : createCommentVNode("", true),
                                             __props.modelValue.layout.listActions.includes("sort") ? (openBlock(), createBlock(unref(VListItem), {
                                               key: 3,
-                                              onClick: ($event) => __props.statefulLayout.input(__props.modelValue, unref(moveArrayItem)(__props.modelValue.data, childIndex, childIndex + 1))
+                                              onClick: ($event) => __props.statefulLayout.input(__props.modelValue, unref(moveDataItem)(__props.modelValue.data, childIndex, childIndex + 1))
                                             }, {
                                               prepend: withCtx(() => [
                                                 createVNode(unref(VIcon), { icon: "mdi-arrow-down" })
@@ -80127,10 +80490,50 @@ Reason: ${error2}`);
                       childIndex < __props.modelValue.children.length - 1 ? (openBlock(), createBlock(unref(VDivider), { key: 0 })) : createCommentVNode("", true)
                     ], 64);
                   }), 128)),
-                  !__props.modelValue.options.readOnly && __props.modelValue.layout.listActions.includes("add") ? (openBlock(), createBlock(unref(VListItem), { key: 1 }, {
+                  !__props.modelValue.options.readOnly && __props.modelValue.layout.listActions.includes("add") ? (openBlock(), createBlock(unref(VListItem), {
+                    key: 1,
+                    class: "py-2"
+                  }, {
                     default: withCtx(() => [
-                      createVNode(unref(VSpacer)),
-                      createVNode(unref(VBtn), {
+                      __props.modelValue.layout.indexed ? (openBlock(), createBlock(unref(VForm), {
+                        key: 0,
+                        ref_key: "newKeyForm",
+                        ref: newKeyForm,
+                        style: { "max-width": "250px" },
+                        onSubmit: _cache[2] || (_cache[2] = withModifiers(() => {
+                        }, ["prevent"]))
+                      }, {
+                        default: withCtx(() => [
+                          createVNode(unref(VTextField), {
+                            modelValue: newKey.value,
+                            "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => newKey.value = $event),
+                            variant: "outlined",
+                            placeholder: __props.modelValue.messages.addItem,
+                            "hide-details": "",
+                            rules: [(v) => !__props.modelValue.children.some((c) => c.key === v), (v) => {
+                              var _a2;
+                              return !v || ((_a2 = __props.modelValue.layout.indexed) == null ? void 0 : _a2.some((pattern2) => v.match(unref(getRegexp)(pattern2))));
+                            }],
+                            onKeypress: withKeys(pushEmptyIndexedItem, ["enter"])
+                          }, {
+                            append: withCtx(() => [
+                              createVNode(unref(VIcon), {
+                                color: "primary",
+                                size: "large",
+                                onClick: pushEmptyIndexedItem
+                              }, {
+                                default: withCtx(() => [
+                                  createTextVNode(" mdi-plus ")
+                                ]),
+                                _: 1
+                              })
+                            ]),
+                            _: 1
+                          }, 8, ["modelValue", "placeholder", "rules"])
+                        ]),
+                        _: 1
+                      }, 512)) : (openBlock(), createBlock(unref(VBtn), {
+                        key: 1,
                         color: "primary",
                         onClick: pushEmptyItem
                       }, {
@@ -80138,8 +80541,7 @@ Reason: ${error2}`);
                           createTextVNode(toDisplayString(__props.modelValue.messages.addItem), 1)
                         ]),
                         _: 1
-                      }),
-                      createVNode(unref(VSpacer))
+                      }))
                     ]),
                     _: 1
                   })) : createCommentVNode("", true)
@@ -80646,62 +81048,6 @@ Reason: ${error2}`);
           delete_connection,
           delete_module_instance
         };
-      }
-    });
-    const makeVFormProps = propsFactory({
-      ...makeComponentProps(),
-      ...makeFormProps()
-    }, "VForm");
-    const VForm = genericComponent()({
-      name: "VForm",
-      props: makeVFormProps(),
-      emits: {
-        "update:modelValue": (val) => true,
-        submit: (e) => true
-      },
-      setup(props, _ref) {
-        let {
-          slots,
-          emit: emit2
-        } = _ref;
-        const form = createForm(props);
-        const formRef = ref$1();
-        function onReset(e) {
-          e.preventDefault();
-          form.reset();
-        }
-        function onSubmit(_e) {
-          const e = _e;
-          const ready = form.validate();
-          e.then = ready.then.bind(ready);
-          e.catch = ready.catch.bind(ready);
-          e.finally = ready.finally.bind(ready);
-          emit2("submit", e);
-          if (!e.defaultPrevented) {
-            ready.then((_ref2) => {
-              var _a2;
-              let {
-                valid
-              } = _ref2;
-              if (valid) {
-                (_a2 = formRef.value) == null ? void 0 : _a2.submit();
-              }
-            });
-          }
-          e.preventDefault();
-        }
-        useRender(() => {
-          var _a2;
-          return createVNode("form", {
-            "ref": formRef,
-            "class": ["v-form", props.class],
-            "style": props.style,
-            "novalidate": true,
-            "onReset": onReset,
-            "onSubmit": onSubmit
-          }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots, form)]);
-        });
-        return forwardRefs(form, formRef);
       }
     });
     const _hoisted_1 = { class: "font-weight-bold" };

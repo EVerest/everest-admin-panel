@@ -55395,6 +55395,12 @@ html.overflow-y-hidden {
   height: 100%;
   align-items: start;
 }
+.vjsf-list-item .v-list-item__content {
+  padding-right: 4px;
+}
+.vjsf-list-item-actions-wrapper {
+  /*margin: -4px;*/
+}
 .v-file-input--hide.v-input .v-field,
 .v-file-input--hide.v-input .v-input__control,
 .v-file-input--hide.v-input .v-input__details {
