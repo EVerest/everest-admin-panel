@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-prrPPXbM.js"(exports, module) {
+  "assets/index-ZftHWqxG.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.35
+    * @vue/shared v3.4.36
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -661,7 +661,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.35
+    * @vue/reactivity v3.4.36
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -1727,7 +1727,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.35
+    * @vue/runtime-core v3.4.36
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -7217,9 +7217,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.35";
+    const version$2 = "3.4.36";
     /**
-    * @vue/runtime-dom v3.4.35
+    * @vue/runtime-dom v3.4.36
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -27004,7 +27004,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$5]]);
     var isVue2 = false;
     /*!
-     * pinia v2.2.0
+     * pinia v2.2.1
      * (c) 2024 Eduardo San Martin Morote
      * @license MIT
      */
