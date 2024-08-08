@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-BthnZOMc.js"(exports, module) {
+  "assets/index-BHL8ofd9.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.36
+    * @vue/shared v3.4.37
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -661,7 +661,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.36
+    * @vue/reactivity v3.4.37
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -1035,7 +1035,7 @@ var require_index_001 = __commonJS({
           return isShallow2;
         } else if (key === "__v_raw") {
           if (receiver === (isReadonly2 ? isShallow2 ? shallowReadonlyMap : readonlyMap : isShallow2 ? shallowReactiveMap : reactiveMap).get(target2) || // receiver is not the reactive proxy, but has the same prototype
-          // this means the reciever is a user proxy of the reactive proxy
+          // this means the receiver is a user proxy of the reactive proxy
           Object.getPrototypeOf(target2) === Object.getPrototypeOf(receiver)) {
             return target2;
           }
@@ -1727,7 +1727,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.36
+    * @vue/runtime-core v3.4.37
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -3319,7 +3319,7 @@ var require_index_001 = __commonJS({
     function inject$1(key, defaultValue, treatDefaultAsFactory = false) {
       const instance = currentInstance || currentRenderingInstance;
       if (instance || currentApp) {
-        const provides = instance ? instance.parent == null ? instance.vnode.appContext && instance.vnode.appContext.provides : instance.parent.provides : currentApp._context.provides;
+        const provides = currentApp ? currentApp._context.provides : instance ? instance.parent == null ? instance.vnode.appContext && instance.vnode.appContext.provides : instance.parent.provides : void 0;
         if (provides && key in provides) {
           return provides[key];
         } else if (arguments.length > 1) {
@@ -5290,13 +5290,13 @@ var require_index_001 = __commonJS({
             namespace
           );
         }
+        container._vnode = vnode;
         if (!isFlushing2) {
           isFlushing2 = true;
           flushPreFlushCbs();
           flushPostFlushCbs();
           isFlushing2 = false;
         }
-        container._vnode = vnode;
       };
       const internals = {
         p: patch,
@@ -5661,7 +5661,8 @@ var require_index_001 = __commonJS({
             return options.get ? options.get(localValue) : localValue;
           },
           set(value) {
-            if (!hasChanged(value, localValue) && !(prevSetValue !== EMPTY_OBJ && hasChanged(value, prevSetValue))) {
+            const emittedValue = options.set ? options.set(value) : value;
+            if (!hasChanged(emittedValue, localValue) && !(prevSetValue !== EMPTY_OBJ && hasChanged(value, prevSetValue))) {
               return;
             }
             const rawProps = i2.vnode.props;
@@ -5670,7 +5671,6 @@ var require_index_001 = __commonJS({
               localValue = value;
               trigger2();
             }
-            const emittedValue = options.set ? options.set(value) : value;
             i2.emit(`update:${name}`, emittedValue);
             if (hasChanged(value, emittedValue) && hasChanged(value, prevSetValue) && !hasChanged(emittedValue, prevEmittedValue)) {
               trigger2();
@@ -7217,9 +7217,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.36";
+    const version$2 = "3.4.37";
     /**
-    * @vue/runtime-dom v3.4.36
+    * @vue/runtime-dom v3.4.37
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
