@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-BHL8ofd9.js"(exports, module) {
+  "assets/index-aizcljrU.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -459,7 +459,7 @@ var require_index_001 = __commonJS({
       }()
     );
     /**
-    * @vue/shared v3.4.37
+    * @vue/shared v3.4.38
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -661,7 +661,7 @@ var require_index_001 = __commonJS({
       );
     };
     /**
-    * @vue/reactivity v3.4.37
+    * @vue/reactivity v3.4.38
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -1727,7 +1727,7 @@ var require_index_001 = __commonJS({
       return isRef(val) ? val : new ObjectRefImpl(source2, key, defaultValue);
     }
     /**
-    * @vue/runtime-core v3.4.37
+    * @vue/runtime-core v3.4.38
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -7217,9 +7217,9 @@ var require_index_001 = __commonJS({
         return createVNode(type2, propsOrChildren, children);
       }
     }
-    const version$2 = "3.4.37";
+    const version$2 = "3.4.38";
     /**
-    * @vue/runtime-dom v3.4.37
+    * @vue/runtime-dom v3.4.38
     * (c) 2018-present Yuxi (Evan) You and Vue contributors
     * @license MIT
     **/
@@ -10118,14 +10118,12 @@ var require_index_001 = __commonJS({
     const SUPPORTS_INTERSECTION = IN_BROWSER && "IntersectionObserver" in window;
     const SUPPORTS_TOUCH = IN_BROWSER && ("ontouchstart" in window || window.navigator.maxTouchPoints > 0);
     const SUPPORTS_EYE_DROPPER = IN_BROWSER && "EyeDropper" in window;
-    function _classPrivateFieldInitSpec(obj, privateMap, value) {
-      _checkPrivateRedeclaration(obj, privateMap);
-      privateMap.set(obj, value);
+    function _classPrivateFieldInitSpec(e, t, a) {
+      _checkPrivateRedeclaration(e, t), t.set(e, a);
     }
-    function _checkPrivateRedeclaration(obj, privateCollection) {
-      if (privateCollection.has(obj)) {
+    function _checkPrivateRedeclaration(e, t) {
+      if (t.has(e))
         throw new TypeError("Cannot initialize the same private elements twice on an object");
-      }
     }
     function _classPrivateFieldSet(s, a, r2) {
       return s.set(_assertClassBrand(s, a), r2), r2;
@@ -20320,7 +20318,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         if (targetElement == null) {
           return void 0;
         }
-        let container = targetElement.querySelector(":scope > .v-overlay-container");
+        let container = [...targetElement.children].find((el2) => el2.matches(".v-overlay-container"));
         if (!container) {
           container = document.createElement("div");
           container.className = "v-overlay-container";
@@ -20351,6 +20349,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     }
     function directive(e, el2, binding) {
       const handler = typeof binding.value === "function" ? binding.value : binding.value.handler;
+      e.shadowTarget = e.target;
       el2._clickOutside.lastMousedownWasOutside && checkEvent(e, el2, binding) && setTimeout(() => {
         checkIsActive(e, binding) && handler && handler(e);
       }, 0);
@@ -20387,7 +20386,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           onMousedown
         };
       },
-      unmounted(el2, binding) {
+      beforeUnmount(el2, binding) {
         if (!el2._clickOutside)
           return;
         handleShadow(el2, (app2) => {
@@ -20474,6 +20473,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           attrs,
           emit: emit2
         } = _ref;
+        const vm = getCurrentInstance("VOverlay");
         const model = useProxiedModel(props, "modelValue");
         const isActive = computed({
           get: () => model.value,
@@ -20517,11 +20517,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           teleportTarget
         } = useTeleport(() => {
-          var _a2;
+          var _a2, _b, _c;
           const target3 = props.attach || props.contained;
           if (target3)
             return target3;
-          const rootNode = (_a2 = activatorEl == null ? void 0 : activatorEl.value) == null ? void 0 : _a2.getRootNode();
+          const rootNode = ((_a2 = activatorEl == null ? void 0 : activatorEl.value) == null ? void 0 : _a2.getRootNode()) || ((_c = (_b = vm.proxy) == null ? void 0 : _b.$el) == null ? void 0 : _c.getRootNode());
           if (rootNode instanceof ShadowRoot)
             return rootNode;
           return false;
@@ -20565,7 +20565,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         function closeConditional(e) {
           return isActive.value && globalTop.value && // If using scrim, only close if clicking on it rather than anything opened on top
-          (!props.scrim || e.target === scrimEl.value);
+          (!props.scrim || e.target === scrimEl.value || e instanceof MouseEvent && e.shadowTarget === scrimEl.value);
         }
         IN_BROWSER && watch(isActive, (val) => {
           if (val) {
@@ -39019,7 +39019,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.14";
+    const version$1 = "3.6.15";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -80607,7 +80607,7 @@ Reason: ${error2}`);
         const {
           t
         } = useLocale();
-        const model = useProxiedModel(props, "modelValue", props.modelValue, (val) => wrapInArray(val), (val) => props.multiple || Array.isArray(props.modelValue) ? val : val[0] ?? null);
+        const model = useProxiedModel(props, "modelValue", props.modelValue, (val) => wrapInArray(val), (val) => !props.multiple && Array.isArray(val) ? val[0] : val);
         const {
           isFocused,
           focus,
