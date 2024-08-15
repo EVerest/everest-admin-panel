@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-_XgeTMnh.js"(exports, module) {
+  "assets/index-lQb1cEQf.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -26516,7 +26516,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const ConnectPage = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["render", _sfc_render$5]]);
     var isVue2 = false;
     /*!
-     * pinia v2.2.1
+     * pinia v2.2.2
      * (c) 2024 Eduardo San Martin Morote
      * @license MIT
      */
@@ -26832,6 +26832,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       isSyncListening = true;
       return store;
     }
+    // @__NO_SIDE_EFFECTS__
     function defineStore(idOrOptions, setup2, setupOptions) {
       let id2;
       let options;
@@ -26942,7 +26943,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         });
       }
     }
-    const useEvbcStore = defineStore("evbc", () => {
+    const useEvbcStore = /* @__PURE__ */ defineStore("evbc", () => {
       const selection = ref$1({ type: "NONE" });
       const current_config = ref$1(null);
       const config_context = reactive(new ConfigStageContext());
