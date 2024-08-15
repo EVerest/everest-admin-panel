@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-aizcljrU.js"(exports, module) {
+  "assets/index-_XgeTMnh.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -5896,24 +5896,6 @@ var require_index_001 = __commonJS({
       setCurrentRenderingInstance(prev);
       return result;
     }
-    function filterSingleRoot(children, recurse = true) {
-      let singleRoot;
-      for (let i2 = 0; i2 < children.length; i2++) {
-        const child = children[i2];
-        if (isVNode(child)) {
-          if (child.type !== Comment || child.children === "v-if") {
-            if (singleRoot) {
-              return;
-            } else {
-              singleRoot = child;
-            }
-          }
-        } else {
-          return;
-        }
-      }
-      return singleRoot;
-    }
     const getFunctionalFallthrough = (attrs) => {
       let res;
       for (const key in attrs) {
@@ -6004,537 +5986,6 @@ var require_index_001 = __commonJS({
       }
     }
     const isSuspense = (type2) => type2.__isSuspense;
-    let suspenseId = 0;
-    const SuspenseImpl = {
-      name: "Suspense",
-      // In order to make Suspense tree-shakable, we need to avoid importing it
-      // directly in the renderer. The renderer checks for the __isSuspense flag
-      // on a vnode's type and calls the `process` method, passing in renderer
-      // internals.
-      __isSuspense: true,
-      process(n1, n2, container, anchor, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals) {
-        if (n1 == null) {
-          mountSuspense(
-            n2,
-            container,
-            anchor,
-            parentComponent,
-            parentSuspense,
-            namespace,
-            slotScopeIds,
-            optimized,
-            rendererInternals
-          );
-        } else {
-          if (parentSuspense && parentSuspense.deps > 0 && !n1.suspense.isInFallback) {
-            n2.suspense = n1.suspense;
-            n2.suspense.vnode = n2;
-            n2.el = n1.el;
-            return;
-          }
-          patchSuspense(
-            n1,
-            n2,
-            container,
-            anchor,
-            parentComponent,
-            namespace,
-            slotScopeIds,
-            optimized,
-            rendererInternals
-          );
-        }
-      },
-      hydrate: hydrateSuspense,
-      normalize: normalizeSuspenseChildren
-    };
-    const Suspense = SuspenseImpl;
-    function triggerEvent(vnode, name) {
-      const eventListener = vnode.props && vnode.props[name];
-      if (isFunction$1(eventListener)) {
-        eventListener();
-      }
-    }
-    function mountSuspense(vnode, container, anchor, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals) {
-      const {
-        p: patch,
-        o: { createElement }
-      } = rendererInternals;
-      const hiddenContainer = createElement("div");
-      const suspense = vnode.suspense = createSuspenseBoundary(
-        vnode,
-        parentSuspense,
-        parentComponent,
-        container,
-        hiddenContainer,
-        anchor,
-        namespace,
-        slotScopeIds,
-        optimized,
-        rendererInternals
-      );
-      patch(
-        null,
-        suspense.pendingBranch = vnode.ssContent,
-        hiddenContainer,
-        null,
-        parentComponent,
-        suspense,
-        namespace,
-        slotScopeIds
-      );
-      if (suspense.deps > 0) {
-        triggerEvent(vnode, "onPending");
-        triggerEvent(vnode, "onFallback");
-        patch(
-          null,
-          vnode.ssFallback,
-          container,
-          anchor,
-          parentComponent,
-          null,
-          // fallback tree will not have suspense context
-          namespace,
-          slotScopeIds
-        );
-        setActiveBranch(suspense, vnode.ssFallback);
-      } else {
-        suspense.resolve(false, true);
-      }
-    }
-    function patchSuspense(n1, n2, container, anchor, parentComponent, namespace, slotScopeIds, optimized, { p: patch, um: unmount, o: { createElement } }) {
-      const suspense = n2.suspense = n1.suspense;
-      suspense.vnode = n2;
-      n2.el = n1.el;
-      const newBranch = n2.ssContent;
-      const newFallback = n2.ssFallback;
-      const { activeBranch, pendingBranch, isInFallback, isHydrating } = suspense;
-      if (pendingBranch) {
-        suspense.pendingBranch = newBranch;
-        if (isSameVNodeType(newBranch, pendingBranch)) {
-          patch(
-            pendingBranch,
-            newBranch,
-            suspense.hiddenContainer,
-            null,
-            parentComponent,
-            suspense,
-            namespace,
-            slotScopeIds,
-            optimized
-          );
-          if (suspense.deps <= 0) {
-            suspense.resolve();
-          } else if (isInFallback) {
-            if (!isHydrating) {
-              patch(
-                activeBranch,
-                newFallback,
-                container,
-                anchor,
-                parentComponent,
-                null,
-                // fallback tree will not have suspense context
-                namespace,
-                slotScopeIds,
-                optimized
-              );
-              setActiveBranch(suspense, newFallback);
-            }
-          }
-        } else {
-          suspense.pendingId = suspenseId++;
-          if (isHydrating) {
-            suspense.isHydrating = false;
-            suspense.activeBranch = pendingBranch;
-          } else {
-            unmount(pendingBranch, parentComponent, suspense);
-          }
-          suspense.deps = 0;
-          suspense.effects.length = 0;
-          suspense.hiddenContainer = createElement("div");
-          if (isInFallback) {
-            patch(
-              null,
-              newBranch,
-              suspense.hiddenContainer,
-              null,
-              parentComponent,
-              suspense,
-              namespace,
-              slotScopeIds,
-              optimized
-            );
-            if (suspense.deps <= 0) {
-              suspense.resolve();
-            } else {
-              patch(
-                activeBranch,
-                newFallback,
-                container,
-                anchor,
-                parentComponent,
-                null,
-                // fallback tree will not have suspense context
-                namespace,
-                slotScopeIds,
-                optimized
-              );
-              setActiveBranch(suspense, newFallback);
-            }
-          } else if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
-            patch(
-              activeBranch,
-              newBranch,
-              container,
-              anchor,
-              parentComponent,
-              suspense,
-              namespace,
-              slotScopeIds,
-              optimized
-            );
-            suspense.resolve(true);
-          } else {
-            patch(
-              null,
-              newBranch,
-              suspense.hiddenContainer,
-              null,
-              parentComponent,
-              suspense,
-              namespace,
-              slotScopeIds,
-              optimized
-            );
-            if (suspense.deps <= 0) {
-              suspense.resolve();
-            }
-          }
-        }
-      } else {
-        if (activeBranch && isSameVNodeType(newBranch, activeBranch)) {
-          patch(
-            activeBranch,
-            newBranch,
-            container,
-            anchor,
-            parentComponent,
-            suspense,
-            namespace,
-            slotScopeIds,
-            optimized
-          );
-          setActiveBranch(suspense, newBranch);
-        } else {
-          triggerEvent(n2, "onPending");
-          suspense.pendingBranch = newBranch;
-          if (newBranch.shapeFlag & 512) {
-            suspense.pendingId = newBranch.component.suspenseId;
-          } else {
-            suspense.pendingId = suspenseId++;
-          }
-          patch(
-            null,
-            newBranch,
-            suspense.hiddenContainer,
-            null,
-            parentComponent,
-            suspense,
-            namespace,
-            slotScopeIds,
-            optimized
-          );
-          if (suspense.deps <= 0) {
-            suspense.resolve();
-          } else {
-            const { timeout, pendingId } = suspense;
-            if (timeout > 0) {
-              setTimeout(() => {
-                if (suspense.pendingId === pendingId) {
-                  suspense.fallback(newFallback);
-                }
-              }, timeout);
-            } else if (timeout === 0) {
-              suspense.fallback(newFallback);
-            }
-          }
-        }
-      }
-    }
-    function createSuspenseBoundary(vnode, parentSuspense, parentComponent, container, hiddenContainer, anchor, namespace, slotScopeIds, optimized, rendererInternals, isHydrating = false) {
-      const {
-        p: patch,
-        m: move,
-        um: unmount,
-        n: next2,
-        o: { parentNode, remove: remove2 }
-      } = rendererInternals;
-      let parentSuspenseId;
-      const isSuspensible = isVNodeSuspensible(vnode);
-      if (isSuspensible) {
-        if (parentSuspense && parentSuspense.pendingBranch) {
-          parentSuspenseId = parentSuspense.pendingId;
-          parentSuspense.deps++;
-        }
-      }
-      const timeout = vnode.props ? toNumber$1(vnode.props.timeout) : void 0;
-      const initialAnchor = anchor;
-      const suspense = {
-        vnode,
-        parent: parentSuspense,
-        parentComponent,
-        namespace,
-        container,
-        hiddenContainer,
-        deps: 0,
-        pendingId: suspenseId++,
-        timeout: typeof timeout === "number" ? timeout : -1,
-        activeBranch: null,
-        pendingBranch: null,
-        isInFallback: !isHydrating,
-        isHydrating,
-        isUnmounted: false,
-        effects: [],
-        resolve(resume = false, sync = false) {
-          const {
-            vnode: vnode2,
-            activeBranch,
-            pendingBranch,
-            pendingId,
-            effects,
-            parentComponent: parentComponent2,
-            container: container2
-          } = suspense;
-          let delayEnter = false;
-          if (suspense.isHydrating) {
-            suspense.isHydrating = false;
-          } else if (!resume) {
-            delayEnter = activeBranch && pendingBranch.transition && pendingBranch.transition.mode === "out-in";
-            if (delayEnter) {
-              activeBranch.transition.afterLeave = () => {
-                if (pendingId === suspense.pendingId) {
-                  move(
-                    pendingBranch,
-                    container2,
-                    anchor === initialAnchor ? next2(activeBranch) : anchor,
-                    0
-                  );
-                  queuePostFlushCb(effects);
-                }
-              };
-            }
-            if (activeBranch) {
-              if (parentNode(activeBranch.el) !== suspense.hiddenContainer) {
-                anchor = next2(activeBranch);
-              }
-              unmount(activeBranch, parentComponent2, suspense, true);
-            }
-            if (!delayEnter) {
-              move(pendingBranch, container2, anchor, 0);
-            }
-          }
-          setActiveBranch(suspense, pendingBranch);
-          suspense.pendingBranch = null;
-          suspense.isInFallback = false;
-          let parent = suspense.parent;
-          let hasUnresolvedAncestor = false;
-          while (parent) {
-            if (parent.pendingBranch) {
-              parent.effects.push(...effects);
-              hasUnresolvedAncestor = true;
-              break;
-            }
-            parent = parent.parent;
-          }
-          if (!hasUnresolvedAncestor && !delayEnter) {
-            queuePostFlushCb(effects);
-          }
-          suspense.effects = [];
-          if (isSuspensible) {
-            if (parentSuspense && parentSuspense.pendingBranch && parentSuspenseId === parentSuspense.pendingId) {
-              parentSuspense.deps--;
-              if (parentSuspense.deps === 0 && !sync) {
-                parentSuspense.resolve();
-              }
-            }
-          }
-          triggerEvent(vnode2, "onResolve");
-        },
-        fallback(fallbackVNode) {
-          if (!suspense.pendingBranch) {
-            return;
-          }
-          const { vnode: vnode2, activeBranch, parentComponent: parentComponent2, container: container2, namespace: namespace2 } = suspense;
-          triggerEvent(vnode2, "onFallback");
-          const anchor2 = next2(activeBranch);
-          const mountFallback = () => {
-            if (!suspense.isInFallback) {
-              return;
-            }
-            patch(
-              null,
-              fallbackVNode,
-              container2,
-              anchor2,
-              parentComponent2,
-              null,
-              // fallback tree will not have suspense context
-              namespace2,
-              slotScopeIds,
-              optimized
-            );
-            setActiveBranch(suspense, fallbackVNode);
-          };
-          const delayEnter = fallbackVNode.transition && fallbackVNode.transition.mode === "out-in";
-          if (delayEnter) {
-            activeBranch.transition.afterLeave = mountFallback;
-          }
-          suspense.isInFallback = true;
-          unmount(
-            activeBranch,
-            parentComponent2,
-            null,
-            // no suspense so unmount hooks fire now
-            true
-            // shouldRemove
-          );
-          if (!delayEnter) {
-            mountFallback();
-          }
-        },
-        move(container2, anchor2, type2) {
-          suspense.activeBranch && move(suspense.activeBranch, container2, anchor2, type2);
-          suspense.container = container2;
-        },
-        next() {
-          return suspense.activeBranch && next2(suspense.activeBranch);
-        },
-        registerDep(instance, setupRenderEffect, optimized2) {
-          const isInPendingSuspense = !!suspense.pendingBranch;
-          if (isInPendingSuspense) {
-            suspense.deps++;
-          }
-          const hydratedEl = instance.vnode.el;
-          instance.asyncDep.catch((err) => {
-            handleError(err, instance, 0);
-          }).then((asyncSetupResult) => {
-            if (instance.isUnmounted || suspense.isUnmounted || suspense.pendingId !== instance.suspenseId) {
-              return;
-            }
-            instance.asyncResolved = true;
-            const { vnode: vnode2 } = instance;
-            handleSetupResult(instance, asyncSetupResult, false);
-            if (hydratedEl) {
-              vnode2.el = hydratedEl;
-            }
-            const placeholder = !hydratedEl && instance.subTree.el;
-            setupRenderEffect(
-              instance,
-              vnode2,
-              // component may have been moved before resolve.
-              // if this is not a hydration, instance.subTree will be the comment
-              // placeholder.
-              parentNode(hydratedEl || instance.subTree.el),
-              // anchor will not be used if this is hydration, so only need to
-              // consider the comment placeholder case.
-              hydratedEl ? null : next2(instance.subTree),
-              suspense,
-              namespace,
-              optimized2
-            );
-            if (placeholder) {
-              remove2(placeholder);
-            }
-            updateHOCHostEl(instance, vnode2.el);
-            if (isInPendingSuspense && --suspense.deps === 0) {
-              suspense.resolve();
-            }
-          });
-        },
-        unmount(parentSuspense2, doRemove) {
-          suspense.isUnmounted = true;
-          if (suspense.activeBranch) {
-            unmount(
-              suspense.activeBranch,
-              parentComponent,
-              parentSuspense2,
-              doRemove
-            );
-          }
-          if (suspense.pendingBranch) {
-            unmount(
-              suspense.pendingBranch,
-              parentComponent,
-              parentSuspense2,
-              doRemove
-            );
-          }
-        }
-      };
-      return suspense;
-    }
-    function hydrateSuspense(node, vnode, parentComponent, parentSuspense, namespace, slotScopeIds, optimized, rendererInternals, hydrateNode) {
-      const suspense = vnode.suspense = createSuspenseBoundary(
-        vnode,
-        parentSuspense,
-        parentComponent,
-        node.parentNode,
-        // eslint-disable-next-line no-restricted-globals
-        document.createElement("div"),
-        null,
-        namespace,
-        slotScopeIds,
-        optimized,
-        rendererInternals,
-        true
-      );
-      const result = hydrateNode(
-        node,
-        suspense.pendingBranch = vnode.ssContent,
-        parentComponent,
-        suspense,
-        slotScopeIds,
-        optimized
-      );
-      if (suspense.deps === 0) {
-        suspense.resolve(false, true);
-      }
-      return result;
-    }
-    function normalizeSuspenseChildren(vnode) {
-      const { shapeFlag, children } = vnode;
-      const isSlotChildren = shapeFlag & 32;
-      vnode.ssContent = normalizeSuspenseSlot(
-        isSlotChildren ? children.default : children
-      );
-      vnode.ssFallback = isSlotChildren ? normalizeSuspenseSlot(children.fallback) : createVNode(Comment);
-    }
-    function normalizeSuspenseSlot(s) {
-      let block2;
-      if (isFunction$1(s)) {
-        const trackBlock = isBlockTreeEnabled && s._c;
-        if (trackBlock) {
-          s._d = false;
-          openBlock();
-        }
-        s = s();
-        if (trackBlock) {
-          s._d = true;
-          block2 = currentBlock;
-          closeBlock();
-        }
-      }
-      if (isArray$1(s)) {
-        const singleChild = filterSingleRoot(s);
-        s = singleChild;
-      }
-      s = normalizeVNode(s);
-      if (block2 && !s.dynamicChildren) {
-        s.dynamicChildren = block2.filter((c) => c !== s);
-      }
-      return s;
-    }
     function queueEffectWithSuspense(fn, suspense) {
       if (suspense && suspense.pendingBranch) {
         if (isArray$1(fn)) {
@@ -6545,24 +5996,6 @@ var require_index_001 = __commonJS({
       } else {
         queuePostFlushCb(fn);
       }
-    }
-    function setActiveBranch(suspense, branch) {
-      suspense.activeBranch = branch;
-      const { vnode, parentComponent } = suspense;
-      let el2 = branch.el;
-      while (!el2 && branch.component) {
-        branch = branch.component.subTree;
-        el2 = branch.el;
-      }
-      vnode.el = el2;
-      if (parentComponent && parentComponent.subTree === vnode) {
-        parentComponent.vnode.el = el2;
-        updateHOCHostEl(parentComponent, el2);
-      }
-    }
-    function isVNodeSuspensible(vnode) {
-      const suspensible = vnode.props && vnode.props.suspensible;
-      return suspensible != null && suspensible !== false;
     }
     const Fragment = Symbol.for("v-fgt");
     const Text$2 = Symbol.for("v-txt");
@@ -10564,16 +9997,6 @@ var require_index_001 = __commonJS({
       const timeoutId = window.setTimeout(cb, timeout);
       return () => window.clearTimeout(timeoutId);
     }
-    function eagerComputed(fn, options) {
-      const result = shallowRef();
-      watchEffect(() => {
-        result.value = fn();
-      }, {
-        flush: "sync",
-        ...options
-      });
-      return readonly(result);
-    }
     function isClickInsideElement(event, targetDiv) {
       const mouseX = event.clientX;
       const mouseY = event.clientY;
@@ -10599,6 +10022,11 @@ var require_index_001 = __commonJS({
         get: () => refElement(el2.value)
       });
       return fn;
+    }
+    function checkPrintable(e) {
+      const isPrintableChar = e.key.length === 1;
+      const noModifier = !e.ctrlKey && !e.metaKey && !e.altKey;
+      return isPrintableChar && noModifier;
     }
     const block$2 = ["top", "bottom"];
     const inline$1 = ["start", "end", "left", "right"];
@@ -11486,9 +10914,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const layout = inject$1(VuetifyLayoutKey);
       if (!layout)
         throw new Error("[Vuetify] Could not find injected layout");
-      const layoutIsReady = nextTick();
       return {
-        layoutIsReady,
         getLayoutItem: layout.getLayoutItem,
         mainRect: layout.mainRect,
         mainStyles: layout.mainStyles
@@ -11506,7 +10932,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const isKeptAlive = shallowRef(false);
       onDeactivated(() => isKeptAlive.value = true);
       onActivated(() => isKeptAlive.value = false);
-      const layoutIsReady = nextTick();
       const {
         layoutItemStyles,
         layoutItemScrimStyles
@@ -11519,8 +10944,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       return {
         layoutItemStyles,
         layoutRect: layout.layoutRect,
-        layoutItemScrimStyles,
-        layoutIsReady
+        layoutItemScrimStyles
       };
     }
     const generateLayers = (layout, positions, layoutSizes, activeItems) => {
@@ -11567,7 +10991,31 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         resizeRef,
         contentRect: layoutRect
       } = useResizeObserver$1();
-      const layers = eagerComputed(() => {
+      const computedOverlaps = computed(() => {
+        const map2 = /* @__PURE__ */ new Map();
+        const overlaps = props.overlaps ?? [];
+        for (const overlap of overlaps.filter((item) => item.includes(":"))) {
+          const [top2, bottom2] = overlap.split(":");
+          if (!registered.value.includes(top2) || !registered.value.includes(bottom2))
+            continue;
+          const topPosition = positions.get(top2);
+          const bottomPosition = positions.get(bottom2);
+          const topAmount = layoutSizes.get(top2);
+          const bottomAmount = layoutSizes.get(bottom2);
+          if (!topPosition || !bottomPosition || !topAmount || !bottomAmount)
+            continue;
+          map2.set(bottom2, {
+            position: topPosition.value,
+            amount: parseInt(topAmount.value, 10)
+          });
+          map2.set(top2, {
+            position: bottomPosition.value,
+            amount: -parseInt(bottomAmount.value, 10)
+          });
+        }
+        return map2;
+      });
+      const layers = computed(() => {
         const uniquePriorities = [...new Set([...priorities.values()].map((p2) => p2.value))].sort((a, b) => a - b);
         const layout = [];
         for (const p2 of uniquePriorities) {
@@ -11596,7 +11044,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
         };
       });
-      const items2 = eagerComputed(() => {
+      const items2 = computed(() => {
         return layers.value.slice(1).map((_ref, index) => {
           let {
             id: id2
@@ -11618,7 +11066,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return items2.value.find((item) => item.id === id2);
       };
       const rootVm = getCurrentInstance("createLayout");
-      const layoutIsReady = nextTick();
+      const isMounted = shallowRef(false);
+      onMounted(() => {
+        isMounted.value = true;
+      });
       provide(VuetifyLayoutKey, {
         register: (vm, _ref2) => {
           let {
@@ -11659,11 +11110,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 transition: "none"
               }
             };
-            if (index.value < 0)
-              throw new Error(`Layout item "${id2}" is missing`);
+            if (!isMounted.value)
+              return styles;
             const item = items2.value[index.value];
             if (!item)
               throw new Error(`[Vuetify] Could not find layout item "${id2}"`);
+            const overlap = computedOverlaps.value.get(id2);
+            if (overlap) {
+              item[overlap.position] += overlap.amount;
+            }
             return {
               ...styles,
               height: isHorizontal ? `calc(100% - ${item.top}px - ${item.bottom}px)` : elementSize.value ? `${elementSize.value}px` : void 0,
@@ -11696,8 +11151,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         getLayoutItem,
         items: items2,
         layoutRect,
-        rootZIndex,
-        layoutIsReady
+        rootZIndex
       });
       const layoutClasses = computed(() => ["v-layout", {
         "v-layout--full-height": props.fullHeight
@@ -11713,7 +11167,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         getLayoutItem,
         items: items2,
         layoutRect,
-        layoutIsReady,
         layoutRef: resizeRef
       };
     }
@@ -12367,18 +11820,16 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           rtlClasses
         } = useRtl();
-        useRender(() => createVNode("div", {
-          "ref": layoutRef,
-          "class": ["v-application", theme.themeClasses.value, layoutClasses.value, rtlClasses.value, props.class],
-          "style": [props.style]
-        }, [createVNode("div", {
-          "class": "v-application__wrap"
-        }, [createVNode(Suspense, null, {
-          default: () => {
-            var _a2;
-            return [createVNode(Fragment, null, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])];
-          }
-        })])]));
+        useRender(() => {
+          var _a2;
+          return createVNode("div", {
+            "ref": layoutRef,
+            "class": ["v-application", theme.themeClasses.value, layoutClasses.value, rtlClasses.value, props.class],
+            "style": [props.style]
+          }, [createVNode("div", {
+            "class": "v-application__wrap"
+          }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)])]);
+        });
         return {
           getLayoutItem,
           items: items2,
@@ -13022,6 +12473,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     };
     const Intersect$1 = Intersect;
     const makeVImgProps = propsFactory({
+      absolute: Boolean,
       alt: String,
       cover: Boolean,
       color: String,
@@ -13295,6 +12747,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const responsiveProps = VResponsive.filterProps(props);
           return withDirectives(createVNode(VResponsive, mergeProps({
             "class": ["v-img", {
+              "v-img--absolute": props.absolute,
               "v-img--booting": !isBooted.value
             }, backgroundColorClasses.value, roundedClasses.value, props.class],
             "style": [{
@@ -13680,8 +13133,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const opacity = computed(() => scrollBehavior.value.fadeImage ? scrollBehavior.value.inverted ? 1 - scrollRatio.value : scrollRatio.value : void 0);
         const height = computed(() => {
           var _a2, _b;
-          const height2 = Number(((_a2 = vToolbarRef.value) == null ? void 0 : _a2.contentHeight) ?? props.height);
-          const extensionHeight = Number(((_b = vToolbarRef.value) == null ? void 0 : _b.extensionHeight) ?? 0);
+          if (scrollBehavior.value.hide && scrollBehavior.value.inverted)
+            return 0;
+          const height2 = ((_a2 = vToolbarRef.value) == null ? void 0 : _a2.contentHeight) ?? 0;
+          const extensionHeight = ((_b = vToolbarRef.value) == null ? void 0 : _b.extensionHeight) ?? 0;
           if (!canHide.value)
             return height2 + extensionHeight;
           return currentScroll.value < scrollThreshold.value || scrollBehavior.value.fullyHide ? height2 + extensionHeight : height2;
@@ -13703,8 +13158,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           ssrBootStyles
         } = useSsrBoot();
         const {
-          layoutItemStyles,
-          layoutIsReady
+          layoutItemStyles
         } = useLayoutItem({
           id: props.name,
           order: computed(() => parseInt(props.order, 10)),
@@ -13732,7 +13186,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "flat": isFlat.value
           }), slots);
         });
-        return layoutIsReady;
+        return {};
       }
     });
     const allowedDensities = [null, "default", "comfortable", "compact"];
@@ -15233,6 +14687,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         type: Boolean,
         default: void 0
       },
+      activeColor: String,
       baseColor: String,
       symbol: {
         type: null,
@@ -15325,11 +14780,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }
           return group == null ? void 0 : group.isSelected.value;
         });
+        const color = computed(() => isActive.value ? props.activeColor ?? props.color : props.color);
         const variantProps = computed(() => {
           var _a2, _b;
           const showColor = (group == null ? void 0 : group.isSelected.value) && (!link2.isLink.value || ((_a2 = link2.isActive) == null ? void 0 : _a2.value)) || !group || ((_b = link2.isActive) == null ? void 0 : _b.value);
           return {
-            color: showColor ? props.color ?? props.baseColor : props.baseColor,
+            color: showColor ? color.value ?? props.baseColor : props.baseColor,
             variant: props.variant
           };
         });
@@ -15519,6 +14975,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       icon: IconValue,
       image: String,
       text: String,
+      ...makeBorderProps(),
       ...makeComponentProps(),
       ...makeDensityProps(),
       ...makeRoundedProps(),
@@ -15540,6 +14997,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           themeClasses
         } = provideTheme(props);
         const {
+          borderClasses
+        } = useBorder(props);
+        const {
           colorClasses,
           colorStyles,
           variantClasses
@@ -15558,7 +15018,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           "class": ["v-avatar", {
             "v-avatar--start": props.start,
             "v-avatar--end": props.end
-          }, themeClasses.value, colorClasses.value, densityClasses.value, roundedClasses.value, sizeClasses.value, variantClasses.value, props.class],
+          }, themeClasses.value, borderClasses.value, colorClasses.value, densityClasses.value, roundedClasses.value, sizeClasses.value, variantClasses.value, props.class],
           "style": [colorStyles.value, sizeStyles.value, props.style]
         }, {
           default: () => [!slots.default ? props.image ? createVNode(VImg, {
@@ -15869,6 +15329,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         default: false
       },
       ...makeComponentProps(),
+      ...makeDimensionProps(),
       ...makeTagProps()
     }, "VContainer");
     const VContainer = genericComponent()({
@@ -15881,11 +15342,14 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           rtlClasses
         } = useRtl();
+        const {
+          dimensionStyles
+        } = useDimension(props);
         useRender(() => createVNode(props.tag, {
           "class": ["v-container", {
             "v-container--fluid": props.fluid
           }, rtlClasses.value, props.class],
-          "style": props.style
+          "style": [dimensionStyles.value, props.style]
         }, slots));
         return {};
       }
@@ -16441,11 +15905,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           parents
         } = _ref2;
         if (value) {
-          let parent = parents.get(id2);
+          let parent = toRaw(parents.get(id2));
           opened.add(id2);
           while (parent != null && parent !== id2) {
             opened.add(parent);
-            parent = parents.get(parent);
+            parent = toRaw(parents.get(parent));
           }
           return opened;
         } else {
@@ -16616,18 +16080,18 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           const items2 = [id2];
           while (items2.length) {
             const item = items2.shift();
-            selected.set(item, value ? "on" : "off");
+            selected.set(toRaw(item), value ? "on" : "off");
             if (children.has(item)) {
               items2.push(...children.get(item));
             }
           }
-          let parent = parents.get(id2);
+          let parent = toRaw(parents.get(id2));
           while (parent) {
             const childrenIds = children.get(parent);
-            const everySelected = childrenIds.every((cid) => selected.get(cid) === "on");
-            const noneSelected = childrenIds.every((cid) => !selected.has(cid) || selected.get(cid) === "off");
+            const everySelected = childrenIds.every((cid) => selected.get(toRaw(cid)) === "on");
+            const noneSelected = childrenIds.every((cid) => !selected.has(toRaw(cid)) || selected.get(toRaw(cid)) === "off");
             selected.set(parent, everySelected ? "on" : noneSelected ? "off" : "indeterminate");
-            parent = parents.get(parent);
+            parent = toRaw(parents.get(parent));
           }
           if (mandatory && !value) {
             const on = Array.from(selected.entries()).reduce((arr, _ref7) => {
@@ -16700,7 +16164,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       let isUnmounted = false;
       const children = ref$1(/* @__PURE__ */ new Map());
       const parents = ref$1(/* @__PURE__ */ new Map());
-      const opened = useProxiedModel(props, "opened", props.opened, (v) => new Set(v), (v) => [...v.values()]);
+      const opened = useProxiedModel(props, "opened", props.opened, (v) => new Set(toRaw(v)), (v) => [...v.values()]);
       const activeStrategy = computed(() => {
         if (typeof props.activeStrategy === "object")
           return props.activeStrategy;
@@ -16880,9 +16344,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const item = {
         ...parent,
         id: computedId,
-        open: (open, e) => parent.root.open(computedId.value, open, e),
+        open: (open, e) => parent.root.open(toRaw(computedId.value), open, e),
         openOnSelect: (open, e) => parent.root.openOnSelect(computedId.value, open, e),
-        isOpen: computed(() => parent.root.opened.value.has(computedId.value)),
+        isOpen: computed(() => parent.root.opened.value.has(toRaw(computedId.value))),
         parent: computed(() => parent.root.parents.value.get(computedId.value)),
         activate: (activated, e) => parent.root.activate(computedId.value, activated, e),
         isActivated: computed(() => parent.root.activated.value.has(toRaw(computedId.value))),
@@ -17105,6 +16569,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           activate,
           isActivated,
           select,
+          isOpen,
           isSelected,
           isIndeterminate,
           isGroupActivator,
@@ -17165,6 +16630,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const slotProps = computed(() => ({
           isActive: isActive.value,
           select,
+          isOpen: isOpen.value,
           isSelected: isSelected.value,
           isIndeterminate: isIndeterminate.value
         }));
@@ -17187,7 +16653,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         function onKeyDown(e) {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            onClick(e);
+            e.target.dispatchEvent(new MouseEvent("click", e));
           }
         }
         useRender(() => {
@@ -17863,8 +17329,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           dimensionStyles
         } = useDimension(props);
         const {
-          mainStyles,
-          layoutIsReady
+          mainStyles
         } = useLayout();
         const {
           ssrBootStyles
@@ -17882,7 +17347,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, [(_a2 = slots.default) == null ? void 0 : _a2.call(slots)]) : (_b = slots.default) == null ? void 0 : _b.call(slots)];
           }
         }));
-        return layoutIsReady;
+        return {};
       }
     });
     function useSticky(_ref) {
@@ -19314,8 +18779,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const elementSize = computed(() => ["top", "bottom"].includes(props.location) ? 0 : width.value);
         const {
           layoutItemStyles,
-          layoutItemScrimStyles,
-          layoutIsReady
+          layoutItemScrimStyles
         } = useLayoutItem({
           id: props.name,
           order: computed(() => parseInt(props.order, 10)),
@@ -19416,9 +18880,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             }, scopeId), null)]
           })]);
         });
-        return layoutIsReady.then(() => ({
+        return {
           isStuck
-        }));
+        };
       }
     });
     function elementToViewport(point, offset) {
@@ -19517,11 +18981,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function staticLocationStrategy() {
     }
     function getIntrinsicSize(el2, isRtl) {
-      if (isRtl) {
-        el2.style.removeProperty("left");
-      } else {
-        el2.style.removeProperty("right");
-      }
       const contentBox = nullifyTransforms(el2);
       if (isRtl) {
         contentBox.x += parseFloat(el2.style.right || 0);
@@ -19986,7 +19445,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function useActivator(props, _ref) {
       let {
         isActive,
-        isTop
+        isTop,
+        contentEl
       } = _ref;
       const vm = getCurrentInstance("useActivator");
       const activatorEl = ref$1();
@@ -20106,7 +19566,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         return events;
       });
       watch(isTop, (val) => {
-        if (val && (props.openOnHover && !isHovered && (!openOnFocus.value || !isFocused) || openOnFocus.value && !isFocused && (!props.openOnHover || !isHovered))) {
+        var _a2;
+        if (val && (props.openOnHover && !isHovered && (!openOnFocus.value || !isFocused) || openOnFocus.value && !isFocused && (!props.openOnHover || !isHovered)) && !((_a2 = contentEl.value) == null ? void 0 : _a2.contains(document.activeElement))) {
           isActive.value = false;
         }
       });
@@ -20474,6 +19935,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           emit: emit2
         } = _ref;
         const vm = getCurrentInstance("VOverlay");
+        const root = ref$1();
+        const scrimEl = ref$1();
+        const contentEl = ref$1();
         const model = useProxiedModel(props, "modelValue");
         const isActive = computed({
           get: () => model.value,
@@ -20512,7 +19976,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           scrimEvents
         } = useActivator(props, {
           isActive,
-          isTop: localTop
+          isTop: localTop,
+          contentEl
         });
         const {
           teleportTarget
@@ -20537,9 +20002,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (v)
             isActive.value = false;
         });
-        const root = ref$1();
-        const scrimEl = ref$1();
-        const contentEl = ref$1();
         const {
           contentStyles,
           updateLocation
@@ -24102,12 +23564,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         let value = (props.validateOn ?? (form == null ? void 0 : form.validateOn.value)) || "input";
         if (value === "lazy")
           value = "input lazy";
+        if (value === "eager")
+          value = "input eager";
         const set2 = new Set((value == null ? void 0 : value.split(" ")) ?? []);
         return {
-          blur: set2.has("blur") || set2.has("input"),
           input: set2.has("input"),
-          submit: set2.has("submit"),
-          lazy: set2.has("lazy")
+          blur: set2.has("blur") || set2.has("input") || set2.has("invalid-input"),
+          invalidInput: set2.has("invalid-input"),
+          lazy: set2.has("lazy"),
+          eager: set2.has("eager")
         };
       });
       const isValid2 = computed(() => {
@@ -24147,11 +23612,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       });
       onMounted(async () => {
         if (!validateOn.value.lazy) {
-          await validate2(true);
+          await validate2(!validateOn.value.eager);
         }
         form == null ? void 0 : form.update(uid2.value, isValid2.value, errorMessages.value);
       });
-      useToggleScope(() => validateOn.value.input, () => {
+      useToggleScope(() => validateOn.value.input || validateOn.value.invalidInput && isValid2.value === false, () => {
         watch(validationModel, () => {
           if (validationModel.value != null) {
             validate2();
@@ -24181,7 +23646,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       async function resetValidation() {
         isPristine.value = true;
         if (!validateOn.value.lazy) {
-          await validate2(true);
+          await validate2(!validateOn.value.eager);
         } else {
           internalErrorMessages.value = [];
         }
@@ -24812,7 +24277,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           selected: group.selected,
           scrollTo: scrollTo2,
           scrollOffset,
-          focus
+          focus,
+          hasPrev,
+          hasNext
         };
       }
     });
@@ -25140,10 +24607,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       // TODO
       // disableKeys: Boolean,
       id: String,
+      submenu: Boolean,
       ...omit$1(makeVOverlayProps({
         closeDelay: 250,
         closeOnContentClick: true,
         locationStrategy: "connected",
+        location: void 0,
         openDelay: 300,
         scrim: false,
         scrollStrategy: "reposition",
@@ -25166,28 +24635,33 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         const {
           scopeId
         } = useScopeId();
+        const {
+          isRtl
+        } = useRtl();
         const uid2 = getUid();
         const id2 = computed(() => props.id || `v-menu-${uid2}`);
         const overlay = ref$1();
         const parent = inject$1(VMenuSymbol, null);
-        const openChildren = shallowRef(0);
+        const openChildren = shallowRef(/* @__PURE__ */ new Set());
         provide(VMenuSymbol, {
           register() {
-            ++openChildren.value;
+            openChildren.value.add(uid2);
           },
           unregister() {
-            --openChildren.value;
+            openChildren.value.delete(uid2);
           },
           closeParents(e) {
             setTimeout(() => {
               var _a2;
-              if (!openChildren.value && !props.persistent && (e == null || ((_a2 = overlay.value) == null ? void 0 : _a2.contentEl) && !isClickInsideElement(e, overlay.value.contentEl))) {
+              if (!openChildren.value.size && !props.persistent && (e == null || ((_a2 = overlay.value) == null ? void 0 : _a2.contentEl) && !isClickInsideElement(e, overlay.value.contentEl))) {
                 isActive.value = false;
                 parent == null ? void 0 : parent.closeParents();
               }
             }, 40);
           }
         });
+        onBeforeUnmount(() => parent == null ? void 0 : parent.unregister());
+        onDeactivated(() => isActive.value = false);
         async function onFocusIn(e) {
           var _a2, _b, _c;
           const before = e.relatedTarget;
@@ -25216,7 +24690,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           parent == null ? void 0 : parent.closeParents(e);
         }
         function onKeydown(e) {
-          var _a2, _b, _c;
+          var _a2, _b, _c, _d, _e;
           if (props.disabled)
             return;
           if (e.key === "Tab" || e.key === "Enter" && !props.closeOnContentClick) {
@@ -25229,9 +24703,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               isActive.value = false;
               (_c = (_b = overlay.value) == null ? void 0 : _b.activatorEl) == null ? void 0 : _c.focus();
             }
-          } else if (["Enter", " "].includes(e.key) && props.closeOnContentClick) {
+          } else if (props.submenu && e.key === (isRtl.value ? "ArrowRight" : "ArrowLeft")) {
             isActive.value = false;
-            parent == null ? void 0 : parent.closeParents();
+            (_e = (_d = overlay.value) == null ? void 0 : _d.activatorEl) == null ? void 0 : _e.focus();
           }
         }
         function onActivatorKeydown(e) {
@@ -25242,12 +24716,21 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (el2 && isActive.value) {
             if (e.key === "ArrowDown") {
               e.preventDefault();
+              e.stopImmediatePropagation();
               focusChild(el2, "next");
             } else if (e.key === "ArrowUp") {
               e.preventDefault();
+              e.stopImmediatePropagation();
               focusChild(el2, "prev");
+            } else if (props.submenu) {
+              if (e.key === (isRtl.value ? "ArrowRight" : "ArrowLeft")) {
+                isActive.value = false;
+              } else if (e.key === (isRtl.value ? "ArrowLeft" : "ArrowRight")) {
+                e.preventDefault();
+                focusChild(el2, "first");
+              }
             }
-          } else if (["ArrowDown", "ArrowUp"].includes(e.key)) {
+          } else if (props.submenu ? e.key === (isRtl.value ? "ArrowLeft" : "ArrowRight") : ["ArrowDown", "ArrowUp"].includes(e.key)) {
             isActive.value = true;
             e.preventDefault();
             setTimeout(() => setTimeout(() => onActivatorKeydown(e)));
@@ -25271,6 +24754,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             "onUpdate:modelValue": ($event) => isActive.value = $event,
             "absolute": true,
             "activatorProps": activatorProps.value,
+            "location": props.location ?? (props.submenu ? "end" : "bottom"),
             "onClick:outside": onClickOutside,
             "onKeydown": onKeydown
           }, scopeId), {
@@ -26103,6 +25587,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         deep: true
       });
       return {
+        calculateVisibleItems,
         containerRef,
         markerRef,
         computedItems,
@@ -26161,6 +25646,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           dimensionStyles
         } = useDimension(props);
         const {
+          calculateVisibleItems,
           containerRef,
           markerRef,
           handleScroll,
@@ -26236,6 +25722,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           }, [children])]);
         });
         return {
+          calculateVisibleItems,
           scrollToIndex
         };
       }
@@ -26303,8 +25790,8 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
       }
       return {
-        onListScroll,
-        onListKeydown
+        onScrollPassive: onListScroll,
+        onKeydown: onListKeydown
       };
     }
     const makeSelectProps = propsFactory({
@@ -26378,7 +25865,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           get: () => _menu.value,
           set: (v) => {
             var _a2;
-            if (_menu.value && !v && ((_a2 = vMenuRef.value) == null ? void 0 : _a2.ΨopenChildren))
+            if (_menu.value && !v && ((_a2 = vMenuRef.value) == null ? void 0 : _a2.ΨopenChildren.size))
               return;
             _menu.value = v;
           }
@@ -26420,10 +25907,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           };
         });
         const listRef = ref$1();
-        const {
-          onListScroll,
-          onListKeydown
-        } = useScrolling(listRef, vTextFieldRef);
+        const listEvents = useScrolling(listRef, vTextFieldRef);
         function onClear(e) {
           if (props.openOnClear) {
             menu.value = true;
@@ -26433,6 +25917,11 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           if (menuDisabled.value)
             return;
           menu.value = !menu.value;
+        }
+        function onListKeydown(e) {
+          if (checkPrintable(e)) {
+            onKeydown(e);
+          }
         }
         function onKeydown(e) {
           var _a2, _b;
@@ -26453,11 +25942,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             (_b = listRef.value) == null ? void 0 : _b.focus("last");
           }
           const KEYBOARD_LOOKUP_THRESHOLD = 1e3;
-          function checkPrintable(e2) {
-            const isPrintableChar = e2.key.length === 1;
-            const noModifier = !e2.ctrlKey && !e2.metaKey && !e2.altKey;
-            return isPrintableChar && noModifier;
-          }
           if (props.multiple || !checkPrintable(e))
             return;
           const now2 = performance.now();
@@ -26502,6 +25986,12 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           var _a2;
           if (!((_a2 = listRef.value) == null ? void 0 : _a2.$el.contains(e.relatedTarget))) {
             menu.value = false;
+          }
+        }
+        function onAfterEnter() {
+          var _a2;
+          if (props.eager) {
+            (_a2 = vVirtualScrollRef.value) == null ? void 0 : _a2.calculateVisibleItems();
           }
         }
         function onAfterLeave() {
@@ -26587,6 +26077,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
               "openOnClick": false,
               "closeOnContentClick": false,
               "transition": props.transition,
+              "onAfterEnter": onAfterEnter,
               "onAfterLeave": onAfterLeave
             }, computedMenuProps.value), {
               default: () => [hasList && createVNode(VList, mergeProps({
@@ -26596,11 +26087,10 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
                 "onMousedown": (e) => e.preventDefault(),
                 "onKeydown": onListKeydown,
                 "onFocusin": onFocusin,
-                "onScrollPassive": onListScroll,
                 "tabindex": "-1",
                 "aria-live": "polite",
                 "color": props.itemColor ?? props.color
-              }, props.listProps), {
+              }, listEvents, props.listProps), {
                 default: () => {
                   var _a2, _b, _c;
                   return [(_a2 = slots["prepend-item"]) == null ? void 0 : _a2.call(slots), !displayItems.value.length && !props.hideNoData && (((_b = slots["no-data"]) == null ? void 0 : _b.call(slots)) ?? createVNode(VListItem, {
@@ -39019,7 +38509,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.6.15";
+    const version$1 = "3.7.0";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -52016,7 +51506,8 @@ Reason: ${error2}`);
         default: false
       },
       readonly: Boolean,
-      ...makeComponentProps()
+      ...makeComponentProps(),
+      ...makeDimensionProps()
     }, "VExpansionPanelTitle");
     const VExpansionPanelTitle = genericComponent()({
       name: "VExpansionPanelTitle",
@@ -52035,6 +51526,9 @@ Reason: ${error2}`);
           backgroundColorClasses,
           backgroundColorStyles
         } = useBackgroundColor(props, "color");
+        const {
+          dimensionStyles
+        } = useDimension(props);
         const slotProps = computed(() => ({
           collapseIcon: props.collapseIcon,
           disabled: expansionPanel.disabled.value,
@@ -52051,7 +51545,7 @@ Reason: ${error2}`);
               "v-expansion-panel-title--focusable": props.focusable,
               "v-expansion-panel-title--static": props.static
             }, backgroundColorClasses.value, props.class],
-            "style": [backgroundColorStyles.value, props.style],
+            "style": [backgroundColorStyles.value, dimensionStyles.value, props.style],
             "type": "button",
             "tabindex": expansionPanel.disabled.value ? -1 : void 0,
             "disabled": expansionPanel.disabled.value,
@@ -77593,7 +77087,7 @@ Reason: ${error2}`);
           get: () => _menu.value,
           set: (v) => {
             var _a2;
-            if (_menu.value && !v && ((_a2 = vMenuRef.value) == null ? void 0 : _a2.ΨopenChildren))
+            if (_menu.value && !v && ((_a2 = vMenuRef.value) == null ? void 0 : _a2.ΨopenChildren.size))
               return;
             _menu.value = v;
           }
@@ -77642,10 +77136,7 @@ Reason: ${error2}`);
         });
         const menuDisabled = computed(() => props.hideNoData && !displayItems.value.length || props.readonly || (form == null ? void 0 : form.isReadonly.value));
         const listRef = ref$1();
-        const {
-          onListScroll,
-          onListKeydown
-        } = useScrolling(listRef, vTextFieldRef);
+        const listEvents = useScrolling(listRef, vTextFieldRef);
         function onClear(e) {
           if (props.openOnClear) {
             menu.value = true;
@@ -77665,6 +77156,12 @@ Reason: ${error2}`);
             e.stopPropagation();
           }
           menu.value = !menu.value;
+        }
+        function onListKeydown(e) {
+          var _a2;
+          if (checkPrintable(e)) {
+            (_a2 = vTextFieldRef.value) == null ? void 0 : _a2.focus();
+          }
         }
         function onKeydown(e) {
           var _a2, _b, _c;
@@ -77734,6 +77231,12 @@ Reason: ${error2}`);
             if (item) {
               select(item);
             }
+          }
+        }
+        function onAfterEnter() {
+          var _a2;
+          if (props.eager) {
+            (_a2 = vVirtualScrollRef.value) == null ? void 0 : _a2.calculateVisibleItems();
           }
         }
         function onAfterLeave() {
@@ -77871,6 +77374,7 @@ Reason: ${error2}`);
               "openOnClick": false,
               "closeOnContentClick": false,
               "transition": props.transition,
+              "onAfterEnter": onAfterEnter,
               "onAfterLeave": onAfterLeave
             }, props.menuProps), {
               default: () => [hasList && createVNode(VList, mergeProps({
@@ -77881,11 +77385,10 @@ Reason: ${error2}`);
                 "onKeydown": onListKeydown,
                 "onFocusin": onFocusin,
                 "onFocusout": onFocusout,
-                "onScrollPassive": onListScroll,
                 "tabindex": "-1",
                 "aria-live": "polite",
                 "color": props.itemColor ?? props.color
-              }, props.listProps), {
+              }, listEvents, props.listProps), {
                 default: () => {
                   var _a2, _b, _c;
                   return [(_a2 = slots["prepend-item"]) == null ? void 0 : _a2.call(slots), !displayItems.value.length && !props.hideNoData && (((_b = slots["no-data"]) == null ? void 0 : _b.call(slots)) ?? createVNode(VListItem, {
@@ -78851,7 +78354,7 @@ Reason: ${error2}`);
           get: () => _menu.value,
           set: (v) => {
             var _a3;
-            if (_menu.value && !v && ((_a3 = vMenuRef.value) == null ? void 0 : _a3.ΨopenChildren))
+            if (_menu.value && !v && ((_a3 = vMenuRef.value) == null ? void 0 : _a3.ΨopenChildren.size))
               return;
             _menu.value = v;
           }
@@ -78941,10 +78444,7 @@ Reason: ${error2}`);
         });
         const menuDisabled = computed(() => props.hideNoData && !displayItems.value.length || props.readonly || (form == null ? void 0 : form.isReadonly.value));
         const listRef = ref$1();
-        const {
-          onListScroll,
-          onListKeydown
-        } = useScrolling(listRef, vTextFieldRef);
+        const listEvents = useScrolling(listRef, vTextFieldRef);
         function onClear(e) {
           cleared = true;
           if (props.openOnClear) {
@@ -78964,6 +78464,12 @@ Reason: ${error2}`);
             e.stopPropagation();
           }
           menu.value = !menu.value;
+        }
+        function onListKeydown(e) {
+          var _a3;
+          if (checkPrintable(e)) {
+            (_a3 = vTextFieldRef.value) == null ? void 0 : _a3.focus();
+          }
         }
         function onKeydown(e) {
           var _a3;
@@ -79033,6 +78539,12 @@ Reason: ${error2}`);
               selectionIndex.value = -1;
               vTextFieldRef.value.setSelectionRange(0, 0);
             }
+          }
+        }
+        function onAfterEnter() {
+          var _a3;
+          if (props.eager) {
+            (_a3 = vVirtualScrollRef.value) == null ? void 0 : _a3.calculateVisibleItems();
           }
         }
         function onAfterLeave() {
@@ -79163,6 +78675,7 @@ Reason: ${error2}`);
               "openOnClick": false,
               "closeOnContentClick": false,
               "transition": props.transition,
+              "onAfterEnter": onAfterEnter,
               "onAfterLeave": onAfterLeave
             }, props.menuProps), {
               default: () => [hasList && createVNode(VList, mergeProps({
@@ -79173,11 +78686,10 @@ Reason: ${error2}`);
                 "onKeydown": onListKeydown,
                 "onFocusin": onFocusin,
                 "onFocusout": onFocusout,
-                "onScrollPassive": onListScroll,
                 "tabindex": "-1",
                 "aria-live": "polite",
                 "color": props.itemColor ?? props.color
-              }, props.listProps), {
+              }, listEvents, props.listProps), {
                 default: () => {
                   var _a3, _b, _c;
                   return [(_a3 = slots["prepend-item"]) == null ? void 0 : _a3.call(slots), !displayItems.value.length && !props.hideNoData && (((_b = slots["no-data"]) == null ? void 0 : _b.call(slots)) ?? createVNode(VListItem, {
