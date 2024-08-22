@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-lQb1cEQf.js"(exports, module) {
+  "assets/index-yoEzzM9B.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -72023,7 +72023,7 @@ Reason: ${error2}`);
       const { width } = useElementSize(el2);
       const statefulLayout = shallowRef(null);
       const stateTree = shallowRef(null);
-      const form = inject$1(Symbol.for("vuetify:form"));
+      const form = inject$1(Symbol.for("vuetify:form"), null);
       if (form) {
         form.register({
           id: "vjsf",
