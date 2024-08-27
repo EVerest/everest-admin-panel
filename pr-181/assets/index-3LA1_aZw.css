@@ -31680,7 +31680,7 @@ html {
 .v-avatar {
   border-color: rgba(var(--v-border-color), var(--v-border-opacity));
   border-style: solid;
-  border-width: thin;
+  border-width: 0;
 }
 .v-avatar--border {
   border-width: thin;

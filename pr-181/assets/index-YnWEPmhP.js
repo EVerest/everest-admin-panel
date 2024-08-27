@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-yoEzzM9B.js"(exports, module) {
+  "assets/index-YnWEPmhP.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -501,7 +501,7 @@ var require_index_001 = __commonJS({
     const toRawType = (value) => {
       return toTypeString(value).slice(8, -1);
     };
-    const isPlainObject$3 = (val) => toTypeString(val) === "[object Object]";
+    const isPlainObject$4 = (val) => toTypeString(val) === "[object Object]";
     const isIntegerKey = (key) => isString$1(key) && key !== "NaN" && key[0] !== "-" && "" + parseInt(key, 10) === key;
     const isReservedProp = /* @__PURE__ */ makeMap(
       // the leading comma is intentional so empty string "" is also included
@@ -647,7 +647,7 @@ var require_index_001 = __commonJS({
         };
       } else if (isSymbol(val)) {
         return stringifySymbol(val);
-      } else if (isObject$4(val) && !isArray$1(val) && !isPlainObject$3(val)) {
+      } else if (isObject$4(val) && !isArray$1(val) && !isPlainObject$4(val)) {
         return String(val);
       }
       return val;
@@ -5627,7 +5627,7 @@ var require_index_001 = __commonJS({
         value.forEach((v) => {
           traverse$2(v, depth, seen);
         });
-      } else if (isPlainObject$3(value)) {
+      } else if (isPlainObject$4(value)) {
         for (const key in value) {
           traverse$2(value[key], depth, seen);
         }
@@ -9648,6 +9648,10 @@ var require_index_001 = __commonJS({
     function isObject$3(obj) {
       return obj !== null && typeof obj === "object" && !Array.isArray(obj);
     }
+    function isPlainObject$3(obj) {
+      let proto;
+      return obj !== null && typeof obj === "object" && ((proto = Object.getPrototypeOf(obj)) === Object.prototype || proto === null);
+    }
     function refElement(obj) {
       if (obj && "$el" in obj) {
         const el2 = obj.$el;
@@ -9820,11 +9824,11 @@ var require_index_001 = __commonJS({
       for (const key in target2) {
         const sourceProperty = source2[key];
         const targetProperty = target2[key];
-        if (isObject$3(sourceProperty) && isObject$3(targetProperty)) {
+        if (isPlainObject$3(sourceProperty) && isPlainObject$3(targetProperty)) {
           out[key] = mergeDeep(sourceProperty, targetProperty, arrayFn);
           continue;
         }
-        if (Array.isArray(sourceProperty) && Array.isArray(targetProperty) && arrayFn) {
+        if (arrayFn && Array.isArray(sourceProperty) && Array.isArray(targetProperty)) {
           out[key] = arrayFn(sourceProperty, targetProperty);
           continue;
         }
@@ -38510,7 +38514,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         goTo
       };
     }
-    const version$1 = "3.7.0";
+    const version$1 = "3.7.1";
     createVuetify.version = version$1;
     function inject(key) {
       var _a2, _b;
@@ -43753,6 +43757,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       props: makeVDialogProps(),
       emits: {
         "update:modelValue": (value) => true,
+        afterEnter: () => true,
         afterLeave: () => true
       },
       setup(props, _ref) {
@@ -43794,6 +43799,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         }
         function onAfterEnter() {
           var _a2;
+          emit2("afterEnter");
           if (((_a2 = overlay.value) == null ? void 0 : _a2.contentEl) && !overlay.value.contentEl.contains(document.activeElement)) {
             overlay.value.contentEl.focus({
               preventScroll: true
