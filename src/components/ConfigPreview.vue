@@ -5,7 +5,7 @@
     <template v-slot:activator="{ props: activatorProps }">
       <slot name="activator" :activatorProps="activatorProps"></slot>
     </template>
-    <template v-slot:default="{ isActive }">
+    <template v-slot:default="{ }">
       <v-card>
         <v-card-title>
           <div class="title-content">
