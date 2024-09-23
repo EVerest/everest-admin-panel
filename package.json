@@ -20,7 +20,7 @@
     "@json-layout/vocabulary": "^0.15.0",
     "@koumoul/vjsf": "^3.0.0-beta.11",
     "@mdi/font": "^7.4.47",
-    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-commonjs": "^28.0.0",
     "@vue/compat": "^3.4.26",
     "ajv": "^8.13.0",
     "ajv-errors": "^3.0.0",
