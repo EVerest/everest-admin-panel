@@ -15,7 +15,7 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  package:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,3 +30,14 @@ jobs:
           fail_on_error: true
           filter_mode: 'nofilter'
           eslint_flags: '--ignore-path .gitignore .'
+
+  vue-tsc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup node + pnpm install
+        uses: ./.github/actions/setup-node
+        with:
+          pnpm-version: 9
+      - name: Run Vue TSC
+        run: pnpm vue-tsc
