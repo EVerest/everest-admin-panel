@@ -52404,16 +52404,16 @@ html.overflow-y-hidden {
 }
 .v-window-y-reverse-transition-leave-to {
   transform: translateY(100%);
-}.title-content[data-v-82fa1853] {
+}.title-content[data-v-34d7fce7] {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
 }
-.title-content .controls[data-v-82fa1853] {
+.title-content .controls[data-v-34d7fce7] {
   margin-top: 0.5rem;
 }
-.controls[data-v-82fa1853] {
+.controls[data-v-34d7fce7] {
   display: flex;
   gap: 0.5rem;
 }#konva-stage-container {
