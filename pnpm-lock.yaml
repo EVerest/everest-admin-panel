@@ -25,7 +25,7 @@ importers:
         version: 0.15.0(ajv@8.13.0)
       '@koumoul/vjsf':
         specifier: ^3.0.0-beta.11
-        version: 3.0.0-beta.11(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3(typescript@5.3.3)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.3.3)))
+        version: 3.0.0-beta.11(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3)
       '@mdi/font':
         specifier: ^7.4.47
         version: 7.4.47
@@ -42,8 +42,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0(ajv@8.13.0)
       ajv-formats:
-        specifier: ^2.1.1
-        version: 2.1.1(ajv@8.13.0)
+        specifier: ^3.0.1
+        version: 3.0.1(ajv@8.13.0)
       ajv-i18n:
         specifier: ^4.2.0
         version: 4.2.0(ajv@8.13.0)
@@ -128,7 +128,7 @@ importers:
         version: 9.25.0(eslint@8.57.0)
       eslint-plugin-vuetify:
         specifier: ^2.4.0
-        version: 2.4.0(eslint@8.57.0)(vuetify@3.6.3(typescript@5.3.3)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.3.3)))
+        version: 2.4.0(eslint@8.57.0)(vuetify@3.6.3)
       sass:
         specifier: ^1.76.0
         version: 1.76.0
@@ -960,6 +960,7 @@ packages:
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
     engines: {node: '>=10.10.0'}
+    deprecated: Use @eslint/config-array instead
 
   '@humanwhocodes/module-importer@1.0.1':
     resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
@@ -967,6 +968,7 @@ packages:
 
   '@humanwhocodes/object-schema@2.0.2':
     resolution: {integrity: sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==}
+    deprecated: Use @eslint/object-schema instead
 
   '@istanbuljs/schema@0.1.3':
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
@@ -1411,6 +1413,14 @@ packages:
 
   ajv-formats@2.1.1:
     resolution: {integrity: sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
+
+  ajv-formats@3.0.1:
+    resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
     peerDependencies:
       ajv: ^8.0.0
     peerDependenciesMeta:
@@ -1902,6 +1912,7 @@ packages:
   eslint@8.57.0:
     resolution: {integrity: sha512-dZ6+mexnaTIbSBZWgou51U6OmzIhYM2VcNdtiTtI7qPNZm35Akpr0f6vtw3w1Kmn5PYo+tZVfh13WrhpS6oLqQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
 
   espree@9.6.1:
@@ -2084,10 +2095,12 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   glob@8.1.0:
     resolution: {integrity: sha512-r8hpEjiQEYlF2QU0df3dS+nxxSIreXQS1qRhMJM0Q5NDdR386C7jb7Hwwod8Fgiuex+k0GFjgft18yvxm5XoCQ==}
     engines: {node: '>=12'}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   global-dirs@3.0.1:
     resolution: {integrity: sha512-NBcGGFbBA9s1VzD41QXDG+3++t9Mn5t1FpLdhESY6oKY4gYTFpX4wO3sqGUa0Srjtbfj3szX0RnemmrVRUdULA==}
@@ -2205,6 +2218,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -2905,6 +2919,7 @@ packages:
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rollup@2.79.1:
@@ -4564,7 +4579,7 @@ snapshots:
       - ajv
       - supports-color
 
-  '@koumoul/vjsf@3.0.0-beta.11(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3(typescript@5.3.3)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.3.3)))':
+  '@koumoul/vjsf@3.0.0-beta.11(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3)':
     dependencies:
       '@json-layout/core': 0.15.1
       '@vueuse/core': 10.7.1(vue@3.4.26(typescript@5.3.3))
@@ -5005,7 +5020,7 @@ snapshots:
 
   '@vue/shared@3.4.26': {}
 
-  '@vuetify/loader-shared@2.0.3(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3(typescript@5.3.3)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.3.3)))':
+  '@vuetify/loader-shared@2.0.3(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3)':
     dependencies:
       upath: 2.0.1
       vue: 3.4.26(typescript@5.3.3)
@@ -5050,6 +5065,10 @@ snapshots:
       ajv: 8.13.0
 
   ajv-formats@2.1.1(ajv@8.13.0):
+    optionalDependencies:
+      ajv: 8.13.0
+
+  ajv-formats@3.0.1(ajv@8.13.0):
     optionalDependencies:
       ajv: 8.13.0
 
@@ -5624,7 +5643,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-vuetify@2.4.0(eslint@8.57.0)(vuetify@3.6.3(typescript@5.3.3)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.3.3))):
+  eslint-plugin-vuetify@2.4.0(eslint@8.57.0)(vuetify@3.6.3):
     dependencies:
       eslint: 8.57.0
       eslint-plugin-vue: 9.25.0(eslint@8.57.0)
@@ -7107,7 +7126,7 @@ snapshots:
 
   vite-plugin-vuetify@2.0.3(vite@5.0.11(@types/node@20.12.10)(sass@1.76.0)(terser@5.31.1))(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3):
     dependencies:
-      '@vuetify/loader-shared': 2.0.3(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3(typescript@5.3.3)(vite-plugin-vuetify@2.0.3)(vue@3.4.26(typescript@5.3.3)))
+      '@vuetify/loader-shared': 2.0.3(vue@3.4.26(typescript@5.3.3))(vuetify@3.6.3)
       debug: 4.3.4
       upath: 2.0.1
       vite: 5.0.11(@types/node@20.12.10)(sass@1.76.0)(terser@5.31.1)
