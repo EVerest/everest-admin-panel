@@ -86,7 +86,7 @@ export default defineComponent({
   }),
   computed: {
     connectionUrl() {
-      return evbc?._cxn?._url ?? "nothing";
+      return evbc?.connection.url ?? "nothing";
     }
   },
   methods: {
