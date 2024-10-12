@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-_acgTKIf.js"(exports, module) {
+  "assets/index-CDRbLsml.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -44199,7 +44199,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       mounted,
       unmounted
     };
-    const Touch$1 = Touch;
     const VWindowSymbol = Symbol.for("vuetify:v-window");
     const VWindowGroupSymbol = Symbol.for("vuetify:v-window-group");
     const makeVWindowProps = propsFactory({
@@ -44434,7 +44433,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const VWindowItem = genericComponent()({
       name: "VWindowItem",
       directives: {
-        Touch: Touch$1
+        Touch
       },
       props: makeVWindowItemProps(),
       emits: {
@@ -44742,7 +44741,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
             activator: withCtx(({ props: activatorProps }) => [
               renderSlot(_ctx.$slots, "activator", { activatorProps }, void 0, true)
             ]),
-            default: withCtx(({ isActive }) => [
+            default: withCtx(({}) => [
               createVNode(VCard, null, {
                 default: withCtx(() => [
                   createVNode(VCardTitle, null, {
@@ -44829,7 +44828,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         };
       }
     });
-    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["__scopeId", "data-v-82fa1853"]]);
+    const ConfigPreview = /* @__PURE__ */ _export_sfc(_sfc_main$C, [["__scopeId", "data-v-34d7fce7"]]);
     const _sfc_main$B = /* @__PURE__ */ defineComponent$1({
       components: { ConfigPreview },
       setup() {
