@@ -4,13 +4,13 @@
 import Vue from '@vitejs/plugin-vue';
 import Vuetify, {transformAssetUrls} from 'vite-plugin-vuetify';
 import {defineConfig, loadEnv} from "vite";
-import {commonjsDeps} from '@koumoul/vjsf/utils/build';
+import {commonjsDeps} from '@koumoul/vjsf/utils/build.js';
 import {fileURLToPath} from "node:url";
 import commonjs from "@rollup/plugin-commonjs";
 import {VitePWA} from 'vite-plugin-pwa';
 import {vitePluginFetchSchemas} from "./build-tools/fetch-schemas-plugin";
 
-export default defineConfig(({ mode}) => {
+export default defineConfig(({ mode }) => {
     loadEnv(mode, process.cwd(), '');
     return {
         base: mode === 'pages' ? `/everest-admin-panel/${process.env.SUBDIR}` : '',
