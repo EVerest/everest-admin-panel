@@ -21,7 +21,7 @@ export default defineConfig(({ mode}) => {
         commonjsOptions: {
             include: commonjsDeps,
         },
-        minify: false
+        minify: true
     },
         test: {
             include: ['**/*.test.ts', '**/*.test.vue'],
