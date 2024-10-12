@@ -9,7 +9,7 @@ var __publicField = (obj, key, value) => {
   return value;
 };
 var require_index_001 = __commonJS({
-  "assets/index-HdxFoTvH.js"(exports, module) {
+  "assets/index-CNfVlwq3.js"(exports, module) {
     var _a;
     (function polyfill() {
       const relList = document.createElement("link").relList;
@@ -467,7 +467,7 @@ var require_index_001 = __commonJS({
     // @__NO_SIDE_EFFECTS__
     function makeMap(str2, expectsLowerCase) {
       const set2 = new Set(str2.split(","));
-      return expectsLowerCase ? (val) => set2.has(val.toLowerCase()) : (val) => set2.has(val);
+      return (val) => set2.has(val);
     }
     const EMPTY_OBJ = {};
     const EMPTY_ARR = [];
@@ -3627,36 +3627,33 @@ var require_index_001 = __commonJS({
     }
     function renderList(source2, renderItem, cache, index) {
       let ret;
-      const cached = cache && cache[index];
+      const cached = cache;
       if (isArray$1(source2) || isString$1(source2)) {
         ret = new Array(source2.length);
         for (let i2 = 0, l = source2.length; i2 < l; i2++) {
-          ret[i2] = renderItem(source2[i2], i2, void 0, cached && cached[i2]);
+          ret[i2] = renderItem(source2[i2], i2, void 0, cached);
         }
       } else if (typeof source2 === "number") {
         ret = new Array(source2);
         for (let i2 = 0; i2 < source2; i2++) {
-          ret[i2] = renderItem(i2 + 1, i2, void 0, cached && cached[i2]);
+          ret[i2] = renderItem(i2 + 1, i2, void 0, cached);
         }
       } else if (isObject$4(source2)) {
         if (source2[Symbol.iterator]) {
           ret = Array.from(
             source2,
-            (item, i2) => renderItem(item, i2, void 0, cached && cached[i2])
+            (item, i2) => renderItem(item, i2, void 0, cached)
           );
         } else {
           const keys2 = Object.keys(source2);
           ret = new Array(keys2.length);
           for (let i2 = 0, l = keys2.length; i2 < l; i2++) {
             const key = keys2[i2];
-            ret[i2] = renderItem(source2[key], key, i2, cached && cached[i2]);
+            ret[i2] = renderItem(source2[key], key, i2, cached);
           }
         }
       } else {
         ret = [];
-      }
-      if (cache) {
-        cache[index] = ret;
       }
       return ret;
     }
@@ -3682,7 +3679,7 @@ var require_index_001 = __commonJS({
       if (currentRenderingInstance.isCE || currentRenderingInstance.parent && isAsyncWrapper(currentRenderingInstance.parent) && currentRenderingInstance.parent.isCE) {
         if (name !== "default")
           props.name = name;
-        return createVNode("slot", props, fallback && fallback());
+        return createVNode("slot", props, fallback);
       }
       let slot = slots[name];
       if (slot && slot._c) {
@@ -3697,7 +3694,7 @@ var require_index_001 = __commonJS({
           // key attached in the `createSlots` helper, respect that
           validSlotContent && validSlotContent.key || `_${name}`
         },
-        validSlotContent || (fallback ? fallback() : []),
+        validSlotContent || [],
         validSlotContent && slots._ === 1 ? 64 : -2
       );
       if (!noSlotted && rendered.scopeId) {
@@ -6089,11 +6086,6 @@ var require_index_001 = __commonJS({
       };
       let hydrate;
       let hydrateNode;
-      if (createHydrationFns) {
-        [hydrate, hydrateNode] = createHydrationFns(
-          internals
-        );
-      }
       return {
         render,
         hydrate,
@@ -11124,7 +11116,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     function getCurrentInstance(name, message) {
       const vm = getCurrentInstance$1();
       if (!vm) {
-        throw new Error(`[Vuetify] ${name} ${message || "must be called from inside a setup function"}`);
+        throw new Error(`[Vuetify] ${name} ${"must be called from inside a setup function"}`);
       }
       return vm;
     }
@@ -12784,7 +12776,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       mounted: mounted$2,
       unmounted: unmounted$2
     };
-    const Intersect$1 = Intersect;
     const makeVImgProps = propsFactory({
       alt: String,
       cover: Boolean,
@@ -12823,7 +12814,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const VImg = genericComponent()({
       name: "VImg",
       directives: {
-        intersect: Intersect$1
+        intersect: Intersect
       },
       props: makeVImgProps(),
       emits: {
@@ -14161,7 +14152,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       const isIntersecting = shallowRef(false);
       if (SUPPORTS_INTERSECTION) {
         const observer = new IntersectionObserver((entries) => {
-          callback == null ? void 0 : callback(entries, observer);
           isIntersecting.value = !!entries.find((entry) => entry.isIntersecting);
         }, options);
         onBeforeUnmount(() => {
@@ -21647,13 +21637,13 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       };
     }
     function useField(path, rules2, opts) {
-      if (hasCheckedAttr(opts === null || opts === void 0 ? void 0 : opts.type)) {
-        return useFieldWithChecked(path, rules2, opts);
+      if (hasCheckedAttr(void 0)) {
+        return useFieldWithChecked(path, rules2);
       }
-      return _useField(path, rules2, opts);
+      return _useField(path, rules2);
     }
     function _useField(path, rules2, opts) {
-      const { initialValue: modelValue, validateOnMount, bails, type: type2, checkedValue, label, validateOnValueUpdate, uncheckedValue, controlled, keepValueOnUnmount, syncVModel, form: controlForm } = normalizeOptions(opts);
+      const { initialValue: modelValue, validateOnMount, bails, type: type2, checkedValue, label, validateOnValueUpdate, uncheckedValue, controlled, keepValueOnUnmount, syncVModel, form: controlForm } = normalizeOptions();
       const injectedForm = controlled ? injectWithSelf(FormContextKey) : void 0;
       const form = controlForm || injectedForm;
       const name = computed(() => normalizeFormPath(toValue$1(path)));
@@ -21884,26 +21874,15 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
         syncVModel: false,
         controlled: true
       });
-      const isVModelSynced = !!(opts === null || opts === void 0 ? void 0 : opts.syncVModel);
-      const modelPropName = typeof (opts === null || opts === void 0 ? void 0 : opts.syncVModel) === "string" ? opts.syncVModel : (opts === null || opts === void 0 ? void 0 : opts.modelPropName) || "modelValue";
-      const initialValue = isVModelSynced && !("initialValue" in (opts || {})) ? getCurrentModelValue(getCurrentInstance$1(), modelPropName) : opts === null || opts === void 0 ? void 0 : opts.initialValue;
-      if (!opts) {
+      const initialValue = void 0;
+      {
         return Object.assign(Object.assign({}, defaults2()), { initialValue });
       }
-      const checkedValue = "valueProp" in opts ? opts.valueProp : opts.checkedValue;
-      const controlled = "standalone" in opts ? !opts.standalone : opts.controlled;
-      const syncVModel = (opts === null || opts === void 0 ? void 0 : opts.modelPropName) || (opts === null || opts === void 0 ? void 0 : opts.syncVModel) || false;
-      return Object.assign(Object.assign(Object.assign({}, defaults2()), opts || {}), {
-        initialValue,
-        controlled: controlled !== null && controlled !== void 0 ? controlled : true,
-        checkedValue,
-        syncVModel
-      });
     }
     function useFieldWithChecked(name, rules2, opts) {
-      const form = !(opts === null || opts === void 0 ? void 0 : opts.standalone) ? injectWithSelf(FormContextKey) : void 0;
-      const checkedValue = opts === null || opts === void 0 ? void 0 : opts.checkedValue;
-      const uncheckedValue = opts === null || opts === void 0 ? void 0 : opts.uncheckedValue;
+      const form = injectWithSelf(FormContextKey);
+      const checkedValue = void 0;
+      const uncheckedValue = void 0;
       function patchCheckedApi(field) {
         const handleChange = field.handleChange;
         const checked = computed(() => {
@@ -21925,8 +21904,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           let newValue = (_b = toValue$1(checkedValue)) !== null && _b !== void 0 ? _b : value;
           if (form && (pathState === null || pathState === void 0 ? void 0 : pathState.multiple) && pathState.type === "checkbox") {
             newValue = resolveNextCheckboxValue(getFromPath(form.values, path) || [], newValue, void 0);
-          } else if ((opts === null || opts === void 0 ? void 0 : opts.type) === "checkbox") {
-            newValue = resolveNextCheckboxValue(toValue$1(field.value), newValue, toValue$1(uncheckedValue));
           }
           handleChange(newValue, shouldValidate);
         }
@@ -21937,7 +21914,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
           handleChange: handleCheckboxChange
         });
       }
-      return patchCheckedApi(_useField(name, rules2, opts));
+      return patchCheckedApi(_useField(name, rules2));
     }
     function useVModel({ prop: prop2, value, handleChange, shouldValidate }) {
       const vm = getCurrentInstance$1();
@@ -25370,7 +25347,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const VTextField = genericComponent()({
       name: "VTextField",
       directives: {
-        Intersect: Intersect$1
+        Intersect
       },
       inheritAttrs: false,
       props: makeVTextFieldProps(),
@@ -27032,12 +27009,9 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       let id2;
       let options;
       const isSetupStore = typeof setup2 === "function";
-      if (typeof idOrOptions === "string") {
+      {
         id2 = idOrOptions;
         options = isSetupStore ? setupOptions : setup2;
-      } else {
-        options = idOrOptions;
-        id2 = idOrOptions.id;
       }
       function useStore(pinia2, hot) {
         const hasContext = hasInjectionContext();
@@ -37942,7 +37916,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       y = ySize - yMid;
       rad = Math.sqrt(x2 * x2 + y * y);
       rMax = rad > rMax ? rad : rMax;
-      var rSize = ySize, tSize = xSize, radius, theta2, phaseShift = opt.polarRotation || 0;
+      var rSize = ySize, tSize = xSize, radius, theta2, phaseShift = 0;
       var x1, y1;
       for (x2 = 0; x2 < xSize; x2 += 1) {
         for (y = 0; y < ySize; y += 1) {
@@ -44225,7 +44199,6 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
       mounted,
       unmounted
     };
-    const Touch$1 = Touch;
     const VWindowSymbol = Symbol.for("vuetify:v-window");
     const VWindowGroupSymbol = Symbol.for("vuetify:v-window-group");
     const makeVWindowProps = propsFactory({
@@ -44460,7 +44433,7 @@ Expected #hex, #hexa, rgb(), rgba(), hsl(), hsla(), object or number`);
     const VWindowItem = genericComponent()({
       name: "VWindowItem",
       directives: {
-        Touch: Touch$1
+        Touch
       },
       props: makeVWindowItemProps(),
       emits: {
@@ -71420,7 +71393,7 @@ Reason: ${error2}`);
     function useFilter(props, items2, query, options) {
       const filteredItems = ref$1([]);
       const filteredMatches = ref$1(/* @__PURE__ */ new Map());
-      const transformedItems = computed(() => (options == null ? void 0 : options.transform) ? unref(items2).map((item) => [item, options.transform(item)]) : unref(items2));
+      const transformedItems = computed(() => unref(items2));
       watchEffect(() => {
         const _query = typeof query === "function" ? query() : unref(query);
         const strQuery = typeof _query !== "string" && typeof _query !== "number" ? "" : String(_query);
@@ -76073,7 +76046,7 @@ Reason: ${error2}`);
     const VTextarea = genericComponent()({
       name: "VTextarea",
       directives: {
-        Intersect: Intersect$1
+        Intersect
       },
       inheritAttrs: false,
       props: makeVTextareaProps(),
@@ -76508,7 +76481,7 @@ Reason: ${error2}`);
     const isClient = typeof window !== "undefined" && typeof document !== "undefined";
     typeof WorkerGlobalScope !== "undefined" && globalThis instanceof WorkerGlobalScope;
     function getLifeCycleTarget(target2) {
-      return target2 || getCurrentInstance$1();
+      return getCurrentInstance$1();
     }
     function tryOnMounted(fn, sync = true, target2) {
       const instance = getLifeCycleTarget();
