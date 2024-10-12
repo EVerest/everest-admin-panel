@@ -5,8 +5,7 @@ name: Cypress Tests
 on:
   pull_request:
     branches:
-      - main
-      - spr/main/*
+      - '*'
   push:
     branches:
       - main
