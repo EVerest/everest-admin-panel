@@ -6,8 +6,7 @@ name: Execute Vitest Unit Tests
 on:
   pull_request:
     branches:
-      - main
-      - spr/main/*
+      - '*'
   push:
     branches:
       - main

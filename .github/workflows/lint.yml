@@ -6,8 +6,7 @@ name: Lint EVerest Admin Panel
 on:
   pull_request:
     branches:
-      - main
-      - spr/main/*
+      - '*'
   push:
     branches:
       - main
