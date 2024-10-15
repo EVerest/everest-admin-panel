@@ -162,7 +162,7 @@ function uploadConfigPrompt() {
 /**
  * Validates that the config content is a valid JSON or YAML config
  */
-async function validateConfigContent(content: object): Promise<true | string> {
+async function validateConfigContent(content: unknown): Promise<true | string> {
   const ajv = new Ajv();
   const schema = await getConfigJsonSchema();
   const validate = ajv.compile(schema);
