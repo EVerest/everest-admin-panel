@@ -54,6 +54,10 @@ class EVBackendConnection {
     }
   }
 
+  public get url(): string {
+    return this._url;
+  }
+
   _connect_websocket_mode() {
     this.rpc_issuer = new WebsocketRpcIssuer(this._url, this._publish_connection_state.bind(this));
   }

@@ -34,6 +34,10 @@ class EVBackendClient {
     interfaces: null,
   };
 
+  public get connection(): EVBackendConnection {
+    return this._cxn;
+  }
+
   async connect(url: string): Promise<void> {
     if (this._cxn) {
       await this._cxn._disconnect();
