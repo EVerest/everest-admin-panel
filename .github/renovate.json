@@ -1,6 +1,6 @@
 {
     "extends": [
-        ":assigneeAndReview(lukas-mertens)",
+        ":assignAndReview(lukas-mertens)",
         ":automergeLinters",
         ":automergePatch",
         ":gitSignOff",
