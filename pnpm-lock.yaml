@@ -25,7 +25,7 @@ importers:
         version: 0.23.2
       '@koumoul/vjsf':
         specifier: ^3.0.0-beta.46
-        version: 3.0.0-beta.46(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2(typescript@5.3.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.12(typescript@5.3.3)))
+        version: 3.0.0-beta.46(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2)
       '@mdi/font':
         specifier: ^7.4.47
         version: 7.4.47
@@ -94,8 +94,8 @@ importers:
         specifier: ^7.24.5
         version: 7.24.5
       '@faker-js/faker':
-        specifier: ^8.4.1
-        version: 8.4.1
+        specifier: ^9.0.0
+        version: 9.2.0
       '@types/js-yaml':
         specifier: ^4.0.9
         version: 4.0.9
@@ -131,7 +131,7 @@ importers:
         version: 9.25.0(eslint@8.57.0)
       eslint-plugin-vuetify:
         specifier: ^2.4.0
-        version: 2.4.0(eslint@8.57.0)(vuetify@3.7.2(typescript@5.3.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.12(typescript@5.3.3)))
+        version: 2.4.0(eslint@8.57.0)(vuetify@3.7.2)
       sass:
         specifier: ^1.76.0
         version: 1.76.0
@@ -854,9 +854,9 @@ packages:
     resolution: {integrity: sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@faker-js/faker@8.4.1':
-    resolution: {integrity: sha512-XQ3cU+Q8Uqmrbf2e0cIC/QN43sTBSC8KF12u29Mb47tWrt2hAgBXSgpZMj4Ao8Uk0iJcU99QsOCaIL8934obCg==}
-    engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0, npm: '>=6.14.13'}
+  '@faker-js/faker@9.2.0':
+    resolution: {integrity: sha512-ulqQu4KMr1/sTFIYvqSdegHT8NIkt66tFAkugGnHA+1WAfEn6hMzNR+svjXGFRVLnapxvej67Z/LwchFrnLBUg==}
+    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
 
   '@fontsource/open-sans-condensed@4.5.5':
     resolution: {integrity: sha512-ah6DBSWgjWEG20tVJnvcUQ/8XTfnGpuOGK4HLTF91vtrGg7PyrdEMlao/O1+S4i+SzeuJCmf5Qbc3eWponBL3Q==}
@@ -4278,7 +4278,7 @@ snapshots:
 
   '@eslint/js@8.57.0': {}
 
-  '@faker-js/faker@8.4.1': {}
+  '@faker-js/faker@9.2.0': {}
 
   '@fontsource/open-sans-condensed@4.5.5': {}
 
@@ -4360,7 +4360,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@koumoul/vjsf@3.0.0-beta.46(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2(typescript@5.3.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.12(typescript@5.3.3)))':
+  '@koumoul/vjsf@3.0.0-beta.46(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2)':
     dependencies:
       '@json-layout/core': 0.32.1
       '@vueuse/core': 10.7.1(vue@3.5.12(typescript@5.3.3))
@@ -4827,7 +4827,7 @@ snapshots:
 
   '@vue/shared@3.5.12': {}
 
-  '@vuetify/loader-shared@2.0.3(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2(typescript@5.3.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.12(typescript@5.3.3)))':
+  '@vuetify/loader-shared@2.0.3(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2)':
     dependencies:
       upath: 2.0.1
       vue: 3.5.12(typescript@5.3.3)
@@ -5444,7 +5444,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-vuetify@2.4.0(eslint@8.57.0)(vuetify@3.7.2(typescript@5.3.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.12(typescript@5.3.3))):
+  eslint-plugin-vuetify@2.4.0(eslint@8.57.0)(vuetify@3.7.2):
     dependencies:
       eslint: 8.57.0
       eslint-plugin-vue: 9.25.0(eslint@8.57.0)
@@ -6848,7 +6848,7 @@ snapshots:
 
   vite-plugin-vuetify@2.0.4(vite@5.4.8(@types/node@20.12.10)(sass@1.76.0)(terser@5.34.1))(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2):
     dependencies:
-      '@vuetify/loader-shared': 2.0.3(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2(typescript@5.3.3)(vite-plugin-vuetify@2.0.4)(vue@3.5.12(typescript@5.3.3)))
+      '@vuetify/loader-shared': 2.0.3(vue@3.5.12(typescript@5.3.3))(vuetify@3.7.2)
       debug: 4.3.7(supports-color@8.1.1)
       upath: 2.0.1
       vite: 5.4.8(@types/node@20.12.10)(sass@1.76.0)(terser@5.34.1)

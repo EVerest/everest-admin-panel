@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@babel/types": "^7.24.5",
-    "@faker-js/faker": "^8.4.1",
+    "@faker-js/faker": "^9.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.12.10",
     "@types/splitpanes": "^2.2.6",
