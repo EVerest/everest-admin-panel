@@ -318,7 +318,7 @@ class EVConfigModel {
 
   _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig): number {
     if (!(type in this._module_definitions)) {
-      throw Error(`Invalid module type: ${type}`);
+      throw Error(`Invalid module type: ${type}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this module yet. Make sure you are running the correct admin panel or connect to a live instance.`);
     }
     if (Object.values(this._instances).filter((value) => value.id === id).length) {
       throw Error(`Module instance with id: ${module.id} already exists`);
@@ -361,12 +361,12 @@ class EVConfigModel {
   _validate_connection(conn: Connection) {
     const prov_id = conn.providing_instance_id;
     if (!(prov_id in this._instances)) {
-      throw Error(`Providing instance with instance id ${prov_id} does not exist`);
+      throw Error(`Providing instance with instance id ${prov_id} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.`);
     }
 
     const req_id = conn.requiring_instance_id;
     if (!(req_id in this._instances)) {
-      throw Error(`Requiring instance with instance id ${req_id} does not exist`);
+      throw Error(`Requiring instance with instance id ${req_id} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.`);
     }
 
     const prov_module = this._instances[prov_id].type;
@@ -377,13 +377,13 @@ class EVConfigModel {
 
     if (!(conn.providing_impl_name in prov_manifest.provides)) {
       throw Error(
-        `Providing module of type "${prov_module}" does not provide an implementation named "${conn.providing_impl_name}"`
+        `Providing module of type "${prov_module}" does not provide an implementation named "${conn.providing_impl_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`
       );
     }
 
     if (!(conn.requirement_name in req_manifest.requires)) {
       throw Error(
-        `Requiring module of type "${req_module}" does not have an requirement called "${conn.requirement_name}"`
+        `Requiring module of type "${req_module}" does not have an requirement called "${conn.requirement_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`
       );
     }
 
