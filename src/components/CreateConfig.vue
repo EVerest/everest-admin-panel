@@ -69,7 +69,7 @@
     <v-card color="danger">
       <v-card-title>Couldn't load config</v-card-title>
       <v-card-text>
-        <pre><code>{{ errors }}</code></pre>
+        <pre style="white-space: pre-wrap;"><code>{{ errors }}</code></pre>
       </v-card-text>
       <v-card-actions>
         <v-btn color="primary" @click="resetDialog()">OK</v-btn>
@@ -79,13 +79,14 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import { computed, ref, inject, defineEmits } from "vue";
 import {useEvbcStore} from "@/store/evbc";
 import {storeToRefs} from "pinia";
 import yaml from "js-yaml";
 import Ajv from "ajv";
 import {EverestConfig} from "@/modules/evbc";
 import {urlToPublicAsset} from "@/utils";
+import EVBackendClient from "@/modules/evbc/client";
 
 enum ComponentStates {
   DEFAULT,
@@ -103,6 +104,7 @@ const {available_configs} = storeToRefs(evbcStore);
 const configContent = ref<EverestConfig>(null);
 const errors = ref<string>(null);
 const showErrorDialog = computed<boolean>(() => !!errors.value);
+const evbc = inject<EVBackendClient>('evbc') as EVBackendClient;
 
 function onAcceptBtnClick() {
     if (validateConfigName() === true) {
@@ -188,8 +190,15 @@ async function getConfigJsonSchema(): Promise<object> {
 async function parseConfig(content: string): Promise<{ errors: string, config: EverestConfig }> {
   try {
     const config = yaml.load(content);
+    // catch schema/syntax errors in the config
     const validationResult = await validateConfigContent(config);
     if (validationResult === true) {
+      // Catch logical errors in the config
+      try {
+        evbc.create_config_model(configName.value, config as EverestConfig);
+      } catch (e) {
+        return { errors: e.toString(), config: null };
+      }
       return {errors: null, config: config as EverestConfig};
     } else {
       return {errors: validationResult, config: null};
