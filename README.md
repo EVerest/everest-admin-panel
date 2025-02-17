@@ -10,14 +10,20 @@ includes a simulator for experimenting without an actual EVerest instance.
 
 ## Table of Contents
 
-- [Features](#features)
-- [Demo](#demo)
-- [Development](#development)
-- [Documentation](#documentation)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [Dependencies](#dependencies)
-- [License](#license)
+- [EVerest Admin Panel](#everest-admin-panel)
+  - [Introduction](#introduction)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Demo](#demo)
+  - [Development](#development)
+    - [Releasing a new version](#releasing-a-new-version)
+    - [Updating the simulator data](#updating-the-simulator-data)
+    - [Updating config/interface-schemas](#updating-configinterface-schemas)
+  - [Documentation](#documentation)
+  - [Troubleshooting](#troubleshooting)
+  - [Contributing](#contributing)
+  - [Dependencies](#dependencies)
+  - [License](#license)
 
 ## Features
 
@@ -79,6 +85,7 @@ This is recommended if you're not using the simulator version.
 ### Releasing a new version
 
 To release a new version, follow these steps:
+
 1. Generate a changelog using [cocogitto](https://github.com/cocogitto/cocogitto): `cog changelog vX.Y.Z..HEAD`. Copy it.
 2. Update the version in `package.json`.
 3. Commit the changes, the commit message should look like this: `chore(release): vX.Y.Z`.
@@ -89,6 +96,16 @@ To release a new version, follow these steps:
 ### Updating the simulator data
 
 Find a detailed guide on how to update the simulator data [here](src/modules/evbc/simulator-sample-data/README.md).
+
+### Updating config/interface-schemas
+
+The admin panel relies on definitions of json/yaml scehams in github.com/EVerest/everest-framework to correctly parse configs. If the schemas are outdated:
+
+1. Change the release tag in `schemas.config.ts`
+2. Delete locally fetched schemas: `rm public/schemas/*.json`
+3. Run `pnpm build` to fetch schemas (after `pnpm install` if you didn't setup the project already)
+4. You will get an error like this: `Error: Schema hash mismatch for https://raw.githubusercontent.com/EVerest/everest-framework/v0.20.2/schemas/config.yaml. Expected: 8b548f1b5ed6a29a04fd30ca344850bc8e8f2c132063cc4422e94e1108b93e9b, got: 8b548f1b5ed6a29a04fd30ca344850bc8e8f2c132063cc4422e94e1108b93e9a`. Copy the hash and paste it in `schemas.config.ts` in the appropriate place.
+5. Run `pnpm build` again. It should now be successful 🎉
 
 ## Documentation
 
@@ -120,6 +137,7 @@ Contributions are welcome! If you'd like to contribute, please:
 Please make sure to create an issue before creating a pull request.
 
 ## Dependencies
+
 The most important technologies used in this project are:
 
 - [Vue.js](https://vuejs.org/)
