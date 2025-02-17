@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 import {INITIAL_RPC_TIMEOUT_VALUE} from "@/modules/evconf_konva/views/constants";
 import {ConnectionStatus} from "@/modules/evbc/connection";
 import {RpcIssuer} from "@/modules/evbc/rpc/abstractRpcIssuer";
