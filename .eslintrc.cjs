@@ -4,24 +4,30 @@ module.exports = {
   root: true,
   env: {
     node: true,
-    es2022: true
+    es2022: true,
   },
   extends: [
-    'eslint:recommended',
-    'plugin:vue/vue3-essential',
-    'plugin:vuetify/base',
-    '@vue/eslint-config-typescript'
+    "eslint:recommended",
+    "plugin:vuetify/base",
+    "@vue/eslint-config-typescript",
+    "plugin:vue/vue3-recommended",
+    "plugin:@typescript-eslint/recommended",
   ],
   parser: "vue-eslint-parser",
   parserOptions: {
-    ecmaVersion: 2020
+    ecmaVersion: 2020,
   },
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'warn'
+    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
+    "no-debugger": process.env.NODE_ENV === "production" ? "error" : "warn",
+    quotes: [ "error", "double", {avoidEscape: true,}, ],
+    indent: [ "error", 2, ],
+    semi: [ "error", "always", ],
+    curly: "error",
+    eqeqeq: [ "error", "always", ],
+    "comma-dangle": ["error", "always",],
+    "vue/no-mutating-props": "error",
+
   },
-  ignorePatterns: [
-      "node_modules",
-      "dist"
-  ],
-}
+  ignorePatterns: [ "node_modules", "dist", ],
+};
