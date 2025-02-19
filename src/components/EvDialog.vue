@@ -2,12 +2,16 @@
      Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-dialog :model-value="show_dialog" @click:outside="deny" width="auto">
+  <v-dialog
+    :model-value="showDialog"
+    width="auto"
+    @click:outside="deny"
+  >
     <v-card>
       <v-card-title class="d-flex flex-row align-baseline">
         <v-icon
-            size="large"
-            color="error"
+          size="large"
+          color="error"
         >
           mdi-alert-circle
         </v-icon>
@@ -18,18 +22,25 @@
         <p>{{ $props.text }}</p>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="error" @click="accept">{{ $props.accept_text }}</v-btn>
-        <v-btn @click="deny">{{ $props.deny_text }}</v-btn>
+        <v-btn
+          color="error"
+          @click="accept"
+        >
+          {{ $props.acceptText }}
+        </v-btn>
+        <v-btn @click="deny">
+          {{ $props.denyText }}
+        </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, } from "vue";
 export default defineComponent({
   props: {
-    show_dialog: {
+    showDialog: {
       type: Boolean,
       required: true,
     },
@@ -41,23 +52,23 @@ export default defineComponent({
       type: String,
       required: true,
     },
-    accept_text: {
+    acceptText: {
       type: String,
       required: true,
     },
-    deny_text: {
+    denyText: {
       type: String,
       required: true,
     },
   },
+  emits: [ "accept", "deny", ],
   methods: {
     accept() {
-      this.$emit("accept");
+      this.$emit("accept",);
     },
     deny() {
-      this.$emit("deny");
+      this.$emit("deny",);
     },
   },
-})
+},);
 </script>
-

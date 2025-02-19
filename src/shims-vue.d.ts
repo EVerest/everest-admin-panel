@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
-declare module '*.vue' {
-  import Vue from 'vue'
-  export default Vue
+declare module "*.vue" {
+  import Vue from "vue";
+  export default Vue;
 }

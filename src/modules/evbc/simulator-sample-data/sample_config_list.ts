@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
-import {EverestConfigList} from "../index";
+import { EverestConfigList, } from "../index";
 
 export default {
   "config-sil-dc": {
@@ -12,9 +12,9 @@ export default {
           "evse_manager": [
             {
               "module_id": "evse_manager",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_module": {
           "charger_information_file": "",
@@ -53,8 +53,8 @@ export default {
           "telemetry_supply_voltage_12V_decimal_places": 2,
           "telemetry_supply_voltage_12V_round_to": 0,
           "telemetry_supply_voltage_minus_12V_decimal_places": 2,
-          "telemetry_supply_voltage_minus_12V_round_to": 0
-        }
+          "telemetry_supply_voltage_minus_12V_round_to": 0,
+        },
       },
       "auth": {
         "module": "Auth",
@@ -62,29 +62,29 @@ export default {
           "evse_manager": [
             {
               "module_id": "evse_manager",
-              "implementation_id": "evse"
-            }
+              "implementation_id": "evse",
+            },
           ],
           "token_provider": [
             {
               "module_id": "token_provider",
-              "implementation_id": "main"
-            }
+              "implementation_id": "main",
+            },
           ],
           "token_validator": [
             {
               "module_id": "token_validator",
-              "implementation_id": "main"
-            }
-          ]
+              "implementation_id": "main",
+            },
+          ],
         },
         "config_module": {
           "connection_timeout": 10,
           "ignore_connector_faults": false,
           "master_pass_group_id": "",
           "prioritize_authorization_over_stopping_transaction": true,
-          "selection_algorithm": "FindFirst"
-        }
+          "selection_algorithm": "FindFirst",
+        },
       },
       "car_simulator": {
         "module": "JsCarSimulator",
@@ -92,21 +92,21 @@ export default {
           "ev": [
             {
               "module_id": "iso15118_car",
-              "implementation_id": "ev"
-            }
+              "implementation_id": "ev",
+            },
           ],
           "simulation_control": [
             {
               "module_id": "yeti_driver",
-              "implementation_id": "yeti_simulation_control"
-            }
+              "implementation_id": "yeti_simulation_control",
+            },
           ],
           "slac": [
             {
               "module_id": "slac",
-              "implementation_id": "ev"
-            }
-          ]
+              "implementation_id": "ev",
+            },
+          ],
         },
         "config_module": {
           "auto_enable": true,
@@ -123,8 +123,8 @@ export default {
           "dc_max_voltage_limit": 900,
           "dc_target_current": 20,
           "dc_target_voltage": 400,
-          "support_sae_j2847": false
-        }
+          "support_sae_j2847": false,
+        },
       },
       "energy_manager": {
         "module": "EnergyManager",
@@ -132,9 +132,9 @@ export default {
           "energy_trunk": [
             {
               "module_id": "grid_connection_point",
-              "implementation_id": "energy_grid"
-            }
-          ]
+              "implementation_id": "energy_grid",
+            },
+          ],
         },
         "config_module": {
           "debug": false,
@@ -143,8 +143,8 @@ export default {
           "schedule_total_duration": 1,
           "slice_ampere": 0.5,
           "slice_watt": 500,
-          "update_interval": 1
-        }
+          "update_interval": 1,
+        },
       },
       "evse_manager": {
         "module": "EvseManager",
@@ -152,39 +152,39 @@ export default {
           "bsp": [
             {
               "module_id": "yeti_driver",
-              "implementation_id": "board_support"
-            }
+              "implementation_id": "board_support",
+            },
           ],
           "hlc": [
             {
               "module_id": "iso15118_charger",
-              "implementation_id": "charger"
-            }
+              "implementation_id": "charger",
+            },
           ],
           "imd": [
             {
               "module_id": "imd",
-              "implementation_id": "main"
-            }
+              "implementation_id": "main",
+            },
           ],
           "powermeter_car_side": [
             {
               "module_id": "powersupply_dc",
-              "implementation_id": "powermeter"
-            }
+              "implementation_id": "powermeter",
+            },
           ],
           "powersupply_DC": [
             {
               "module_id": "powersupply_dc",
-              "implementation_id": "main"
-            }
+              "implementation_id": "main",
+            },
           ],
           "slac": [
             {
               "module_id": "slac",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_module": {
           "ac_enforce_hlc": false,
@@ -228,8 +228,8 @@ export default {
           "three_phases": true,
           "uk_smartcharging_random_delay_at_any_change": true,
           "uk_smartcharging_random_delay_enable": false,
-          "uk_smartcharging_random_delay_max_duration": 600
-        }
+          "uk_smartcharging_random_delay_max_duration": 600,
+        },
       },
       "evse_security": {
         "module": "EvseSecurity",
@@ -243,8 +243,8 @@ export default {
           "private_key_password": "123456",
           "secc_leaf_cert_directory": "client/cso",
           "secc_leaf_key_directory": "client/cso",
-          "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem"
-        }
+          "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem",
+        },
       },
       "grid_connection_point": {
         "module": "EnergyNode",
@@ -252,20 +252,20 @@ export default {
           "energy_consumer": [
             {
               "module_id": "evse_manager",
-              "implementation_id": "energy_grid"
-            }
+              "implementation_id": "energy_grid",
+            },
           ],
           "powermeter": [
             {
               "module_id": "yeti_driver",
-              "implementation_id": "powermeter"
-            }
-          ]
+              "implementation_id": "powermeter",
+            },
+          ],
         },
         "config_module": {
           "fuse_limit_A": 40,
-          "phase_count": 3
-        }
+          "phase_count": 3,
+        },
       },
       "imd": {
         "module": "IMDSimulator",
@@ -273,9 +273,9 @@ export default {
         "config_implementation": {
           "main": {
             "interval": 1000,
-            "resistance_F_Ohm": 900000
-          }
-        }
+            "resistance_F_Ohm": 900000,
+          },
+        },
       },
       "iso15118_car": {
         "module": "PyEvJosev",
@@ -288,8 +288,8 @@ export default {
           "supported_ISO15118_2": true,
           "supported_ISO15118_20_AC": false,
           "supported_ISO15118_20_DC": false,
-          "tls_active": false
-        }
+          "tls_active": false,
+        },
       },
       "iso15118_charger": {
         "module": "EvseV2G",
@@ -297,9 +297,9 @@ export default {
           "security": [
             {
               "module_id": "evse_security",
-              "implementation_id": "main"
-            }
-          ]
+              "implementation_id": "main",
+            },
+          ],
         },
         "config_module": {
           "auth_timeout_eim": 300,
@@ -312,8 +312,8 @@ export default {
           "tls_key_logging_path": "/tmp",
           "tls_security": "allow",
           "tls_timeout": 15000,
-          "verify_contract_cert_chain": false
-        }
+          "verify_contract_cert_chain": false,
+        },
       },
       "powersupply_dc": {
         "module": "JsDCSupplySimulator",
@@ -325,23 +325,23 @@ export default {
             "max_power": 150000,
             "max_voltage": 900,
             "min_current": 1,
-            "min_voltage": 200
-          }
-        }
+            "min_voltage": 200,
+          },
+        },
       },
       "slac": {
         "module": "JsSlacSimulator",
         "connections": {},
         "config_implementation": {
           "ev": {
-            "ev_id": "PIONIX_SAYS_HELLO"
+            "ev_id": "PIONIX_SAYS_HELLO",
           },
           "evse": {
             "evse_id": "PIONIX_SAYS_HELLO",
             "nid": "pionix!",
-            "number_of_sounds": 10
-          }
-        }
+            "number_of_sounds": 10,
+          },
+        },
       },
       "token_provider": {
         "module": "DummyTokenProvider",
@@ -349,18 +349,18 @@ export default {
           "evse": [
             {
               "module_id": "evse_manager",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_implementation": {
           "main": {
             "connector_id": 0,
             "timeout": 10,
             "token": "TOKEN1",
-            "type": "RFID"
-          }
-        }
+            "type": "RFID",
+          },
+        },
       },
       "token_validator": {
         "module": "DummyTokenValidator",
@@ -369,23 +369,23 @@ export default {
           "main": {
             "sleep": 0.25,
             "validation_reason": "Token seems valid",
-            "validation_result": "Accepted"
-          }
-        }
+            "validation_result": "Accepted",
+          },
+        },
       },
       "yeti_driver": {
         "module": "JsYetiSimulator",
         "connections": {},
         "config_module": {
-          "connector_id": 1
-        }
-      }
+          "connector_id": 1,
+        },
+      },
     },
     "x-module-layout": {
       "api": {
         "position": {
           "x": 37,
-          "y": 41
+          "y": 41,
         },
         "terminals": {
           "top": [],
@@ -393,33 +393,33 @@ export default {
             {
               "id": "main",
               "interface": "empty",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "evse_manager",
               "interface": "evse_manager",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "ocpp",
               "interface": "ocpp",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "random_delay",
               "interface": "uk_random_delay",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "auth": {
         "position": {
           "x": 37,
-          "y": 22
+          "y": 22,
         },
         "terminals": {
           "top": [],
@@ -427,74 +427,74 @@ export default {
             {
               "id": "main",
               "interface": "auth",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "token_validator",
               "interface": "auth_token_validator",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "reservation",
               "interface": "reservation",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [
             {
               "id": "token_provider",
               "interface": "auth_token_provider",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "left": [
             {
               "id": "evse_manager",
               "interface": "evse_manager",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "car_simulator": {
         "position": {
           "x": 18,
-          "y": 5
+          "y": 5,
         },
         "terminals": {
           "top": [
             {
               "id": "ev",
               "interface": "ISO15118_ev",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "main",
               "interface": "car_simulator",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "slac",
               "interface": "slac",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "simulation_control",
               "interface": "yeti_simulation_control",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "energy_manager": {
         "position": {
           "x": 50,
-          "y": 10
+          "y": 10,
         },
         "terminals": {
           "top": [],
@@ -502,104 +502,104 @@ export default {
             {
               "id": "main",
               "interface": "energy_manager",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "energy_trunk",
               "interface": "energy",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "evse_manager": {
         "position": {
           "x": 18,
-          "y": 25
+          "y": 25,
         },
         "terminals": {
           "top": [
             {
               "id": "energy_grid",
               "interface": "energy",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "right": [
             {
               "id": "evse",
               "interface": "evse_manager",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "random_delay",
               "interface": "uk_random_delay",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "token_provider",
               "interface": "auth_token_provider",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [
             {
               "id": "hlc",
               "interface": "ISO15118_charger",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "left": [
             {
               "id": "slac",
               "interface": "slac",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "ac_rcd",
               "interface": "ac_rcd",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "bsp",
               "interface": "evse_board_support",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "connector_lock",
               "interface": "connector_lock",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "imd",
               "interface": "isolation_monitor",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter_car_side",
               "interface": "powermeter",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter_grid_side",
               "interface": "powermeter",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powersupply_DC",
               "interface": "power_supply_DC",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "evse_security": {
         "position": {
           "x": 2,
-          "y": 37
+          "y": 37,
         },
         "terminals": {
           "top": [],
@@ -607,17 +607,17 @@ export default {
             {
               "id": "main",
               "interface": "evse_security",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "grid_connection_point": {
         "position": {
           "x": 18,
-          "y": 16
+          "y": 16,
         },
         "terminals": {
           "top": [],
@@ -625,39 +625,39 @@ export default {
             {
               "id": "energy_grid",
               "interface": "energy",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "external_limits",
               "interface": "external_energy_limits",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [
             {
               "id": "energy_consumer",
               "interface": "energy",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "left": [
             {
               "id": "price_information",
               "interface": "energy_price_information",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter",
               "interface": "powermeter",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "imd": {
         "position": {
           "x": -12,
-          "y": 23
+          "y": 23,
         },
         "terminals": {
           "top": [],
@@ -665,17 +665,17 @@ export default {
             {
               "id": "main",
               "interface": "isolation_monitor",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "iso15118_car": {
         "position": {
           "x": 18,
-          "y": -4
+          "y": -4,
         },
         "terminals": {
           "top": [],
@@ -684,24 +684,24 @@ export default {
             {
               "id": "ev",
               "interface": "ISO15118_ev",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "iso15118_charger": {
         "position": {
           "x": 18,
-          "y": 37
+          "y": 37,
         },
         "terminals": {
           "top": [
             {
               "id": "charger",
               "interface": "ISO15118_charger",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "right": [],
           "bottom": [],
@@ -709,15 +709,15 @@ export default {
             {
               "id": "security",
               "interface": "evse_security",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "powersupply_dc": {
         "position": {
           "x": -12,
-          "y": 30
+          "y": 30,
         },
         "terminals": {
           "top": [],
@@ -725,22 +725,22 @@ export default {
             {
               "id": "powermeter",
               "interface": "powermeter",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "main",
               "interface": "power_supply_DC",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "slac": {
         "position": {
           "x": -12,
-          "y": 9
+          "y": 9,
         },
         "terminals": {
           "top": [],
@@ -748,30 +748,30 @@ export default {
             {
               "id": "ev",
               "interface": "slac",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "evse",
               "interface": "slac",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "token_provider": {
         "position": {
           "x": 37,
-          "y": 32
+          "y": 32,
         },
         "terminals": {
           "top": [
             {
               "id": "main",
               "interface": "auth_token_provider",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "right": [],
           "bottom": [],
@@ -779,15 +779,15 @@ export default {
             {
               "id": "evse",
               "interface": "evse_manager",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "token_validator": {
         "position": {
           "x": 52,
-          "y": 22
+          "y": 22,
         },
         "terminals": {
           "top": [],
@@ -797,15 +797,15 @@ export default {
             {
               "id": "main",
               "interface": "auth_token_validator",
-              "type": "provide"
-            }
-          ]
-        }
+              "type": "provide",
+            },
+          ],
+        },
       },
       "yeti_driver": {
         "position": {
           "x": -12,
-          "y": 16
+          "y": 16,
         },
         "terminals": {
           "top": [],
@@ -813,34 +813,34 @@ export default {
             {
               "id": "yeti_simulation_control",
               "interface": "yeti_simulation_control",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "connector_lock",
               "interface": "connector_lock",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "powermeter",
               "interface": "powermeter",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "rcd",
               "interface": "ac_rcd",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "board_support",
               "interface": "evse_board_support",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
-          "left": []
-        }
-      }
-    }
+          "left": [],
+        },
+      },
+    },
   },
   "config-sil-ocpp201": {
     "active_modules": {
@@ -850,9 +850,9 @@ export default {
           "evse_manager": [
             {
               "module_id": "evse_manager_1",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_module": {
           "charger_information_file": "",
@@ -891,8 +891,8 @@ export default {
           "telemetry_supply_voltage_12V_decimal_places": 2,
           "telemetry_supply_voltage_12V_round_to": 0,
           "telemetry_supply_voltage_minus_12V_decimal_places": 2,
-          "telemetry_supply_voltage_minus_12V_round_to": 0
-        }
+          "telemetry_supply_voltage_minus_12V_round_to": 0,
+        },
       },
       "auth": {
         "module": "Auth",
@@ -900,37 +900,37 @@ export default {
           "evse_manager": [
             {
               "module_id": "evse_manager_1",
-              "implementation_id": "evse"
+              "implementation_id": "evse",
             },
             {
               "module_id": "evse_manager_2",
-              "implementation_id": "evse"
-            }
+              "implementation_id": "evse",
+            },
           ],
           "token_provider": [
             {
               "module_id": "token_provider_1",
-              "implementation_id": "main"
+              "implementation_id": "main",
             },
             {
               "module_id": "ocpp",
-              "implementation_id": "auth_provider"
-            }
+              "implementation_id": "auth_provider",
+            },
           ],
           "token_validator": [
             {
               "module_id": "ocpp",
-              "implementation_id": "auth_validator"
-            }
-          ]
+              "implementation_id": "auth_validator",
+            },
+          ],
         },
         "config_module": {
           "connection_timeout": 60,
           "ignore_connector_faults": false,
           "master_pass_group_id": "",
           "prioritize_authorization_over_stopping_transaction": true,
-          "selection_algorithm": "FindFirst"
-        }
+          "selection_algorithm": "FindFirst",
+        },
       },
       "car_simulator_1": {
         "module": "JsCarSimulator",
@@ -938,21 +938,21 @@ export default {
           "ev": [
             {
               "module_id": "iso15118_car",
-              "implementation_id": "ev"
-            }
+              "implementation_id": "ev",
+            },
           ],
           "simulation_control": [
             {
               "module_id": "yeti_driver_1",
-              "implementation_id": "yeti_simulation_control"
-            }
+              "implementation_id": "yeti_simulation_control",
+            },
           ],
           "slac": [
             {
               "module_id": "slac",
-              "implementation_id": "ev"
-            }
-          ]
+              "implementation_id": "ev",
+            },
+          ],
         },
         "config_module": {
           "auto_enable": true,
@@ -969,8 +969,8 @@ export default {
           "dc_max_voltage_limit": 900,
           "dc_target_current": 5,
           "dc_target_voltage": 200,
-          "support_sae_j2847": false
-        }
+          "support_sae_j2847": false,
+        },
       },
       "car_simulator_2": {
         "module": "JsCarSimulator",
@@ -978,21 +978,21 @@ export default {
           "ev": [
             {
               "module_id": "iso15118_car",
-              "implementation_id": "ev"
-            }
+              "implementation_id": "ev",
+            },
           ],
           "simulation_control": [
             {
               "module_id": "yeti_driver_2",
-              "implementation_id": "yeti_simulation_control"
-            }
+              "implementation_id": "yeti_simulation_control",
+            },
           ],
           "slac": [
             {
               "module_id": "slac",
-              "implementation_id": "ev"
-            }
-          ]
+              "implementation_id": "ev",
+            },
+          ],
         },
         "config_module": {
           "auto_enable": true,
@@ -1009,8 +1009,8 @@ export default {
           "dc_max_voltage_limit": 900,
           "dc_target_current": 5,
           "dc_target_voltage": 200,
-          "support_sae_j2847": false
-        }
+          "support_sae_j2847": false,
+        },
       },
       "energy_manager": {
         "module": "EnergyManager",
@@ -1018,9 +1018,9 @@ export default {
           "energy_trunk": [
             {
               "module_id": "grid_connection_point",
-              "implementation_id": "energy_grid"
-            }
-          ]
+              "implementation_id": "energy_grid",
+            },
+          ],
         },
         "config_module": {
           "debug": false,
@@ -1029,8 +1029,8 @@ export default {
           "schedule_total_duration": 1,
           "slice_ampere": 0.5,
           "slice_watt": 500,
-          "update_interval": 1
-        }
+          "update_interval": 1,
+        },
       },
       "evse_manager_1": {
         "module": "EvseManager",
@@ -1038,27 +1038,27 @@ export default {
           "bsp": [
             {
               "module_id": "yeti_driver_1",
-              "implementation_id": "board_support"
-            }
+              "implementation_id": "board_support",
+            },
           ],
           "hlc": [
             {
               "module_id": "iso15118_charger",
-              "implementation_id": "charger"
-            }
+              "implementation_id": "charger",
+            },
           ],
           "powermeter_grid_side": [
             {
               "module_id": "yeti_driver_1",
-              "implementation_id": "powermeter"
-            }
+              "implementation_id": "powermeter",
+            },
           ],
           "slac": [
             {
               "module_id": "slac",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_module": {
           "ac_enforce_hlc": false,
@@ -1102,8 +1102,8 @@ export default {
           "three_phases": true,
           "uk_smartcharging_random_delay_at_any_change": true,
           "uk_smartcharging_random_delay_enable": false,
-          "uk_smartcharging_random_delay_max_duration": 600
-        }
+          "uk_smartcharging_random_delay_max_duration": 600,
+        },
       },
       "evse_manager_2": {
         "module": "EvseManager",
@@ -1111,27 +1111,27 @@ export default {
           "bsp": [
             {
               "module_id": "yeti_driver_2",
-              "implementation_id": "board_support"
-            }
+              "implementation_id": "board_support",
+            },
           ],
           "hlc": [
             {
               "module_id": "iso15118_charger",
-              "implementation_id": "charger"
-            }
+              "implementation_id": "charger",
+            },
           ],
           "powermeter_grid_side": [
             {
               "module_id": "yeti_driver_2",
-              "implementation_id": "powermeter"
-            }
+              "implementation_id": "powermeter",
+            },
           ],
           "slac": [
             {
               "module_id": "slac",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_module": {
           "ac_enforce_hlc": false,
@@ -1175,8 +1175,8 @@ export default {
           "three_phases": true,
           "uk_smartcharging_random_delay_at_any_change": true,
           "uk_smartcharging_random_delay_enable": false,
-          "uk_smartcharging_random_delay_max_duration": 600
-        }
+          "uk_smartcharging_random_delay_max_duration": 600,
+        },
       },
       "evse_security": {
         "module": "EvseSecurity",
@@ -1190,8 +1190,8 @@ export default {
           "private_key_password": "123456",
           "secc_leaf_cert_directory": "client/cso",
           "secc_leaf_key_directory": "client/cso",
-          "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem"
-        }
+          "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem",
+        },
       },
       "grid_connection_point": {
         "module": "EnergyNode",
@@ -1199,24 +1199,24 @@ export default {
           "energy_consumer": [
             {
               "module_id": "evse_manager_1",
-              "implementation_id": "energy_grid"
+              "implementation_id": "energy_grid",
             },
             {
               "module_id": "evse_manager_2",
-              "implementation_id": "energy_grid"
-            }
+              "implementation_id": "energy_grid",
+            },
           ],
           "powermeter": [
             {
               "module_id": "yeti_driver_1",
-              "implementation_id": "powermeter"
-            }
-          ]
+              "implementation_id": "powermeter",
+            },
+          ],
         },
         "config_module": {
           "fuse_limit_A": 40,
-          "phase_count": 3
-        }
+          "phase_count": 3,
+        },
       },
       "iso15118_car": {
         "module": "PyEvJosev",
@@ -1229,8 +1229,8 @@ export default {
           "supported_ISO15118_2": true,
           "supported_ISO15118_20_AC": false,
           "supported_ISO15118_20_DC": false,
-          "tls_active": false
-        }
+          "tls_active": false,
+        },
       },
       "iso15118_charger": {
         "module": "EvseV2G",
@@ -1238,9 +1238,9 @@ export default {
           "security": [
             {
               "module_id": "evse_security",
-              "implementation_id": "main"
-            }
-          ]
+              "implementation_id": "main",
+            },
+          ],
         },
         "config_module": {
           "auth_timeout_eim": 300,
@@ -1253,8 +1253,8 @@ export default {
           "tls_key_logging_path": "/tmp",
           "tls_security": "allow",
           "tls_timeout": 15000,
-          "verify_contract_cert_chain": false
-        }
+          "verify_contract_cert_chain": false,
+        },
       },
       "ocpp": {
         "module": "OCPP201",
@@ -1262,61 +1262,61 @@ export default {
           "auth": [
             {
               "module_id": "auth",
-              "implementation_id": "main"
-            }
+              "implementation_id": "main",
+            },
           ],
           "evse_manager": [
             {
               "module_id": "evse_manager_1",
-              "implementation_id": "evse"
+              "implementation_id": "evse",
             },
             {
               "module_id": "evse_manager_2",
-              "implementation_id": "evse"
-            }
+              "implementation_id": "evse",
+            },
           ],
           "security": [
             {
               "module_id": "evse_security",
-              "implementation_id": "main"
-            }
+              "implementation_id": "main",
+            },
           ],
           "system": [
             {
               "module_id": "system",
-              "implementation_id": "main"
-            }
-          ]
+              "implementation_id": "main",
+            },
+          ],
         },
         "config_module": {
           "CoreDatabasePath": "/tmp/ocpp201",
           "DeviceModelDatabasePath": "device_model_storage.db",
           "EnableExternalWebsocketControl": false,
           "MessageLogPath": "/tmp/everest_ocpp_logs",
-          "MessageQueueResumeDelay": 0
-        }
+          "MessageQueueResumeDelay": 0,
+        },
       },
       "slac": {
         "module": "JsSlacSimulator",
         "connections": {},
         "config_implementation": {
           "ev": {
-            "ev_id": "PIONIX_SAYS_HELLO"
+            "ev_id": "PIONIX_SAYS_HELLO",
           },
           "evse": {
             "evse_id": "PIONIX_SAYS_HELLO",
             "nid": "pionix!",
-            "number_of_sounds": 10
-          }
-        }
+            "number_of_sounds": 10,
+          },
+        },
       },
       "system": {
         "module": "System",
         "connections": {},
         "config_module": {
           "DefaultRetries": 1,
-          "DefaultRetryInterval": 1
-        }
+          "DefaultRetryInterval": 1,
+        },
       },
       "token_provider_1": {
         "module": "DummyTokenProviderManual",
@@ -1325,30 +1325,30 @@ export default {
           "main": {
             "timeout": 10,
             "token": "DEADBEEF",
-            "type": "RFID"
-          }
-        }
+            "type": "RFID",
+          },
+        },
       },
       "yeti_driver_1": {
         "module": "JsYetiSimulator",
         "connections": {},
         "config_module": {
-          "connector_id": 1
-        }
+          "connector_id": 1,
+        },
       },
       "yeti_driver_2": {
         "module": "JsYetiSimulator",
         "connections": {},
         "config_module": {
-          "connector_id": 2
-        }
-      }
+          "connector_id": 2,
+        },
+      },
     },
     "x-module-layout": {
       "api": {
         "position": {
           "x": 41,
-          "y": 4
+          "y": 4,
         },
         "terminals": {
           "top": [],
@@ -1356,33 +1356,33 @@ export default {
             {
               "id": "main",
               "interface": "empty",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "evse_manager",
               "interface": "evse_manager",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "ocpp",
               "interface": "ocpp",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "random_delay",
               "interface": "uk_random_delay",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "auth": {
         "position": {
           "x": 39,
-          "y": -17
+          "y": -17,
         },
         "terminals": {
           "top": [],
@@ -1390,74 +1390,74 @@ export default {
             {
               "id": "reservation",
               "interface": "reservation",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [
             {
               "id": "main",
               "interface": "auth",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "left": [
             {
               "id": "token_provider",
               "interface": "auth_token_provider",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "token_validator",
               "interface": "auth_token_validator",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "evse_manager",
               "interface": "evse_manager",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "car_simulator_1": {
         "position": {
           "x": -60,
-          "y": 17
+          "y": 17,
         },
         "terminals": {
           "top": [
             {
               "id": "ev",
               "interface": "ISO15118_ev",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "simulation_control",
               "interface": "yeti_simulation_control",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "main",
               "interface": "car_simulator",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [
             {
               "id": "slac",
               "interface": "slac",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "car_simulator_2": {
         "position": {
           "x": -60,
-          "y": 42
+          "y": 42,
         },
         "terminals": {
           "top": [],
@@ -1465,33 +1465,33 @@ export default {
             {
               "id": "ev",
               "interface": "ISO15118_ev",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "simulation_control",
               "interface": "yeti_simulation_control",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "slac",
               "interface": "slac",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "bottom": [
             {
               "id": "main",
               "interface": "car_simulator",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "energy_manager": {
         "position": {
           "x": 50,
-          "y": 21
+          "y": 21,
         },
         "terminals": {
           "top": [],
@@ -1499,23 +1499,23 @@ export default {
             {
               "id": "main",
               "interface": "energy_manager",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "energy_trunk",
               "interface": "energy",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "evse_manager_1": {
         "position": {
           "x": 2,
-          "y": -1
+          "y": -1,
         },
         "terminals": {
           "top": [],
@@ -1523,158 +1523,158 @@ export default {
             {
               "id": "energy_grid",
               "interface": "energy",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "random_delay",
               "interface": "uk_random_delay",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "token_provider",
               "interface": "auth_token_provider",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "evse",
               "interface": "evse_manager",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "ac_rcd",
               "interface": "ac_rcd",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "bsp",
               "interface": "evse_board_support",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "connector_lock",
               "interface": "connector_lock",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "hlc",
               "interface": "ISO15118_charger",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "imd",
               "interface": "isolation_monitor",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter_car_side",
               "interface": "powermeter",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter_grid_side",
               "interface": "powermeter",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powersupply_DC",
               "interface": "power_supply_DC",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "slac",
               "interface": "slac",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "evse_manager_2": {
         "position": {
           "x": 13,
-          "y": 16
+          "y": 16,
         },
         "terminals": {
           "top": [
             {
               "id": "evse",
               "interface": "evse_manager",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "right": [
             {
               "id": "energy_grid",
               "interface": "energy",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "random_delay",
               "interface": "uk_random_delay",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "token_provider",
               "interface": "auth_token_provider",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "hlc",
               "interface": "ISO15118_charger",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "ac_rcd",
               "interface": "ac_rcd",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "bsp",
               "interface": "evse_board_support",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "connector_lock",
               "interface": "connector_lock",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "imd",
               "interface": "isolation_monitor",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter_car_side",
               "interface": "powermeter",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter_grid_side",
               "interface": "powermeter",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powersupply_DC",
               "interface": "power_supply_DC",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "slac",
               "interface": "slac",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "evse_security": {
         "position": {
           "x": -40,
-          "y": 3
+          "y": 3,
         },
         "terminals": {
           "top": [],
@@ -1682,57 +1682,57 @@ export default {
             {
               "id": "main",
               "interface": "evse_security",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "grid_connection_point": {
         "position": {
           "x": 32,
-          "y": 23
+          "y": 23,
         },
         "terminals": {
           "top": [
             {
               "id": "energy_consumer",
               "interface": "energy",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "energy_grid",
               "interface": "energy",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "external_limits",
               "interface": "external_energy_limits",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "powermeter",
               "interface": "powermeter",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "price_information",
               "interface": "energy_price_information",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "iso15118_car": {
         "position": {
           "x": -40,
-          "y": 10
+          "y": 10,
         },
         "terminals": {
           "top": [],
@@ -1742,15 +1742,15 @@ export default {
             {
               "id": "ev",
               "interface": "ISO15118_ev",
-              "type": "provide"
-            }
-          ]
-        }
+              "type": "provide",
+            },
+          ],
+        },
       },
       "iso15118_charger": {
         "position": {
           "x": -21,
-          "y": -10
+          "y": -10,
         },
         "terminals": {
           "top": [],
@@ -1759,87 +1759,87 @@ export default {
             {
               "id": "charger",
               "interface": "ISO15118_charger",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "left": [
             {
               "id": "security",
               "interface": "evse_security",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "ocpp": {
         "position": {
           "x": 24,
-          "y": 7
+          "y": 7,
         },
         "terminals": {
           "top": [
             {
               "id": "auth_provider",
               "interface": "auth_token_provider",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "auth_validator",
               "interface": "auth_token_validator",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "auth",
               "interface": "auth",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "data_transfer",
               "interface": "ocpp_data_transfer",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "main",
               "interface": "empty",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "ocpp_generic",
               "interface": "ocpp",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "data_transfer",
               "interface": "ocpp_data_transfer",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "evse_manager",
               "interface": "evse_manager",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "security",
               "interface": "evse_security",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "system",
               "interface": "system",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "slac": {
         "position": {
           "x": -40,
-          "y": 38
+          "y": 38,
         },
         "terminals": {
           "top": [],
@@ -1847,23 +1847,23 @@ export default {
             {
               "id": "evse",
               "interface": "slac",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "ev",
               "interface": "slac",
-              "type": "provide"
-            }
-          ]
-        }
+              "type": "provide",
+            },
+          ],
+        },
       },
       "system": {
         "position": {
           "x": -40,
-          "y": 31
+          "y": 31,
         },
         "terminals": {
           "top": [],
@@ -1871,17 +1871,17 @@ export default {
             {
               "id": "main",
               "interface": "system",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "token_provider_1": {
         "position": {
           "x": 12,
-          "y": -21
+          "y": -21,
         },
         "terminals": {
           "top": [],
@@ -1889,17 +1889,17 @@ export default {
             {
               "id": "main",
               "interface": "auth_token_provider",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
-          "left": []
-        }
+          "left": [],
+        },
       },
       "yeti_driver_1": {
         "position": {
           "x": -40,
-          "y": 17
+          "y": 17,
         },
         "terminals": {
           "top": [],
@@ -1907,38 +1907,38 @@ export default {
             {
               "id": "board_support",
               "interface": "evse_board_support",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "connector_lock",
               "interface": "connector_lock",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "powermeter",
               "interface": "powermeter",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "rcd",
               "interface": "ac_rcd",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "yeti_simulation_control",
               "interface": "yeti_simulation_control",
-              "type": "provide"
-            }
-          ]
-        }
+              "type": "provide",
+            },
+          ],
+        },
       },
       "yeti_driver_2": {
         "position": {
           "x": -40,
-          "y": 24
+          "y": 24,
         },
         "terminals": {
           "top": [],
@@ -1946,35 +1946,35 @@ export default {
             {
               "id": "board_support",
               "interface": "evse_board_support",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "connector_lock",
               "interface": "connector_lock",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "powermeter",
               "interface": "powermeter",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "rcd",
               "interface": "ac_rcd",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "bottom": [],
           "left": [
             {
               "id": "yeti_simulation_control",
               "interface": "yeti_simulation_control",
-              "type": "provide"
-            }
-          ]
-        }
-      }
-    }
+              "type": "provide",
+            },
+          ],
+        },
+      },
+    },
   },
   "config-sil": {
     "active_modules": {
@@ -1984,39 +1984,39 @@ export default {
           "ac_rcd": [
             {
               "module_id": "connector_1_powerpath",
-              "implementation_id": "rcd"
-            }
+              "implementation_id": "rcd",
+            },
           ],
           "bsp": [
             {
               "module_id": "connector_1_powerpath",
-              "implementation_id": "board_support"
-            }
+              "implementation_id": "board_support",
+            },
           ],
           "connector_lock": [
             {
               "module_id": "connector_1_powerpath",
-              "implementation_id": "connector_lock"
-            }
+              "implementation_id": "connector_lock",
+            },
           ],
           "hlc": [
             {
               "module_id": "iso15118_charger",
-              "implementation_id": "charger"
-            }
+              "implementation_id": "charger",
+            },
           ],
           "powermeter_grid_side": [
             {
               "module_id": "connector_1_powerpath",
-              "implementation_id": "powermeter"
-            }
+              "implementation_id": "powermeter",
+            },
           ],
           "slac": [
             {
               "module_id": "slac",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_module": {
           "ac_enforce_hlc": false,
@@ -2057,8 +2057,8 @@ export default {
           "soft_over_current_measurement_noise_A": 0.5,
           "soft_over_current_tolerance_percent": 10,
           "switch_to_minimum_voltage_after_cable_check": false,
-          "three_phases": true
-        }
+          "three_phases": true,
+        },
       },
       "api": {
         "module": "API",
@@ -2066,9 +2066,9 @@ export default {
           "evse_manager": [
             {
               "module_id": "MyEvseManager",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_module": {
           "charger_information_file": "",
@@ -2107,8 +2107,8 @@ export default {
           "telemetry_supply_voltage_12V_decimal_places": 2,
           "telemetry_supply_voltage_12V_round_to": 0,
           "telemetry_supply_voltage_minus_12V_decimal_places": 2,
-          "telemetry_supply_voltage_minus_12V_round_to": 0
-        }
+          "telemetry_supply_voltage_minus_12V_round_to": 0,
+        },
       },
       "auth": {
         "module": "Auth",
@@ -2116,29 +2116,29 @@ export default {
           "evse_manager": [
             {
               "module_id": "MyEvseManager",
-              "implementation_id": "evse"
-            }
+              "implementation_id": "evse",
+            },
           ],
           "token_provider": [
             {
               "module_id": "token_provider",
-              "implementation_id": "main"
-            }
+              "implementation_id": "main",
+            },
           ],
           "token_validator": [
             {
               "module_id": "token_validator",
-              "implementation_id": "main"
-            }
-          ]
+              "implementation_id": "main",
+            },
+          ],
         },
         "config_module": {
           "connection_timeout": 10,
           "ignore_connector_faults": true,
           "master_pass_group_id": "",
           "prioritize_authorization_over_stopping_transaction": true,
-          "selection_algorithm": "FindFirst"
-        }
+          "selection_algorithm": "FindFirst",
+        },
       },
       "car_simulator": {
         "module": "JsCarSimulator",
@@ -2146,21 +2146,21 @@ export default {
           "ev": [
             {
               "module_id": "iso15118_car",
-              "implementation_id": "ev"
-            }
+              "implementation_id": "ev",
+            },
           ],
           "simulation_control": [
             {
               "module_id": "connector_1_powerpath",
-              "implementation_id": "yeti_simulation_control"
-            }
+              "implementation_id": "yeti_simulation_control",
+            },
           ],
           "slac": [
             {
               "module_id": "slac",
-              "implementation_id": "ev"
-            }
-          ]
+              "implementation_id": "ev",
+            },
+          ],
         },
         "config_module": {
           "auto_enable": true,
@@ -2177,15 +2177,15 @@ export default {
           "dc_max_voltage_limit": 900,
           "dc_target_current": 5,
           "dc_target_voltage": 200,
-          "support_sae_j2847": false
-        }
+          "support_sae_j2847": false,
+        },
       },
       "connector_1_powerpath": {
         "module": "JsYetiSimulator",
         "connections": {},
         "config_module": {
-          "connector_id": 1
-        }
+          "connector_id": 1,
+        },
       },
       "energy_manager": {
         "module": "EnergyManager",
@@ -2193,9 +2193,9 @@ export default {
           "energy_trunk": [
             {
               "module_id": "grid_connection_point",
-              "implementation_id": "energy_grid"
-            }
-          ]
+              "implementation_id": "energy_grid",
+            },
+          ],
         },
         "config_module": {
           "debug": false,
@@ -2204,8 +2204,8 @@ export default {
           "schedule_total_duration": 1,
           "slice_ampere": 0.5,
           "slice_watt": 500,
-          "update_interval": 1
-        }
+          "update_interval": 1,
+        },
       },
       "evse_security": {
         "module": "EvseSecurity",
@@ -2219,8 +2219,8 @@ export default {
           "private_key_password": 123456,
           "secc_leaf_cert_directory": "client/cso",
           "secc_leaf_key_directory": "client/cso",
-          "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem"
-        }
+          "v2g_ca_bundle": "ca/v2g/V2G_ROOT_CA.pem",
+        },
       },
       "grid_connection_point": {
         "module": "EnergyNode",
@@ -2228,14 +2228,14 @@ export default {
           "energy_consumer": [
             {
               "module_id": "MyEvseManager",
-              "implementation_id": "energy_grid"
-            }
-          ]
+              "implementation_id": "energy_grid",
+            },
+          ],
         },
         "config_module": {
           "fuse_limit_A": 40,
-          "phase_count": 3
-        }
+          "phase_count": 3,
+        },
       },
       "iso15118_car": {
         "module": "PyEvJosev",
@@ -2248,8 +2248,8 @@ export default {
           "supported_ISO15118_2": true,
           "supported_ISO15118_20_AC": false,
           "supported_ISO15118_20_DC": false,
-          "tls_active": false
-        }
+          "tls_active": false,
+        },
       },
       "iso15118_charger": {
         "module": "EvseV2G",
@@ -2257,9 +2257,9 @@ export default {
           "security": [
             {
               "module_id": "evse_security",
-              "implementation_id": "main"
-            }
-          ]
+              "implementation_id": "main",
+            },
+          ],
         },
         "config_module": {
           "auth_timeout_eim": 300,
@@ -2272,15 +2272,15 @@ export default {
           "tls_key_logging_path": "/tmp",
           "tls_security": "allow",
           "tls_timeout": 15000,
-          "verify_contract_cert_chain": false
-        }
+          "verify_contract_cert_chain": false,
+        },
       },
       "persistent_store": {
         "module": "PersistentStore",
         "connections": {},
         "config_module": {
-          "sqlite_db_file_path": "everest_persistent_store.db"
-        }
+          "sqlite_db_file_path": "everest_persistent_store.db",
+        },
       },
       "setup": {
         "module": "Setup",
@@ -2288,9 +2288,9 @@ export default {
           "store": [
             {
               "module_id": "persistent_store",
-              "implementation_id": "main"
-            }
-          ]
+              "implementation_id": "main",
+            },
+          ],
         },
         "config_module": {
           "ap_interface": "wlan0",
@@ -2300,22 +2300,22 @@ export default {
           "online_check_host": "lfenergy.org",
           "release_metadata_file": "release.json",
           "setup_simulation": true,
-          "setup_wifi": false
-        }
+          "setup_wifi": false,
+        },
       },
       "slac": {
         "module": "JsSlacSimulator",
         "connections": {},
         "config_implementation": {
           "ev": {
-            "ev_id": "PIONIX_SAYS_HELLO"
+            "ev_id": "PIONIX_SAYS_HELLO",
           },
           "evse": {
             "evse_id": "PIONIX_SAYS_HELLO",
             "nid": "pionix!",
-            "number_of_sounds": 10
-          }
-        }
+            "number_of_sounds": 10,
+          },
+        },
       },
       "token_provider": {
         "module": "DummyTokenProvider",
@@ -2323,17 +2323,17 @@ export default {
           "evse": [
             {
               "module_id": "MyEvseManager",
-              "implementation_id": "evse"
-            }
-          ]
+              "implementation_id": "evse",
+            },
+          ],
         },
         "config_implementation": {
           "main": {
             "timeout": 10,
             "token": "DEADBEEF",
-            "type": "RFID"
-          }
-        }
+            "type": "RFID",
+          },
+        },
       },
       "token_validator": {
         "module": "DummyTokenValidator",
@@ -2342,82 +2342,82 @@ export default {
           "main": {
             "sleep": 0.25,
             "validation_reason": "Token seems valid",
-            "validation_result": "Accepted"
-          }
-        }
-      }
+            "validation_result": "Accepted",
+          },
+        },
+      },
     },
     "x-module-layout": {
       "MyEvseManager": {
         "position": {
           "x": 13,
-          "y": 23
+          "y": 23,
         },
         "terminals": {
           "bottom": [
             {
               "id": "powersupply_DC",
               "interface": "power_supply_DC",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "imd",
               "interface": "isolation_monitor",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter_car_side",
               "interface": "powermeter",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "token_provider",
               "interface": "auth_token_provider",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "slac",
               "interface": "slac",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "left": [
             {
               "id": "hlc",
               "interface": "ISO15118_charger",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "bsp",
               "interface": "board_support_AC",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter_grid_side",
               "interface": "powermeter",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "top": [
             {
               "id": "energy_grid",
               "interface": "energy",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "evse",
               "interface": "evse_manager",
-              "type": "provide"
-            }
-          ]
-        }
+              "type": "provide",
+            },
+          ],
+        },
       },
       "api": {
         "position": {
           "x": 33,
-          "y": 13
+          "y": 13,
         },
         "terminals": {
           "bottom": [],
@@ -2425,64 +2425,64 @@ export default {
             {
               "id": "evse_manager",
               "interface": "evse_manager",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "main",
               "interface": "empty",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "auth": {
         "position": {
           "x": 33,
-          "y": 2
+          "y": 2,
         },
         "terminals": {
           "bottom": [
             {
               "id": "main",
               "interface": "auth",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "reservation",
               "interface": "reservation",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "left": [
             {
               "id": "evse_manager",
               "interface": "evse_manager",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "token_validator",
               "interface": "auth_token_validator",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "top": [
             {
               "id": "token_provider",
               "interface": "auth_token_provider",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "car_simulator": {
         "position": {
           "x": 53,
-          "y": 33
+          "y": 33,
         },
         "terminals": {
           "bottom": [],
@@ -2490,113 +2490,113 @@ export default {
             {
               "id": "simulation_control",
               "interface": "yeti_simulation_control",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "slac",
               "interface": "slac",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "main",
               "interface": "car_simulator",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "top": [
             {
               "id": "ev",
               "interface": "ISO15118_ev",
-              "type": "requirement"
-            }
-          ]
-        }
+              "type": "requirement",
+            },
+          ],
+        },
       },
       "connector_1_powerpath": {
         "position": {
           "x": 33,
-          "y": 23
+          "y": 23,
         },
         "terminals": {
           "bottom": [
             {
               "id": "debug_keepalive",
               "interface": "debug_json",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "debug_powermeter",
               "interface": "debug_json",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "debug_yeti",
               "interface": "debug_json",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "yeti_extras",
               "interface": "yeti_extras",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "debug_state",
               "interface": "debug_json",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "left": [
             {
               "id": "board_support",
               "interface": "board_support_AC",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "powermeter",
               "interface": "powermeter",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "right": [
             {
               "id": "yeti_simulation_control",
               "interface": "yeti_simulation_control",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "energy_manager": {
         "position": {
           "x": -5,
-          "y": 2
+          "y": 2,
         },
         "terminals": {
           "bottom": [
             {
               "id": "energy_trunk",
               "interface": "energy",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "left": [],
           "right": [
             {
               "id": "main",
               "interface": "energy_manager",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "evse_security": {
         "position": {
           "x": 9,
-          "y": 2
+          "y": 2,
         },
         "terminals": {
           "bottom": [],
@@ -2605,16 +2605,16 @@ export default {
             {
               "id": "main",
               "interface": "evse_security",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "grid_connection_point": {
         "position": {
           "x": -5,
-          "y": 13
+          "y": 13,
         },
         "terminals": {
           "bottom": [],
@@ -2622,63 +2622,63 @@ export default {
             {
               "id": "price_information",
               "interface": "energy_price_information",
-              "type": "requirement"
+              "type": "requirement",
             },
             {
               "id": "powermeter",
               "interface": "powermeter",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "external_limits",
               "interface": "external_energy_limits",
-              "type": "provide"
+              "type": "provide",
             },
             {
               "id": "energy_consumer",
               "interface": "energy",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "top": [
             {
               "id": "energy_grid",
               "interface": "energy",
-              "type": "provide"
-            }
-          ]
-        }
+              "type": "provide",
+            },
+          ],
+        },
       },
       "iso15118_car": {
         "position": {
           "x": 53,
-          "y": 23
+          "y": 23,
         },
         "terminals": {
           "bottom": [
             {
               "id": "ev",
               "interface": "ISO15118_ev",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "left": [],
           "right": [
             {
               "id": "main",
               "interface": "empty",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "iso15118_charger": {
         "position": {
           "x": -5,
-          "y": 23
+          "y": 23,
         },
         "terminals": {
           "bottom": [],
@@ -2687,16 +2687,16 @@ export default {
             {
               "id": "charger",
               "interface": "ISO15118_charger",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "persistent_store": {
         "position": {
           "x": -5,
-          "y": 40
+          "y": 40,
         },
         "terminals": {
           "bottom": [],
@@ -2705,16 +2705,16 @@ export default {
             {
               "id": "main",
               "interface": "kvs",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "setup": {
         "position": {
           "x": 13,
-          "y": 40
+          "y": 40,
         },
         "terminals": {
           "bottom": [],
@@ -2722,23 +2722,23 @@ export default {
             {
               "id": "store",
               "interface": "kvs",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [
             {
               "id": "main",
               "interface": "empty",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "slac": {
         "position": {
           "x": 33,
-          "y": 33
+          "y": 33,
         },
         "terminals": {
           "bottom": [],
@@ -2746,47 +2746,47 @@ export default {
             {
               "id": "evse",
               "interface": "slac",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "right": [
             {
               "id": "ev",
               "interface": "slac",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "token_provider": {
         "position": {
           "x": 33,
-          "y": -9
+          "y": -9,
         },
         "terminals": {
           "bottom": [
             {
               "id": "main",
               "interface": "auth_token_provider",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "left": [
             {
               "id": "evse",
               "interface": "evse_manager",
-              "type": "requirement"
-            }
+              "type": "requirement",
+            },
           ],
           "right": [],
-          "top": []
-        }
+          "top": [],
+        },
       },
       "token_validator": {
         "position": {
           "x": 51,
-          "y": 2
+          "y": 2,
         },
         "terminals": {
           "bottom": [],
@@ -2794,13 +2794,13 @@ export default {
             {
               "id": "main",
               "interface": "auth_token_validator",
-              "type": "provide"
-            }
+              "type": "provide",
+            },
           ],
           "right": [],
-          "top": []
-        }
-      }
-    }
-  }
+          "top": [],
+        },
+      },
+    },
+  },
 } as EverestConfigList;

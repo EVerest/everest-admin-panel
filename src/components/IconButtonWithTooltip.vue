@@ -2,25 +2,23 @@
      Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-    <v-tooltip location="bottom">
-        <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" :icon="icon" class="icon-right" @click="emit('click')" :variant="variant" :density="density">
-            </v-btn>
-        </template>
-        <span> {{ props.title }} </span>
-    </v-tooltip>
+  <v-tooltip location="bottom">
+    <template #activator="{ props: slotProps }">
+      <v-btn
+        v-bind="slotProps"
+        :icon="icon"
+        class="icon-right"
+        :variant="variant"
+        :density="density"
+        @click="emit('click')"
+      />
+    </template>
+    <span> {{ props.title }} </span>
+  </v-tooltip>
 </template>
-  
-<style scoped lang="scss">
-.icon-right {
-  position: absolute;
-  right: 0;
-  margin-bottom: 2rem;
-}
-</style>
 
 <script lang="ts" setup>
-import type { VBtn } from "vuetify/components";
+import type { VBtn, } from "vuetify/components";
 
 const props = defineProps<{
   title: string,
@@ -32,3 +30,11 @@ const emit = defineEmits<{
   click: []
 }>();
 </script>
+
+<style scoped lang="scss">
+.icon-right {
+  position: absolute;
+  right: 0;
+  margin-bottom: 2rem;
+}
+</style>
