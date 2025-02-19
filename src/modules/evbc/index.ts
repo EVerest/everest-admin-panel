@@ -96,7 +96,7 @@ export type EverestInterfaceDefinitionList = Record<string, EverestInterfaceDefi
 
 export type EverestConfig = {
   active_modules: Record<string, EverestModuleConfig>;
-  'x-module-layout'?: Record<string, ModuleViewConfig>;
+  "x-module-layout"?: Record<string, ModuleViewConfig>;
 };
 
 export type EventHandler<K> = (ev: K) => void;
