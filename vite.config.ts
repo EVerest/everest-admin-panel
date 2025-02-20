@@ -10,8 +10,8 @@ import commonjs from "@rollup/plugin-commonjs";
 import { VitePWA, } from "vite-plugin-pwa";
 import { vitePluginFetchSchemas, } from "./build-tools/fetch-schemas-plugin";
 
-export default defineConfig(({ mode, },) => {
-  loadEnv(mode, process.cwd(), "",);
+export default defineConfig( ( { mode, }, ) => {
+  loadEnv( mode, process.cwd(), "", );
   return {
     base: mode === "pages" ? `/everest-admin-panel/${process.env.SUBDIR}` : "",
     optimizeDeps: {
@@ -31,22 +31,22 @@ export default defineConfig(({ mode, },) => {
       },
     },
     define: {
-      VITE_APP_VERSION: JSON.stringify(process.env.npm_package_version,),
+      VITE_APP_VERSION: JSON.stringify( process.env.npm_package_version, ),
     },
     plugins: [
       commonjs(),
-      Vue({
+      Vue( {
         template: { transformAssetUrls, },
-      },),
-      Vuetify({
+      }, ),
+      Vuetify( {
         autoImport: true,
-      },),
-      VitePWA({ registerType: "autoUpdate", },),
+      }, ),
+      VitePWA( { registerType: "autoUpdate", }, ),
       vitePluginFetchSchemas(),
     ],
     resolve: {
       alias: {
-        "@": fileURLToPath(new URL("./src", import.meta.url,),),
+        "@": fileURLToPath( new URL( "./src", import.meta.url, ), ),
       },
       extensions: [ ".mjs", ".js", ".ts", ".jsx", ".tsx", ".json", ],
     },
@@ -54,4 +54,4 @@ export default defineConfig(({ mode, },) => {
       port: 8080,
       host: "127.0.0.1",
     }, };
-},);
+}, );

@@ -12,15 +12,15 @@ import "highlight.js/styles/github-dark.min.css";
 import yaml from "highlight.js/lib/languages/yaml";
 import json from "highlight.js/lib/languages/json";
 
-hljs.registerLanguage("yaml", yaml,);
-hljs.registerLanguage("json", json,);
+hljs.registerLanguage( "yaml", yaml, );
+hljs.registerLanguage( "json", json, );
 
 
-export function registerPlugins (app: App,) {
+export function registerPlugins ( app: App, ) {
   app
-    .use(pinia,)
-    .use(evbcPlugin,)
-    .use(vuetify,)
-    .use(router,)
-    .use(hljsVuePlugin,);
+    .use( pinia, )
+    .use( evbcPlugin, )
+    .use( vuetify, )
+    .use( router, )
+    .use( hljsVuePlugin, );
 }

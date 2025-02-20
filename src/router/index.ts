@@ -30,27 +30,27 @@ const routes: RouteRecordRaw[] = [
   },
 ];
 
-export const router = createRouter({
-  history: createWebHashHistory(import.meta.env.BASE_URL,),
+export const router = createRouter( {
+  history: createWebHashHistory( import.meta.env.BASE_URL, ),
   routes,
-},);
+}, );
 
-router.beforeEach((to, from, next,) => {
-  const evbc = inject<EVBackendClient>("evbc",);
+router.beforeEach( ( to, from, next, ) => {
+  const evbc = inject<EVBackendClient>( "evbc", );
   const userIsConnected = evbc?.initialized;
 
   // Redirect to ConfigPage if the user is logged in and navigating to the root path
-  if (to.path === "/" && userIsConnected) {
-    next("/config",);
-  } else if (to.matched.some((record,) => record.meta.requiresConnection,)) {
+  if ( to.path === "/" && userIsConnected ) {
+    next( "/config", );
+  } else if ( to.matched.some( ( record, ) => record.meta.requiresConnection, ) ) {
     // Require connection for specific routes
-    if (userIsConnected) {
+    if ( userIsConnected ) {
       next();
     } else {
-      next("/connect",); // Redirect to connect if not connected
+      next( "/connect", ); // Redirect to connect if not connected
     }
   } else {
     // Proceed with the navigation for all other cases
     next();
   }
-},);
+}, );

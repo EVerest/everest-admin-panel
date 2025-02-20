@@ -38,7 +38,7 @@
 
 <script lang="ts">
 import { defineComponent, } from "vue";
-export default defineComponent({
+export default defineComponent( {
   props: {
     showDialog: {
       type: Boolean,
@@ -64,11 +64,11 @@ export default defineComponent({
   emits: [ "accept", "deny", ],
   methods: {
     accept() {
-      this.$emit("accept",);
+      this.$emit( "accept", );
     },
     deny() {
-      this.$emit("deny",);
+      this.$emit( "deny", );
     },
   },
-},);
+}, );
 </script>

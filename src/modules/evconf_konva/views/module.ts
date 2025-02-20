@@ -20,30 +20,30 @@ type TerminalsUpdatedEvent = {
 };
 
 export type ModuleViewEvent = TerminalsUpdatedEvent;
-type ModuleViewEventHandler = (ev: ModuleViewEvent) => void;
+type ModuleViewEventHandler = ( ev: ModuleViewEvent ) => void;
 
-function check_hit(x: number, y: number, terminal_distribution: Record<TerminalAlignment, number[]>,) {
+function check_hit( x: number, y: number, terminal_distribution: Record<TerminalAlignment, number[]>, ) {
   let align: TerminalAlignment = null;
   let index = null;
 
-  if (0 < x && x < SIZE.FRAME_WIDTH) {
+  if ( 0 < x && x < SIZE.FRAME_WIDTH ) {
     // could either be top or bottom
-    if (-SIZE.TERMINAL < y && y < 0) {
+    if ( -SIZE.TERMINAL < y && y < 0 ) {
       align = "top";
-      index = Math.floor((terminal_distribution.top.length * x) / SIZE.FRAME_WIDTH + 0.5,);
-    } else if (y > SIZE.FRAME_HEIGHT && y < SIZE.FRAME_HEIGHT + SIZE.TERMINAL) {
+      index = Math.floor( ( terminal_distribution.top.length * x ) / SIZE.FRAME_WIDTH + 0.5, );
+    } else if ( y > SIZE.FRAME_HEIGHT && y < SIZE.FRAME_HEIGHT + SIZE.TERMINAL ) {
       align = "bottom";
-      index = Math.floor((terminal_distribution.bottom.length * x) / SIZE.FRAME_WIDTH + 0.5,);
+      index = Math.floor( ( terminal_distribution.bottom.length * x ) / SIZE.FRAME_WIDTH + 0.5, );
     }
   }
-  if (0 < y && y < SIZE.FRAME_HEIGHT) {
+  if ( 0 < y && y < SIZE.FRAME_HEIGHT ) {
     // could either be left or right
-    if (-SIZE.TERMINAL < x && x < 0) {
+    if ( -SIZE.TERMINAL < x && x < 0 ) {
       align = "left";
-      index = Math.floor((terminal_distribution.left.length * y) / SIZE.FRAME_HEIGHT + 0.5,);
-    } else if (x > SIZE.FRAME_WIDTH && x < SIZE.FRAME_WIDTH + SIZE.TERMINAL) {
+      index = Math.floor( ( terminal_distribution.left.length * y ) / SIZE.FRAME_HEIGHT + 0.5, );
+    } else if ( x > SIZE.FRAME_WIDTH && x < SIZE.FRAME_WIDTH + SIZE.TERMINAL ) {
       align = "right";
-      index = Math.floor((terminal_distribution.right.length * y) / SIZE.FRAME_HEIGHT + 0.5,);
+      index = Math.floor( ( terminal_distribution.right.length * y ) / SIZE.FRAME_HEIGHT + 0.5, );
     }
   }
 
@@ -61,66 +61,66 @@ export default class ModuleView {
 
   _observers: ModuleViewEventHandler[] = [];
 
-  constructor(view_model: ModuleViewModel,) {
+  constructor( view_model: ModuleViewModel, ) {
     // FIXME (aw): refactor all these inline functions !!!
-    this.group = new Konva.Group({
+    this.group = new Konva.Group( {
       draggable: true,
-    },);
+    }, );
 
     // initialize member variables
     this._vm = view_model;
 
-    this._terminal_views = view_model.terminal_lookup.map((item, terminal_id,) => {
-      const view = new TerminalShape<TerminalConfig>({
+    this._terminal_views = view_model.terminal_lookup.map( ( item, terminal_id, ) => {
+      const view = new TerminalShape<TerminalConfig>( {
         terminal_type: item.terminal.type,
         terminal_id,
         terminal_alignment: item.alignment,
-      },);
+      }, );
 
-      view.setDraggable(true,);
-      view.on("dragstart", () => this._terminal_dragstart_handler(view,),);
-      view.on("dragmove", () => this._terminal_dragmove_handler(view,),);
-      view.on("dragend", () => this._terminal_dragend_handler(view,),);
-      view.on("mouseenter", () => {
-        this._vm.set_cursor("pointer",);
+      view.setDraggable( true, );
+      view.on( "dragstart", () => this._terminal_dragstart_handler( view, ), );
+      view.on( "dragmove", () => this._terminal_dragmove_handler( view, ), );
+      view.on( "dragend", () => this._terminal_dragend_handler( view, ), );
+      view.on( "mouseenter", () => {
+        this._vm.set_cursor( "pointer", );
         const showTooltip: ShowTooltipEvent = {
           type: "SHOW_TOOLTIP",
           text: `Interface type: ${item.terminal.interface}`,
         };
-        this._vm.notify_stage_context(showTooltip,);
-      },);
-      view.on("mouseleave", () => {
-        this._vm.set_cursor("default",);
+        this._vm.notify_stage_context( showTooltip, );
+      }, );
+      view.on( "mouseleave", () => {
+        this._vm.set_cursor( "default", );
         const hideTooltip: HideTooltipEvent = {
           type: "HIDE_TOOLTIP",
         };
-        this._vm.notify_stage_context(hideTooltip,);
-      },);
-      view.on("pointerclick", (ev,) => {
-        view_model.clicked_terminal(terminal_id,);
+        this._vm.notify_stage_context( hideTooltip, );
+      }, );
+      view.on( "pointerclick", ( ev, ) => {
+        view_model.clicked_terminal( terminal_id, );
         ev.cancelBubble = true;
-      },);
+      }, );
 
       return view;
-    },);
+    }, );
 
     // initialize correct terminal positions
-    Object.entries(view_model.terminal_dist,).forEach(([ _alignment, terminal_ids, ],) => {
-      this._recalculate_terminal_position(_alignment as TerminalAlignment, terminal_ids, false,);
-    },);
+    Object.entries( view_model.terminal_dist, ).forEach( ( [ _alignment, terminal_ids, ], ) => {
+      this._recalculate_terminal_position( _alignment as TerminalAlignment, terminal_ids, false, );
+    }, );
 
     // register view model observer
-    view_model.add_observer((ev,) => this._vm_event_handler(ev,),);
+    view_model.add_observer( ( ev, ) => this._vm_event_handler( ev, ), );
 
     // set handlers
-    this.group.on("dragmove", () => this._module_dragmove_handler(),);
+    this.group.on( "dragmove", () => this._module_dragmove_handler(), );
 
     // init position
-    this.group.position({
+    this.group.position( {
       x: view_model.grid_position.x * SIZE.GRID,
       y: view_model.grid_position.y * SIZE.GRID,
-    },);
-    const frame = new Konva.Rect({
+    }, );
+    const frame = new Konva.Rect( {
       cornerRadius: 4,
       width: SIZE.FRAME_WIDTH,
       height: SIZE.FRAME_HEIGHT,
@@ -133,10 +133,10 @@ export default class ModuleView {
       },
       fillAfterStrokeEnabled: true,
       listening: true,
-    },);
+    }, );
 
     const strokeWidth = 8;
-    const topStroke = new Konva.Line({
+    const topStroke = new Konva.Line( {
       cornerRadius: 4,
       points: [
         0, strokeWidth / 2, // Start at the top-left corner of where the rectangle is positioned
@@ -147,9 +147,9 @@ export default class ModuleView {
       x: frame.x(),
       y: frame.y(),
       listening: true,
-    },);
+    }, );
 
-    const title = new Konva.Text({
+    const title = new Konva.Text( {
       wrap: "none",
       text: view_model.id,
       fontFamily: NORMAL_TEXT.fontFamily,
@@ -160,9 +160,9 @@ export default class ModuleView {
       y: strokeWidth,
       width: SIZE.FRAME_WIDTH,
       listening: true,
-    },);
+    }, );
 
-    const typeInfo = new Konva.Text({
+    const typeInfo = new Konva.Text( {
       wrap: "none",
       text: `${view_model.type}`,
       fontFamily: MONO_TEXT.fontFamily,
@@ -175,27 +175,27 @@ export default class ModuleView {
       y: frame.height() - 16 * 2,
       align: "right",
       listening: true,
-    },);
+    }, );
 
-    [ frame, title, topStroke, typeInfo, ].forEach((e,) => {
-      e.on("mouseenter", () => {
-        this._vm.set_cursor("pointer",);
-      },);
-      e.on("mouseleave", () => {
-        this._vm.set_cursor("default",);
-      },);
-      e.on("pointerclick", (ev,) => {
+    [ frame, title, topStroke, typeInfo, ].forEach( ( e, ) => {
+      e.on( "mouseenter", () => {
+        this._vm.set_cursor( "pointer", );
+      }, );
+      e.on( "mouseleave", () => {
+        this._vm.set_cursor( "default", );
+      }, );
+      e.on( "pointerclick", ( ev, ) => {
         this._vm.clicked_title();
         ev.cancelBubble = true;
-      },);
-    },);
+      }, );
+    }, );
 
     this._title = title;
 
-    this.group.add(frame, topStroke, typeInfo, title, ...this._terminal_views,);
+    this.group.add( frame, topStroke, typeInfo, title, ...this._terminal_views, );
   }
 
-  get_terminal_placement(id: number,) {
+  get_terminal_placement( id: number, ) {
     const terminal_view = this._terminal_views[id];
     const relative_position = terminal_view.position();
     const module_position = this.group.position();
@@ -207,33 +207,33 @@ export default class ModuleView {
     };
   }
 
-  add_observer(handler: ModuleViewEventHandler,) {
-    this._observers.push(handler,);
+  add_observer( handler: ModuleViewEventHandler, ) {
+    this._observers.push( handler, );
 
     return () => {
-      this._observers = this._observers.filter((other,) => other !== handler,);
+      this._observers = this._observers.filter( ( other, ) => other !== handler, );
     };
   }
 
-  _notify(ev: ModuleViewEvent,) {
-    this._observers.forEach((handler,) => handler(ev,),);
+  _notify( ev: ModuleViewEvent, ) {
+    this._observers.forEach( ( handler, ) => handler( ev, ), );
   }
 
-  _vm_event_handler(ev: ViewModelChangeEvent,) {
+  _vm_event_handler( ev: ViewModelChangeEvent, ) {
     // FIXME (aw): unneccessary complex - should be displayed in a custom html widget !!!
-    if (ev.type === "TERMINAL_MODIFY_APPEARENCE") {
-      ev.disable.forEach((id,) => {
-        this._terminal_views[id].set_appearence("DISABLED",);
-      },);
-      ev.normal.forEach((id,) => {
-        this._terminal_views[id].set_appearence("NORMAL",);
-      },);
-      if (this.group.children.length > 0) {
+    if ( ev.type === "TERMINAL_MODIFY_APPEARENCE" ) {
+      ev.disable.forEach( ( id, ) => {
+        this._terminal_views[id].set_appearence( "DISABLED", );
+      }, );
+      ev.normal.forEach( ( id, ) => {
+        this._terminal_views[id].set_appearence( "NORMAL", );
+      }, );
+      if ( this.group.children.length > 0 ) {
         this.group.cache();
       }
-    } else if (ev.type === "MODULE_MODEL_UPDATE") {
-      this._title.setText(this._vm.id,);
-      if (this.group.children.length > 0) {
+    } else if ( ev.type === "MODULE_MODEL_UPDATE" ) {
+      this._title.setText( this._vm.id, );
+      if ( this.group.children.length > 0 ) {
         this.group.cache();
       }
     }
@@ -243,8 +243,8 @@ export default class ModuleView {
     const pos = this.group.position();
 
     const new_grid_pos = {
-      x: Math.round(pos.x / SIZE.GRID,),
-      y: Math.round(pos.y / SIZE.GRID,),
+      x: Math.round( pos.x / SIZE.GRID, ),
+      y: Math.round( pos.y / SIZE.GRID, ),
     };
 
     const cur_grid_pos = this._vm.grid_position;
@@ -255,76 +255,76 @@ export default class ModuleView {
     };
 
     // snap to grid
-    this.group.position(new_group_pos,);
+    this.group.position( new_group_pos, );
 
-    if (cur_grid_pos.x !== new_grid_pos.x || cur_grid_pos.y !== new_grid_pos.y) {
+    if ( cur_grid_pos.x !== new_grid_pos.x || cur_grid_pos.y !== new_grid_pos.y ) {
       // got a change, send notification and update view model
       this._vm.grid_position = new_grid_pos;
 
       // update all terminals
-      const update_terminals = this._terminal_views.map((item, id,): TerminalPlacementWithID => {
+      const update_terminals = this._terminal_views.map( ( item, id, ): TerminalPlacementWithID => {
         return {
           alignment: item.terminal_alignment,
           id,
           x: item.x() + new_group_pos.x,
           y: item.y() + new_group_pos.y,
         };
-      },);
+      }, );
 
-      this._notify({
+      this._notify( {
         type: "TERMINALS_UPDATED",
         terminals: update_terminals,
         module_moved: true,
-      },);
+      }, );
     }
   }
 
-  _terminal_dragstart_handler(view: TerminalShape,) {
+  _terminal_dragstart_handler( view: TerminalShape, ) {
     const replace_terminal = view.clone() as TerminalShape;
-    replace_terminal.set_appearence("PLACEHOLDER",);
+    replace_terminal.set_appearence( "PLACEHOLDER", );
 
     this._terminal_views[view.terminal_id] = replace_terminal;
 
     // this will become the ghost
-    this.group.add(replace_terminal,);
+    this.group.add( replace_terminal, );
 
     view.moveToTop();
     this.group.clearCache();
   }
 
-  _terminal_dragmove_handler(view: TerminalShape,) {
-    const hit = check_hit(view.x(), view.y(), this._vm.terminal_dist,);
+  _terminal_dragmove_handler( view: TerminalShape, ) {
+    const hit = check_hit( view.x(), view.y(), this._vm.terminal_dist, );
 
-    if (!hit.align) {
+    if ( !hit.align ) {
       return;
     }
 
     // update orientation of hovering dragged element
-    if (hit.align !== this._vm.terminal_lookup[view.terminal_id].alignment) {
-      view.set_alignment(hit.align,);
+    if ( hit.align !== this._vm.terminal_lookup[view.terminal_id].alignment ) {
+      view.set_alignment( hit.align, );
     }
 
-    const changed_areas = this._vm.move_terminal(view.terminal_id, hit.align, hit.index,);
+    const changed_areas = this._vm.move_terminal( view.terminal_id, hit.align, hit.index, );
 
-    changed_areas.forEach((alignment,) => {
-      this._recalculate_terminal_position(alignment, this._vm.terminal_dist[alignment], true,);
-    },);
+    changed_areas.forEach( ( alignment, ) => {
+      this._recalculate_terminal_position( alignment, this._vm.terminal_dist[alignment], true, );
+    }, );
   }
 
-  _terminal_dragend_handler(view: TerminalShape,) {
+  _terminal_dragend_handler( view: TerminalShape, ) {
     // remove ghost
     this._terminal_views[view.terminal_id].destroy();
     this._terminal_views[view.terminal_id] = view;
 
     const end_align = this._vm.terminal_lookup[view.terminal_id].alignment;
 
-    this._recalculate_terminal_position(end_align, this._vm.terminal_dist[end_align],);
-    if (this.group.children.length > 0) {
+    this._recalculate_terminal_position( end_align, this._vm.terminal_dist[end_align], );
+    if ( this.group.children.length > 0 ) {
       this.group.cache();
     }
   }
 
-  _recalculate_terminal_position(alignment: TerminalAlignment, terminal_ids: number[], animate = false,) {
+  _recalculate_terminal_position( alignment: TerminalAlignment, terminal_ids: number[], animate = false, ) {
     const horizontal_align = alignment === "top" || alignment === "bottom";
     const x_offset = alignment === "right" ? SIZE.FRAME_WIDTH + SIZE.TERMINAL : 0;
     const y_offset = alignment === "bottom" ? SIZE.FRAME_HEIGHT + SIZE.TERMINAL : 0;
@@ -337,32 +337,32 @@ export default class ModuleView {
       module_moved: false,
     };
 
-    terminal_ids.forEach((terminal_id, index,) => {
+    terminal_ids.forEach( ( terminal_id, index, ) => {
       const terminal_view = this._terminal_views[terminal_id];
-      const list_offset = ((index + 0.5) * size) / terminal_count;
-      const x = x_offset + (horizontal_align ? list_offset : -SIZE.TERMINAL / 2);
-      const y = y_offset + (horizontal_align ? -SIZE.TERMINAL / 2 : list_offset);
-      terminal_view.set_alignment(alignment,);
-      if (animate) {
-        terminal_view.to({
+      const list_offset = ( ( index + 0.5 ) * size ) / terminal_count;
+      const x = x_offset + ( horizontal_align ? list_offset : -SIZE.TERMINAL / 2 );
+      const y = y_offset + ( horizontal_align ? -SIZE.TERMINAL / 2 : list_offset );
+      terminal_view.set_alignment( alignment, );
+      if ( animate ) {
+        terminal_view.to( {
           duration: 0.2,
           ease: "EaseIn",
           x,
           y,
-        },);
+        }, );
       } else {
-        terminal_view.x(x,);
-        terminal_view.y(y,);
+        terminal_view.x( x, );
+        terminal_view.y( y, );
       }
 
-      terminal_update_event.terminals.push({
+      terminal_update_event.terminals.push( {
         alignment,
         id: terminal_id,
         x: x + this.group.x(),
         y: y + this.group.y(),
-      },);
-    },);
+      }, );
+    }, );
 
-    this._notify(terminal_update_event,);
+    this._notify( terminal_update_event, );
   }
 }

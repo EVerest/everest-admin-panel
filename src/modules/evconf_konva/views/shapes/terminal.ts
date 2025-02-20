@@ -14,7 +14,7 @@ export interface TerminalConfig extends PathConfig {
 
 // this view sticks to the Konva infrastructure of shapes
 export class TerminalShape<Config extends TerminalConfig = TerminalConfig> extends Konva.Path {
-  constructor(config: Config,) {
+  constructor( config: Config, ) {
     // FIXME (aw): the static path string should go to constants!
     config.data = config.data || ICON_DATA.TERMINAL;
 
@@ -26,43 +26,43 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
     config.offset = config.offset || { x: SIZE.TERMINAL / 2, y: SIZE.TERMINAL / 2, };
     config.hitFunc =
       config.hitFunc ||
-      function (context, shape,) {
+      function ( context, shape, ) {
         context.beginPath();
-        context.rect(0, 0, SIZE.TERMINAL, SIZE.TERMINAL,);
+        context.rect( 0, 0, SIZE.TERMINAL, SIZE.TERMINAL, );
         context.closePath();
-        context.fillShape(shape,);
+        context.fillShape( shape, );
       };
 
-    super(config,);
+    super( config, );
 
-    if (config.terminal_alignment) {
-      this.set_alignment(config.terminal_alignment,);
+    if ( config.terminal_alignment ) {
+      this.set_alignment( config.terminal_alignment, );
     }
   }
 
   get terminal_type(): TerminalType {
-    return this.getAttr("terminal_type",);
+    return this.getAttr( "terminal_type", );
   }
 
   get terminal_id(): number {
-    return this.getAttr("terminal_id",);
+    return this.getAttr( "terminal_id", );
   }
 
   get terminal_alignment(): TerminalAlignment {
-    return this.getAttr("terminal_alignment",);
+    return this.getAttr( "terminal_alignment", );
   }
 
-  set_alignment(alignment: TerminalAlignment,) {
-    this.setAttr("terminal_alignment", alignment,);
+  set_alignment( alignment: TerminalAlignment, ) {
+    this.setAttr( "terminal_alignment", alignment, );
     const is_provide = this.terminal_type === "provide";
-    if (alignment === "top") {
-      this.rotation(is_provide ? 0 : 180,);
-    } else if (alignment === "right") {
-      this.rotation(is_provide ? 90 : 270,);
-    } else if (alignment === "bottom") {
-      this.rotation(is_provide ? 180 : 0,);
-    } else if (alignment === "left") {
-      this.rotation(is_provide ? 270 : 90,);
+    if ( alignment === "top" ) {
+      this.rotation( is_provide ? 0 : 180, );
+    } else if ( alignment === "right" ) {
+      this.rotation( is_provide ? 90 : 270, );
+    } else if ( alignment === "bottom" ) {
+      this.rotation( is_provide ? 180 : 0, );
+    } else if ( alignment === "left" ) {
+      this.rotation( is_provide ? 270 : 90, );
     }
   }
   // get_rotation(alignment: TerminalAlignment): number {
@@ -78,21 +78,21 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
   //   }
   // }
 
-  set_appearence(look: "DISABLED" | "NORMAL" | "PLACEHOLDER",) {
+  set_appearence( look: "DISABLED" | "NORMAL" | "PLACEHOLDER", ) {
     // FIXME (aw): this function might still assume some knowledge about the order in which the appearence was set
-    if (look !== "DISABLED") {
-      this.data(ICON_DATA.TERMINAL,);
+    if ( look !== "DISABLED" ) {
+      this.data( ICON_DATA.TERMINAL, );
     }
-    if (look === "DISABLED") {
-      this.data(ICON_DATA.DISABLED,);
-      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED,);
-      this.listening(false,);
-    } else if (look === "PLACEHOLDER") {
-      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED,);
-      this.listening(false,);
-    } else if (look === "NORMAL") {
-      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE,);
-      this.listening(true,);
+    if ( look === "DISABLED" ) {
+      this.data( ICON_DATA.DISABLED, );
+      this.fill( this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED, );
+      this.listening( false, );
+    } else if ( look === "PLACEHOLDER" ) {
+      this.fill( this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED, );
+      this.listening( false, );
+    } else if ( look === "NORMAL" ) {
+      this.fill( this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE, );
+      this.listening( true, );
     }
   }
 }

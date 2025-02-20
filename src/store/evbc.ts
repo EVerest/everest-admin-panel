@@ -8,19 +8,19 @@ import EVConfigModel from "@/modules/evbc/config_model";
 import ConfigStageContext, { SelectionType, } from "@/modules/evconf_konva/stage_context";
 import { ConnectionID, EverestConfigList, ModuleInstanceID, Terminal, } from "@/modules/evbc";
 
-export const useEvbcStore = defineStore("evbc", () => {
-  const selection = ref({ type: "NONE", } as SelectionType,);
-  const current_config = ref<EVConfigModel | null>(null,);
-  const config_context = reactive(new ConfigStageContext(),);
-  const available_configs: Ref<EverestConfigList> = ref({},);
+export const useEvbcStore = defineStore( "evbc", () => {
+  const selection = ref( { type: "NONE", } as SelectionType, );
+  const current_config = ref<EVConfigModel | null>( null, );
+  const config_context = reactive( new ConfigStageContext(), );
+  const available_configs: Ref<EverestConfigList> = ref( {}, );
 
-  config_context.add_observer((ev,) => {
-    if (ev.type === "SELECT") {
+  config_context.add_observer( ( ev, ) => {
+    if ( ev.type === "SELECT" ) {
       selection.value = ev.selection;
     }
-  },);
+  }, );
 
-  function setOpenedConfig(model: EVConfigModel,) {
+  function setOpenedConfig( model: EVConfigModel, ) {
     current_config.value = model;
   }
 
@@ -42,4 +42,4 @@ export const useEvbcStore = defineStore("evbc", () => {
     get_selected_terminal,
     get_selected_connection,
   };
-},);
+}, );

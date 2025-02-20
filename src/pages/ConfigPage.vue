@@ -33,7 +33,7 @@ import EvModuleInfo from "../components/EvModuleInfo.vue";
 import { Pane, Splitpanes, } from "splitpanes";
 import "splitpanes/dist/splitpanes.css";
 
-export default defineComponent({
+export default defineComponent( {
   components: {
     EvConfigCanvas,
     EvModuleList,
@@ -43,10 +43,10 @@ export default defineComponent({
   },
   methods: {
     on_splitpanes_resize() {
-      window.dispatchEvent(new Event("resize",),);
+      window.dispatchEvent( new Event( "resize", ), );
     },
   },
-},);
+}, );
 </script>
 
 <style lang="scss" scoped>

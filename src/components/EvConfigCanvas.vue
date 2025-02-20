@@ -70,19 +70,19 @@ import { Notyf, } from "notyf";
 import ConfigPreview from "@/components/ConfigPreview.vue";
 import { storeToRefs, } from "pinia";
 
-export default defineComponent({
+export default defineComponent( {
   components: { ConfigPreview, },
   setup() {
     const evbcStore = useEvbcStore();
-    const evbc = inject<EVBackendClient>("evbc",);
+    const evbc = inject<EVBackendClient>( "evbc", );
     const selected_interface: string | null = null;
-    const notyf = inject<Notyf>("notyf",);
-    const { current_config: current_config, } = storeToRefs(evbcStore,);
+    const notyf = inject<Notyf>( "notyf", );
+    const { current_config: current_config, } = storeToRefs( evbcStore, );
 
-    ref(false,);
+    ref( false, );
 
     let stage: ConfigStage;
-    onMounted(() => {
+    onMounted( () => {
       stage = new ConfigStage(
         {
           container: "konva-stage",
@@ -92,14 +92,14 @@ export default defineComponent({
         },
         evbcStore.config_context,
       );
-      if (current_config.value) {
-        stage.set_model(current_config.value,);
+      if ( current_config.value ) {
+        stage.set_model( current_config.value, );
       }
-    },);
+    }, );
 
-    onBeforeUnmount(() => {
+    onBeforeUnmount( () => {
       stage.destroy();
-    },);
+    }, );
 
 
     const reset_view = () => {
@@ -107,26 +107,26 @@ export default defineComponent({
     };
 
     const save_config = () => {
-      if (!current_config.value) {
+      if ( !current_config.value ) {
         return;
       }
       evbc
-        .save_config(current_config.value,)
-        .then(() => {
-          notyf.success(`Successfully saved ${current_config.value._name}`,);
-        },)
-        .catch((error: string,) => {
-          notyf.error(`Failed to save ${current_config.value._name}\nReason: ${error}`,);
-        },);
+        .save_config( current_config.value, )
+        .then( () => {
+          notyf.success( `Successfully saved ${current_config.value._name}`, );
+        }, )
+        .catch( ( error: string, ) => {
+          notyf.error( `Failed to save ${current_config.value._name}\nReason: ${error}`, );
+        }, );
     };
 
-    watch(current_config, (new_config: EVConfigModel, old_config: EVConfigModel,) => {
-      if (old_config) {
+    watch( current_config, ( new_config: EVConfigModel, old_config: EVConfigModel, ) => {
+      if ( old_config ) {
         // FIXME (aw): should we ask for something here?
       }
 
-      stage.set_model(new_config,);
-    },);
+      stage.set_model( new_config, );
+    }, );
 
     return {
       selected_interface,
@@ -136,7 +136,7 @@ export default defineComponent({
       save_config,
     };
   },
-},);
+}, );
 </script>
 
 <style lang="scss">

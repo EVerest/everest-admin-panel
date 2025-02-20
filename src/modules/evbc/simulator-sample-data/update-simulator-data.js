@@ -114,7 +114,7 @@ function compileConfigFiles () {
   const configDirPath = path.join( __dirname, "sample-configs", );
   const configFiles = fs.readdirSync( configDirPath, );
 
-  let configs = {};
+  const configs = {};
 
   configFiles.forEach( ( file, ) => {
     if ( path.extname( file, ) === ".json" ) {
