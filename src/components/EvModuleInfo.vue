@@ -123,39 +123,39 @@ import ConfigStageContext from "@/modules/evconf_konva/stage_context";
 import { useEvbcStore, } from "@/store/evbc";
 import { storeToRefs, } from "pinia";
 
-export default defineComponent({
+export default defineComponent( {
   components: {
     Vjsf,
     IconButtonWithTooltip,
   },
   setup() {
     const evbcStore = useEvbcStore();
-    const { current_config, } = storeToRefs(evbcStore,);
+    const { current_config, } = storeToRefs( evbcStore, );
 
-    const module_node = computed(() => {
+    const module_node = computed( () => {
       const instance_id = evbcStore.get_selected_module_instance();
-      if (instance_id === null) {
+      if ( instance_id === null ) {
         return null;
       }
-      const instance = current_config.value.get_module_instance(instance_id,);
+      const instance = current_config.value.get_module_instance( instance_id, );
       return {
         instance_id,
         instance,
       };
-    },);
+    }, );
 
-    const terminal = computed(() => {
+    const terminal = computed( () => {
       return evbcStore.get_selected_terminal();
-    },);
+    }, );
 
-    const connection = computed(() => {
+    const connection = computed( () => {
       const connection_id = evbcStore.get_selected_connection();
-      if (connection_id === null) {
+      if ( connection_id === null ) {
         return null;
       }
-      const cxn = current_config.value.get_connection(connection_id,);
-      const requiring_module = current_config.value.get_module_instance(cxn.requiring_instance_id,);
-      const implementing_module = current_config.value.get_module_instance(cxn.providing_instance_id,);
+      const cxn = current_config.value.get_connection( connection_id, );
+      const requiring_module = current_config.value.get_module_instance( cxn.requiring_instance_id, );
+      const implementing_module = current_config.value.get_module_instance( cxn.providing_instance_id, );
 
       return {
         from: {
@@ -170,28 +170,28 @@ export default defineComponent({
         },
         id: connection_id,
       };
-    },);
+    }, );
 
-    const context = computed((): ConfigStageContext => {
+    const context = computed( (): ConfigStageContext => {
       return evbcStore.config_context;
-    },);
+    }, );
 
-    const moduleIDRules = computed(() => {
+    const moduleIDRules = computed( () => {
       return [
-        (v: string,) => {
+        ( v: string, ) => {
           const instance_id = module_node.value.instance_id;
-          const result = current_config.value.update_module_id(instance_id, v,);
+          const result = current_config.value.update_module_id( instance_id, v, );
           return result || "This module id is not available";
         },
       ];
-    },);
+    }, );
 
-    function delete_connection(id: ConnectionID,) {
-      current_config.value.delete_connection(id,);
+    function delete_connection( id: ConnectionID, ) {
+      current_config.value.delete_connection( id, );
     }
 
-    function delete_module_instance(id: ModuleInstanceID,) {
-      current_config.value.delete_module_instance(id,);
+    function delete_module_instance( id: ModuleInstanceID, ) {
+      current_config.value.delete_module_instance( id, );
     }
 
     return {
@@ -205,5 +205,5 @@ export default defineComponent({
       delete_module_instance,
     };
   },
-},);
+}, );
 </script>

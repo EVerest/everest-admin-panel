@@ -118,7 +118,7 @@ let evbcStore: ReturnType<typeof useEvbcStore>;
 let evbc: EVBackendClient;
 let notyf: Notyf;
 
-export default defineComponent({
+export default defineComponent( {
   components: { CreateConfig, EvDialog, },
   data: () => {
     return {
@@ -142,94 +142,94 @@ export default defineComponent({
     },
     filtered_module_list(): Array<{ type: string; description: string }> {
       const selectedTerminal = evbcStore.get_selected_terminal();
-      if (selectedTerminal) {
-        return Object.entries(evbc.everest_definitions.modules,)
-          .filter(([ , value, ],) => {
-            if (selectedTerminal.type === "requirement") {
-              return value.provides && Object.values(value.provides,).some((e,) => e.interface === selectedTerminal.interface,);
+      if ( selectedTerminal ) {
+        return Object.entries( evbc.everest_definitions.modules, )
+          .filter( ( [ , value, ], ) => {
+            if ( selectedTerminal.type === "requirement" ) {
+              return value.provides && Object.values( value.provides, ).some( ( e, ) => e.interface === selectedTerminal.interface, );
             } else {
-              return value.requires && Object.values(value.requires,).some((e,) => e.interface === selectedTerminal.interface,);
+              return value.requires && Object.values( value.requires, ).some( ( e, ) => e.interface === selectedTerminal.interface, );
             }
-          },)
-          .map(([ key, value, ],) => ({
+          }, )
+          .map( ( [ key, value, ], ) => ( {
             type: key,
             description: value.description,
-          }),);
+          } ), );
       } else {
-        return Object.entries(evbc.everest_definitions.modules,)
-          .filter(([ key, value, ],) => {
+        return Object.entries( evbc.everest_definitions.modules, )
+          .filter( ( [ key, value, ], ) => {
             return !this.search || this.search.trim() === "" ||
-                  key.toLowerCase().includes(this.search.toLowerCase(),) ||
-                  value.description.toLowerCase().includes(this.search.toLowerCase(),);
-          },)
-          .map(([ key, value, ],) => ({
+                  key.toLowerCase().includes( this.search.toLowerCase(), ) ||
+                  value.description.toLowerCase().includes( this.search.toLowerCase(), );
+          }, )
+          .map( ( [ key, value, ], ) => ( {
             type: key,
             description: value.description,
-          }),);
+          } ), );
       }
     },
     config_list(): Array<string> {
-      return Object.entries(evbcStore.available_configs,).map(([ key, ],) => key,);
+      return Object.entries( evbcStore.available_configs, ).map( ( [ key, ], ) => key, );
     },
   },
   created() {
     evbcStore = useEvbcStore();
-    evbc = inject<EVBackendClient>("evbc",) as EVBackendClient;
-    notyf = inject<Notyf>("notyf",);
+    evbc = inject<EVBackendClient>( "evbc", ) as EVBackendClient;
+    notyf = inject<Notyf>( "notyf", );
   },
   methods: {
-    add_module_to_config(type: string,) {
+    add_module_to_config( type: string, ) {
       let added_module_id: number;
-      if (evbcStore.current_config) {
-        added_module_id = evbcStore.current_config.add_new_module_instance(type,);
+      if ( evbcStore.current_config ) {
+        added_module_id = evbcStore.current_config.add_new_module_instance( type, );
       } else {
-        throw new Error("No config loaded",);
+        throw new Error( "No config loaded", );
       }
-      if (evbcStore.get_selected_terminal()) {
+      if ( evbcStore.get_selected_terminal() ) {
         const selectedTerminal = evbcStore.get_selected_terminal();
-        const addedModuleInstance = evbcStore.current_config.get_module_instance(added_module_id,);
-        const terminals = Object.values(addedModuleInstance.view_config.terminals,).flat();
+        const addedModuleInstance = evbcStore.current_config.get_module_instance( added_module_id, );
+        const terminals = Object.values( addedModuleInstance.view_config.terminals, ).flat();
         let terminalToClick;
-        if (selectedTerminal.type === "requirement") {
-          terminalToClick = terminals.find((t,) => t.interface === selectedTerminal.interface && t.type === "provide",);
+        if ( selectedTerminal.type === "requirement" ) {
+          terminalToClick = terminals.find( ( t, ) => t.interface === selectedTerminal.interface && t.type === "provide", );
         } else {
-          terminalToClick = terminals.find((t,) => t.interface === selectedTerminal.interface && t.type === "requirement",);
+          terminalToClick = terminals.find( ( t, ) => t.interface === selectedTerminal.interface && t.type === "requirement", );
         }
-        evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id,);
+        evbcStore.get_config_context().clicked_terminal( terminalToClick, added_module_id, );
       }
     },
-    create_config(name: string, content?: EverestConfig,) {
-      const new_config = evbc.create_config_model(name, content,);
-      evbcStore.setOpenedConfig(new_config,);
+    create_config( name: string, content?: EverestConfig, ) {
+      const new_config = evbc.create_config_model( name, content, );
+      evbcStore.setOpenedConfig( new_config, );
       this.expansionPanelState = [ "modules", ];
     },
-    load_config_if_empty(name: string,) {
-      if (!this.current_config) {
-        this.load_config(name,);
+    load_config_if_empty( name: string, ) {
+      if ( !this.current_config ) {
+        this.load_config( name, );
         return;
       }
       this.config_to_load = name;
       this.show_dialog = true;
     },
-    load_config(name: string | null,) {
-      if (!name) {
+    load_config( name: string | null, ) {
+      if ( !name ) {
         return;
       }
       this.show_dialog = false;
-      const new_config = evbc.load_config(name,);
-      evbcStore.setOpenedConfig(new_config,);
+      const new_config = evbc.load_config( name, );
+      evbcStore.setOpenedConfig( new_config, );
       this.expansionPanelState = [ "modules", ];
     },
     restart_modules() {
-      evbc._cxn.rpc_issuer.restart_modules().then(() => {
-        notyf.success("Issued restart modules command",);
-      },);
+      evbc._cxn.rpc_issuer.restart_modules().then( () => {
+        notyf.success( "Issued restart modules command", );
+      }, );
     },
     close_dialog() {
       this.show_dialog = false;
     },
   },
-},);
+}, );
 </script>
 
 <style>

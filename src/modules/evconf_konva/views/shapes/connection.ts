@@ -38,18 +38,18 @@ const correction = {
 };
 
 export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig> extends Konva.Line {
-  constructor(config: Config,) {
+  constructor( config: Config, ) {
     config.bezier = config.bezier || true;
     config.strokeWidth = config.strokeWidth || SIZE.CONNECTION_WIDTH;
     config.stroke = config.stroke || COLOR.CONNECTION;
-    super(config,);
+    super( config, );
 
-    this.update_terminals(config.requirement, config.provide,);
+    this.update_terminals( config.requirement, config.provide, );
   }
 
-  update_terminals(requirement: TerminalPlacement, provide: TerminalPlacement, animate = false,) {
-    requirement = requirement || this.getAttr("requirement",);
-    provide = provide || this.getAttr("provide",);
+  update_terminals( requirement: TerminalPlacement, provide: TerminalPlacement, animate = false, ) {
+    requirement = requirement || this.getAttr( "requirement", );
+    provide = provide || this.getAttr( "provide", );
 
     const req_x = requirement.x + correction[requirement.alignment].x;
     const req_y = requirement.y + correction[requirement.alignment].y;
@@ -60,35 +60,35 @@ export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig>
     const cps = [
       [ requirement.alignment, req_x, req_y, x_dist, y_dist, ],
       [ provide.alignment, prov_x, prov_y, -x_dist, -y_dist, ],
-    ].map((item,) => {
+    ].map( ( item, ) => {
       const [ alignment, pos_x, pos_y, dist_x, dist_y, ] = item as [TerminalAlignment, number, number, number, number];
-      if (alignment === "top") {
-        return [ pos_x, pos_y - Math.max(SIZE.CONNECTION_CTRL, -dist_y,), ];
-      } else if (alignment === "right") {
-        return [ pos_x + Math.max(SIZE.CONNECTION_CTRL, dist_x,), pos_y, ];
-      } else if (alignment === "bottom") {
-        return [ pos_x, pos_y + Math.max(SIZE.CONNECTION_CTRL, dist_y,), ];
+      if ( alignment === "top" ) {
+        return [ pos_x, pos_y - Math.max( SIZE.CONNECTION_CTRL, -dist_y, ), ];
+      } else if ( alignment === "right" ) {
+        return [ pos_x + Math.max( SIZE.CONNECTION_CTRL, dist_x, ), pos_y, ];
+      } else if ( alignment === "bottom" ) {
+        return [ pos_x, pos_y + Math.max( SIZE.CONNECTION_CTRL, dist_y, ), ];
       } else {
         // left
-        return [ pos_x - Math.max(SIZE.CONNECTION_CTRL, -dist_x,), pos_y, ];
+        return [ pos_x - Math.max( SIZE.CONNECTION_CTRL, -dist_x, ), pos_y, ];
       }
-    },);
+    }, );
 
     const points = [ req_x, req_y, cps[0][0], cps[0][1], cps[1][0], cps[1][1], prov_x, prov_y, ];
 
-    if (animate) {
-      this.to({
+    if ( animate ) {
+      this.to( {
         points,
         duration: 0.2,
         ease: "EaseIn",
-      },);
+      }, );
     } else {
-      this.points(points,);
+      this.points( points, );
     }
 
-    this.setAttrs({
+    this.setAttrs( {
       requirement,
       provide,
-    },);
+    }, );
   }
 }

@@ -225,10 +225,10 @@ enum ComponentViews {
   ADD
 }
 
-export default defineComponent({
+export default defineComponent( {
   setup() {
-    const evbc = inject<EVBackendClient>("evbc",);
-    const servers = reactive<ServerItem[]>([
+    const evbc = inject<EVBackendClient>( "evbc", );
+    const servers = reactive<ServerItem[]>( [
       {
         id: "Simulator / Mock",
         host: "loopback",
@@ -244,57 +244,57 @@ export default defineComponent({
         protocol: "ws",
         port: 8849,
       },
-    ],);
-    const currentView = ref<ComponentViews>(ComponentViews.LIST,);
-    const connectAutomatically = ref(false,);
-    watch<boolean>(connectAutomatically, () => {
+    ], );
+    const currentView = ref<ComponentViews>( ComponentViews.LIST, );
+    const connectAutomatically = ref( false, );
+    watch<boolean>( connectAutomatically, () => {
       submitLocalStorageSettings();
-    },);
-    const currentlyEditing = ref<ServerItem | null>(null,);
-    const connecting = ref(false,);
-    const connectionStatus = ref<string | null>(null,);
-    const error = reactive({ active: false, status: "", },);
+    }, );
+    const currentlyEditing = ref<ServerItem | null>( null, );
+    const connecting = ref( false, );
+    const connectionStatus = ref<string | null>( null, );
+    const error = reactive( { active: false, status: "", }, );
 
-    const { meta, handleSubmit, } = useForm({
+    const { meta, handleSubmit, } = useForm( {
       validationSchema: {
-        instanceId: (value: string,) => {
-          if (value === undefined || value.trim().length < 1) {
+        instanceId: ( value: string, ) => {
+          if ( value === undefined || value.trim().length < 1 ) {
             return "Please enter a name with at least one character.";
           } else {
             return true;
           }
         },
-        host: (value: string,) => {
-          if (value === undefined || value.trim().length < 1) {
+        host: ( value: string, ) => {
+          if ( value === undefined || value.trim().length < 1 ) {
             return "Please enter a host.";
           }
 
-          if (value.includes("://",)) {
+          if ( value.includes( "://", ) ) {
             return 'Please enter a domain without any protocol (e.g., "test.pionix.de").';
           }
 
           // Prevent user from entering a domain with port
           const domainPattern = /.*:\d+$/;
-          if (domainPattern.test(value,)) {
+          if ( domainPattern.test( value, ) ) {
             return "Please don't enter a port here.";
           } else {
             return true;
           }
         },
-        port: (value: number,) => {
-          if (value === undefined || value < 1 || value > 65535) {
+        port: ( value: number, ) => {
+          if ( value === undefined || value < 1 || value > 65535 ) {
             return "Please enter a valid port number.";
           } else {
             return true;
           }
         },
       },
-    },);
+    }, );
 
-    const instanceId = useField<string>("instanceId",);
-    const host = useField<string>("host",);
-    const port = useField<number>("port",);
-    const protocol = useField<"ws" | "wss">("protocol",);
+    const instanceId = useField<string>( "instanceId", );
+    const host = useField<string>( "host", );
+    const port = useField<number>( "port", );
+    const protocol = useField<"ws" | "wss">( "protocol", );
 
 
     const openAddServerView = () => {
@@ -310,7 +310,7 @@ export default defineComponent({
       currentlyEditing.value = null;
     };
 
-    const openEditServerView = (index: number,) => {
+    const openEditServerView = ( index: number, ) => {
       currentlyEditing.value = servers[index];
       protocol.value.value = servers[index].protocol;
       host.value.value = servers[index].host;
@@ -319,25 +319,25 @@ export default defineComponent({
       currentView.value = ComponentViews.EDIT;
     };
 
-    const submitEdit = handleSubmit(async () => {
-      if (currentlyEditing.value !== null) {
+    const submitEdit = handleSubmit( async () => {
+      if ( currentlyEditing.value !== null ) {
         // This works because we are using the objects reference and not a copy
         currentlyEditing.value.id = instanceId.value.value;
         currentlyEditing.value.host = host.value.value;
         currentlyEditing.value.protocol = protocol.value.value;
         currentlyEditing.value.port = port.value.value;
       } else {
-        servers.push({
+        servers.push( {
           id: instanceId.value.value,
           host: host.value.value,
           editable: true,
           protocol: protocol.value.value,
           port: port.value.value,
-        },);
+        }, );
       }
       closeEdit();
       submitLocalStorageSettings();
-    },);
+    }, );
 
     const closeEdit = () => {
       currentView.value = ComponentViews.LIST;
@@ -345,7 +345,7 @@ export default defineComponent({
     };
 
     const deleteItem = () => {
-      servers.splice(servers.indexOf(currentlyEditing.value,), 1,);
+      servers.splice( servers.indexOf( currentlyEditing.value, ), 1, );
       closeEdit();
       submitLocalStorageSettings();
     };
@@ -353,62 +353,62 @@ export default defineComponent({
     const submitLocalStorageSettings = () => {
       window.localStorage.setItem(
         "evbcSettings",
-        JSON.stringify({
+        JSON.stringify( {
           servers: servers,
           connectAutomatically: connectAutomatically.value,
-        },),
+        }, ),
       );
     };
 
-    const connect = (server: ServerItem,) => {
-      window.localStorage.setItem("lastConnectedServer", JSON.stringify(server,),);
+    const connect = ( server: ServerItem, ) => {
+      window.localStorage.setItem( "lastConnectedServer", JSON.stringify( server, ), );
       connecting.value = true;
-      if (evbc) {
-        evbc.connect(server.protocol + "://" + server.host + ":" + server.port,);
+      if ( evbc ) {
+        evbc.connect( server.protocol + "://" + server.host + ":" + server.port, );
       }
     };
 
-    onMounted(() => {
+    onMounted( () => {
       const router = useRouter();
       const storage = window.localStorage;
-      const evbcLsString = storage.getItem("evbcSettings",);
-      if (evbcLsString) {
-        const evbcLocalStorage = JSON.parse(evbcLsString,);
-        if ("servers" in evbcLocalStorage) {
-          servers.splice(0, servers.length,);
-          servers.push(...evbcLocalStorage.servers,);
+      const evbcLsString = storage.getItem( "evbcSettings", );
+      if ( evbcLsString ) {
+        const evbcLocalStorage = JSON.parse( evbcLsString, );
+        if ( "servers" in evbcLocalStorage ) {
+          servers.splice( 0, servers.length, );
+          servers.push( ...evbcLocalStorage.servers, );
         }
-        if ("connectAutomatically" in evbcLocalStorage) {
+        if ( "connectAutomatically" in evbcLocalStorage ) {
           connectAutomatically.value = evbcLocalStorage.connectAutomatically;
           if (
             router.currentRoute.value.query.auto_connect !== "false" &&
               connectAutomatically.value &&
-              window.localStorage?.getItem("lastConnectedServer",) !== null
+              window.localStorage?.getItem( "lastConnectedServer", ) !== null
           ) {
-            const lastServer = JSON.parse(window.localStorage.getItem("lastConnectedServer",)!,);
-            connect(lastServer,);
+            const lastServer = JSON.parse( window.localStorage.getItem( "lastConnectedServer", )!, );
+            connect( lastServer, );
           }
         }
       }
 
-      if (evbc) {
-        const unsubscribe = evbc.on("connection_state", (ev,) => {
-          if (ev.type === "INFO") {
+      if ( evbc ) {
+        const unsubscribe = evbc.on( "connection_state", ( ev, ) => {
+          if ( ev.type === "INFO" ) {
             connectionStatus.value = ev.text;
-          } else if (ev.type === "INITIALIZED") {
+          } else if ( ev.type === "INITIALIZED" ) {
             unsubscribe();
-            router.push({ name: "main", },);
-          } else if (ev.type === "FAILED") {
+            router.push( { name: "main", }, );
+          } else if ( ev.type === "FAILED" ) {
             connecting.value = false;
             error.active = true;
             error.status = ev.text;
-          } else if (ev.type === "IDLE") {
+          } else if ( ev.type === "IDLE" ) {
             connecting.value = false;
             connectionStatus.value = "";
           }
-        },);
+        }, );
       }
-    },);
+    }, );
 
     return {
       servers,
@@ -433,5 +433,5 @@ export default defineComponent({
       ComponentViews,
     };
   },
-},);
+}, );
 </script>

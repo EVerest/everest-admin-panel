@@ -12,10 +12,10 @@ import App from "@/App.vue";
 import { registerPlugins, } from "@/plugins";
 import { currentTheme, } from "@/plugins/vuetify";
 
-const app: Vue.App<Element> = createApp(App,);
-registerPlugins(app,);
+const app: Vue.App<Element> = createApp( App, );
+registerPlugins( app, );
 
-app.provide("notyf", new Notyf({
+app.provide( "notyf", new Notyf( {
   duration: 3000, // default duration for notifications
   ripple: true, // adds a material design ripple effect to the notifications
   position: {
@@ -40,6 +40,6 @@ app.provide("notyf", new Notyf({
       background: currentTheme.colors.error,
     },
   ],
-},),);
+}, ), );
 
-app.mount("#app",);
+app.mount( "#app", );

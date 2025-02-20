@@ -32,7 +32,7 @@ export const everestTheme = {
   },
 };
 export const currentTheme = everestTheme;
-export default createVuetify({
+export default createVuetify( {
   blueprint: md3,
   theme: {
     defaultTheme: "everestTheme",
@@ -40,4 +40,4 @@ export default createVuetify({
       everestTheme,
     },
   },
-},);
+}, );

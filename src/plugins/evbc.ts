@@ -6,8 +6,8 @@ import { App, } from "vue";
 
 
 export default {
-  install(app: App,) {
+  install( app: App, ) {
     const evbc = new EVBackendClient();
-    app.provide("evbc", evbc,);
+    app.provide( "evbc", evbc, );
   },
 };
