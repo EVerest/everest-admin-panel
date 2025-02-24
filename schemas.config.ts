@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2024 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 // configure the release tag / branch of EVerest/everest-framework here
 const releaseTag = 'v0.20.2';
