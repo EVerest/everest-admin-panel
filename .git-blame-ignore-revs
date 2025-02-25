@@ -1,0 +1,9 @@
+# please run this git command to exclude these revisions from git blame
+# git config --local blame.ignoreRevsFile .git-blame-ignore-revs
+
+# ESLint stricter rules (mostly formatting)
+b08b05f3022233548b3d33139107b5628822f277
+35007d1c17c2fe6db8256afb40e0b71de1220b0e
+9376372918927c1a29ea2b70876d413b921a2d74
+
+# Add additional revisions to ignore for git blame
