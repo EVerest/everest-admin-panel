@@ -2,19 +2,10 @@
      Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-dialog
-    :model-value="showDialog"
-    width="auto"
-    @click:outside="deny"
-  >
+  <v-dialog :model-value="showDialog" width="auto" @click:outside="deny">
     <v-card>
       <v-card-title class="d-flex flex-row align-baseline">
-        <v-icon
-          size="large"
-          color="error"
-        >
-          mdi-alert-circle
-        </v-icon>
+        <v-icon size="large" color="error"> mdi-alert-circle </v-icon>
         &nbsp;
         {{ $props.title }}
       </v-card-title>
@@ -22,10 +13,7 @@
         <p>{{ $props.text }}</p>
       </v-card-text>
       <v-card-actions>
-        <v-btn
-          color="error"
-          @click="accept"
-        >
+        <v-btn color="error" @click="accept">
           {{ $props.acceptText }}
         </v-btn>
         <v-btn @click="deny">
@@ -37,8 +25,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, } from "vue";
-export default defineComponent( {
+import { defineComponent } from "vue";
+export default defineComponent({
   props: {
     showDialog: {
       type: Boolean,
@@ -61,14 +49,14 @@ export default defineComponent( {
       required: true,
     },
   },
-  emits: [ "accept", "deny", ],
+  emits: ["accept", "deny"],
   methods: {
     accept() {
-      this.$emit( "accept", );
+      this.$emit("accept");
     },
     deny() {
-      this.$emit( "deny", );
+      this.$emit("deny");
     },
   },
-}, );
+});
 </script>

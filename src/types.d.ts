@@ -4,5 +4,5 @@
 import "vite/client";
 declare module "@koumoul/vjsf";
 declare global {
-    const VITE_APP_VERSION: string;
+  const VITE_APP_VERSION: string;
 }

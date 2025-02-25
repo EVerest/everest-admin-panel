@@ -10,10 +10,10 @@
 // Styles
 import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/styles";
-import { md3, } from "vuetify/blueprints";
+import { md3 } from "vuetify/blueprints";
 
 // Composables
-import { createVuetify, } from "vuetify";
+import { createVuetify } from "vuetify";
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export const everestTheme = {
@@ -32,7 +32,7 @@ export const everestTheme = {
   },
 };
 export const currentTheme = everestTheme;
-export default createVuetify( {
+export default createVuetify({
   blueprint: md3,
   theme: {
     defaultTheme: "everestTheme",
@@ -40,4 +40,4 @@ export default createVuetify( {
       everestTheme,
     },
   },
-}, );
+});

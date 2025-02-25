@@ -18,16 +18,16 @@
 </template>
 
 <script lang="ts" setup>
-import type { VBtn, } from "vuetify/components";
+import type { VBtn } from "vuetify/components";
 
 const props = defineProps<{
-  title: string,
-  icon: string,
-  variant?: VBtn["$props"]["variant"],
-  density?: VBtn["$props"]["density"],
+  title: string;
+  icon: string;
+  variant?: VBtn["$props"]["variant"];
+  density?: VBtn["$props"]["density"];
 }>();
 const emit = defineEmits<{
-  click: []
+  click: [];
 }>();
 </script>
 

@@ -5,10 +5,10 @@
 const releaseTag = "v0.20.2";
 
 export type RemoteSchema = {
-    url: string;
-    name: string;
-    hash: string;
-}
+  url: string;
+  name: string;
+  hash: string;
+};
 
 // TODO : Currently we reference the schemas from a tag of the git repo.
 // TODO : In the future we might want to release the schemas separately with a version number.

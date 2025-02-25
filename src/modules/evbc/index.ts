@@ -99,7 +99,7 @@ export type EverestConfig = {
   "x-module-layout"?: Record<string, ModuleViewConfig>;
 };
 
-export type EventHandler<K> = ( ev: K ) => void;
+export type EventHandler<K> = (ev: K) => void;
 
 export type EverestConfigList = Record<string, EverestConfig>;
 

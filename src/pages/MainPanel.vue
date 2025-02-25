@@ -4,36 +4,15 @@
 <template>
   <v-app>
     <v-app-bar color="primary">
-      <v-app-bar-nav-icon
-        data-cy="hamburger-menu"
-        @click="drawer = !drawer"
-      />
+      <v-app-bar-nav-icon data-cy="hamburger-menu" @click="drawer = !drawer" />
       <v-spacer />
-      <v-img
-        class="mx-4 rotateable"
-        max-height="40"
-        max-width="40"
-        src="/img/icons/everest_lf_logo_white.svg"
-      />
-      <v-toolbar-title class="app-bar-title">
-        EVerest Admin Panel
-      </v-toolbar-title>
+      <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo_white.svg" />
+      <v-toolbar-title class="app-bar-title"> EVerest Admin Panel </v-toolbar-title>
       <v-spacer />
     </v-app-bar>
-    <v-navigation-drawer
-      v-model="drawer"
-      position="fixed"
-      temporary
-    >
-      <v-list
-        nav
-        density="compact"
-      >
-        <v-list-item
-          to="config"
-          append-icon="mdi-cog"
-          link
-        >
+    <v-navigation-drawer v-model="drawer" position="fixed" temporary>
+      <v-list nav density="compact">
+        <v-list-item to="config" append-icon="mdi-cog" link>
           <v-list-item-title>Config</v-list-item-title>
         </v-list-item>
         <v-tooltip location="end">
@@ -58,22 +37,11 @@
 
     <v-main>
       <router-view v-if="!evbc_disconnected" />
-      <v-overlay
-        v-else
-        :dark="false"
-      >
+      <v-overlay v-else :dark="false">
         <!-- FIXME (aw): remove absolute dimensions without changing v-card size -->
-        <v-card
-          elevation="10"
-          loading="true"
-          width="400"
-          height="150"
-        >
+        <v-card elevation="10" loading="true" width="400" height="150">
           <template #actions>
-            <v-progress-linear
-              height="10"
-              indeterminate
-            />
+            <v-progress-linear height="10" indeterminate />
           </template>
           <v-card-title>Lost connection to EVerest backend</v-card-title>
           <v-card-text>Trying to reconnect ...</v-card-text>
@@ -84,56 +52,60 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, } from "vue";
+import { defineComponent, inject } from "vue";
 import EVBackendClient from "@/modules/evbc/client";
 
-import { Router, useRouter, } from "vue-router";
-import { Notyf, } from "notyf";
+import { Router, useRouter } from "vue-router";
+import { Notyf } from "notyf";
 
 let evbc: EVBackendClient;
 let router: Router;
 let notyf: Notyf;
-export default defineComponent( {
-  data: () => ( {
+export default defineComponent({
+  data: () => ({
     drawer: false,
     evbc_disconnected: false,
     evbc_status: "",
     version: VITE_APP_VERSION,
-  } ),
+  }),
   computed: {
     connectionUrl() {
       return evbc?.connection.url ?? "nothing";
     },
   },
   created() {
-    evbc = inject<EVBackendClient>( "evbc", );
+    evbc = inject<EVBackendClient>("evbc");
     router = useRouter();
-    notyf = inject<Notyf>( "notyf", );
-    evbc.on( "connection_state", ( ev, ) => {
+    notyf = inject<Notyf>("notyf");
+    evbc.on("connection_state", (ev) => {
       this.evbc_status = ev.text;
-      if ( ev.type === "RECONNECT" || ev.type === "IDLE" ) {
+      if (ev.type === "RECONNECT" || ev.type === "IDLE") {
         this.evbc_disconnected = true;
-      } else if ( ev.type === "INITIALIZED" ) {
+      } else if (ev.type === "INITIALIZED") {
         this.evbc_disconnected = false;
       }
-    }, );
+    });
   },
   methods: {
     async changeInstance() {
       let notification;
       // show notification if disconnect takes longer than 250ms
-      const timeout = setTimeout( () => {
-        notification = notyf.open( { type: "warning", message: "Disconnecting from EVerest backend ...", ripple: false, }, );
-      }, 250, );
+      const timeout = setTimeout(() => {
+        notification = notyf.open({
+          type: "warning",
+          message: "Disconnecting from EVerest backend ...",
+          ripple: false,
+        });
+      }, 250);
       await evbc.disconnect();
-      clearTimeout( timeout, );
-      if ( notification ) {
-        notyf.dismiss( notification, );
+      clearTimeout(timeout);
+      if (notification) {
+        notyf.dismiss(notification);
       }
-      await router.push( { path: "/connect", query: { auto_connect: "false", }, }, );
+      await router.push({ path: "/connect", query: { auto_connect: "false" } });
     },
   },
-}, );
+});
 </script>
 
 <style scoped>
