@@ -83,7 +83,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, inject, defineEmits } from "vue";
+import { computed, ref, defineEmits } from "vue";
 import { useEvbcStore } from "@/store/evbc";
 import { storeToRefs } from "pinia";
 import yaml from "js-yaml";

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
-import {remoteSchemas} from "../schemas.config";
-import yaml from 'js-yaml';
-import crypto from 'crypto';
+import { remoteSchemas } from "../schemas.config";
+import yaml from "js-yaml";
+import crypto from "crypto";
 import fs from "fs";
 
 export function vitePluginFetchSchemas() {
