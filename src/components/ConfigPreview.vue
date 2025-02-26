@@ -19,14 +19,10 @@
         <v-card-text>
           <v-tabs v-model="tab">
             <v-tab value="yaml"> YAML </v-tab>
-            <v-tab value="json"> JSON </v-tab>
           </v-tabs>
           <v-window v-model="tab">
             <v-window-item value="yaml">
               <highlightjs language="yaml" :code="yamlCode" />
-            </v-window-item>
-            <v-window-item value="json">
-              <highlightjs language="json" :code="jsonCode" />
             </v-window-item>
           </v-window>
         </v-card-text>
@@ -64,23 +60,12 @@ const props = defineProps<{
 
 const tab = ref("yaml");
 
-const jsonCode = computed(() => JSON.stringify(props.config.serialize(), null, 2));
 const yamlCode = computed(() => yaml.dump(props.config.serialize()));
 
 const downloadConfig = () => {
-  let filename = "";
-  let contentType = "";
-  let content = "";
-
-  if (tab.value === "json") {
-    filename = `${props.config._name}.json`;
-    contentType = "application/json";
-    content = jsonCode.value;
-  } else if (tab.value === "yaml") {
-    filename = `${props.config._name}.yaml`;
-    contentType = "text/yaml";
-    content = yamlCode.value;
-  }
+  const filename = `${props.config._name}.yaml`;
+  const contentType = "text/yaml";
+  const content = yamlCode.value;
 
   const blob = new Blob([content], { type: contentType });
   const url = URL.createObjectURL(blob);
@@ -94,12 +79,7 @@ const downloadConfig = () => {
 };
 
 const copyConfig = () => {
-  let content = "";
-  if (tab.value === "json") {
-    content = jsonCode.value;
-  } else if (tab.value === "yaml") {
-    content = yamlCode.value;
-  }
+  const content = yamlCode.value;
   navigator.clipboard.writeText(content);
   notyf.success("Copied to clipboard!");
 };
