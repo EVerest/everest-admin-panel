@@ -67,7 +67,7 @@ export default class ModuleViewModel {
 
     stage_context.add_observer((ev) => this._handle_stage_context_event(ev));
     model.add_observer((ev) => {
-      if (ev.type == "MODULE_INSTANCE_UPDATED" && ev.id == id) {
+      if (ev.type === "MODULE_INSTANCE_UPDATED" && ev.id === id) {
         this._notify({ type: "MODULE_MODEL_UPDATE" });
       }
     });
@@ -100,7 +100,7 @@ export default class ModuleViewModel {
   }
 
   notify_stage_context(event: ConfigStageContextEvent) {
-    this._stage_context._publish(event)
+    this._stage_context._publish(event);
   }
 
   _notify(ev: ViewModelChangeEvent) {
@@ -177,7 +177,7 @@ export default class ModuleViewModel {
     const cur_align = this.terminal_lookup[terminal_id].alignment;
     const cur_index = this.terminal_lookup[terminal_id].index;
 
-    if (new_align != cur_align) {
+    if (new_align !== cur_align) {
       // FIXME (aw): we could do an assert here checking the terminal_id
       this.terminal_dist[cur_align].splice(cur_index, 1);
       this.terminal_dist[new_align].splice(new_index, 0, terminal_id);

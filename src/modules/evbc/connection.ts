@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
-import {RpcIssuer} from "./rpc/abstractRpcIssuer";
-import {LoopbackRpcIssuer} from "@/modules/evbc/rpc/loopbackRpcIssuer";
-import {WebsocketRpcIssuer} from "@/modules/evbc/rpc/websocketRpcIssuer";
+import { RpcIssuer } from "./rpc/abstractRpcIssuer";
+import { LoopbackRpcIssuer } from "@/modules/evbc/rpc/loopbackRpcIssuer";
+import { WebsocketRpcIssuer } from "@/modules/evbc/rpc/websocketRpcIssuer";
 
 // set a value greater than 0 to simulate a delay in the loopback mode
 export const LOOPBACK_WAIT_MS = 0;
@@ -28,14 +28,14 @@ type ConnectionErrorStatus = {
 
 type ConnectionDisconnectedStatus = {
   type: "DISCONNECTED";
-}
+};
 
 export type ConnectionStatus =
   | ConnectionOpenStatus
   | ConnectionOpenedStatus
   | ConnectionClosedStatus
-    | ConnectionErrorStatus
-    | ConnectionDisconnectedStatus;
+  | ConnectionErrorStatus
+  | ConnectionDisconnectedStatus;
 
 export type ConnectionStatusListener = (status: ConnectionStatus) => void;
 
@@ -45,7 +45,10 @@ class EVBackendConnection {
   _loopback = false;
   rpc_issuer: RpcIssuer;
 
-  constructor(private _url: string, private _listener: ConnectionStatusListener) {
+  constructor(
+    private _url: string,
+    private _listener: ConnectionStatusListener,
+  ) {
     this._publish_connection_state({ type: "OPEN", url: this._url });
     if (this._url === "ws://loopback:8849") {
       this._connect_loopback_mode();
@@ -72,7 +75,7 @@ class EVBackendConnection {
 
   async _disconnect() {
     await this.rpc_issuer.disconnect();
-    this._publish_connection_state({type: "DISCONNECTED"});
+    this._publish_connection_state({ type: "DISCONNECTED" });
     this._listener = () => {};
   }
 

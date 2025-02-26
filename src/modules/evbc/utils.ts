@@ -38,8 +38,8 @@ export function default_terminals(module_definition: EverestModuleDefinition): T
           id: key,
           interface: value.interface,
           type: "requirement",
-        })
-      )
+        }),
+      ),
     );
   }
   const right_terminals: Array<Terminal> = [];
@@ -50,8 +50,8 @@ export function default_terminals(module_definition: EverestModuleDefinition): T
           id: key,
           interface: value.interface,
           type: "provide",
-        })
-      )
+        }),
+      ),
     );
   }
 

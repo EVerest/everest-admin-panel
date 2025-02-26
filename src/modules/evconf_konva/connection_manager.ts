@@ -114,7 +114,9 @@ export default class ConnectionManager {
       if (ev.type === "TERMINALS_UPDATED") {
         const is_animated = ev.module_moved === false;
         ev.terminals.forEach((terminal) => {
-          if (!new_module.terminal_lookup[terminal.id]) return;
+          if (!new_module.terminal_lookup[terminal.id]) {
+            return;
+          }
 
           const { connections, type } = new_module.terminal_lookup[terminal.id];
           connections.forEach((cxn) => {

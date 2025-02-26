@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
-import {EventHandler, EverestConfig, EverestDefinitions,} from ".";
+import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
-import EVBackendConnection, {ConnectionStatus} from "./connection";
-import {useEvbcStore} from "@/store/evbc";
+import EVBackendConnection, { ConnectionStatus } from "./connection";
+import { useEvbcStore } from "@/store/evbc";
 
 type ConnectionStateEvent = {
   type: "INFO" | "INITIALIZED" | "FAILED" | "RECONNECT" | "IDLE";
@@ -81,10 +81,13 @@ class EVBackendClient {
   }
 
   async save_config(config: EVConfigModel) {
-    await this._cxn.rpc_issuer.save_config({
-      name: `${config._name}`,
-      config: config.serialize(),
-    }, false);
+    await this._cxn.rpc_issuer.save_config(
+      {
+        name: `${config._name}`,
+        config: config.serialize(),
+      },
+      false,
+    );
     await this._reload_configs();
   }
 
@@ -95,17 +98,17 @@ class EVBackendClient {
     } else if (status.type === "OPENED") {
       // FIXME (aw): this state handling is not production ready yet, in fact it will be probably quite complicated
       if (!this.initialized) {
-        event = { type: "INFO", text: `Successfully opened WebSocket connection` };
+        event = { type: "INFO", text: "Successfully opened WebSocket connection" };
         this._on_connected();
       } else {
         event = { type: "INITIALIZED", text: "Successfully reconnected" };
       }
     } else if (status.type === "ERROR") {
-      event = {type: "FAILED", text: `Connection failed. Trying to reconnect.`};
+      event = { type: "FAILED", text: "Connection failed. Trying to reconnect." };
     } else if (status.type === "CLOSED") {
       event = { type: "RECONNECT", text: "Trying to reconnect" };
     } else if (status.type === "DISCONNECTED") {
-      event = {type: "IDLE", text: "Disconnected"};
+      event = { type: "IDLE", text: "Disconnected" };
     }
 
     if (event) {
@@ -122,7 +125,10 @@ class EVBackendClient {
 
   async _reload_modules(): Promise<void> {
     this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
-    this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(this.everest_definitions.modules).length} module files` });
+    this._publish("connection_state", {
+      type: "INFO",
+      text: `Received ${Object.keys(this.everest_definitions.modules).length} module files`,
+    });
   }
 
   async _reload_interfaces(): Promise<void> {
@@ -134,7 +140,7 @@ class EVBackendClient {
   }
 
   async _reload_configs(): Promise<void> {
-    const cfgs = (await this._cxn.rpc_issuer.get_configs());
+    const cfgs = await this._cxn.rpc_issuer.get_configs();
     Object.assign(this.evbcStore.available_configs, cfgs);
     this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(cfgs).length} config files` });
   }

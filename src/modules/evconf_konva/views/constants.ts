@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
-import {currentTheme} from "@/plugins/vuetify";
+import { currentTheme } from "@/plugins/vuetify";
 
 export const COLOR = {
   TERMINAL_REQUIREMENT: currentTheme.colors.secondary,
@@ -35,7 +35,7 @@ export const NORMAL_TEXT = {
 
 export const MONO_TEXT = {
   fontFamily: "Roboto Mono, monospace",
-}
+};
 
 export const TOOLTIP = {
   position: {

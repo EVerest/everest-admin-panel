@@ -18,7 +18,7 @@ import {
   TerminalAlignment,
   TerminalArrangement,
 } from ".";
-import {default_terminals, generate_interface_parents_map, InterfaceParentMap} from "./utils";
+import { default_terminals, generate_interface_parents_map, InterfaceParentMap } from "./utils";
 
 import clone from "just-clone";
 
@@ -107,7 +107,9 @@ class EVConfigModel {
 
     Object.entries(this._instances).forEach(([_instance_id, module_instance]) => {
       const instance_connections = config.active_modules[module_instance.id].connections;
-      if (!instance_connections) return;
+      if (!instance_connections) {
+        return;
+      }
 
       Object.entries(instance_connections).forEach(([requirement_name, requirement_connections]) => {
         requirement_connections.forEach((provider) => {
@@ -143,7 +145,7 @@ class EVConfigModel {
       module_id ||
       get_next_available_name(
         module_type,
-        Object.values(this._instances).map((item) => item.id)
+        Object.values(this._instances).map((item) => item.id),
       );
     return this._add_module_instance(module_type, module_id);
   }
@@ -154,7 +156,7 @@ class EVConfigModel {
     }
 
     const cxns = Object.entries(this._connections).filter(
-      ([, cxn]) => cxn.providing_instance_id === id || cxn.requiring_instance_id === id
+      ([, cxn]) => cxn.providing_instance_id === id || cxn.requiring_instance_id === id,
     );
 
     cxns.forEach(([cxn_id]) => {
@@ -188,12 +190,12 @@ class EVConfigModel {
   // FIXME (aw): all these update module things need to factored out in a module instance model class
   update_module_id(module_instance_id: ModuleInstanceID, new_module_id: string): boolean {
     const module_instance = this.get_module_instance(module_instance_id);
-    if (module_instance.id == new_module_id) {
+    if (module_instance.id === new_module_id) {
       // module id stays the same, so nothing to do ¯\_(ツ)_/¯
       return true;
     }
 
-    if (Object.values(this._instances).filter((config) => config.id == new_module_id).length) {
+    if (Object.values(this._instances).filter((config) => config.id === new_module_id).length) {
       return false;
     }
 
@@ -245,8 +247,7 @@ class EVConfigModel {
   }
 
   interfaces_match(provide: string, requirement: string): boolean {
-    return provide === requirement ||
-        (this._interface_parents[provide]?.has(requirement) ?? false);
+    return provide === requirement || (this._interface_parents[provide]?.has(requirement) ?? false);
   }
 
   serialize(): EverestConfig {
@@ -292,7 +293,7 @@ class EVConfigModel {
         const implementation_config: Record<string, ConfigSet> = {};
         Object.entries(instance.implementation_config).forEach(([impl_name, config_set_with_schema]) => {
           const config_set = config_set_with_schema_to_config_set(config_set_with_schema);
-          if (Object.keys(config_set).length != 0) {
+          if (Object.keys(config_set).length !== 0) {
             implementation_config[impl_name] = config_set;
           }
         });
@@ -318,7 +319,9 @@ class EVConfigModel {
 
   _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig): number {
     if (!(type in this._module_definitions)) {
-      throw Error(`Invalid module type: ${type}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this module yet. Make sure you are running the correct admin panel or connect to a live instance.`);
+      throw Error(
+        `Invalid module type: ${type}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this module yet. Make sure you are running the correct admin panel or connect to a live instance.`,
+      );
     }
     if (Object.values(this._instances).filter((value) => value.id === id).length) {
       throw Error(`Module instance with id: ${module.id} already exists`);
@@ -344,13 +347,12 @@ class EVConfigModel {
       module_config: this._setup_config_set(manifest.config, config?.config_module),
       implementation_config: Object.keys(impl_configs).length ? impl_configs : undefined,
       connections: [],
-      view_config:
-        view_config
-          ? view_config
-          : {
-              position: null,
-              terminals: default_terminals(manifest),
-            },
+      view_config: view_config
+        ? view_config
+        : {
+            position: null,
+            terminals: default_terminals(manifest),
+          },
     };
 
     // FIXME (aw): notify about new module instance
@@ -361,12 +363,16 @@ class EVConfigModel {
   _validate_connection(conn: Connection) {
     const prov_id = conn.providing_instance_id;
     if (!(prov_id in this._instances)) {
-      throw Error(`Providing instance with instance id ${prov_id} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.`);
+      throw Error(
+        `Providing instance with instance id ${prov_id} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.`,
+      );
     }
 
     const req_id = conn.requiring_instance_id;
     if (!(req_id in this._instances)) {
-      throw Error(`Requiring instance with instance id ${req_id} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.`);
+      throw Error(
+        `Requiring instance with instance id ${req_id} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.`,
+      );
     }
 
     const prov_module = this._instances[prov_id].type;
@@ -377,13 +383,13 @@ class EVConfigModel {
 
     if (!(conn.providing_impl_name in prov_manifest.provides)) {
       throw Error(
-        `Providing module of type "${prov_module}" does not provide an implementation named "${conn.providing_impl_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`
+        `Providing module of type "${prov_module}" does not provide an implementation named "${conn.providing_impl_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`,
       );
     }
 
     if (!(conn.requirement_name in req_manifest.requires)) {
       throw Error(
-        `Requiring module of type "${req_module}" does not have an requirement called "${conn.requirement_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`
+        `Requiring module of type "${req_module}" does not have an requirement called "${conn.requirement_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`,
       );
     }
 
@@ -392,7 +398,7 @@ class EVConfigModel {
 
     if (!this.interfaces_match(prov_interface, req_interface)) {
       throw Error(
-        `The interface for the provide (${prov_interface}) and the requirement (${req_interface}) do not match`
+        `The interface for the provide (${prov_interface}) and the requirement (${req_interface}) do not match`,
       );
     }
   }

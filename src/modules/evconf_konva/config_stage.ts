@@ -2,17 +2,17 @@
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
-import {StageConfig} from "konva/lib/Stage";
-import {ConnectionID, ModuleInstanceID} from "@/modules/evbc";
-import EVConfigModel, {ConfigModelEvent} from "@/modules/evbc/config_model";
+import { StageConfig } from "konva/lib/Stage";
+import { ConnectionID, ModuleInstanceID } from "@/modules/evbc";
+import EVConfigModel, { ConfigModelEvent } from "@/modules/evbc/config_model";
 import ModuleView from "./views/module";
 import ModuleViewModel from "./view_models/module";
-import ConfigStageContext, {ConfigStageContextEvent} from "./stage_context";
+import ConfigStageContext, { ConfigStageContextEvent } from "./stage_context";
 import ConnectionManager from "./connection_manager";
-import {NORMAL_TEXT, TOOLTIP} from "./views/constants";
-import {KonvaEventObject} from "konva/lib/Node";
-import {Vector2d} from "konva/lib/types";
-import {currentTheme} from "@/plugins/vuetify";
+import { NORMAL_TEXT, TOOLTIP } from "./views/constants";
+import { KonvaEventObject } from "konva/lib/Node";
+import { Vector2d } from "konva/lib/types";
+import { currentTheme } from "@/plugins/vuetify";
 import Stage = Konva.Stage;
 import Layer = Konva.Layer;
 
@@ -37,7 +37,10 @@ export default class ConfigStage {
   private _stage: Stage;
   private _bg: Konva.Rect;
 
-  constructor(private config: StageConfig, context: ConfigStageContext) {
+  constructor(
+    private config: StageConfig,
+    context: ConfigStageContext,
+  ) {
     this._stage = new Konva.Stage(config);
 
     // bind this to the resize function. This is necessary to remove the listener later on
@@ -51,15 +54,15 @@ export default class ConfigStage {
     const tooltipLayer = new Konva.Layer({});
 
     const tooltip = new Konva.Text({
-      text: '',
+      text: "",
       fontFamily: NORMAL_TEXT.fontFamily,
       fontSize: 16,
       padding: 5,
-      fill: 'white',
+      fill: "white",
       alpha: 0.75,
       visible: false,
-      sceneFunc: function(context, shape) {
-        const {width, height} = shape.size();
+      sceneFunc: function (context, shape) {
+        const { width, height } = shape.size();
         const borderRadius = 3;
 
         context.beginPath();
@@ -78,13 +81,13 @@ export default class ConfigStage {
 
         (shape as Konva.Text)._sceneFunc(context);
       },
-      ...TOOLTIP.position
+      ...TOOLTIP.position,
     });
 
     tooltipLayer.add(tooltip);
 
     const static_layer = new Konva.Layer({
-      draggable: true
+      draggable: true,
     });
     this._reset_static_layer(static_layer);
 
@@ -106,8 +109,7 @@ export default class ConfigStage {
 
       // if a trackpad does not give a proper delta, we have to reduce the speed,
       // because of the high amount of events triggered by a trackpad
-      const delta = event.evt.deltaY === 1 || event.evt.deltaY === -1 ?
-          event.evt.deltaY * 0.2 : event.evt.deltaY;
+      const delta = event.evt.deltaY === 1 || event.evt.deltaY === -1 ? event.evt.deltaY * 0.2 : event.evt.deltaY;
       const zoomIntensity = 0.005; // Adjust this value to control the zoom speed
       const scaleBy = Math.exp(delta * zoomIntensity);
 
@@ -139,20 +141,20 @@ export default class ConfigStage {
   }
 
   private setNewPosAndScale(static_layer: Layer, newPos: { x: number; y: number }, newScale: number) {
-    static_layer.scale({x: newScale, y: newScale});
+    static_layer.scale({ x: newScale, y: newScale });
     static_layer.position(newPos);
     this._bg.width(this._stage.width() / newScale);
     this._bg.height(this._stage.height() / newScale);
-    this._bg.setAbsolutePosition({x: 0, y: 0});
+    this._bg.setAbsolutePosition({ x: 0, y: 0 });
     static_layer.batchDraw();
   }
 
   private registerListeners() {
-    window.addEventListener('resize', this.resizeStage);
+    window.addEventListener("resize", this.resizeStage);
   }
 
   private unregisterListeners() {
-    window.removeEventListener('resize', this.resizeStage);
+    window.removeEventListener("resize", this.resizeStage);
   }
 
   public destroy() {
@@ -163,7 +165,9 @@ export default class ConfigStage {
   public resizeStage(): void {
     // debugger;
     const container = document.getElementById(this.config.container as string) as HTMLDivElement;
-    if (!container) return;
+    if (!container) {
+      return;
+    }
 
     const containerWidth = container.offsetWidth;
     const containerHeight = container.offsetHeight;
@@ -173,7 +177,7 @@ export default class ConfigStage {
   }
 
   public reset_view(): void {
-    this.setNewPosAndScale(this._konva.static_layer, {x: 0, y: 0}, 1);
+    this.setNewPosAndScale(this._konva.static_layer, { x: 0, y: 0 }, 1);
   }
 
   set_model(model: EVConfigModel) {
@@ -184,7 +188,7 @@ export default class ConfigStage {
     }
 
     this._conn_man = new ConnectionManager(this.context);
-    this._reset_static_layer(this._konva.static_layer)
+    this._reset_static_layer(this._konva.static_layer);
     this._konva.static_layer.add(this._conn_man.group);
 
     this._model = model;
@@ -192,7 +196,7 @@ export default class ConfigStage {
     Object.keys(model._instances).forEach((id) => this._add_module_instance_to_stage(Number(id)));
     Object.keys(model._connections).forEach((id) => {
       try {
-        this._add_connection_to_stage(Number(id))
+        this._add_connection_to_stage(Number(id));
       } catch (e) {
         console.warn(e);
       }
@@ -227,7 +231,7 @@ export default class ConfigStage {
     if (ev.type === "ADD_CONNECTION") {
       // FIXME (aw): check return value and deal with it
       this._model.add_connection(ev.connection);
-    } else if (ev.type === "SHOW_TOOLTIP") { 
+    } else if (ev.type === "SHOW_TOOLTIP") {
       this._konva.tooltip.text(ev.text);
       this._konva.tooltip.show();
     } else if (ev.type === "HIDE_TOOLTIP") {
@@ -265,24 +269,28 @@ export default class ConfigStage {
 
     const providing_terminal_lookup_id = providing_view_model.get_terminal_lookup_id(
       cxn.providing_impl_name,
-      "provide"
+      "provide",
     );
     if (providing_terminal_lookup_id === -1) {
-      throw Error(`Couldn't add connection to stage, terminal ${cxn.providing_impl_name} not found on ${providing_view_model.type}.`);
+      throw Error(
+        `Couldn't add connection to stage, terminal ${cxn.providing_impl_name} not found on ${providing_view_model.type}.`,
+      );
     }
 
     const requiring_terminal_lookup_id = requiring_view_model.get_terminal_lookup_id(
       cxn.requirement_name,
-      "requirement"
+      "requirement",
     );
     if (requiring_terminal_lookup_id === -1) {
-      throw Error(`Couldn't add connection to stage, terminal ${cxn.requirement_name} not found on ${requiring_view_model.type}.`);
+      throw Error(
+        `Couldn't add connection to stage, terminal ${cxn.requirement_name} not found on ${requiring_view_model.type}.`,
+      );
     }
 
     this._conn_man.add_connection(
       id,
       { module_view: providing_view, terminal_lookup_id: providing_terminal_lookup_id },
-      { module_view: requiring_view, terminal_lookup_id: requiring_terminal_lookup_id }
+      { module_view: requiring_view, terminal_lookup_id: requiring_terminal_lookup_id },
     );
 
     // connection manager
@@ -302,7 +310,7 @@ export default class ConfigStage {
     this._bg = new Konva.Rect({
       width: this._stage.width(),
       height: this._stage.height(),
-      fill: 'rgba(255, 0, 0, 0)'
+      fill: "rgba(255, 0, 0, 0)",
     });
     this._bg.on("pointerclick", () => this.context.unselect());
     static_layer.add(this._bg);
@@ -311,7 +319,7 @@ export default class ConfigStage {
     });
     static_layer.on("dragend", () => {
       this._stage.container().style.cursor = "default";
-      this._bg.setAbsolutePosition({x: 0, y: 0});
+      this._bg.setAbsolutePosition({ x: 0, y: 0 });
     });
   }
 }

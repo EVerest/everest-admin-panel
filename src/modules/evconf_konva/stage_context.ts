@@ -43,7 +43,7 @@ export type HideTooltipEvent = {
   readonly type: "HIDE_TOOLTIP";
 };
 
-export type ConfigStageContextEvent = SelectionEvent | AddConnectionEvent | ShowTooltipEvent | HideTooltipEvent ;
+export type ConfigStageContextEvent = SelectionEvent | AddConnectionEvent | ShowTooltipEvent | HideTooltipEvent;
 
 type ConfigStageContextEventHandler = (ev: ConfigStageContextEvent) => void;
 

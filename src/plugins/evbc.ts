@@ -4,10 +4,9 @@
 import EVBackendClient from "@/modules/evbc/client";
 import { App } from "vue";
 
-
 export default {
   install(app: App) {
     const evbc = new EVBackendClient();
-    app.provide('evbc', evbc);
+    app.provide("evbc", evbc);
   },
 };

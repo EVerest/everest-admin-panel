@@ -3,20 +3,20 @@
 
 <template>
   <v-card v-if="module_node" :title="'Module instance information'">
-    <template v-slot:append>
+    <template #append>
       <icon-button-with-tooltip
-          icon="mdi-close"
-          title="Discard selection"
-          variant="text"
-          density="compact"
-          @click="context.unselect()"
+        icon="mdi-close"
+        title="Discard selection"
+        variant="text"
+        density="compact"
+        @click="context.unselect()"
       />
     </template>
     <v-card-text>
       <p class="font-weight-bold">Module type: {{ module_node?.instance?.type }}</p>
       <v-form @submit.prevent>
         <!-- FIXME (aw): howto do the binding here? -->
-        <v-text-field :model-value="module_node?.instance.id" label="Module ID" :rules="moduleIDRules"></v-text-field>
+        <v-text-field :model-value="module_node?.instance.id" label="Module ID" :rules="moduleIDRules" />
       </v-form>
       <v-form @submit.prevent>
         <template v-if="module_node.instance.module_config">
@@ -38,10 +38,7 @@
                 {{ id }}
               </v-expansion-panel-title>
               <v-expansion-panel-text>
-                <vjsf
-                    v-for="(item, index) in impl_config" :key="index" v-model="item.model" :schema="item.schema"
-                >
-                </vjsf>
+                <vjsf v-for="(item, index) in impl_config" :key="index" v-model="item.model" :schema="item.schema" />
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
@@ -65,18 +62,14 @@
         variant="text"
         density="compact"
         @click="context.unselect()"
-      /> 
+      />
     </v-card-title>
     <v-card-text>
       The requirement <code>{{ connection.to.name }}</code> of <code>{{ connection.to.id }}</code> is fulfilled by
       implementation <code>{{ connection.from.name }}</code> of <code>{{ connection.from.id }}</code>
     </v-card-text>
     <v-card-actions>
-      <icon-button-with-tooltip
-        icon="mdi-delete"
-        title="Delete connection"
-        @click="delete_connection(connection.id)"
-      />
+      <icon-button-with-tooltip icon="mdi-delete" title="Delete connection" @click="delete_connection(connection.id)" />
     </v-card-actions>
   </v-card>
   <v-card v-else-if="terminal">
@@ -88,7 +81,7 @@
         variant="text"
         density="compact"
         @click="context.unselect()"
-      />     
+      />
     </v-card-title>
     <v-card-text>
       Interface type: <code>{{ terminal.interface }}</code>
@@ -103,7 +96,7 @@ import IconButtonWithTooltip from "./IconButtonWithTooltip.vue";
 import { ConnectionID, ModuleInstanceID } from "@/modules/evbc";
 import ConfigStageContext from "@/modules/evconf_konva/stage_context";
 import { useEvbcStore } from "@/store/evbc";
-import {storeToRefs} from "pinia";
+import { storeToRefs } from "pinia";
 
 export default defineComponent({
   components: {

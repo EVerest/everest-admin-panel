@@ -2,29 +2,30 @@
      Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-expansion-panels class="ma-0" v-model="expansionPanelState">
+  <v-expansion-panels v-model="expansionPanelState" class="ma-0">
     <v-expansion-panel data-cy="modules-expansion-panel" value="modules" :disabled="!current_config">
       <v-expansion-panel-title> Available modules</v-expansion-panel-title>
       <v-expansion-panel-text>
-        <v-text-field v-model="search"
-                      v-if="show_search"
-                      hide-details
-                      label="Search"
-                      density="compact"
-                      variant="outlined"
-                      data-cy="modules-search"
-                      clearable
-        ></v-text-field>
+        <v-text-field
+          v-if="show_search"
+          v-model="search"
+          hide-details
+          label="Search"
+          density="compact"
+          variant="outlined"
+          data-cy="modules-search"
+          clearable
+        />
         <v-list class="ma-0">
-          <v-tooltip location="right" v-for="module in filtered_module_list" :key="module.type" open-delay="500">
-            <template v-slot:activator="{ props }">
+          <v-tooltip v-for="module in filtered_module_list" :key="module.type" location="right" open-delay="500">
+            <template #activator="{ props }">
               <v-list-item
-                  v-bind="props"
-                  :title="module.type"
-                  @click.stop="add_module_to_config(module.type)"
-                  data-cy="module-list-item"
+                v-bind="props"
+                :title="module.type"
+                data-cy="module-list-item"
+                @click.stop="add_module_to_config(module.type)"
               >
-                <template v-slot:append>
+                <template #append>
                   <v-icon>mdi-plus</v-icon>
                 </template>
               </v-list-item>
@@ -39,12 +40,17 @@
         {{ config_list.length == 0 ? "No configs available" : "Available configs" }}
       </v-expansion-panel-title>
       <v-expansion-panel-text>
-        <create-config @create-config="create_config"></create-config>
+        <create-config @create-config="create_config" />
         <v-list class="ma-0">
-          <v-tooltip location="right" v-for="config in config_list" :key="config" open-delay="500">
-            <template v-slot:activator="{ props }">
-              <v-list-item :title="config" v-bind="props" @click="load_config_if_empty(config)" data-cy="config-list-item">
-                <template v-slot:append>
+          <v-tooltip v-for="config in config_list" :key="config" location="right" open-delay="500">
+            <template #activator="{ props }">
+              <v-list-item
+                :title="config"
+                v-bind="props"
+                data-cy="config-list-item"
+                @click="load_config_if_empty(config)"
+              >
+                <template #append>
                   <v-icon>mdi-file-document-arrow-right</v-icon>
                 </template>
               </v-list-item>
@@ -54,21 +60,21 @@
         </v-list>
       </v-expansion-panel-text>
       <ev-dialog
-          :show_dialog="show_dialog"
-          title="Warning"
-          text="Do you want to discard the current config and load the new one?"
-          accept_text="Load config"
-          deny_text="Don't load config"
-          @accept="load_config(config_to_load)"
-          @deny="close_dialog()"
+        :show-dialog="show_dialog"
+        title="Warning"
+        text="Do you want to discard the current config and load the new one?"
+        accept-text="Load config"
+        deny-text="Don't load config"
+        @accept="load_config(config_to_load)"
+        @deny="close_dialog()"
       />
     </v-expansion-panel>
     <v-expansion-panel value="commands">
       <v-expansion-panel-title> Issue commands</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-list>
-          <v-list-item @click="restart_modules()" :title="'Restart modules'">
-            <template v-slot:append>
+          <v-list-item :title="'Restart modules'" @click="restart_modules()">
+            <template #append>
               <v-icon>mdi-run</v-icon>
             </template>
           </v-list-item>
@@ -79,20 +85,21 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, inject} from "vue";
-import {useEvbcStore} from "@/store/evbc";
+import { defineComponent, inject } from "vue";
+import { useEvbcStore } from "@/store/evbc";
 import EVBackendClient from "@/modules/evbc/client";
 import EvDialog from "@/components/EvDialog.vue";
 import EVConfigModel from "@/modules/evbc/config_model";
-import {Notyf} from "notyf";
+import { Notyf } from "notyf";
 import CreateConfig from "@/components/CreateConfig.vue";
-import {EverestConfig} from "@/modules/evbc";
+import { EverestConfig } from "@/modules/evbc";
 
 let evbcStore: ReturnType<typeof useEvbcStore>;
 let evbc: EVBackendClient;
 let notyf: Notyf;
 
 export default defineComponent({
+  components: { CreateConfig, EvDialog },
   data: () => {
     return {
       show_dialog: false,
@@ -106,12 +113,6 @@ export default defineComponent({
       expansionPanelState: string[];
     };
   },
-  created() {
-    evbcStore = useEvbcStore();
-    evbc = inject<EVBackendClient>('evbc') as EVBackendClient;
-    notyf = inject<Notyf>('notyf');
-  },
-  components: {CreateConfig, EvDialog},
   computed: {
     current_config(): EVConfigModel | null {
       return evbcStore.current_config;
@@ -123,33 +124,45 @@ export default defineComponent({
       const selectedTerminal = evbcStore.get_selected_terminal();
       if (selectedTerminal) {
         return Object.entries(evbc.everest_definitions.modules)
-            .filter(([, value]) => {
-              if (selectedTerminal.type === "requirement") {
-                return value.provides && Object.values(value.provides).some((e) => e.interface === selectedTerminal.interface);
-              } else {
-                return value.requires && Object.values(value.requires).some((e) => e.interface === selectedTerminal.interface);
-              }
-            })
-            .map(([key, value]) => ({
-              type: key,
-              description: value.description,
-            }));
+          .filter(([, value]) => {
+            if (selectedTerminal.type === "requirement") {
+              return (
+                value.provides && Object.values(value.provides).some((e) => e.interface === selectedTerminal.interface)
+              );
+            } else {
+              return (
+                value.requires && Object.values(value.requires).some((e) => e.interface === selectedTerminal.interface)
+              );
+            }
+          })
+          .map(([key, value]) => ({
+            type: key,
+            description: value.description,
+          }));
       } else {
         return Object.entries(evbc.everest_definitions.modules)
-            .filter(([key, value]) => {
-              return !this.search || this.search.trim() === "" ||
-                  key.toLowerCase().includes(this.search.toLowerCase()) ||
-                  value.description.toLowerCase().includes(this.search.toLowerCase());
-            })
-            .map(([key, value]) => ({
-              type: key,
-              description: value.description,
-            }));
+          .filter(([key, value]) => {
+            return (
+              !this.search ||
+              this.search.trim() === "" ||
+              key.toLowerCase().includes(this.search.toLowerCase()) ||
+              value.description.toLowerCase().includes(this.search.toLowerCase())
+            );
+          })
+          .map(([key, value]) => ({
+            type: key,
+            description: value.description,
+          }));
       }
     },
     config_list(): Array<string> {
       return Object.entries(evbcStore.available_configs).map(([key]) => key);
     },
+  },
+  created() {
+    evbcStore = useEvbcStore();
+    evbc = inject<EVBackendClient>("evbc") as EVBackendClient;
+    notyf = inject<Notyf>("notyf");
   },
   methods: {
     add_module_to_config(type: string) {
@@ -167,7 +180,9 @@ export default defineComponent({
         if (selectedTerminal.type === "requirement") {
           terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "provide");
         } else {
-          terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
+          terminalToClick = terminals.find(
+            (t) => t.interface === selectedTerminal.interface && t.type === "requirement",
+          );
         }
         evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
       }
@@ -186,10 +201,12 @@ export default defineComponent({
       this.show_dialog = true;
     },
     load_config(name: string | null) {
-      if (!name) return;
+      if (!name) {
+        return;
+      }
       this.show_dialog = false;
       const new_config = evbc.load_config(name);
-      evbcStore.setOpenedConfig(new_config)
+      evbcStore.setOpenedConfig(new_config);
       this.expansionPanelState = ["modules"];
     },
     restart_modules() {
@@ -205,7 +222,7 @@ export default defineComponent({
 </script>
 
 <style>
-  .v-expansion-panel-text__wrapper {
-    padding: 0.5rem !important;
-  }
+.v-expansion-panel-text__wrapper {
+  padding: 0.5rem !important;
+}
 </style>

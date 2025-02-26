@@ -2,13 +2,13 @@
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
-import {TerminalAlignment} from "@/modules/evbc";
-import {MONO_TEXT, NORMAL_TEXT, SIZE} from "./constants";
-import {TerminalConfig, TerminalShape} from "./shapes/terminal";
-import ModuleViewModel, {ViewModelChangeEvent} from "../view_models/module";
-import {TerminalPlacement} from "./shapes/connection";
-import {HideTooltipEvent, ShowTooltipEvent} from "../stage_context";
-import {currentTheme} from "@/plugins/vuetify";
+import { TerminalAlignment } from "@/modules/evbc";
+import { MONO_TEXT, NORMAL_TEXT, SIZE } from "./constants";
+import { TerminalConfig, TerminalShape } from "./shapes/terminal";
+import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
+import { TerminalPlacement } from "./shapes/connection";
+import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
+import { currentTheme } from "@/plugins/vuetify";
 
 // FIXME (aw): the TerminalPlacement type belongs to a shared place!
 type TerminalPlacementWithID = TerminalPlacement & { id: number };
@@ -86,15 +86,15 @@ export default class ModuleView {
         const showTooltip: ShowTooltipEvent = {
           type: "SHOW_TOOLTIP",
           text: `Interface type: ${item.terminal.interface}`,
-        }
-        this._vm.notify_stage_context(showTooltip)
+        };
+        this._vm.notify_stage_context(showTooltip);
       });
       view.on("mouseleave", () => {
         this._vm.set_cursor("default");
         const hideTooltip: HideTooltipEvent = {
           type: "HIDE_TOOLTIP",
-        }
-        this._vm.notify_stage_context(hideTooltip)
+        };
+        this._vm.notify_stage_context(hideTooltip);
       });
       view.on("pointerclick", (ev) => {
         view_model.clicked_terminal(terminal_id);
@@ -139,14 +139,16 @@ export default class ModuleView {
     const topStroke = new Konva.Line({
       cornerRadius: 4,
       points: [
-        0, strokeWidth / 2, // Start at the top-left corner of where the rectangle is positioned
-        SIZE.FRAME_WIDTH, strokeWidth / 2 // End at the top-right corner of where the rectangle is positioned
+        0,
+        strokeWidth / 2, // Start at the top-left corner of where the rectangle is positioned
+        SIZE.FRAME_WIDTH,
+        strokeWidth / 2, // End at the top-right corner of where the rectangle is positioned
       ],
       stroke: currentTheme.colors.secondary,
       strokeWidth,
       x: frame.x(),
       y: frame.y(),
-      listening: true
+      listening: true,
     });
 
     const title = new Konva.Text({
@@ -177,7 +179,7 @@ export default class ModuleView {
       listening: true,
     });
 
-    [frame, title, topStroke, typeInfo].forEach(e => {
+    [frame, title, topStroke, typeInfo].forEach((e) => {
       e.on("mouseenter", () => {
         this._vm.set_cursor("pointer");
       });
@@ -187,7 +189,7 @@ export default class ModuleView {
       e.on("pointerclick", (ev) => {
         this._vm.clicked_title();
         ev.cancelBubble = true;
-      })
+      });
     });
 
     this._title = title;
@@ -257,7 +259,7 @@ export default class ModuleView {
     // snap to grid
     this.group.position(new_group_pos);
 
-    if (cur_grid_pos.x != new_grid_pos.x || cur_grid_pos.y != new_grid_pos.y) {
+    if (cur_grid_pos.x !== new_grid_pos.x || cur_grid_pos.y !== new_grid_pos.y) {
       // got a change, send notification and update view model
       this._vm.grid_position = new_grid_pos;
 
@@ -300,7 +302,7 @@ export default class ModuleView {
     }
 
     // update orientation of hovering dragged element
-    if (hit.align != this._vm.terminal_lookup[view.terminal_id].alignment) {
+    if (hit.align !== this._vm.terminal_lookup[view.terminal_id].alignment) {
       view.set_alignment(hit.align);
     }
 
