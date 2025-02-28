@@ -44,5 +44,7 @@ app.provide(
     ],
   }),
 );
+// enable vue-devtools for debugging
+// app.config.devtools = true;
 
 app.mount("#app");

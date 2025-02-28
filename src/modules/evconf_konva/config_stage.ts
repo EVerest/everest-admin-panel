@@ -109,7 +109,17 @@ export default class ConfigStage {
 
       // if a trackpad does not give a proper delta, we have to reduce the speed,
       // because of the high amount of events triggered by a trackpad
-      const delta = event.evt.deltaY === 1 || event.evt.deltaY === -1 ? event.evt.deltaY * 0.2 : event.evt.deltaY;
+
+      let delta: number;
+      if (event.evt.deltaY === 1 || event.evt.deltaY === -1) {
+        delta = event.evt.deltaY * 0.2;
+      } else {
+        delta = event.evt.deltaY;
+      }
+
+      // invert delta as it is unnatural otherwise
+      delta = -delta;
+
       const zoomIntensity = 0.005; // Adjust this value to control the zoom speed
       const scaleBy = Math.exp(delta * zoomIntensity);
 
