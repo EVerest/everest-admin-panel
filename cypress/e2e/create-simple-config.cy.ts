@@ -6,10 +6,11 @@
 describe("create a simple config", () => {
   it("should create a config successfully", () => {
     cy.visit("/");
-    cy.contains("div", "Simulator / Mock").click();
-    cy.get(".mdi-plus").click();
-    cy.get("input").type("simple-config");
-    cy.get(".mdi-check").click();
+    cy.get("[data-cy='server-list-item']:nth-child(1)").click();
+    cy.get("[data-cy='plus-create-config-btn']").click();
+    cy.get("[data-cy='config-name-input']").type("simple-config");
+    cy.get("[data-cy='accept-create-config-btn']").click();
+    // these should be fine without data-cy as they are dynamically generated and there should be only one module named eg. EvseManager
     cy.contains("div", "EvseManager").click();
     cy.contains("div", "YetiDriver").click();
     const canvas = cy.get("#konva-stage");
@@ -36,8 +37,8 @@ describe("create a simple config", () => {
     // canvas.trigger("mouseup", 330, 465);
 
     cy.get("#show-preview-button").click();
-    cy.get(".v-slide-group__content").should("be.visible");
-    cy.get(".hljs").should(
+    cy.get("[data-cy='download-config-file-button']").should("be.visible");
+    cy.get("[data-cy='config-preview-component'").should(
       "contain.text",
       "EvseManager0:\n    module: EvseManager",
     );

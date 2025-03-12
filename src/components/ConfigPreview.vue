@@ -10,7 +10,7 @@
         <v-card-title>
           <div class="title-content">
             <div class="controls">
-              <v-btn icon="mdi-download" @click="downloadConfig()" />
+              <v-btn icon="mdi-download" data-cy="download-config-file-button" @click="downloadConfig()" />
               <v-btn icon="mdi-content-copy" @click="copyConfig()" />
             </div>
             <v-btn class="close-button" icon="mdi-close" variant="plain" density="compact" @click="closeDialog()" />
@@ -22,7 +22,7 @@
           </v-tabs>
           <v-window v-model="tab">
             <v-window-item value="yaml">
-              <highlightjs language="yaml" :code="yamlCode" />
+              <highlightjs language="yaml" :code="yamlCode" data-cy="config-preview-component" />
             </v-window-item>
           </v-window>
         </v-card-text>
