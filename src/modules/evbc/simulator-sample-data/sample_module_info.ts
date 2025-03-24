@@ -223,6 +223,16 @@ export default {
       },
     },
     requires: {
+      error_history: {
+        interface: "error_history",
+        max_connections: 1,
+        min_connections: 0,
+      },
+      evse_energy_sink: {
+        interface: "external_energy_limits",
+        max_connections: 128,
+        min_connections: 0,
+      },
       evse_manager: {
         interface: "evse_manager",
         max_connections: 128,
@@ -267,7 +277,8 @@ export default {
       },
       selection_algorithm: {
         default: "FindFirst",
-        description: "The algorithm that is used to map an incoming token to a connector",
+        description:
+          "The selection algorithm contains the logic to select one connector for an incoming token. In case the charging station has only one connector, the selection of a connector is pretty straight-forward because there is only one that is  available. The selection algorithm becomes relevant in case the Auth  module manages authorization requests  for multiple connectors. The following values can be set: PlugEvents: Selection of connector is based on EV Plug In events FindFirst: Simply selects the first available connector that has no active transaction UserInput: Placeholder, not yet implemented",
         type: "string",
       },
     },
@@ -293,6 +304,11 @@ export default {
         max_connections: 128,
         min_connections: 1,
       },
+      kvs: {
+        interface: "kvs",
+        max_connections: 1,
+        min_connections: 0,
+      },
       token_provider: {
         interface: "auth_token_provider",
         max_connections: 128,
@@ -312,6 +328,7 @@ export default {
         "Cornelius Claussen (Pionix GmbH)",
         "Fabian Hartung (chargebyte GmbH)",
         "Mohannad Oraby (chargebyte GmbH)",
+        "Sebastian Lukas (Pionix GmbH)",
       ],
       license: "https://opensource.org/licenses/Apache-2.0",
     },
@@ -351,6 +368,10 @@ export default {
         },
         description: "Main interface for the power supply",
         interface: "power_supply_DC",
+      },
+      powermeter: {
+        description: "Power meter interface for simulation",
+        interface: "powermeter",
       },
     },
   },
@@ -424,6 +445,28 @@ export default {
         interface: "power_supply_DC",
       },
     },
+  },
+  DummyBankSessionTokenProvider: {
+    description: "Dummy bank session token provider",
+    enable_external_mqtt: false,
+    metadata: {
+      authors: ["Kai-Uwe Hermann"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      main: {
+        config: {
+          token: {
+            default: "DummyBankSessionToken",
+            description: "Dummy token string to return",
+            type: "string",
+          },
+        },
+        description: "Main implementation of bank session dummy token provider always returning one configured token",
+        interface: "bank_session_token_provider",
+      },
+    },
+    requires: {},
   },
   DummyTokenProvider: {
     description:
@@ -522,7 +565,7 @@ export default {
         config: {
           sleep: {
             default: 0.5,
-            description: "Time to wait before returning the dumy validation result (in s)",
+            description: "Time to wait before returning the dummy validation result (in s)",
             maximum: 120,
             minimum: 0,
             type: "number",
@@ -590,8 +633,40 @@ export default {
       slice_watt: {
         default: 500,
         description:
-          "Watt slice for trading. Lower values will give more even distribution but increase processing time [A].",
+          "Watt slice for trading. Lower values will give more even distribution but increase processing time [W].",
         type: "number",
+      },
+      switch_3ph1ph_max_nr_of_switches_per_session: {
+        default: 0,
+        description:
+          "Limit the maximum number of switches between 1ph and 3ph per charging session. Set to 0 for no limit.",
+        type: "integer",
+      },
+      switch_3ph1ph_power_hysteresis_W: {
+        default: 200,
+        description:
+          "Power based hysteresis in Watt. If set to 200W for example, the hysteresis for PWM based charging will be 4.2kW to 4.4kW. Actual values will depend on configured nominal AC voltage, and they may be different for PWM vs ISO based charging in the future.",
+        type: "integer",
+      },
+      switch_3ph1ph_switch_limit_stickyness: {
+        default: "DontChange",
+        description:
+          "If the maximum number of switches between 1ph and 3ph is reached, select what should happen:\n  - SinglePhase: Switch to 1ph mode\n  - ThreePhase: Switch to 3ph mode\n  - DontChange: Stay in the mode it is currently in",
+        enum: ["SinglePhase", "ThreePhase", "DontChange"],
+        type: "string",
+      },
+      switch_3ph1ph_time_hysteresis_s: {
+        default: 600,
+        description:
+          "Time based hysteresis. It will only switch to 3 phases if the condition to select 3 phases is stable for the configured number of seconds. It will always switch to 1ph mode without waiting for this delay. Set to 0 to disable time based hysteresis.",
+        type: "integer",
+      },
+      switch_3ph1ph_while_charging_mode: {
+        default: "Never",
+        description:
+          "If supported by BSP in capabilities to switch between three phases and one phase and config option three_phases is set to true, this controls the algorithm:\n  - Never: Do not use 1ph/3ph switching even if supported by the BSP\n  - Oneway: Only switch from 3ph to 1ph if power is not enough, but never switch back to 3ph for a session.\n  - Both: Switch in both directions, i.e. from 3ph to 1ph and back to 3ph if available power changes",
+        enum: ["Never", "Oneway", "Both"],
+        type: "string",
       },
       update_interval: {
         default: 1,
@@ -667,6 +742,155 @@ export default {
       },
     },
   },
+  ErrorHistory: {
+    description: "This module provides a persistent error history",
+    enable_global_errors: true,
+    metadata: {
+      authors: ["Andreas Heinrich"],
+      license: "https://spdx.org/licenses/Apache-2.0.html",
+    },
+    provides: {
+      error_history: {
+        config: {
+          database_path: {
+            description: "Absolute path to the database file",
+            type: "string",
+          },
+        },
+        description: "Error history",
+        interface: "error_history",
+      },
+    },
+  },
+  EvManager: {
+    config: {
+      auto_enable: {
+        default: false,
+        description:
+          "Enable this simulation directly at start. Set to true for pure SIL configs, set to false for HIL.",
+        type: "boolean",
+      },
+      auto_exec: {
+        default: false,
+        description:
+          "Enable automatic execution of simulation commands at startup from auto_exec_commands config option.",
+        type: "boolean",
+      },
+      auto_exec_commands: {
+        default: "",
+        description:
+          "Simulation commands, e.g. sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
+        type: "string",
+      },
+      auto_exec_infinite: {
+        default: false,
+        description: "If enabled the simulation commands executes infinitely.",
+        type: "boolean",
+      },
+      connector_id: {
+        description: "Connector id of the evse manager to which this simulator is connected to",
+        type: "integer",
+      },
+      dc_discharge_max_current_limit: {
+        default: 300,
+        description: "Maximum discharge current allowed by the EV",
+        type: "integer",
+      },
+      dc_discharge_max_power_limit: {
+        default: 150000,
+        description: "Maximum discharge power allowed by the EV",
+        type: "integer",
+      },
+      dc_discharge_target_current: {
+        default: 5,
+        description: "Discharge target current requested by the EV",
+        type: "integer",
+      },
+      dc_discharge_v2g_minimal_soc: {
+        default: 20,
+        description: "Discharge minimal soc at which the evse should shutdown",
+        type: "integer",
+      },
+      dc_energy_capacity: {
+        default: 60000,
+        description: "Energy capacity of the EV",
+        type: "integer",
+      },
+      dc_max_current_limit: {
+        default: 300,
+        description: "Maximum current allowed by the EV",
+        type: "integer",
+      },
+      dc_max_power_limit: {
+        default: 150000,
+        description: "Maximum power allowed by the EV",
+        type: "integer",
+      },
+      dc_max_voltage_limit: {
+        default: 900,
+        description: "Maximum voltage allowed by the EV",
+        type: "integer",
+      },
+      dc_target_current: {
+        default: 5,
+        description: "Target current requested by the EV",
+        type: "integer",
+      },
+      dc_target_voltage: {
+        default: 200,
+        description: "Target voltage requested by the EV",
+        type: "integer",
+      },
+      max_current: {
+        default: 16,
+        description: "Ac max current in Ampere",
+        type: "number",
+      },
+      support_sae_j2847: {
+        default: false,
+        description: "Supporting SAE J2847 ISO 2 bidi version",
+        type: "boolean",
+      },
+      three_phases: {
+        default: true,
+        description: "Support three phase",
+        type: "boolean",
+      },
+    },
+    description:
+      "This module implements a Car simulator that can execute charging sessions using the car_simulator interface.",
+    enable_external_mqtt: true,
+    metadata: {
+      authors: ["Cornelius Claussen", "Sebastian Lukas", "Tobias Marzell"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      main: {
+        description: "This implements the car simulator",
+        interface: "car_simulator",
+      },
+    },
+    requires: {
+      ev: {
+        interface: "ISO15118_ev",
+        max_connections: 1,
+        min_connections: 0,
+      },
+      ev_board_support: {
+        interface: "ev_board_support",
+      },
+      powermeter: {
+        interface: "powermeter",
+        max_connections: 1,
+        min_connections: 0,
+      },
+      slac: {
+        interface: "ev_slac",
+        max_connections: 1,
+        min_connections: 0,
+      },
+    },
+  },
   EvSlac: {
     description: "Implementation of EV SLAC data link negotiation according to ISO15118-3.",
     metadata: {
@@ -682,11 +906,6 @@ export default {
             description: "Ethernet device used for PLC.",
             type: "string",
           },
-          ev_id: {
-            default: "PIONIX_SAYS_HELLO",
-            description: "EVSE id - 17 octets.",
-            type: "string",
-          },
           set_key_timeout_ms: {
             default: 500,
             description: "Timeout for CM_SET_KEY.REQ. Default works for QCA7000/QCA7005/CG5317.",
@@ -695,6 +914,81 @@ export default {
         },
         description: "SLAC interface implementation.",
         interface: "ev_slac",
+      },
+    },
+  },
+  Evse15118D20: {
+    config: {
+      device: {
+        default: "eth0",
+        description:
+          "Ethernet device used for HLC. Any local interface that has an ipv6 link-local and a MAC addr will work",
+        type: "string",
+      },
+      enable_sdp_server: {
+        default: true,
+        description: "Enable the built-in SDP server",
+        type: "boolean",
+      },
+      enable_ssl_logging: {
+        default: false,
+        description: "Verbosely log the ssl/tls connection",
+        type: "boolean",
+      },
+      enable_tls_key_logging: {
+        default: false,
+        description:
+          "Enable/Disable the export of TLS session keys (pre-master-secret) during a TLS handshake. Note that this option is for testing and simulation purpose only",
+        type: "boolean",
+      },
+      logging_path: {
+        default: ".",
+        description: "Path to logging directory (will be created if non existent)",
+        type: "string",
+      },
+      supported_dynamic_mode: {
+        default: true,
+        description: "The EVSE should support dynamic mode",
+        type: "boolean",
+      },
+      supported_mobility_needs_mode_provided_by_secc: {
+        default: false,
+        description:
+          "The EVSE should support the mobility needs mode provided by the SECC. Mobility needs mode provided by the EVCC is always provided.",
+        type: "boolean",
+      },
+      supported_scheduled_mode: {
+        default: false,
+        description: "The EVSE should support scheduled mode",
+        type: "boolean",
+      },
+      tls_negotiation_strategy: {
+        default: "ACCEPT_CLIENT_OFFER",
+        description: "Select strategy on how to negotiate connection encryption",
+        enum: ["ACCEPT_CLIENT_OFFER", "ENFORCE_TLS", "ENFORCE_NO_TLS"],
+        type: "string",
+      },
+    },
+    description: "This module is a draft implementation of iso15118-20 for the EVSE side",
+    enable_external_mqtt: false,
+    metadata: {
+      authors: ["aw@pionix.de", "Sebastian Lukas"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      charger: {
+        description: "This interface provides limited access to iso15118-20",
+        interface: "ISO15118_charger",
+      },
+      extensions: {
+        description:
+          "This interface is used to share data between ISO15118 and OCPP modules to support the requirements of the OCPP protocol",
+        interface: "iso15118_extensions",
+      },
+    },
+    requires: {
+      security: {
+        interface: "evse_security",
       },
     },
   },
@@ -732,6 +1026,23 @@ export default {
         description: "Use slac ev mac address for autocharge instead of EVCCID from HLC",
         type: "boolean",
       },
+      cable_check_enable_imd_self_test: {
+        default: true,
+        description: "Enable self testing of IMD in cable check. This is required for IEC 61851-23 (2023) compliance.",
+        type: "boolean",
+      },
+      cable_check_wait_below_60V_before_finish: {
+        default: true,
+        description:
+          "Switch off power supply and wait until output voltage drops below 60V before cable check is finished. Note: There are different versions of IEC 61851-23:2023 in the wild with the same version number but slightly different content. The IEC was correcting mistakes _after_ releasing the document initially without tagging a new version number. Some early versions require to wait for the output voltage to drop below 60V in CC.4.1.2 (last sentence). Later versions do not have that requirement. The later versions are correct and should be used according to IEC. Both settings (true and false) are compliant with the correct version of IEC 61851-23:2023. Set to true when:\n  - the power supply has no active discharge, and lowering the voltage with no load takes a very long time. In this case\n    this option usually helps to ramp the voltage down quickly by switching it off. It will be switched on again in precharge.\n    Also, some EVs switch their internal relay on at a too high voltage when the voltage is ramped down directly from cablecheck voltage to precharge voltage,\n    so true is the recommended default.\nSet to false when:\n  - the power supply has active discharge and can ramp down quickly without a switch off (by just setting a lower target voltage).\n    This may save a few seconds as it avoids unnecessary voltage down and up ramping.",
+        type: "boolean",
+      },
+      cable_check_wait_number_of_imd_measurements: {
+        default: 1,
+        description:
+          "Amount of isolation measurement samples to collect before the value can be trusted. This does not average, it will evaluate the last measurement. Some IMDs (e.g. from Bender) need to measure for 10s to really get a trustable result. In this case, at 1 Hz sample rate, specify 10 samples here.",
+        type: "integer",
+      },
       charge_mode: {
         default: "AC",
         description: "Select charging mode",
@@ -742,9 +1053,9 @@ export default {
         description: "Connector id of this evse manager",
         type: "integer",
       },
-      country_code: {
-        default: "DE",
-        description: "Country Code",
+      connector_type: {
+        default: "Unknown",
+        description: "The connector type of this evse manager (/evse_manager#/ConnectorTypeEnum)",
         type: "string",
       },
       dbg_hlc_auth_after_tstep: {
@@ -754,14 +1065,21 @@ export default {
         type: "boolean",
       },
       dc_isolation_voltage_V: {
-        default: 500,
-        description: "DC voltage used to test isolation in CableCheck. Set to 500V.",
+        default: 0,
+        description:
+          "Override DC voltage used to test isolation in CableCheck. Default is 0, which means the voltage will be determined according to IEC 61851-23 (2023) CC.4.1.2",
         type: "integer",
       },
       disable_authentication: {
         default: false,
         description:
           "Do not wait for authorization from Auth module, offer a free service. Start charging immediately after plug in. Do not use with Auth manager or OCPP, this option is only to allow charging with a standalone EvseManager that is not connected to an Auth manager. Use DummyTokenProvider/Validator when testing with Auth module and/or OCPP.",
+        type: "boolean",
+      },
+      enable_autocharge: {
+        default: false,
+        description:
+          "Enables Autocharge (i.e. Mac address for authorization). Disabled by default as PnC should be used instead.",
         type: "boolean",
       },
       ev_receipt_required: {
@@ -785,6 +1103,12 @@ export default {
           "Enable the external ready to start charging signal that delays charging ready until it has been received",
         type: "boolean",
       },
+      fail_on_powermeter_errors: {
+        default: true,
+        description:
+          "Set the EVSE Manager to an inoperative state if the powermeter requirement is configured and has reported errors",
+        type: "boolean",
+      },
       hack_allow_bpt_with_iso2: {
         default: false,
         description:
@@ -794,7 +1118,7 @@ export default {
       hack_fix_hlc_integer_current_requests: {
         default: false,
         description:
-          "Some cars request only integer ampere values during DC charging. For low power DC charging that  means that they charge a few hundred watts slower then needed. If enabled, this will charge at full power if the difference between EV requested current (integer) and HLC current limit is less then 1.0",
+          "Some cars request only integer ampere values during DC charging. For low power DC charging that means that they charge a few hundred watts slower then needed. If enabled, this will charge at full power if the difference between EV requested current (integer) and HLC current limit is less then 1.0",
         type: "boolean",
       },
       hack_pause_imd_during_precharge: {
@@ -808,6 +1132,12 @@ export default {
         description:
           "Adds an offset [A] to the present current reported to the car on HLC. Set to 0 unless you really know what you are doing.",
         type: "integer",
+      },
+      hack_simplified_mode_limit_10A: {
+        default: false,
+        description:
+          "Limit PWM to 10A if EV uses simplified charging mode. Set to false to be compliant with IEC61851-1:2019 section A.2.3. It is the responsibility of the EV to limit to 10A according to the norm. Enable this option to deviate from the norm and limit from the EVSE side.",
+        type: "boolean",
       },
       hack_skoda_enyaq: {
         default: false,
@@ -828,6 +1158,18 @@ export default {
       has_ventilation: {
         default: true,
         description: "Allow ventilated charging or not",
+        type: "boolean",
+      },
+      initial_meter_value_timeout_ms: {
+        default: 5000,
+        description:
+          "This timeout in ms defines for how long the EvseManager waits for an initial meter value from a powermeter before it becomes ready to start charging. If configured to 0, the EvseManager will not wait for an initial meter value before it becomes ready to start charging.",
+        type: "integer",
+      },
+      lock_connector_in_state_b: {
+        default: true,
+        description:
+          "Indicates if the connector lock should be locked in state B. If set to false, connector will remain unlocked in CP state B and this violates IEC61851-1:2019 D.6.5 Table D.9 line 4 and should not be used in public environments!",
         type: "boolean",
       },
       logfile_suffix: {
@@ -854,6 +1196,12 @@ export default {
       payment_enable_eim: {
         default: true,
         description: "Set to true to enable EIM (e.g. RFID card or mobile app) authorization",
+        type: "boolean",
+      },
+      raise_mrec9: {
+        default: false,
+        description:
+          "Allows to configure if an MREC9 authorization timeout error shall be raised by this module in case an authorization timeout occurs. It is recommended to disable it if OCPP1.6 is used.",
         type: "boolean",
       },
       request_zero_power_in_idle: {
@@ -893,20 +1241,34 @@ export default {
         description: "Set current measurement noise. Added to limit as an offset to avoid false triggers.",
         type: "number",
       },
+      soft_over_current_timeout_ms: {
+        default: 7000,
+        description: "Allow for over current to be present for N ms in soft over current checking during AC charging.",
+        minimum: 6000,
+        type: "integer",
+      },
       soft_over_current_tolerance_percent: {
         default: 10,
         description: "Allow for N percent over current in soft over current checking during AC charging.",
         type: "number",
       },
-      switch_to_minimum_voltage_after_cable_check: {
-        default: false,
-        description: "When cable check is completed, switch to minimal voltage of DC output. Normally disabled.",
-        type: "boolean",
+      state_F_after_fault_ms: {
+        default: 300,
+        description:
+          "Set state F after any fault that stops charging for the specified time in ms while in Charging mode (CX->F(300ms)->C1/B1). When a fault occurs in state B2, no state F is added (B2->B1 on fault). Some (especially older hybrid vehicles) may go into a permanent fault mode once they detect state F, in this case EVerest cannot recover the charging session if the fault is cleared. In this case you can set this parameter to 0, which will avoid to use state F in case of a fault and only disables PWM (C2->C1) while switching off power. This will violate IEC 61851-1:2017 however. The default is 300ms as the minimum suggested by IEC 61851-1:2017 Table A.5 (description) to be compliant. This setting is only active in BASIC charging mode.",
+        type: "integer",
       },
-      three_phases: {
-        default: true,
-        description: "Limit to three phases (true) or one phase (false)",
-        type: "boolean",
+      switch_3ph1ph_cp_state: {
+        default: "X1",
+        description:
+          "CP state to use for switching. WARNING: Some EVs may be permanently destroyed when switching from 1ph to 3ph. It is the responsibiltiy of the evse_board_support implementation to ensure the EV is capable of performing the switch. If it is not, the capabilities must set the supports_changing_phases_during_charging to false. Phase switching is only possible in basic charging mode.",
+        enum: ["X1", "F"],
+        type: "string",
+      },
+      switch_3ph1ph_delay_s: {
+        default: 10,
+        description: "Wait for n seconds when switching between 3ph/1ph mode.",
+        type: "integer",
       },
       uk_smartcharging_random_delay_at_any_change: {
         default: true,
@@ -933,7 +1295,7 @@ export default {
     enable_telemetry: true,
     metadata: {
       authors: ["Cornelius Claussen", "Anton Woellert"],
-      license: "https://spdx.org/licenses/Apache-2.0.html",
+      license: "https://opensource.org/licenses/Apache-2.0",
     },
     provides: {
       energy_grid: {
@@ -977,6 +1339,11 @@ export default {
         max_connections: 1,
         min_connections: 0,
       },
+      over_voltage_monitor: {
+        interface: "over_voltage_monitor",
+        max_connections: 1,
+        min_connections: 0,
+      },
       powermeter_car_side: {
         interface: "powermeter",
         max_connections: 1,
@@ -997,12 +1364,17 @@ export default {
         max_connections: 1,
         min_connections: 0,
       },
+      store: {
+        interface: "kvs",
+        max_connections: 1,
+        min_connections: 0,
+      },
     },
   },
   EvseSecurity: {
     config: {
       csms_ca_bundle: {
-        default: "ca/v2g/V2G_ROOT_CA.pem",
+        default: "ca/csms/CSMS_ROOT_CA.pem",
         description:
           "Path to csms_ca_bundle file. If relative will be prefixed with everest prefix + etc/everest/certs. Otherwise absolute file path is used.",
         type: "string",
@@ -1112,11 +1484,6 @@ export default {
               "Perform a chip reset after setting NMK using the RS_DEV.REQ Vendor MME Extension (Only works on Qualcomm chips)",
             type: "boolean",
           },
-          evse_id: {
-            default: "PIONIX_SAYS_HELLO",
-            description: "EVSE id - 17 octets.",
-            type: "string",
-          },
           link_status_detection: {
             default: false,
             description:
@@ -1132,11 +1499,6 @@ export default {
             default: 10000,
             description: "Timeout for Link to come up after matching request",
             type: "integer",
-          },
-          nid: {
-            default: "pionix!",
-            description: "NID (Network Identification Key) - 7 octets.",
-            type: "string",
           },
           number_of_sounds: {
             default: 10,
@@ -1156,7 +1518,7 @@ export default {
             type: "boolean",
           },
           set_key_timeout_ms: {
-            default: 500,
+            default: 1000,
             description: "Timeout for CM_SET_KEY.REQ. Default works for QCA7000/QCA7005/CG5317.",
             type: "integer",
           },
@@ -1191,8 +1553,13 @@ export default {
           "Ethernet device used for HLC. Any local interface that has an ipv6 link-local and a MAC addr will work",
         type: "string",
       },
+      enable_sdp_server: {
+        default: true,
+        description: "Enable the built-in SDP server",
+        type: "boolean",
+      },
       supported_DIN70121: {
-        default: false,
+        default: true,
         description: "The EVSE supports the DIN SPEC",
         type: "boolean",
       },
@@ -1238,13 +1605,18 @@ export default {
     description: "This module includes a DIN70121 and ISO15118-2 implementation provided by chargebyte GmbH",
     enable_external_mqtt: true,
     metadata: {
-      authors: ["Fabian Hartung", "Mohannad Oraby"],
+      authors: ["Fabian Hartung", "Mohannad Oraby", "Sebastian Lukas"],
       license: "https://opensource.org/licenses/Apache-2.0",
     },
     provides: {
       charger: {
         description: "This module implements the ISO15118-2 implementation of an AC or DC charger",
         interface: "ISO15118_charger",
+      },
+      extensions: {
+        description:
+          "This interface is used to share data between ISO15118 and OCPP modules to support the requirements of the OCPP protocol",
+        interface: "iso15118_extensions",
       },
     },
     requires: {
@@ -1294,6 +1666,51 @@ export default {
       },
     },
   },
+  ExampleErrorGlobalSubscriber: {
+    description: "Simple example module written in C++ to demonstrate error framework on global subscriber side",
+    enable_global_errors: true,
+    metadata: {
+      authors: ["Andreas Heinrich"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      example_global_subscriber: {
+        description: "This implements the example interface",
+        interface: "example_error_framework",
+      },
+    },
+  },
+  ExampleErrorRaiser: {
+    description: "Simple example module written in C++ to demonstrate error handling on raiser side",
+    metadata: {
+      authors: ["Andreas Heinrich"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      example_raiser: {
+        description: "This implements an example interface",
+        interface: "example_error_framework",
+      },
+    },
+  },
+  ExampleErrorSubscriber: {
+    description: "Simple example module written in C++ to demonstrate error framework on subscriber side",
+    metadata: {
+      authors: ["Andreas Heinrich"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      example_subscriber: {
+        description: "This implements the example interface",
+        interface: "example_error_framework",
+      },
+    },
+    requires: {
+      example_raiser: {
+        interface: "example_error_framework",
+      },
+    },
+  },
   ExampleUser: {
     description: "Simple example module written in C++ and using the other example module",
     metadata: {
@@ -1336,8 +1753,8 @@ export default {
           powermeter_device_id: {
             default: 1,
             description: "The powermeter's address on the serial bus",
-            maximum: 255,
-            minimum: 0,
+            maximum: 247,
+            minimum: 1,
             type: "integer",
           },
         },
@@ -1370,13 +1787,88 @@ export default {
             description: "Resistance to return for the simulated measurements in Ohm",
             type: "number",
           },
+          selftest_success: {
+            default: true,
+            description: "Set to true for successful self testing, false for fault",
+            type: "boolean",
+          },
         },
         description: "Main interface for the IMD",
         interface: "isolation_monitor",
       },
     },
   },
-  JsCarSimulator: {
+  IsoMux: {
+    config: {
+      device: {
+        default: "eth0",
+        description:
+          "Ethernet device used for HLC. Any local interface that has an ipv6 link-local and a MAC addr will work",
+        type: "string",
+      },
+      proxy_port_iso2: {
+        default: 61341,
+        description: "TCP port of the local ISO2 instance",
+        type: "integer",
+      },
+      proxy_port_iso20: {
+        default: 50000,
+        description: "TCP port of the local ISO20 instance",
+        type: "integer",
+      },
+      tls_key_logging: {
+        default: false,
+        description:
+          "Enable/Disable the export of TLS session keys (pre-master-secret) during a TLS handshake. This log file can be used to decrypt TLS sessions. Note that this option is for testing and simulation purpose only",
+        type: "boolean",
+      },
+      tls_security: {
+        default: "prohibit",
+        description: "Controls how to handle encrypted communication",
+        enum: ["prohibit", "allow", "force"],
+        type: "string",
+      },
+      tls_timeout: {
+        default: 15000,
+        description: "Set the TLS timeout in ms when establishing a tls connection ",
+        type: "integer",
+      },
+    },
+    description: "This module is a multiplexer to support switching over between different ISO module implementations",
+    metadata: {
+      authors: ["Cornelius Claussen"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      charger: {
+        description: "This module implements the ISO15118-2 implementation of an AC or DC charger",
+        interface: "ISO15118_charger",
+      },
+      extensions: {
+        description:
+          "This interface is used to share data between ISO15118 and OCPP modules to support the requirements of the OCPP protocol",
+        interface: "iso15118_extensions",
+      },
+    },
+    requires: {
+      ext2: {
+        interface: "iso15118_extensions",
+      },
+      ext20: {
+        interface: "iso15118_extensions",
+      },
+      iso2: {
+        interface: "ISO15118_charger",
+      },
+      iso20: {
+        interface: "ISO15118_charger",
+      },
+      security: {
+        interface: "evse_security",
+      },
+    },
+  },
+  JsEvManager: {
     config: {
       auto_enable: {
         default: false,
@@ -1395,6 +1887,11 @@ export default {
         description:
           "Simulation commands, e.g. sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
         type: "string",
+      },
+      auto_exec_infinite: {
+        default: false,
+        description: "If enabled the simulation commands executes infinitely.",
+        type: "boolean",
       },
       connector_id: {
         description: "Connector id of the evse manager to which this simulator is connected to",
@@ -1450,9 +1947,19 @@ export default {
         description: "Target voltage requested by the EV",
         type: "integer",
       },
+      max_current: {
+        default: 16,
+        description: "AC max current in Ampere",
+        type: "number",
+      },
       support_sae_j2847: {
         default: false,
         description: "Supporting SAE J2847 ISO 2 bidi version",
+        type: "boolean",
+      },
+      three_phases: {
+        default: true,
+        description: "Support three phase",
         type: "boolean",
       },
     },
@@ -1460,7 +1967,7 @@ export default {
       "This module implements a Car simulator that can execute charging sessions using the yeti-simulation-control interface",
     enable_external_mqtt: true,
     metadata: {
-      authors: ["Cornelius Claussen"],
+      authors: ["Cornelius Claussen", "Sebastian Lukas"],
       license: "https://opensource.org/licenses/Apache-2.0",
     },
     provides: {
@@ -1475,94 +1982,49 @@ export default {
         max_connections: 1,
         min_connections: 0,
       },
-      simulation_control: {
-        interface: "yeti_simulation_control",
+      ev_board_support: {
+        interface: "ev_board_support",
+      },
+      powermeter: {
+        interface: "powermeter",
+        max_connections: 1,
+        min_connections: 0,
       },
       slac: {
-        interface: "slac",
+        interface: "ev_slac",
         max_connections: 1,
         min_connections: 0,
       },
     },
   },
-  JsDCSupplySimulator: {
-    description: "SIL Implementation of a programmable power supply for DC charging",
-    enable_external_mqtt: true,
-    metadata: {
-      authors: ["Cornelius Claussen (Pionix GmbH)"],
-      license: "https://opensource.org/licenses/Apache-2.0",
-    },
-    provides: {
-      main: {
-        config: {
-          bidirectional: {
-            default: true,
-            description: "Set to true for bidirectional supply",
-            type: "boolean",
-          },
-          max_current: {
-            default: 200,
-            description: "Max supported current",
-            type: "number",
-          },
-          max_power: {
-            default: 150000,
-            description: "Max supported power in watt",
-            type: "number",
-          },
-          max_voltage: {
-            default: 900,
-            description: "Max supported voltage",
-            type: "number",
-          },
-          min_current: {
-            default: 1,
-            description: "Min supported current",
-            type: "number",
-          },
-          min_voltage: {
-            default: 200,
-            description: "Min supported voltage",
-            type: "number",
-          },
-        },
-        description: "Main interface for the power supply",
-        interface: "power_supply_DC",
-      },
-      powermeter: {
-        description: "Power meter interface for simulation",
-        interface: "powermeter",
-      },
-    },
-  },
-  JsExample: {
-    description: "Simple example module written in JS",
+  JsExampleErrorRaiser: {
+    description: "Simple example module written in Javascript to demonstrate error handling on raiser side",
     metadata: {
       authors: ["Andreas Heinrich"],
       license: "https://opensource.org/licenses/Apache-2.0",
     },
     provides: {
-      example: {
-        description: "This implements an example_user interface that uses multiple framework features",
-        interface: "example_user",
+      example_raiser: {
+        description: "This implements an example interface",
+        interface: "example_error_framework",
       },
     },
   },
-  JsExampleUser: {
-    description: "Simple example module written in JS and using the other example module",
+  JsExampleErrorSubscriber: {
+    description: "Simple example module written in Javascript to demonstrate error framework on subscriber side",
     metadata: {
       authors: ["Andreas Heinrich"],
       license: "https://opensource.org/licenses/Apache-2.0",
     },
     provides: {
-      example_user: {
-        description: "This implements the example_user interface",
-        interface: "example_user",
+      example_subscriber: {
+        description: "This implements the example interface",
+        interface: "example_error_framework",
       },
     },
     requires: {
-      example: {
-        interface: "example_user",
+      example_raiser: {
+        interface: "example_error_framework",
       },
     },
   },
@@ -1583,7 +2045,7 @@ export default {
           },
         },
         description: "SLAC interface implementation for EV side",
-        interface: "slac",
+        interface: "ev_slac",
       },
       evse: {
         config: {
@@ -1652,12 +2114,16 @@ export default {
     },
     provides: {
       board_support: {
-        description: "provides the board support Interface to low level control control pilot, relais, rcd, motor lock",
+        description: "provides the EVSE board support Interface to low level control pilot, relais, rcd, motor lock",
         interface: "evse_board_support",
       },
       connector_lock: {
         description: "Interface for the simulated Connector lock",
         interface: "connector_lock",
+      },
+      ev_board_support: {
+        description: "provides the EV board support Interface to low level control pilot, relais, rcd",
+        interface: "ev_board_support",
       },
       powermeter: {
         description: "provides the Yeti Internal Power Meter",
@@ -1667,16 +2133,45 @@ export default {
         description: "Interface for the simulated AC RCD",
         interface: "ac_rcd",
       },
-      yeti_simulation_control: {
-        description: "Interface for the Yeti HIL simulator",
-        interface: "yeti_simulation_control",
-      },
     },
   },
   LemDCBM400600: {
     config: {
+      SC: {
+        default: 0,
+        description: "SC (OCMF/transaction fields)",
+        type: "integer",
+      },
+      UD: {
+        default: "",
+        description: "UD (OCMF/transaction fields)",
+        type: "string",
+      },
+      UV: {
+        default: "",
+        description: "User SW Version (OCMF/transaction fields)",
+        type: "string",
+      },
+      cable_id: {
+        default: 0,
+        description:
+          "The cable loss compensation level to use. This allows compensating the measurements of the DCBM with a resistance.",
+        type: "integer",
+      },
       ip_address: {
         description: "IP Address of the power meter API.",
+        type: "string",
+      },
+      meter_dst: {
+        default:
+          '{"activated": false, "offset": 60, "start": {"order": "last", "day": "sunday", "month": "march", "hour": "T01:00Z"}, "end": {"order": "last", "day": "sunday", "month": "october", "hour": "T01:00Z" }}',
+        description: "The Daylight Saving Time (DST) settings (ignored if NTP is set)",
+        type: "string",
+      },
+      meter_timezone: {
+        default: "+00:00",
+        description:
+          "The timezone offset (ignored if NTP servers are set) - it can go from -11 to +14 for hours and 00, 15, 30, 45 for minutes",
         type: "string",
       },
       meter_tls_certificate: {
@@ -1736,6 +2231,11 @@ export default {
           "For the controller resilience, the delay in milliseconds before a retry attempt  at a transaction start or stop request.",
         type: "integer",
       },
+      tariff_id: {
+        default: 0,
+        description: "Used for a unique transaction tariff designation",
+        type: "integer",
+      },
     },
     description: "Module implementing the LEM DCBM 400/600 power meter driver adapter via HTTP.",
     metadata: {
@@ -1753,7 +2253,7 @@ export default {
     config: {
       baud_rate: {
         default: 115200,
-        description: "Serial baud rate to use when communicating with Yeti hardware",
+        description: "Serial baud rate to use when communicating with uMWC hardware",
         maximum: 230400,
         minimum: 9600,
         type: "integer",
@@ -1766,15 +2266,18 @@ export default {
         type: "integer",
       },
       reset_gpio: {
-        default: -1,
-        description: "Reset GPIO number to use to HW reset uMWC. If set <0 it is disabled.",
-        maximum: 1000,
-        minimum: -1,
+        default: 27,
+        description: "GPIO line to use to reset uMWC",
         type: "integer",
+      },
+      reset_gpio_chip: {
+        default: "gpiochip0",
+        description: "Reset GPIO chip to use to HW reset uMWC. If set to empty string, it is disabled.",
+        type: "string",
       },
       serial_port: {
         default: "/dev/ttyUSB0",
-        description: "Serial port the Yeti hardware is connected to",
+        description: "Serial port the uMWC hardware is connected to",
         type: "string",
       },
     },
@@ -1794,7 +2297,7 @@ export default {
         interface: "power_supply_DC",
       },
       powermeter: {
-        description: "provides the Yeti Internal Power Meter",
+        description: "Interface for the powermeter",
         interface: "powermeter",
       },
     },
@@ -1803,27 +2306,31 @@ export default {
     config: {
       ChargePointConfigPath: {
         default: "ocpp-config.json",
-        description: "Path to the configuration file",
+        description:
+          "Path to the ocpp configuration file. Libocpp defines a JSON schema for this file. Please refer to the documentation of libocpp for more information about the configuration options.  ",
         type: "string",
       },
       DatabasePath: {
         default: "/tmp/ocpp_1_6_charge_point",
-        description: "Path to the persistent SQLite database folder",
+        description:
+          "Path to the persistent SQLite database directory. Please refer to the libocpp documentation for more information about the database and its structure.",
         type: "string",
       },
       EnableExternalWebsocketControl: {
         default: false,
-        description: "If true websocket can be disconnected and connected externally",
+        description:
+          "If true websocket can be disconnected and connected externally. This parameter is for debug and testing purposes.",
         type: "boolean",
       },
       MessageLogPath: {
         default: "/tmp/everest_ocpp_logs",
-        description: "Path to folder where logs of all OCPP messages get written to",
+        description: "Path to directory where logs of all OCPP messages are written to",
         type: "string",
       },
       MessageQueueResumeDelay: {
         default: 0,
-        description: "Time (seconds) to delay resuming the message queue after reconnecting",
+        description:
+          "Time (seconds) to delay resuming the message queue after reconnecting. This parameter was introduced because some OCTT test cases require that the first message after a reconnect is sent by the CSMS.",
         type: "integer",
       },
       PublishChargingScheduleDurationS: {
@@ -1838,14 +2345,22 @@ export default {
           "Interval in seconds in which charging schedules received from OCPP are be published over MQTT and signalled to connected modules. If the value is set to 0, charging schedules are only published when changed by CSMS",
         type: "integer",
       },
+      RequestCompositeScheduleUnit: {
+        default: "A",
+        description:
+          "Unit in which composite schedules are requested and shared within EVerest. It is recommended to use Amps for AC and Watts for DC charging stations. Allowed values:\n  - 'A' for Amps\n  - 'W' for Watts ",
+        type: "string",
+      },
       UserConfigPath: {
         default: "user_config.json",
-        description: "Path to the file of the OCPP user config",
+        description:
+          "Path to the file of the OCPP user config. The user config is used as an overlay for the original config defined by the ChargePointConfigPath. Any changes to configuration keys turned out internally or by the CSMS will be  written to the user config file.",
         type: "string",
       },
     },
     description: "A OCPP charge point / charging station module, currently targeting OCPP-J 1.6",
     enable_external_mqtt: true,
+    enable_global_errors: true,
     metadata: {
       authors: ["Kai-Uwe Hermann", "Piet Gömpel"],
       license: "https://opensource.org/licenses/Apache-2.0",
@@ -1871,6 +2386,10 @@ export default {
         description: "Generic OCPP interface.",
         interface: "ocpp",
       },
+      session_cost: {
+        description: "Send session cost",
+        interface: "session_cost",
+      },
     },
     requires: {
       auth: {
@@ -1878,20 +2397,30 @@ export default {
         max_connections: 1,
         min_connections: 1,
       },
-      connector_zero_sink: {
-        interface: "external_energy_limits",
-        max_connections: 1,
-        min_connections: 0,
-      },
       data_transfer: {
         interface: "ocpp_data_transfer",
         max_connections: 1,
+        min_connections: 0,
+      },
+      display_message: {
+        interface: "display_message",
+        max_connections: 1,
+        min_connections: 0,
+      },
+      evse_energy_sink: {
+        interface: "external_energy_limits",
+        max_connections: 129,
         min_connections: 0,
       },
       evse_manager: {
         interface: "evse_manager",
         max_connections: 128,
         min_connections: 1,
+      },
+      extensions_15118: {
+        interface: "iso15118_extensions",
+        max_connections: 128,
+        min_connections: 0,
       },
       reservation: {
         interface: "reservation",
@@ -1912,9 +2441,27 @@ export default {
   },
   OCPP201: {
     config: {
+      CompositeScheduleIntervalS: {
+        default: 30,
+        description:
+          "Interval in seconds in which composite schedules are received from libocpp are be published over MQTT and signalled to connected modules. If the value is set to 0, composite schedules are only published when changed by CSMS",
+        type: "integer",
+      },
       CoreDatabasePath: {
         default: "/tmp/ocpp201",
-        description: "Path to the persistent SQLite database folder",
+        description:
+          "Path to the persistent SQLite database directory. Please refer to the libocpp documentation for more information about the database and its structure.",
+        type: "string",
+      },
+      DeviceModelConfigPath: {
+        default: "component_config",
+        description:
+          "Path to the device model component config directory. Libocpp defines a certain schema for these files. Please refer to the documentation of libocpp for more information about the configuration options.",
+        type: "string",
+      },
+      DeviceModelDatabaseMigrationPath: {
+        default: "device_model_migrations",
+        description: "Path to the migration files for the device model",
         type: "string",
       },
       DeviceModelDatabasePath: {
@@ -1924,22 +2471,37 @@ export default {
       },
       EnableExternalWebsocketControl: {
         default: false,
-        description: "If true websocket can be disconnected and connected externally",
+        description:
+          "If true websocket can be disconnected and connected externally. This parameter is for debug and testing purposes.",
         type: "boolean",
       },
       MessageLogPath: {
         default: "/tmp/everest_ocpp_logs",
-        description: "Path to folder where logs of all OCPP messages get written to",
+        description: "Path to directory where logs of all OCPP messages are written to",
         type: "string",
       },
       MessageQueueResumeDelay: {
         default: 0,
-        description: "Time (seconds) to delay resuming the message queue after reconnecting",
+        description:
+          "Time (seconds) to delay resuming the message queue after reconnecting. This parameter was introduced because some OCTT test cases require that the first message after a reconnect is sent by the CSMS.",
         type: "integer",
+      },
+      RequestCompositeScheduleDurationS: {
+        default: 600,
+        description:
+          "Time (seconds) for which composite schedules are requested.  Schedules are requested from now until now + RequestCompositeScheduleDurationS",
+        type: "integer",
+      },
+      RequestCompositeScheduleUnit: {
+        default: "A",
+        description:
+          "Unit in which composite schedules are requested and shared within EVerest. It is recommended to use Amps for AC and Watts for DC charging stations. Allowed values:\n  - 'A' for Amps\n  . 'W' for Watts ",
+        type: "string",
       },
     },
     description: "A OCPP charge point / charging station module for OCPP 2.0.1",
     enable_external_mqtt: true,
+    enable_global_errors: true,
     metadata: {
       authors: ["Piet Gömpel", "Kai-Uwe Hermann"],
       license: "https://opensource.org/licenses/Apache-2.0",
@@ -1957,13 +2519,13 @@ export default {
         description: "OCPP data transfer towards the CSMS",
         interface: "ocpp_data_transfer",
       },
-      main: {
-        description: "This is a OCPP 2.0.1 charge point",
-        interface: "empty",
-      },
       ocpp_generic: {
         description: "Generic OCPP interface.",
         interface: "ocpp",
+      },
+      session_cost: {
+        description: "Send session cost",
+        interface: "session_cost",
       },
     },
     requires: {
@@ -1977,10 +2539,30 @@ export default {
         max_connections: 1,
         min_connections: 0,
       },
+      display_message: {
+        interface: "display_message",
+        max_connections: 1,
+        min_connections: 0,
+      },
+      evse_energy_sink: {
+        interface: "external_energy_limits",
+        max_connections: 129,
+        min_connections: 0,
+      },
       evse_manager: {
         interface: "evse_manager",
         max_connections: 128,
         min_connections: 1,
+      },
+      extensions_15118: {
+        interface: "iso15118_extensions",
+        max_connections: 128,
+        min_connections: 0,
+      },
+      reservation: {
+        interface: "reservation",
+        max_connections: 1,
+        min_connections: 0,
       },
       security: {
         interface: "evse_security",
@@ -2027,6 +2609,31 @@ export default {
       },
     },
   },
+  OVMSimulator: {
+    description: "SIL Implementation of an Over voltage monitor for DC charging",
+    metadata: {
+      authors: ["Cornelius Claussen (Pionix GmbH)"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      main: {
+        config: {
+          simulate_error: {
+            default: false,
+            description: "Set to true to throw an over voltage error during charging",
+            type: "boolean",
+          },
+          simulate_error_delay: {
+            default: 5,
+            description: "Simulate over voltage error N seconds after start of charging",
+            type: "integer",
+          },
+        },
+        description: "Main interface for the OVM",
+        interface: "over_voltage_monitor",
+      },
+    },
+  },
   PN532TokenProvider: {
     description: "PN532 RFID/NFC token provider returning the token as soon as the tag can be read by the reader",
     metadata: {
@@ -2060,15 +2667,40 @@ export default {
             description: "Serial port the PN532 hardware is connected to",
             type: "string",
           },
-          timeout: {
-            default: 30,
-            description: "Time a new token is valid (in s)",
-            maximum: 120,
-            minimum: 0,
-            type: "number",
-          },
         },
         description: "Implementation of PN532 RFID/NFC token provider",
+        interface: "auth_token_provider",
+      },
+    },
+  },
+  PN7160TokenProvider: {
+    description: "PN7160 RFID/NFC token provider returning the token as soon as the tag can be read by the reader",
+    metadata: {
+      authors: ["Cornelius Claussen", "Kai-Uwe Hermann", "Thilo Molitor", "Anton Wöllert", "Christoph Burandt"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      main: {
+        config: {
+          debug: {
+            default: false,
+            description: "Show debug output on command line.",
+            type: "boolean",
+          },
+          disable_nfc_rfid: {
+            default: false,
+            description: "Disable NFC RFID reader",
+            type: "boolean",
+          },
+          token_debounce_interval_ms: {
+            default: 3000,
+            description: "Minimal wait time in ms until next token will be published (debounce interval).",
+            maximum: 10000,
+            minimum: 1000,
+            type: "integer",
+          },
+        },
+        description: "Implementation of PN7160 RFID/NFC token provider",
         interface: "auth_token_provider",
       },
     },
@@ -2124,74 +2756,266 @@ export default {
       },
     },
   },
-  PowermeterBSM: {
+  PhyVersoBSP: {
     config: {
-      baud: {
-        default: 19200,
-        description: "Baud rate on RS-485, allowed value range: 2400 115200 (19200 is default)",
-        maximum: 115200,
-        minimum: 2400,
+      baud_rate: {
+        default: 115200,
+        description: "Serial baud rate to use when communicating with the hardware",
+        maximum: 230400,
+        minimum: 9600,
         type: "integer",
       },
-      meter_id: {
-        default: "no_meter_id",
-        description: "Arbitrary string id, used as power_meter_id in interface powermeter.",
-        type: "string",
-      },
-      power_unit_id: {
-        description: "Modbus unit_id, mostly 1",
-        maximum: 255,
-        minimum: 1,
-        type: "integer",
-      },
-      serial_device: {
-        default: "/dev/ttyUSB0",
-        description: "Serial port the BSM hardware is connected to",
-        type: "string",
-      },
-      sunspec_base_address: {
-        default: 40000,
-        description: "sunspec base address of device ( 0, 40000 or 50000 )",
-        type: "integer",
-      },
-      update_interval: {
-        description: "Update interval in seconds.",
-        minimum: 1,
-        type: "integer",
-      },
-      use_serial_comm_hub: {
-        default: true,
-        description: "When enabled, use a serial serial_communication_hub, otherwise use the configured serial device.",
+      conn1_dc: {
+        default: false,
+        description: "Set to true if it is for DC, false if it is AC",
         type: "boolean",
       },
-      watchdog_wakeup_interval: {
-        default: 60,
-        description: "wakup interval of watchdog in seconds (default 60 seconds).",
+      conn1_gpio_stop_button_bank: {
+        default: "gpiochip1",
+        description: "GPIO peripheral bank for connector 1 stop button",
+        type: "string",
+      },
+      conn1_gpio_stop_button_enabled: {
+        default: false,
+        description:
+          "Set to true to enable external charging stop button for connector 1 on a GPIO connected to the SOM",
+        type: "boolean",
+      },
+      conn1_gpio_stop_button_invert: {
+        default: false,
+        description: "Set to true to invert pin logic",
+        type: "boolean",
+      },
+      conn1_gpio_stop_button_pin: {
+        default: 36,
+        description: "GPIO peripheral pin for connector 1 stop button",
+        type: "integer",
+      },
+      conn1_has_socket: {
+        default: false,
+        description: "Set to true if it has a socket, false if it has a permanently attached cable",
+        type: "boolean",
+      },
+      conn1_max_current_A_export: {
+        default: 0,
+        description: "Maximum export current in amps",
+        maximum: 63,
+        minimum: 0,
+        type: "integer",
+      },
+      conn1_max_current_A_import: {
+        default: 16,
+        description: "Maximum import current in amps",
+        minimum: 0,
+        type: "integer",
+      },
+      conn1_max_phase_count_export: {
+        default: 3,
+        description: "Maximum phase count for export",
+        maximum: 3,
         minimum: 1,
         type: "integer",
       },
+      conn1_max_phase_count_import: {
+        default: 3,
+        description: "Maximum phase count for import",
+        maximum: 3,
+        minimum: 1,
+        type: "integer",
+      },
+      conn1_min_current_A_export: {
+        default: 0,
+        description: "Minimum export current in amps",
+        maximum: 63,
+        minimum: 0,
+        type: "integer",
+      },
+      conn1_min_current_A_import: {
+        default: 6,
+        description: "Minimum import current in amps",
+        minimum: 0,
+        type: "integer",
+      },
+      conn1_min_phase_count_export: {
+        default: 3,
+        description: "Minimum phase count for export",
+        maximum: 3,
+        minimum: 1,
+        type: "integer",
+      },
+      conn1_min_phase_count_import: {
+        default: 3,
+        description: "Minimum phase count for import",
+        maximum: 3,
+        minimum: 1,
+        type: "integer",
+      },
+      conn1_motor_lock_type: {
+        default: 2,
+        description:
+          "Connector 1 motor lock type; 1 == Hella Style time-based lock, 2 == Valeo potentiometer feedback based",
+        type: "integer",
+      },
+      conn2_dc: {
+        default: false,
+        description: "Set to true if it is for DC, false if it is AC",
+        type: "boolean",
+      },
+      conn2_gpio_stop_button_bank: {
+        default: "gpiochip1",
+        description: "GPIO peripheral bank for connector 2 stop button",
+        type: "string",
+      },
+      conn2_gpio_stop_button_enabled: {
+        default: false,
+        description:
+          "Set to true to enable external charging stop button for connector 2 on a GPIO connected to the SOM",
+        type: "boolean",
+      },
+      conn2_gpio_stop_button_invert: {
+        default: false,
+        description: "Set to true to invert pin logic",
+        type: "boolean",
+      },
+      conn2_gpio_stop_button_pin: {
+        default: 37,
+        description: "GPIO peripheral pin for connector 2 stop button",
+        type: "integer",
+      },
+      conn2_has_socket: {
+        default: false,
+        description: "Set to true if it has a socket, false if it has a permanently attached cable",
+        type: "boolean",
+      },
+      conn2_max_current_A_export: {
+        default: 0,
+        description: "Maximum export current in amps",
+        maximum: 63,
+        minimum: 0,
+        type: "integer",
+      },
+      conn2_max_current_A_import: {
+        default: 16,
+        description: "Maximum import current in amps",
+        minimum: 0,
+        type: "integer",
+      },
+      conn2_max_phase_count_export: {
+        default: 3,
+        description: "Maximum phase count for export",
+        maximum: 3,
+        minimum: 1,
+        type: "integer",
+      },
+      conn2_max_phase_count_import: {
+        default: 3,
+        description: "Maximum phase count for import",
+        maximum: 3,
+        minimum: 1,
+        type: "integer",
+      },
+      conn2_min_current_A_export: {
+        default: 0,
+        description: "Minimum export current in amps",
+        maximum: 63,
+        minimum: 0,
+        type: "integer",
+      },
+      conn2_min_current_A_import: {
+        default: 6,
+        description: "Minimum import current in amps",
+        minimum: 0,
+        type: "integer",
+      },
+      conn2_min_phase_count_export: {
+        default: 3,
+        description: "Minimum phase count for export",
+        maximum: 3,
+        minimum: 1,
+        type: "integer",
+      },
+      conn2_min_phase_count_import: {
+        default: 3,
+        description: "Minimum phase count for import",
+        maximum: 3,
+        minimum: 1,
+        type: "integer",
+      },
+      conn2_motor_lock_type: {
+        default: 2,
+        description:
+          "Connector 2 motor lock type; 1 == Hella Style time-based lock, 2 == Valeo potentiometer feedback based",
+        type: "integer",
+      },
+      reset_gpio: {
+        default: -1,
+        description:
+          "If set <0 it is disabled. If > 0, configured reset_gpio_bank and reset_gpio_pin configuration is used for hard reset of MCU",
+        maximum: 1000,
+        minimum: -1,
+        type: "integer",
+      },
+      reset_gpio_bank: {
+        default: 1,
+        description: "GPIO peripheral bank the nRST pin of the MCU is mapped to",
+        type: "integer",
+      },
+      reset_gpio_pin: {
+        default: 23,
+        description: "GPIO peripheral pin the nRST pin of the MCU is mapped to",
+        type: "integer",
+      },
+      serial_port: {
+        default: "/dev/ttyUSB0",
+        description: "Serial port the hardware is connected to",
+        type: "string",
+      },
     },
-    description: "Module that collects power and energy measurements from a MODBUS RTU device",
+    description: "Driver module for Phytec PhyVerso EV Charging controller with Pionix MCU firmware",
     enable_external_mqtt: true,
+    enable_telemetry: true,
     metadata: {
-      authors: ["Christoph Kliemt"],
+      authors: ["Cornelius Claussen"],
       license: "https://opensource.org/licenses/Apache-2.0",
     },
     provides: {
-      ac_meter: {
-        description: "sunspec ac meter",
-        interface: "sunspec_ac_meter",
+      connector_1: {
+        description:
+          "provides the board support interface to low level control the proximity and control pilots, relais and motor lock",
+        interface: "evse_board_support",
       },
-      main: {
-        description: "This is the main unit of the module",
-        interface: "powermeter",
+      connector_2: {
+        description:
+          "provides the board support interface to low level control the proximity and control pilots, relais and motor lock",
+        interface: "evse_board_support",
       },
-    },
-    requires: {
-      serial_com_0_connection: {
-        interface: "serial_communication_hub",
-        max_connections: 1,
-        min_connections: 0,
+      connector_lock_1: {
+        description: "Lock interface",
+        interface: "connector_lock",
+      },
+      connector_lock_2: {
+        description: "Lock interface",
+        interface: "connector_lock",
+      },
+      phyverso_mcu_temperature: {
+        description: "Temperatures from MCU",
+        interface: "phyverso_mcu_temperature",
+      },
+      rcd_1: {
+        description: "RCD interface of the onboard RCD",
+        interface: "ac_rcd",
+      },
+      rcd_2: {
+        description: "RCD interface of the onboard RCD",
+        interface: "ac_rcd",
+      },
+      system_specific_data_1: {
+        description: "Opaque data blobs coming from connector 1",
+        interface: "generic_array",
+      },
+      system_specific_data_2: {
+        description: "Opaque data blobs coming from connector 2",
+        interface: "generic_array",
       },
     },
   },
@@ -2253,34 +3077,34 @@ export default {
       },
     },
   },
-  PyExample: {
-    description: "Simple example module written in Python",
+  PyExampleErrorRaiser: {
+    description: "Simple example module written in Python to demonstrate error handling on raiser side",
     metadata: {
       authors: ["Andreas Heinrich"],
       license: "https://opensource.org/licenses/Apache-2.0",
     },
     provides: {
-      example: {
-        description: "This implements an example_user interface that uses multiple framework features",
-        interface: "example_user",
+      example_raiser: {
+        description: "This implements an example interface",
+        interface: "example_error_framework",
       },
     },
   },
-  PyExampleUser: {
-    description: "Simple example module written in Python and using the other example module",
+  PyExampleErrorSubscriber: {
+    description: "Simple example module written in Python to demonstrate error framework on subscriber side",
     metadata: {
       authors: ["Andreas Heinrich"],
       license: "https://opensource.org/licenses/Apache-2.0",
     },
     provides: {
-      example_user: {
-        description: "This implements the example_user interface",
-        interface: "example_user",
+      example_subscriber: {
+        description: "This implements the example interface",
+        interface: "example_error_framework",
       },
     },
     requires: {
-      example: {
-        interface: "example_user",
+      example_raiser: {
+        interface: "example_error_framework",
       },
     },
   },
@@ -2325,6 +3149,18 @@ export default {
             maximum: 2,
             minimum: 0,
             type: "integer",
+          },
+          retries: {
+            default: 2,
+            description: "Count of retries in case of error in Modbus query.",
+            maximum: 10,
+            minimum: 0,
+            type: "integer",
+          },
+          rtscts: {
+            default: false,
+            description: "Use RTS/CTS hardware flow control",
+            type: "boolean",
           },
           rxtx_gpio_chip: {
             default: "",
@@ -2419,6 +3255,24 @@ export default {
       },
     },
   },
+  SlacSimulator: {
+    description: "SIL Implementation of SLAC data link negotiation according to ISO15118-3.",
+    enable_external_mqtt: true,
+    metadata: {
+      authors: ["Cornelius Claussen (Pionix GmbH)", "Tobias Marzell (Pionix GmbH)"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      ev: {
+        description: "SLAC interface implementation for EV side",
+        interface: "ev_slac",
+      },
+      evse: {
+        description: "SLAC interface implementation for EVSE side",
+        interface: "slac",
+      },
+    },
+  },
   Store: {
     description: "Simple implementation of a memory-backed key-value store",
     metadata: {
@@ -2445,6 +3299,13 @@ export default {
           "Specifies in seconds after which time a retry of an upload or download on previous failure may be attempted.",
         type: "number",
       },
+      ResetDelay: {
+        default: 0,
+        description:
+          "When receiving a reset request, then the actual execution can be delayed by this amount of time (given in seconds). This might be necessary, for example, when the reset request arrives via the network and the call acknowledgement should be given some time to travel the return path to the caller. Defaults to zero, which means that the reset is executed directly without delay.",
+        minimum: 0,
+        type: "integer",
+      },
     },
     description: "This module implements system wide operations",
     enable_external_mqtt: false,
@@ -2460,6 +3321,26 @@ export default {
     },
     requires: {},
   },
+  TerminalCostAndPriceMessage: {
+    description: "Example cost and price message module",
+    metadata: {
+      authors: ["Maaike Zijderveld"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      display_message: {
+        description: "module to show a message",
+        interface: "display_message",
+      },
+    },
+    requires: {
+      session_cost: {
+        interface: "session_cost",
+        max_connections: 1,
+        min_connections: 1,
+      },
+    },
+  },
   YetiDriver: {
     config: {
       baud_rate: {
@@ -2467,6 +3348,12 @@ export default {
         description: "Serial baud rate to use when communicating with Yeti hardware",
         maximum: 230400,
         minimum: 9600,
+        type: "integer",
+      },
+      caps_max_current_A: {
+        default: -1,
+        description:
+          "Maximum current on AC side. For AC this is typically 16 or 32, but for HLC this can be less. -1 means use limit reported by HW.",
         type: "integer",
       },
       caps_min_current_A: {
@@ -2513,6 +3400,42 @@ export default {
       rcd: {
         description: "RCD interface of the onboard RCD",
         interface: "ac_rcd",
+      },
+    },
+  },
+  YetiEvDriver: {
+    config: {
+      baud_rate: {
+        default: 115200,
+        description: "Serial baud rate to use when communicating with Yeti hardware",
+        maximum: 230400,
+        minimum: 9600,
+        type: "integer",
+      },
+      reset_gpio: {
+        default: -1,
+        description: "Reset GPIO number to use to HW reset Yeti. If set <0 it is disabled.",
+        maximum: 1000,
+        minimum: -1,
+        type: "integer",
+      },
+      serial_port: {
+        default: "/dev/ttyUSB0",
+        description: "Serial port the Yeti hardware is connected to",
+        type: "string",
+      },
+    },
+    description: "Driver module for EV side for the YETI hardware",
+    enable_external_mqtt: true,
+    enable_telemetry: true,
+    metadata: {
+      authors: ["Cornelius Claussen", "Sebastian Lukas", "Piet Gömpel"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      ev_board_support: {
+        description: "provides the board support Interface to low level control control pilot, relais, rcd",
+        interface: "ev_board_support",
       },
     },
   },
