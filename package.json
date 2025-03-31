@@ -10,7 +10,9 @@
     "lint": "eslint --ignore-path .gitignore .",
     "lint:fix": "eslint --ignore-path .gitignore --fix .",
     "test": "vitest",
-    "test:coverage": "vitest --coverage.enabled true"
+    "test:coverage": "vitest --coverage.enabled true",
+    "test:e2e": "cypress run",
+    "test:e2e:open": "cypress open"
   },
   "type": "module",
   "dependencies": {
