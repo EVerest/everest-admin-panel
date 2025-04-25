@@ -73,7 +73,7 @@
     <v-card color="danger">
       <v-card-title>Couldn't load config</v-card-title>
       <v-card-text>
-        <pre style="white-space: pre-wrap"><code>{{ errors }}</code></pre>
+        <pre style="white-space: pre-wrap"><code>{{ errors.getError() }}</code></pre>
       </v-card-text>
       <v-card-actions>
         <v-btn color="primary" @click="resetDialog()"> OK </v-btn>
@@ -90,6 +90,7 @@ import yaml from "js-yaml";
 import Ajv from "ajv";
 import { EverestConfig } from "@/modules/evbc";
 import { urlToPublicAsset } from "@/utils";
+import { useErrorStore } from "@/store/errorStore";
 
 enum ComponentStates {
   DEFAULT,
@@ -105,13 +106,13 @@ const emit = defineEmits<{
 }>();
 const { available_configs } = storeToRefs(evbcStore);
 const configContent = ref<EverestConfig>(null);
-const errors = ref<string>(null);
-const showErrorDialog = computed<boolean>(() => !!errors.value);
+const errors = useErrorStore();
+const showErrorDialog = computed(() => errors.hasError);
 
 function onAcceptBtnClick() {
   if (validateConfigName() === true) {
-    emit("createConfig", configName.value, configContent.value ?? undefined);
     resetDialog();
+    emit("createConfig", configName.value, configContent.value ?? undefined);
   }
 }
 
@@ -119,7 +120,7 @@ function resetDialog() {
   state.value = ComponentStates.DEFAULT;
   configName.value = "";
   configContent.value = null;
-  errors.value = null;
+  errors.clearError();
 }
 
 function uploadConfigPrompt() {
@@ -138,7 +139,7 @@ function uploadConfigPrompt() {
           configName.value = file.name.replace(/\.[^.]+$/, ""); // remove file extension
           state.value = ComponentStates.ASK_USER_FOR_CONFIG_NAME;
         } else {
-          errors.value = parseResult.errors;
+          errors.setError(parseResult.errors);
         }
       };
       reader.readAsText(file);
