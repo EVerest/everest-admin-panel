@@ -697,7 +697,8 @@ export default {
   EnergyNode: {
     config: {
       fuse_limit_A: {
-        description: "Fuse limit in ampere for all phases",
+        description:
+          "Fuse limit in ampere for all phases. Note: this always applies in addition to limits set by external_limits interface.",
         minimum: 0,
         type: "number",
       },
@@ -941,6 +942,11 @@ export default {
           "Enable/Disable the export of TLS session keys (pre-master-secret) during a TLS handshake. Note that this option is for testing and simulation purpose only",
         type: "boolean",
       },
+      enforce_tls_1_3: {
+        default: false,
+        description: "Enforcing tls version 1.3. Only applies if tls_negotiation_strategy is ENFORCE_TLS.",
+        type: "boolean",
+      },
       logging_path: {
         default: ".",
         description: "Path to logging directory (will be created if non existent)",
@@ -961,6 +967,11 @@ export default {
         default: false,
         description: "The EVSE should support scheduled mode",
         type: "boolean",
+      },
+      tls_key_logging_path: {
+        default: "/tmp",
+        description: "Output directory for the TLS key log file",
+        type: "string",
       },
       tls_negotiation_strategy: {
         default: "ACCEPT_CLIENT_OFFER",
@@ -2258,6 +2269,11 @@ export default {
         minimum: 9600,
         type: "integer",
       },
+      connector_id: {
+        default: 1,
+        description: "Connector id",
+        type: "integer",
+      },
       dc_max_voltage: {
         default: 1000,
         description: "Maximum voltage to support",
@@ -3027,6 +3043,11 @@ export default {
           "Ethernet device used for HLC. Any local interface that has an ipv6 link-local and a MAC addr will work.",
         type: "string",
       },
+      enable_tls_1_3: {
+        default: false,
+        description: "The EVCC will enable TLS version 1.3",
+        type: "boolean",
+      },
       enforce_tls: {
         default: false,
         description: "The EVCC will enforce a TLS connection",
@@ -3436,6 +3457,43 @@ export default {
       ev_board_support: {
         description: "provides the board support Interface to low level control control pilot, relais, rcd",
         interface: "ev_board_support",
+      },
+    },
+  },
+  YetiSimulator: {
+    config: {
+      connector_id: {
+        description: "Connector id of the evse manager to which this simulator is connected to",
+        type: "integer",
+      },
+    },
+    description: "SIL simulator for YETI hardware v1.0",
+    enable_external_mqtt: true,
+    enable_telemetry: true,
+    metadata: {
+      authors: ["Cornelius Claussen", "Tobias Marzell (Pionix GmbH)"],
+      license: "https://opensource.org/licenses/Apache-2.0",
+    },
+    provides: {
+      board_support: {
+        description: "provides the EVSE board support Interface to low level control pilot, relais, rcd, motor lock",
+        interface: "evse_board_support",
+      },
+      connector_lock: {
+        description: "Interface for the simulated Connector lock",
+        interface: "connector_lock",
+      },
+      ev_board_support: {
+        description: "provides the EV board support Interface to low level control pilot, relais, rcd",
+        interface: "ev_board_support",
+      },
+      powermeter: {
+        description: "provides the Yeti Internal Power Meter",
+        interface: "powermeter",
+      },
+      rcd: {
+        description: "Interface for the simulated AC RCD",
+        interface: "ac_rcd",
       },
     },
   },

@@ -531,6 +531,23 @@ export default {
         description:
           "Sets the master pass group id. IdTokens that have this id as parent_id_token belong to the Master Pass Group.  This means they can stop any ongoing transaction, but cannot start transactions. This can, for example, be used by law enforcement personal to stop any ongoing transaction when an EV has to be towed away. If master_pass_group_id  is an empty string, it is not used.",
       },
+      withdraw_authorization: {
+        arguments: {
+          request: {
+            $ref: "/authorization#/WithdrawAuthorizationRequest",
+            description: "The request",
+            type: "object",
+          },
+        },
+        description:
+          "Withdraw granted authorization. If only the evse_id is given, the granted authorization for this EVSE will be withdrawn. If only the id_token is given, the granted authorization for every EVSE where this id_token is placed will be\n  withdrawn\nIf both parameters are given, the granted authorization for the given EVSE will be withdrawn, if the placed\n  id_token matches the given id_token\nIf no parameter is given, all granted authorizations for all EVSEs will be removed",
+        result: {
+          $ref: "/authorization#/WithdrawAuthorizationResponse",
+          description:
+            "Accepted in case requested authorization was removed AuthorizationNotFound in case no match for request was found Rejected in case module could not process the request for other reasons",
+          type: "string",
+        },
+      },
     },
     description: "Interface of authentication framework",
     errors: [
@@ -1632,6 +1649,12 @@ export default {
     description:
       "This interface is used to share data between ISO15118 and OCPP modules to support the requirements of the OCPP protocol",
     vars: {
+      charging_needs: {
+        $ref: "/iso15118#/ChargingNeeds",
+        description:
+          "The ISO15118-20 bidirectional charging is required to send this message for OCPP 2.1 during the 'ScheduleExchangeReq' state machine. For ISO15118-2 and OCPP 2.1 this message has to be sent during the 'ChargeParameterDiscoveryReq' state machine",
+        type: "object",
+      },
       iso15118_certificate_request: {
         $ref: "/iso15118#/RequestExiStreamSchema",
         description:
@@ -1991,7 +2014,7 @@ export default {
       },
       security_event: {
         $ref: "/ocpp#/SecurityEvent",
-        description: "Published when an internal security event occured",
+        description: "Published when an internal security event occurred",
         type: "object",
       },
     },
@@ -2037,12 +2060,18 @@ export default {
       },
     },
     description:
-      "This interface defines a fast over voltage monitoring device according to IEC61851-23:2023 6.3.1.106.2 for DC charging. An emergency shutdown needs to be triggered if the DC output voltage is above the limit of Table 103 for 9ms. The actual shutdown needs to be handled in a lower layer outside of EVerest, but this interface sets the  correct voltage limit at the start of the session and stops monitoring at the  end of the session. The over voltage error should be reported after the actual shutdown was already performed. Once an over voltage error was raised, it should only be cleared when the reset_over_voltage_error command is called. All other errors should be raised/cleared when they occur/are no longer active immediately.",
+      "This interface defines a fast over voltage monitoring device according to IEC61851-23:2023 6.3.1.106.2 for DC charging. An emergency shutdown needs to be triggered if the DC output voltage is above the limit of Table 103 for 9ms. The actual shutdown needs to be handled in a lower layer outside of EVerest, but this interface sets the  correct voltage limit at the start of the session and stops monitoring at the  end of the session. The over voltage error should be reported after the actual shutdown was already performed. Once an over voltage error was raised, it should only be cleared when the reset_over_voltage_error command is called. All other errors should be raised/cleared when they occur/are no longer active immediately. The var voltage_measurement_V should be published in regular intervals, e.g. 1 second. It is not used to compare it with the overvoltage threshold setting in EVerest, that has to be done in the OVM device itself. It will only be used to validate that the OVM and the IMD see the same voltage to ensure they are correctly wired to the same charging port. If it is not available in hardware, do not publish the voltage_measurement_V at all.",
     errors: [
       {
         reference: "/errors/over_voltage_monitor",
       },
     ],
+    vars: {
+      voltage_measurement_V: {
+        description: "Measured voltage in V",
+        type: "number",
+      },
+    },
   },
   phyverso_mcu_temperature: {
     description: "Temperatures from MCU",
