@@ -1,0 +1,42 @@
+#!/bin/bash
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+
+# This script pulls the latest sample configs from the EVerest repository (defaults to the main branch but can receive any ref).
+
+set -e
+
+BRANCH=$1
+BRANCH=${BRANCH:-main}
+
+LICENSE_HEADER="# SPDX-License-Identifier: Apache-2.0\n# Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest"
+
+
+for file in sample-configs/*; do
+    file_name=${file##*/}
+    URL="https://raw.githubusercontent.com/EVerest/everest-core/refs/heads/$BRANCH/config/$file_name"
+    echo "Pulling $URL"
+
+    curl -sS -o "$file" "$URL"
+
+    sed -i "1i $LICENSE_HEADER" "$file"
+
+
+done
+
+echo "Do you want to update the admin panel data? (this is required for updates to be reflected in the admin panel, but it requires a running everest instance)"
+
+read -p "[Y/n]: " -r confirm
+
+case "$confirm" in
+    [Yy]* | "")
+        echo "updating simulator data"
+        node update-simulator-data.js
+        echo "Simulator data update completed."
+        ;;
+
+    *)
+        echo "Config pulling completed. Skipping admin panel data update."
+        exit 0
+        ;;
+esac

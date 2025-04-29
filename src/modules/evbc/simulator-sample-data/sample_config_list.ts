@@ -6,65 +6,153 @@ import { EverestConfigList } from "../index";
 export default {
   "config-sil-dc": {
     active_modules: {
-      api: {
-        module: "API",
+      iso15118_charger: {
+        module: "EvseV2G",
+        config_module: {
+          device: "auto",
+          tls_security: "allow",
+        },
         connections: {
-          evse_manager: [
+          security: [
             {
-              module_id: "evse_manager",
-              implementation_id: "evse",
+              module_id: "evse_security",
+              implementation_id: "main",
             },
           ],
         },
+      },
+      iso15118_car: {
+        module: "PyEvJosev",
         config_module: {
-          charger_information_file: "",
-          hw_caps_max_current_export_decimal_places: 2,
-          hw_caps_max_current_export_round_to: 0,
-          hw_caps_max_current_import_decimal_places: 2,
-          hw_caps_max_current_import_round_to: 0,
-          hw_caps_max_plug_temperature_C_decimal_places: 2,
-          hw_caps_max_plug_temperature_C_round_to: 0,
-          hw_caps_min_current_export_decimal_places: 2,
-          hw_caps_min_current_export_round_to: 0,
-          hw_caps_min_current_import_decimal_places: 2,
-          hw_caps_min_current_import_round_to: 0,
-          limits_max_current_decimal_places: 2,
-          limits_max_current_round_to: 0,
-          powermeter_VAR_decimal_places: 2,
-          powermeter_VAR_round_to: 0,
-          powermeter_current_decimal_places: 2,
-          powermeter_current_round_to: 0,
-          powermeter_energy_export_decimal_places: 2,
-          powermeter_energy_export_round_to: 0,
-          powermeter_energy_import_decimal_places: 2,
-          powermeter_energy_import_round_to: 0,
-          powermeter_frequency_decimal_places: 2,
-          powermeter_frequency_round_to: 0,
-          powermeter_power_decimal_places: 2,
-          powermeter_power_round_to: 0,
-          powermeter_voltage_decimal_places: 2,
-          powermeter_voltage_round_to: 0,
-          telemetry_evse_temperature_C_decimal_places: 2,
-          telemetry_evse_temperature_C_round_to: 0,
-          telemetry_fan_rpm_decimal_places: 2,
-          telemetry_fan_rpm_round_to: 0,
-          telemetry_plug_temperature_C_decimal_places: 2,
-          telemetry_plug_temperature_C_round_to: 0,
-          telemetry_supply_voltage_12V_decimal_places: 2,
-          telemetry_supply_voltage_12V_round_to: 0,
-          telemetry_supply_voltage_minus_12V_decimal_places: 2,
-          telemetry_supply_voltage_minus_12V_round_to: 0,
+          device: "auto",
+          supported_DIN70121: true,
+          supported_ISO15118_2: true,
+        },
+      },
+      evse_manager: {
+        module: "EvseManager",
+        config_module: {
+          connector_id: 1,
+          evse_id: "DE*PNX*E12345*1",
+          evse_id_din: "49A80737A45678",
+          session_logging: true,
+          session_logging_xml: false,
+          session_logging_path: "/tmp/everest-logs",
+          charge_mode: "DC",
+          hack_allow_bpt_with_iso2: true,
+        },
+        connections: {
+          bsp: [
+            {
+              module_id: "yeti_driver",
+              implementation_id: "board_support",
+            },
+          ],
+          powermeter_car_side: [
+            {
+              module_id: "powersupply_dc",
+              implementation_id: "powermeter",
+            },
+          ],
+          slac: [
+            {
+              module_id: "slac",
+              implementation_id: "evse",
+            },
+          ],
+          hlc: [
+            {
+              module_id: "iso15118_charger",
+              implementation_id: "charger",
+            },
+          ],
+          powersupply_DC: [
+            {
+              module_id: "powersupply_dc",
+              implementation_id: "main",
+            },
+          ],
+          imd: [
+            {
+              module_id: "imd",
+              implementation_id: "main",
+            },
+          ],
+          over_voltage_monitor: [
+            {
+              module_id: "ovm",
+              implementation_id: "main",
+            },
+          ],
+        },
+      },
+      powersupply_dc: {
+        module: "DCSupplySimulator",
+      },
+      yeti_driver: {
+        module: "YetiSimulator",
+        config_module: {
+          connector_id: 1,
+        },
+      },
+      slac: {
+        module: "SlacSimulator",
+      },
+      imd: {
+        config_implementation: {
+          main: {
+            selftest_success: true,
+          },
+        },
+        module: "IMDSimulator",
+      },
+      ovm: {
+        module: "OVMSimulator",
+        config_implementation: {
+          main: {
+            simulate_error: false,
+            simulate_error_delay: 5,
+          },
+        },
+      },
+      ev_manager: {
+        module: "EvManager",
+        config_module: {
+          connector_id: 1,
+          auto_enable: true,
+          auto_exec: false,
+          auto_exec_commands: "sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
+          dc_target_current: 20,
+          dc_target_voltage: 400,
+        },
+        connections: {
+          ev_board_support: [
+            {
+              module_id: "yeti_driver",
+              implementation_id: "ev_board_support",
+            },
+          ],
+          ev: [
+            {
+              module_id: "iso15118_car",
+              implementation_id: "ev",
+            },
+          ],
+          slac: [
+            {
+              module_id: "slac",
+              implementation_id: "ev",
+            },
+          ],
         },
       },
       auth: {
         module: "Auth",
+        config_module: {
+          connection_timeout: 10,
+          selection_algorithm: "FindFirst",
+        },
         connections: {
-          evse_manager: [
-            {
-              module_id: "evse_manager",
-              implementation_id: "evse",
-            },
-          ],
           token_provider: [
             {
               module_id: "token_provider",
@@ -77,57 +165,53 @@ export default {
               implementation_id: "main",
             },
           ],
-        },
-        config_module: {
-          connection_timeout: 10,
-          ignore_connector_faults: false,
-          master_pass_group_id: "",
-          prioritize_authorization_over_stopping_transaction: true,
-          selection_algorithm: "FindFirst",
+          evse_manager: [
+            {
+              module_id: "evse_manager",
+              implementation_id: "evse",
+            },
+          ],
         },
       },
-      car_simulator: {
-        module: "JsCarSimulator",
+      token_provider: {
+        module: "DummyTokenProvider",
+        config_implementation: {
+          main: {
+            token: "TOKEN1",
+          },
+        },
         connections: {
-          ev: [
+          evse: [
             {
-              module_id: "iso15118_car",
-              implementation_id: "ev",
-            },
-          ],
-          simulation_control: [
-            {
-              module_id: "yeti_driver",
-              implementation_id: "yeti_simulation_control",
-            },
-          ],
-          slac: [
-            {
-              module_id: "slac",
-              implementation_id: "ev",
+              module_id: "evse_manager",
+              implementation_id: "evse",
             },
           ],
         },
+      },
+      token_validator: {
+        module: "DummyTokenValidator",
+        config_implementation: {
+          main: {
+            validation_result: "Accepted",
+            validation_reason: "Token seems valid",
+            sleep: 0.25,
+          },
+        },
+      },
+      evse_security: {
+        module: "EvseSecurity",
         config_module: {
-          auto_enable: true,
-          auto_exec: false,
-          auto_exec_commands: "sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
-          connector_id: 1,
-          dc_discharge_max_current_limit: 300,
-          dc_discharge_max_power_limit: 150000,
-          dc_discharge_target_current: 5,
-          dc_discharge_v2g_minimal_soc: 20,
-          dc_energy_capacity: 60000,
-          dc_max_current_limit: 300,
-          dc_max_power_limit: 150000,
-          dc_max_voltage_limit: 900,
-          dc_target_current: 20,
-          dc_target_voltage: 400,
-          support_sae_j2847: false,
+          private_key_password: "123456",
         },
       },
       energy_manager: {
         module: "EnergyManager",
+        config_module: {
+          schedule_total_duration: 1,
+          schedule_interval_duration: 60,
+          debug: false,
+        },
         connections: {
           energy_trunk: [
             {
@@ -136,119 +220,15 @@ export default {
             },
           ],
         },
-        config_module: {
-          debug: false,
-          nominal_ac_voltage: 230,
-          schedule_interval_duration: 60,
-          schedule_total_duration: 1,
-          slice_ampere: 0.5,
-          slice_watt: 500,
-          update_interval: 1,
-        },
-      },
-      evse_manager: {
-        module: "EvseManager",
-        connections: {
-          bsp: [
-            {
-              module_id: "yeti_driver",
-              implementation_id: "board_support",
-            },
-          ],
-          hlc: [
-            {
-              module_id: "iso15118_charger",
-              implementation_id: "charger",
-            },
-          ],
-          imd: [
-            {
-              module_id: "imd",
-              implementation_id: "main",
-            },
-          ],
-          powermeter_car_side: [
-            {
-              module_id: "powersupply_dc",
-              implementation_id: "powermeter",
-            },
-          ],
-          powersupply_DC: [
-            {
-              module_id: "powersupply_dc",
-              implementation_id: "main",
-            },
-          ],
-          slac: [
-            {
-              module_id: "slac",
-              implementation_id: "evse",
-            },
-          ],
-        },
-        config_module: {
-          ac_enforce_hlc: false,
-          ac_hlc_enabled: false,
-          ac_hlc_use_5percent: false,
-          ac_nominal_voltage: 230,
-          ac_with_soc: false,
-          autocharge_use_slac_instead_of_hlc: false,
-          charge_mode: "DC",
-          connector_id: 1,
-          country_code: "DE",
-          dbg_hlc_auth_after_tstep: false,
-          dc_isolation_voltage_V: 500,
-          disable_authentication: false,
-          ev_receipt_required: false,
-          evse_id: "DE*PNX*E12345*1",
-          evse_id_din: "49A80737A45678",
-          external_ready_to_start_charging: false,
-          hack_allow_bpt_with_iso2: true,
-          hack_fix_hlc_integer_current_requests: false,
-          hack_pause_imd_during_precharge: false,
-          hack_present_current_offset: 0,
-          hack_skoda_enyaq: false,
-          hack_sleep_in_cable_check: 0,
-          hack_sleep_in_cable_check_volkswagen: 0,
-          has_ventilation: true,
-          logfile_suffix: "session_uuid",
-          max_current_export_A: 32,
-          max_current_import_A: 32,
-          payment_enable_contract: true,
-          payment_enable_eim: true,
-          request_zero_power_in_idle: false,
-          sae_j2847_2_bpt_enabled: false,
-          sae_j2847_2_bpt_mode: "V2G",
-          session_logging: true,
-          session_logging_path: "/tmp/everest-logs",
-          session_logging_xml: false,
-          soft_over_current_measurement_noise_A: 0.5,
-          soft_over_current_tolerance_percent: 10,
-          switch_to_minimum_voltage_after_cable_check: false,
-          three_phases: true,
-          uk_smartcharging_random_delay_at_any_change: true,
-          uk_smartcharging_random_delay_enable: false,
-          uk_smartcharging_random_delay_max_duration: 600,
-        },
-      },
-      evse_security: {
-        module: "EvseSecurity",
-        connections: {},
-        config_module: {
-          csms_ca_bundle: "ca/v2g/V2G_ROOT_CA.pem",
-          csms_leaf_cert_directory: "client/csms",
-          csms_leaf_key_directory: "client/csms",
-          mf_ca_bundle: "ca/mf/MF_ROOT_CA.pem",
-          mo_ca_bundle: "ca/mo/MO_ROOT_CA.pem",
-          private_key_password: "123456",
-          secc_leaf_cert_directory: "client/cso",
-          secc_leaf_key_directory: "client/cso",
-          v2g_ca_bundle: "ca/v2g/V2G_ROOT_CA.pem",
-        },
       },
       grid_connection_point: {
         module: "EnergyNode",
+        config_module: {
+          fuse_limit_A: 40,
+          phase_count: 3,
+        },
         connections: {
+          price_information: [],
           energy_consumer: [
             {
               module_id: "evse_manager",
@@ -262,448 +242,53 @@ export default {
             },
           ],
         },
-        config_module: {
-          fuse_limit_A: 40,
-          phase_count: 3,
-        },
       },
-      imd: {
-        module: "IMDSimulator",
-        connections: {},
-        config_implementation: {
-          main: {
-            interval: 1000,
-            resistance_F_Ohm: 900000,
-          },
-        },
-      },
-      iso15118_car: {
-        module: "PyEvJosev",
-        connections: {},
-        config_module: {
-          device: "auto",
-          enforce_tls: false,
-          is_cert_install_needed: false,
-          supported_DIN70121: true,
-          supported_ISO15118_2: true,
-          supported_ISO15118_20_AC: false,
-          supported_ISO15118_20_DC: false,
-          tls_active: false,
-        },
-      },
-      iso15118_charger: {
-        module: "EvseV2G",
+      api: {
+        module: "API",
         connections: {
-          security: [
-            {
-              module_id: "evse_security",
-              implementation_id: "main",
-            },
-          ],
-        },
-        config_module: {
-          auth_timeout_eim: 300,
-          auth_timeout_pnc: 55,
-          device: "auto",
-          supported_DIN70121: false,
-          supported_ISO15118_2: true,
-          terminate_connection_on_failed_response: false,
-          tls_key_logging: false,
-          tls_key_logging_path: "/tmp",
-          tls_security: "allow",
-          tls_timeout: 15000,
-          verify_contract_cert_chain: false,
-        },
-      },
-      powersupply_dc: {
-        module: "JsDCSupplySimulator",
-        connections: {},
-        config_implementation: {
-          main: {
-            bidirectional: true,
-            max_current: 200,
-            max_power: 150000,
-            max_voltage: 900,
-            min_current: 1,
-            min_voltage: 200,
-          },
-        },
-      },
-      slac: {
-        module: "JsSlacSimulator",
-        connections: {},
-        config_implementation: {
-          ev: {
-            ev_id: "PIONIX_SAYS_HELLO",
-          },
-          evse: {
-            evse_id: "PIONIX_SAYS_HELLO",
-            nid: "pionix!",
-            number_of_sounds: 10,
-          },
-        },
-      },
-      token_provider: {
-        module: "DummyTokenProvider",
-        connections: {
-          evse: [
+          evse_manager: [
             {
               module_id: "evse_manager",
               implementation_id: "evse",
             },
           ],
-        },
-        config_implementation: {
-          main: {
-            connector_id: 0,
-            timeout: 10,
-            token: "TOKEN1",
-            type: "RFID",
-          },
+          error_history: [
+            {
+              module_id: "error_history",
+              implementation_id: "error_history",
+            },
+          ],
         },
       },
-      token_validator: {
-        module: "DummyTokenValidator",
-        connections: {},
+      error_history: {
+        module: "ErrorHistory",
         config_implementation: {
-          main: {
-            sleep: 0.25,
-            validation_reason: "Token seems valid",
-            validation_result: "Accepted",
+          error_history: {
+            database_path: "/tmp/error_history.db",
           },
-        },
-      },
-      yeti_driver: {
-        module: "JsYetiSimulator",
-        connections: {},
-        config_module: {
-          connector_id: 1,
         },
       },
     },
     "x-module-layout": {
-      api: {
-        position: {
-          x: 37,
-          y: 41,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "main",
-              interface: "empty",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [
-            {
-              id: "evse_manager",
-              interface: "evse_manager",
-              type: "requirement",
-            },
-            {
-              id: "ocpp",
-              interface: "ocpp",
-              type: "requirement",
-            },
-            {
-              id: "random_delay",
-              interface: "uk_random_delay",
-              type: "requirement",
-            },
-          ],
-        },
-      },
-      auth: {
-        position: {
-          x: 37,
-          y: 22,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "main",
-              interface: "auth",
-              type: "provide",
-            },
-            {
-              id: "token_validator",
-              interface: "auth_token_validator",
-              type: "requirement",
-            },
-            {
-              id: "reservation",
-              interface: "reservation",
-              type: "provide",
-            },
-          ],
-          bottom: [
-            {
-              id: "token_provider",
-              interface: "auth_token_provider",
-              type: "requirement",
-            },
-          ],
-          left: [
-            {
-              id: "evse_manager",
-              interface: "evse_manager",
-              type: "requirement",
-            },
-          ],
-        },
-      },
-      car_simulator: {
-        position: {
-          x: 18,
-          y: 5,
-        },
-        terminals: {
-          top: [
-            {
-              id: "ev",
-              interface: "ISO15118_ev",
-              type: "requirement",
-            },
-          ],
-          right: [
-            {
-              id: "main",
-              interface: "car_simulator",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [
-            {
-              id: "slac",
-              interface: "slac",
-              type: "requirement",
-            },
-            {
-              id: "simulation_control",
-              interface: "yeti_simulation_control",
-              type: "requirement",
-            },
-          ],
-        },
-      },
-      energy_manager: {
-        position: {
-          x: 50,
-          y: 10,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "main",
-              interface: "energy_manager",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [
-            {
-              id: "energy_trunk",
-              interface: "energy",
-              type: "requirement",
-            },
-          ],
-        },
-      },
-      evse_manager: {
-        position: {
-          x: 18,
-          y: 25,
-        },
-        terminals: {
-          top: [
-            {
-              id: "energy_grid",
-              interface: "energy",
-              type: "provide",
-            },
-          ],
-          right: [
-            {
-              id: "evse",
-              interface: "evse_manager",
-              type: "provide",
-            },
-            {
-              id: "random_delay",
-              interface: "uk_random_delay",
-              type: "provide",
-            },
-            {
-              id: "token_provider",
-              interface: "auth_token_provider",
-              type: "provide",
-            },
-          ],
-          bottom: [
-            {
-              id: "hlc",
-              interface: "ISO15118_charger",
-              type: "requirement",
-            },
-          ],
-          left: [
-            {
-              id: "slac",
-              interface: "slac",
-              type: "requirement",
-            },
-            {
-              id: "ac_rcd",
-              interface: "ac_rcd",
-              type: "requirement",
-            },
-            {
-              id: "bsp",
-              interface: "evse_board_support",
-              type: "requirement",
-            },
-            {
-              id: "connector_lock",
-              interface: "connector_lock",
-              type: "requirement",
-            },
-            {
-              id: "imd",
-              interface: "isolation_monitor",
-              type: "requirement",
-            },
-            {
-              id: "powermeter_car_side",
-              interface: "powermeter",
-              type: "requirement",
-            },
-            {
-              id: "powermeter_grid_side",
-              interface: "powermeter",
-              type: "requirement",
-            },
-            {
-              id: "powersupply_DC",
-              interface: "power_supply_DC",
-              type: "requirement",
-            },
-          ],
-        },
-      },
-      evse_security: {
-        position: {
-          x: 2,
-          y: 37,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "main",
-              interface: "evse_security",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [],
-        },
-      },
-      grid_connection_point: {
-        position: {
-          x: 18,
-          y: 16,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "energy_grid",
-              interface: "energy",
-              type: "provide",
-            },
-            {
-              id: "external_limits",
-              interface: "external_energy_limits",
-              type: "provide",
-            },
-          ],
-          bottom: [
-            {
-              id: "energy_consumer",
-              interface: "energy",
-              type: "requirement",
-            },
-          ],
-          left: [
-            {
-              id: "price_information",
-              interface: "energy_price_information",
-              type: "requirement",
-            },
-            {
-              id: "powermeter",
-              interface: "powermeter",
-              type: "requirement",
-            },
-          ],
-        },
-      },
-      imd: {
-        position: {
-          x: -12,
-          y: 23,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "main",
-              interface: "isolation_monitor",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [],
-        },
-      },
-      iso15118_car: {
-        position: {
-          x: 18,
-          y: -4,
-        },
-        terminals: {
-          top: [],
-          right: [],
-          bottom: [
-            {
-              id: "ev",
-              interface: "ISO15118_ev",
-              type: "provide",
-            },
-          ],
-          left: [],
-        },
-      },
       iso15118_charger: {
         position: {
-          x: 18,
-          y: 37,
+          x: 12,
+          y: -7,
         },
         terminals: {
-          top: [
+          top: [],
+          right: [
             {
               id: "charger",
               interface: "ISO15118_charger",
               type: "provide",
             },
+            {
+              id: "extensions",
+              interface: "iso15118_extensions",
+              type: "provide",
+            },
           ],
-          right: [],
           bottom: [],
           left: [
             {
@@ -714,45 +299,17 @@ export default {
           ],
         },
       },
-      powersupply_dc: {
+      iso15118_car: {
         position: {
-          x: -12,
-          y: 30,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "powermeter",
-              interface: "powermeter",
-              type: "provide",
-            },
-            {
-              id: "main",
-              interface: "power_supply_DC",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [],
-        },
-      },
-      slac: {
-        position: {
-          x: -12,
-          y: 9,
+          x: -8,
+          y: 35,
         },
         terminals: {
           top: [],
           right: [
             {
               id: "ev",
-              interface: "slac",
-              type: "provide",
-            },
-            {
-              id: "evse",
-              interface: "slac",
+              interface: "ISO15118_ev",
               type: "provide",
             },
           ],
@@ -760,64 +317,139 @@ export default {
           left: [],
         },
       },
-      token_provider: {
+      evse_manager: {
         position: {
-          x: 37,
-          y: 32,
-        },
-        terminals: {
-          top: [
-            {
-              id: "main",
-              interface: "auth_token_provider",
-              type: "provide",
-            },
-          ],
-          right: [],
-          bottom: [],
-          left: [
-            {
-              id: "evse",
-              interface: "evse_manager",
-              type: "requirement",
-            },
-          ],
-        },
-      },
-      token_validator: {
-        position: {
-          x: 52,
-          y: 22,
-        },
-        terminals: {
-          top: [],
-          right: [],
-          bottom: [],
-          left: [
-            {
-              id: "main",
-              interface: "auth_token_validator",
-              type: "provide",
-            },
-          ],
-        },
-      },
-      yeti_driver: {
-        position: {
-          x: -12,
-          y: 16,
+          x: 33,
+          y: 14,
         },
         terminals: {
           top: [],
           right: [
             {
-              id: "yeti_simulation_control",
-              interface: "yeti_simulation_control",
+              id: "evse",
+              interface: "evse_manager",
+              type: "provide",
+            },
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+            {
+              id: "random_delay",
+              interface: "uk_random_delay",
+              type: "provide",
+            },
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "hlc",
+              interface: "ISO15118_charger",
+              type: "requirement",
+            },
+            {
+              id: "over_voltage_monitor",
+              interface: "over_voltage_monitor",
+              type: "requirement",
+            },
+            {
+              id: "imd",
+              interface: "isolation_monitor",
+              type: "requirement",
+            },
+            {
+              id: "powersupply_DC",
+              interface: "power_supply_DC",
+              type: "requirement",
+            },
+            {
+              id: "ac_rcd",
+              interface: "ac_rcd",
+              type: "requirement",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_grid_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "store",
+              interface: "kvs",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_car_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "slac",
+              interface: "slac",
+              type: "requirement",
+            },
+            {
+              id: "bsp",
+              interface: "evse_board_support",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      powersupply_dc: {
+        position: {
+          x: -8,
+          y: 14,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "power_supply_DC",
+              type: "provide",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      yeti_driver: {
+        position: {
+          x: -8,
+          y: 28,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "board_support",
+              interface: "evse_board_support",
               type: "provide",
             },
             {
               id: "connector_lock",
               interface: "connector_lock",
+              type: "provide",
+            },
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
               type: "provide",
             },
             {
@@ -830,9 +462,27 @@ export default {
               interface: "ac_rcd",
               type: "provide",
             },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      slac: {
+        position: {
+          x: -8,
+          y: 21,
+        },
+        terminals: {
+          top: [],
+          right: [
             {
-              id: "board_support",
-              interface: "evse_board_support",
+              id: "evse",
+              interface: "slac",
+              type: "provide",
+            },
+            {
+              id: "ev",
+              interface: "ev_slac",
               type: "provide",
             },
           ],
@@ -840,514 +490,128 @@ export default {
           left: [],
         },
       },
-    },
-  },
-  "config-sil-ocpp201": {
-    active_modules: {
-      api: {
-        module: "API",
-        connections: {
-          evse_manager: [
+      imd: {
+        position: {
+          x: -8,
+          y: 7,
+        },
+        terminals: {
+          top: [],
+          right: [
             {
-              module_id: "evse_manager_1",
-              implementation_id: "evse",
+              id: "main",
+              interface: "isolation_monitor",
+              type: "provide",
             },
           ],
+          bottom: [],
+          left: [],
         },
-        config_module: {
-          charger_information_file: "",
-          hw_caps_max_current_export_decimal_places: 2,
-          hw_caps_max_current_export_round_to: 0,
-          hw_caps_max_current_import_decimal_places: 2,
-          hw_caps_max_current_import_round_to: 0,
-          hw_caps_max_plug_temperature_C_decimal_places: 2,
-          hw_caps_max_plug_temperature_C_round_to: 0,
-          hw_caps_min_current_export_decimal_places: 2,
-          hw_caps_min_current_export_round_to: 0,
-          hw_caps_min_current_import_decimal_places: 2,
-          hw_caps_min_current_import_round_to: 0,
-          limits_max_current_decimal_places: 2,
-          limits_max_current_round_to: 0,
-          powermeter_VAR_decimal_places: 2,
-          powermeter_VAR_round_to: 0,
-          powermeter_current_decimal_places: 2,
-          powermeter_current_round_to: 0,
-          powermeter_energy_export_decimal_places: 2,
-          powermeter_energy_export_round_to: 0,
-          powermeter_energy_import_decimal_places: 2,
-          powermeter_energy_import_round_to: 0,
-          powermeter_frequency_decimal_places: 2,
-          powermeter_frequency_round_to: 0,
-          powermeter_power_decimal_places: 2,
-          powermeter_power_round_to: 0,
-          powermeter_voltage_decimal_places: 2,
-          powermeter_voltage_round_to: 0,
-          telemetry_evse_temperature_C_decimal_places: 2,
-          telemetry_evse_temperature_C_round_to: 0,
-          telemetry_fan_rpm_decimal_places: 2,
-          telemetry_fan_rpm_round_to: 0,
-          telemetry_plug_temperature_C_decimal_places: 2,
-          telemetry_plug_temperature_C_round_to: 0,
-          telemetry_supply_voltage_12V_decimal_places: 2,
-          telemetry_supply_voltage_12V_round_to: 0,
-          telemetry_supply_voltage_minus_12V_decimal_places: 2,
-          telemetry_supply_voltage_minus_12V_round_to: 0,
+      },
+      ovm: {
+        position: {
+          x: -8,
+          y: 0,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "over_voltage_monitor",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      ev_manager: {
+        position: {
+          x: 33,
+          y: 23,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "car_simulator",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "slac",
+              interface: "ev_slac",
+              type: "requirement",
+            },
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "requirement",
+            },
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "requirement",
+            },
+          ],
         },
       },
       auth: {
-        module: "Auth",
-        connections: {
-          evse_manager: [
-            {
-              module_id: "evse_manager_1",
-              implementation_id: "evse",
-            },
-            {
-              module_id: "evse_manager_2",
-              implementation_id: "evse",
-            },
-          ],
-          token_provider: [
-            {
-              module_id: "token_provider_1",
-              implementation_id: "main",
-            },
-            {
-              module_id: "ocpp",
-              implementation_id: "auth_provider",
-            },
-          ],
-          token_validator: [
-            {
-              module_id: "ocpp",
-              implementation_id: "auth_validator",
-            },
-          ],
-        },
-        config_module: {
-          connection_timeout: 60,
-          ignore_connector_faults: false,
-          master_pass_group_id: "",
-          prioritize_authorization_over_stopping_transaction: true,
-          selection_algorithm: "FindFirst",
-        },
-      },
-      car_simulator_1: {
-        module: "JsCarSimulator",
-        connections: {
-          ev: [
-            {
-              module_id: "iso15118_car",
-              implementation_id: "ev",
-            },
-          ],
-          simulation_control: [
-            {
-              module_id: "yeti_driver_1",
-              implementation_id: "yeti_simulation_control",
-            },
-          ],
-          slac: [
-            {
-              module_id: "slac",
-              implementation_id: "ev",
-            },
-          ],
-        },
-        config_module: {
-          auto_enable: true,
-          auto_exec: false,
-          auto_exec_commands: "sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
-          connector_id: 1,
-          dc_discharge_max_current_limit: 300,
-          dc_discharge_max_power_limit: 150000,
-          dc_discharge_target_current: 5,
-          dc_discharge_v2g_minimal_soc: 20,
-          dc_energy_capacity: 60000,
-          dc_max_current_limit: 300,
-          dc_max_power_limit: 150000,
-          dc_max_voltage_limit: 900,
-          dc_target_current: 5,
-          dc_target_voltage: 200,
-          support_sae_j2847: false,
-        },
-      },
-      car_simulator_2: {
-        module: "JsCarSimulator",
-        connections: {
-          ev: [
-            {
-              module_id: "iso15118_car",
-              implementation_id: "ev",
-            },
-          ],
-          simulation_control: [
-            {
-              module_id: "yeti_driver_2",
-              implementation_id: "yeti_simulation_control",
-            },
-          ],
-          slac: [
-            {
-              module_id: "slac",
-              implementation_id: "ev",
-            },
-          ],
-        },
-        config_module: {
-          auto_enable: true,
-          auto_exec: false,
-          auto_exec_commands: "",
-          connector_id: 2,
-          dc_discharge_max_current_limit: 300,
-          dc_discharge_max_power_limit: 150000,
-          dc_discharge_target_current: 5,
-          dc_discharge_v2g_minimal_soc: 20,
-          dc_energy_capacity: 60000,
-          dc_max_current_limit: 300,
-          dc_max_power_limit: 150000,
-          dc_max_voltage_limit: 900,
-          dc_target_current: 5,
-          dc_target_voltage: 200,
-          support_sae_j2847: false,
-        },
-      },
-      energy_manager: {
-        module: "EnergyManager",
-        connections: {
-          energy_trunk: [
-            {
-              module_id: "grid_connection_point",
-              implementation_id: "energy_grid",
-            },
-          ],
-        },
-        config_module: {
-          debug: false,
-          nominal_ac_voltage: 230,
-          schedule_interval_duration: 60,
-          schedule_total_duration: 1,
-          slice_ampere: 0.5,
-          slice_watt: 500,
-          update_interval: 1,
-        },
-      },
-      evse_manager_1: {
-        module: "EvseManager",
-        connections: {
-          bsp: [
-            {
-              module_id: "yeti_driver_1",
-              implementation_id: "board_support",
-            },
-          ],
-          hlc: [
-            {
-              module_id: "iso15118_charger",
-              implementation_id: "charger",
-            },
-          ],
-          powermeter_grid_side: [
-            {
-              module_id: "yeti_driver_1",
-              implementation_id: "powermeter",
-            },
-          ],
-          slac: [
-            {
-              module_id: "slac",
-              implementation_id: "evse",
-            },
-          ],
-        },
-        config_module: {
-          ac_enforce_hlc: false,
-          ac_hlc_enabled: false,
-          ac_hlc_use_5percent: false,
-          ac_nominal_voltage: 230,
-          ac_with_soc: false,
-          autocharge_use_slac_instead_of_hlc: false,
-          charge_mode: "AC",
-          connector_id: 1,
-          country_code: "DE",
-          dbg_hlc_auth_after_tstep: false,
-          dc_isolation_voltage_V: 500,
-          disable_authentication: false,
-          ev_receipt_required: false,
-          evse_id: "1",
-          evse_id_din: "49A80737A45678",
-          external_ready_to_start_charging: false,
-          hack_allow_bpt_with_iso2: false,
-          hack_fix_hlc_integer_current_requests: false,
-          hack_pause_imd_during_precharge: false,
-          hack_present_current_offset: 0,
-          hack_skoda_enyaq: false,
-          hack_sleep_in_cable_check: 0,
-          hack_sleep_in_cable_check_volkswagen: 0,
-          has_ventilation: true,
-          logfile_suffix: "session_uuid",
-          max_current_export_A: 32,
-          max_current_import_A: 32,
-          payment_enable_contract: true,
-          payment_enable_eim: true,
-          request_zero_power_in_idle: false,
-          sae_j2847_2_bpt_enabled: false,
-          sae_j2847_2_bpt_mode: "V2G",
-          session_logging: true,
-          session_logging_path: "/tmp",
-          session_logging_xml: false,
-          soft_over_current_measurement_noise_A: 0.5,
-          soft_over_current_tolerance_percent: 10,
-          switch_to_minimum_voltage_after_cable_check: false,
-          three_phases: true,
-          uk_smartcharging_random_delay_at_any_change: true,
-          uk_smartcharging_random_delay_enable: false,
-          uk_smartcharging_random_delay_max_duration: 600,
-        },
-      },
-      evse_manager_2: {
-        module: "EvseManager",
-        connections: {
-          bsp: [
-            {
-              module_id: "yeti_driver_2",
-              implementation_id: "board_support",
-            },
-          ],
-          hlc: [
-            {
-              module_id: "iso15118_charger",
-              implementation_id: "charger",
-            },
-          ],
-          powermeter_grid_side: [
-            {
-              module_id: "yeti_driver_2",
-              implementation_id: "powermeter",
-            },
-          ],
-          slac: [
-            {
-              module_id: "slac",
-              implementation_id: "evse",
-            },
-          ],
-        },
-        config_module: {
-          ac_enforce_hlc: false,
-          ac_hlc_enabled: false,
-          ac_hlc_use_5percent: false,
-          ac_nominal_voltage: 230,
-          ac_with_soc: false,
-          autocharge_use_slac_instead_of_hlc: false,
-          charge_mode: "AC",
-          connector_id: 2,
-          country_code: "DE",
-          dbg_hlc_auth_after_tstep: false,
-          dc_isolation_voltage_V: 500,
-          disable_authentication: false,
-          ev_receipt_required: false,
-          evse_id: "2",
-          evse_id_din: "49A80737A45678",
-          external_ready_to_start_charging: false,
-          hack_allow_bpt_with_iso2: false,
-          hack_fix_hlc_integer_current_requests: false,
-          hack_pause_imd_during_precharge: false,
-          hack_present_current_offset: 0,
-          hack_skoda_enyaq: false,
-          hack_sleep_in_cable_check: 0,
-          hack_sleep_in_cable_check_volkswagen: 0,
-          has_ventilation: true,
-          logfile_suffix: "session_uuid",
-          max_current_export_A: 32,
-          max_current_import_A: 32,
-          payment_enable_contract: true,
-          payment_enable_eim: true,
-          request_zero_power_in_idle: false,
-          sae_j2847_2_bpt_enabled: false,
-          sae_j2847_2_bpt_mode: "V2G",
-          session_logging: true,
-          session_logging_path: "/tmp",
-          session_logging_xml: false,
-          soft_over_current_measurement_noise_A: 0.5,
-          soft_over_current_tolerance_percent: 10,
-          switch_to_minimum_voltage_after_cable_check: false,
-          three_phases: true,
-          uk_smartcharging_random_delay_at_any_change: true,
-          uk_smartcharging_random_delay_enable: false,
-          uk_smartcharging_random_delay_max_duration: 600,
-        },
-      },
-      evse_security: {
-        module: "EvseSecurity",
-        connections: {},
-        config_module: {
-          csms_ca_bundle: "ca/v2g/V2G_ROOT_CA.pem",
-          csms_leaf_cert_directory: "client/csms",
-          csms_leaf_key_directory: "client/csms",
-          mf_ca_bundle: "ca/mf/MF_ROOT_CA.pem",
-          mo_ca_bundle: "ca/mo/MO_ROOT_CA.pem",
-          private_key_password: "123456",
-          secc_leaf_cert_directory: "client/cso",
-          secc_leaf_key_directory: "client/cso",
-          v2g_ca_bundle: "ca/v2g/V2G_ROOT_CA.pem",
-        },
-      },
-      grid_connection_point: {
-        module: "EnergyNode",
-        connections: {
-          energy_consumer: [
-            {
-              module_id: "evse_manager_1",
-              implementation_id: "energy_grid",
-            },
-            {
-              module_id: "evse_manager_2",
-              implementation_id: "energy_grid",
-            },
-          ],
-          powermeter: [
-            {
-              module_id: "yeti_driver_1",
-              implementation_id: "powermeter",
-            },
-          ],
-        },
-        config_module: {
-          fuse_limit_A: 40,
-          phase_count: 3,
-        },
-      },
-      iso15118_car: {
-        module: "PyEvJosev",
-        connections: {},
-        config_module: {
-          device: "auto",
-          enforce_tls: false,
-          is_cert_install_needed: false,
-          supported_DIN70121: false,
-          supported_ISO15118_2: true,
-          supported_ISO15118_20_AC: false,
-          supported_ISO15118_20_DC: false,
-          tls_active: false,
-        },
-      },
-      iso15118_charger: {
-        module: "EvseV2G",
-        connections: {
-          security: [
-            {
-              module_id: "evse_security",
-              implementation_id: "main",
-            },
-          ],
-        },
-        config_module: {
-          auth_timeout_eim: 300,
-          auth_timeout_pnc: 55,
-          device: "auto",
-          supported_DIN70121: false,
-          supported_ISO15118_2: true,
-          terminate_connection_on_failed_response: false,
-          tls_key_logging: false,
-          tls_key_logging_path: "/tmp",
-          tls_security: "allow",
-          tls_timeout: 15000,
-          verify_contract_cert_chain: false,
-        },
-      },
-      ocpp: {
-        module: "OCPP201",
-        connections: {
-          auth: [
-            {
-              module_id: "auth",
-              implementation_id: "main",
-            },
-          ],
-          evse_manager: [
-            {
-              module_id: "evse_manager_1",
-              implementation_id: "evse",
-            },
-            {
-              module_id: "evse_manager_2",
-              implementation_id: "evse",
-            },
-          ],
-          security: [
-            {
-              module_id: "evse_security",
-              implementation_id: "main",
-            },
-          ],
-          system: [
-            {
-              module_id: "system",
-              implementation_id: "main",
-            },
-          ],
-        },
-        config_module: {
-          CoreDatabasePath: "/tmp/ocpp201",
-          DeviceModelDatabasePath: "device_model_storage.db",
-          EnableExternalWebsocketControl: false,
-          MessageLogPath: "/tmp/everest_ocpp_logs",
-          MessageQueueResumeDelay: 0,
-        },
-      },
-      slac: {
-        module: "JsSlacSimulator",
-        connections: {},
-        config_implementation: {
-          ev: {
-            ev_id: "PIONIX_SAYS_HELLO",
-          },
-          evse: {
-            evse_id: "PIONIX_SAYS_HELLO",
-            nid: "pionix!",
-            number_of_sounds: 10,
-          },
-        },
-      },
-      system: {
-        module: "System",
-        connections: {},
-        config_module: {
-          DefaultRetries: 1,
-          DefaultRetryInterval: 1,
-        },
-      },
-      token_provider_1: {
-        module: "DummyTokenProviderManual",
-        connections: {},
-        config_implementation: {
-          main: {
-            timeout: 10,
-            token: "DEADBEEF",
-            type: "RFID",
-          },
-        },
-      },
-      yeti_driver_1: {
-        module: "JsYetiSimulator",
-        connections: {},
-        config_module: {
-          connector_id: 1,
-        },
-      },
-      yeti_driver_2: {
-        module: "JsYetiSimulator",
-        connections: {},
-        config_module: {
-          connector_id: 2,
-        },
-      },
-    },
-    "x-module-layout": {
-      api: {
         position: {
-          x: 41,
+          x: 77,
+          y: 6,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "auth",
+              type: "provide",
+            },
+            {
+              id: "reservation",
+              interface: "reservation",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "token_validator",
+              interface: "auth_token_validator",
+              type: "requirement",
+            },
+            {
+              id: "kvs",
+              interface: "kvs",
+              type: "requirement",
+            },
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "requirement",
+            },
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      token_provider: {
+        position: {
+          x: 54,
           y: 4,
         },
         terminals: {
@@ -1355,142 +619,59 @@ export default {
           right: [
             {
               id: "main",
-              interface: "empty",
+              interface: "auth_token_provider",
               type: "provide",
             },
           ],
           bottom: [],
           left: [
             {
-              id: "evse_manager",
+              id: "evse",
               interface: "evse_manager",
-              type: "requirement",
-            },
-            {
-              id: "ocpp",
-              interface: "ocpp",
-              type: "requirement",
-            },
-            {
-              id: "random_delay",
-              interface: "uk_random_delay",
               type: "requirement",
             },
           ],
         },
       },
-      auth: {
+      token_validator: {
         position: {
-          x: 39,
-          y: -17,
+          x: 54,
+          y: -4,
         },
         terminals: {
           top: [],
           right: [
             {
-              id: "reservation",
-              interface: "reservation",
-              type: "provide",
-            },
-          ],
-          bottom: [
-            {
               id: "main",
-              interface: "auth",
-              type: "provide",
-            },
-          ],
-          left: [
-            {
-              id: "token_provider",
-              interface: "auth_token_provider",
-              type: "requirement",
-            },
-            {
-              id: "token_validator",
               interface: "auth_token_validator",
-              type: "requirement",
-            },
-            {
-              id: "evse_manager",
-              interface: "evse_manager",
-              type: "requirement",
-            },
-          ],
-        },
-      },
-      car_simulator_1: {
-        position: {
-          x: -60,
-          y: 17,
-        },
-        terminals: {
-          top: [
-            {
-              id: "ev",
-              interface: "ISO15118_ev",
-              type: "requirement",
-            },
-          ],
-          right: [
-            {
-              id: "simulation_control",
-              interface: "yeti_simulation_control",
-              type: "requirement",
-            },
-            {
-              id: "main",
-              interface: "car_simulator",
               type: "provide",
             },
           ],
-          bottom: [
-            {
-              id: "slac",
-              interface: "slac",
-              type: "requirement",
-            },
-          ],
+          bottom: [],
           left: [],
         },
       },
-      car_simulator_2: {
+      evse_security: {
         position: {
-          x: -60,
-          y: 42,
+          x: -8,
+          y: -7,
         },
         terminals: {
           top: [],
           right: [
             {
-              id: "ev",
-              interface: "ISO15118_ev",
-              type: "requirement",
-            },
-            {
-              id: "simulation_control",
-              interface: "yeti_simulation_control",
-              type: "requirement",
-            },
-            {
-              id: "slac",
-              interface: "slac",
-              type: "requirement",
-            },
-          ],
-          bottom: [
-            {
               id: "main",
-              interface: "car_simulator",
+              interface: "evse_security",
               type: "provide",
             },
           ],
+          bottom: [],
           left: [],
         },
       },
       energy_manager: {
         position: {
-          x: 50,
+          x: 77,
           y: 21,
         },
         terminals: {
@@ -1512,10 +693,10 @@ export default {
           ],
         },
       },
-      evse_manager_1: {
+      grid_connection_point: {
         position: {
-          x: 2,
-          y: -1,
+          x: 54,
+          y: 29,
         },
         terminals: {
           top: [],
@@ -1526,6 +707,644 @@ export default {
               type: "provide",
             },
             {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      api: {
+        position: {
+          x: 77,
+          y: 13,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "empty",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "evse_energy_sink",
+              interface: "external_energy_limits",
+              type: "requirement",
+            },
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+            {
+              id: "ocpp",
+              interface: "ocpp",
+              type: "requirement",
+            },
+            {
+              id: "random_delay",
+              interface: "uk_random_delay",
+              type: "requirement",
+            },
+            {
+              id: "error_history",
+              interface: "error_history",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      error_history: {
+        position: {
+          x: 54,
+          y: 17,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "error_history",
+              interface: "error_history",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+    },
+  },
+  "config-sil-ocpp201": {
+    active_modules: {
+      iso15118_charger: {
+        module: "EvseV2G",
+        config_module: {
+          device: "auto",
+          tls_security: "allow",
+        },
+        connections: {
+          security: [
+            {
+              module_id: "evse_security",
+              implementation_id: "main",
+            },
+          ],
+        },
+      },
+      iso15118_car: {
+        module: "PyEvJosev",
+        config_module: {
+          device: "auto",
+          supported_ISO15118_2: true,
+        },
+      },
+      evse_manager_1: {
+        module: "EvseManager",
+        mapping: {
+          module: {
+            evse: 1,
+          },
+        },
+        config_module: {
+          connector_id: 1,
+          evse_id: "1",
+          connector_type: "cType2",
+          session_logging: true,
+          session_logging_xml: false,
+          session_logging_path: "/tmp",
+          ac_hlc_enabled: false,
+          ac_hlc_use_5percent: false,
+          ac_enforce_hlc: false,
+          request_zero_power_in_idle: true,
+        },
+        connections: {
+          bsp: [
+            {
+              module_id: "yeti_driver_1",
+              implementation_id: "board_support",
+            },
+          ],
+          powermeter_grid_side: [
+            {
+              module_id: "yeti_driver_1",
+              implementation_id: "powermeter",
+            },
+          ],
+          slac: [
+            {
+              module_id: "slac",
+              implementation_id: "evse",
+            },
+          ],
+          hlc: [
+            {
+              module_id: "iso15118_charger",
+              implementation_id: "charger",
+            },
+          ],
+        },
+      },
+      evse_manager_2: {
+        module: "EvseManager",
+        mapping: {
+          module: {
+            evse: 2,
+          },
+        },
+        config_module: {
+          connector_id: 2,
+          evse_id: "2",
+          connector_type: "cType2",
+          session_logging: true,
+          session_logging_xml: false,
+          session_logging_path: "/tmp",
+          ac_hlc_enabled: false,
+          ac_hlc_use_5percent: false,
+          ac_enforce_hlc: false,
+          request_zero_power_in_idle: true,
+        },
+        connections: {
+          bsp: [
+            {
+              module_id: "yeti_driver_2",
+              implementation_id: "board_support",
+            },
+          ],
+          powermeter_grid_side: [
+            {
+              module_id: "yeti_driver_2",
+              implementation_id: "powermeter",
+            },
+          ],
+          slac: [
+            {
+              module_id: "slac",
+              implementation_id: "evse",
+            },
+          ],
+          hlc: [
+            {
+              module_id: "iso15118_charger",
+              implementation_id: "charger",
+            },
+          ],
+        },
+      },
+      yeti_driver_1: {
+        module: "YetiSimulator",
+        mapping: {
+          module: {
+            evse: 1,
+          },
+        },
+        config_module: {
+          connector_id: 1,
+        },
+      },
+      yeti_driver_2: {
+        module: "YetiSimulator",
+        mapping: {
+          module: {
+            evse: 2,
+          },
+        },
+        config_module: {
+          connector_id: 2,
+        },
+      },
+      slac: {
+        module: "SlacSimulator",
+      },
+      ev_manager_1: {
+        module: "EvManager",
+        config_module: {
+          connector_id: 1,
+          auto_enable: true,
+          auto_exec: false,
+          auto_exec_commands: "sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
+        },
+        connections: {
+          ev_board_support: [
+            {
+              module_id: "yeti_driver_1",
+              implementation_id: "ev_board_support",
+            },
+          ],
+          ev: [
+            {
+              module_id: "iso15118_car",
+              implementation_id: "ev",
+            },
+          ],
+          slac: [
+            {
+              module_id: "slac",
+              implementation_id: "ev",
+            },
+          ],
+        },
+      },
+      ev_manager_2: {
+        module: "EvManager",
+        config_module: {
+          connector_id: 2,
+          auto_enable: true,
+          auto_exec: false,
+        },
+        connections: {
+          ev_board_support: [
+            {
+              module_id: "yeti_driver_2",
+              implementation_id: "ev_board_support",
+            },
+          ],
+          ev: [
+            {
+              module_id: "iso15118_car",
+              implementation_id: "ev",
+            },
+          ],
+          slac: [
+            {
+              module_id: "slac",
+              implementation_id: "ev",
+            },
+          ],
+        },
+      },
+      ocpp: {
+        module: "OCPP201",
+        connections: {
+          evse_manager: [
+            {
+              module_id: "evse_manager_1",
+              implementation_id: "evse",
+            },
+            {
+              module_id: "evse_manager_2",
+              implementation_id: "evse",
+            },
+          ],
+          auth: [
+            {
+              module_id: "auth",
+              implementation_id: "main",
+            },
+          ],
+          system: [
+            {
+              module_id: "system",
+              implementation_id: "main",
+            },
+          ],
+          security: [
+            {
+              module_id: "evse_security",
+              implementation_id: "main",
+            },
+          ],
+          evse_energy_sink: [
+            {
+              module_id: "grid_connection_point",
+              implementation_id: "external_limits",
+            },
+            {
+              module_id: "evse_manager_1_ocpp_sink",
+              implementation_id: "external_limits",
+            },
+            {
+              module_id: "evse_manager_2_ocpp_sink",
+              implementation_id: "external_limits",
+            },
+          ],
+          reservation: [
+            {
+              module_id: "auth",
+              implementation_id: "reservation",
+            },
+          ],
+        },
+      },
+      persistent_store: {
+        module: "PersistentStore",
+      },
+      evse_security: {
+        module: "EvseSecurity",
+        config_module: {
+          private_key_password: "123456",
+        },
+      },
+      token_provider_1: {
+        module: "DummyTokenProviderManual",
+      },
+      auth: {
+        module: "Auth",
+        config_module: {
+          connection_timeout: 60,
+          selection_algorithm: "FindFirst",
+        },
+        connections: {
+          token_provider: [
+            {
+              module_id: "token_provider_1",
+              implementation_id: "main",
+            },
+            {
+              module_id: "ocpp",
+              implementation_id: "auth_provider",
+            },
+          ],
+          token_validator: [
+            {
+              module_id: "ocpp",
+              implementation_id: "auth_validator",
+            },
+          ],
+          evse_manager: [
+            {
+              module_id: "evse_manager_1",
+              implementation_id: "evse",
+            },
+            {
+              module_id: "evse_manager_2",
+              implementation_id: "evse",
+            },
+          ],
+          kvs: [
+            {
+              module_id: "persistent_store",
+              implementation_id: "main",
+            },
+          ],
+        },
+      },
+      energy_manager: {
+        module: "EnergyManager",
+        connections: {
+          energy_trunk: [
+            {
+              module_id: "grid_connection_point",
+              implementation_id: "energy_grid",
+            },
+          ],
+        },
+      },
+      evse_manager_1_ocpp_sink: {
+        module: "EnergyNode",
+        mapping: {
+          module: {
+            evse: 1,
+          },
+        },
+        config_module: {
+          fuse_limit_A: 32,
+          phase_count: 3,
+        },
+        connections: {
+          energy_consumer: [
+            {
+              module_id: "evse_manager_1",
+              implementation_id: "energy_grid",
+            },
+          ],
+        },
+      },
+      evse_manager_2_ocpp_sink: {
+        module: "EnergyNode",
+        mapping: {
+          module: {
+            evse: 2,
+          },
+        },
+        config_module: {
+          fuse_limit_A: 32,
+          phase_count: 3,
+        },
+        connections: {
+          energy_consumer: [
+            {
+              module_id: "evse_manager_2",
+              implementation_id: "energy_grid",
+            },
+          ],
+        },
+      },
+      evse_manager_1_api_sink: {
+        module: "EnergyNode",
+        mapping: {
+          module: {
+            evse: 1,
+          },
+        },
+        config_module: {
+          fuse_limit_A: 32,
+          phase_count: 3,
+        },
+        connections: {
+          energy_consumer: [
+            {
+              module_id: "evse_manager_1_ocpp_sink",
+              implementation_id: "energy_grid",
+            },
+          ],
+          powermeter: [
+            {
+              module_id: "yeti_driver_1",
+              implementation_id: "powermeter",
+            },
+          ],
+        },
+      },
+      evse_manager_2_api_sink: {
+        module: "EnergyNode",
+        mapping: {
+          module: {
+            evse: 2,
+          },
+        },
+        config_module: {
+          fuse_limit_A: 32,
+          phase_count: 3,
+        },
+        connections: {
+          energy_consumer: [
+            {
+              module_id: "evse_manager_2_ocpp_sink",
+              implementation_id: "energy_grid",
+            },
+          ],
+          powermeter: [
+            {
+              module_id: "yeti_driver_2",
+              implementation_id: "powermeter",
+            },
+          ],
+        },
+      },
+      grid_connection_point: {
+        module: "EnergyNode",
+        mapping: {
+          module: {
+            evse: 0,
+          },
+        },
+        config_module: {
+          fuse_limit_A: 40,
+          phase_count: 3,
+        },
+        connections: {
+          price_information: [],
+          energy_consumer: [
+            {
+              module_id: "evse_manager_1_api_sink",
+              implementation_id: "energy_grid",
+            },
+            {
+              module_id: "evse_manager_2_api_sink",
+              implementation_id: "energy_grid",
+            },
+          ],
+        },
+      },
+      api: {
+        module: "API",
+        connections: {
+          evse_manager: [
+            {
+              module_id: "evse_manager_1",
+              implementation_id: "evse",
+            },
+            {
+              module_id: "evse_manager_2",
+              implementation_id: "evse",
+            },
+          ],
+          ocpp: [
+            {
+              module_id: "ocpp",
+              implementation_id: "ocpp_generic",
+            },
+          ],
+          error_history: [
+            {
+              module_id: "error_history",
+              implementation_id: "error_history",
+            },
+          ],
+          evse_energy_sink: [
+            {
+              module_id: "evse_manager_1_api_sink",
+              implementation_id: "external_limits",
+            },
+            {
+              module_id: "evse_manager_2_api_sink",
+              implementation_id: "external_limits",
+            },
+          ],
+        },
+      },
+      error_history: {
+        module: "ErrorHistory",
+        config_implementation: {
+          error_history: {
+            database_path: "/tmp/error_history.db",
+          },
+        },
+      },
+      system: {
+        module: "System",
+        connections: {},
+        config_module: {
+          DefaultRetries: 1,
+          DefaultRetryInterval: 1,
+          ResetDelay: 0,
+        },
+      },
+    },
+    "x-module-layout": {
+      iso15118_charger: {
+        position: {
+          x: -29,
+          y: 21,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "charger",
+              interface: "ISO15118_charger",
+              type: "provide",
+            },
+            {
+              id: "extensions",
+              interface: "iso15118_extensions",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "security",
+              interface: "evse_security",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      iso15118_car: {
+        position: {
+          x: -42,
+          y: 1,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      evse_manager_1: {
+        position: {
+          x: 2,
+          y: 10,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "evse",
+              interface: "evse_manager",
+              type: "provide",
+            },
+            {
               id: "random_delay",
               interface: "uk_random_delay",
               type: "provide",
@@ -1535,14 +1354,20 @@ export default {
               interface: "auth_token_provider",
               type: "provide",
             },
+          ],
+          bottom: [
             {
-              id: "evse",
-              interface: "evse_manager",
+              id: "energy_grid",
+              interface: "energy",
               type: "provide",
             },
           ],
-          bottom: [],
           left: [
+            {
+              id: "slac",
+              interface: "slac",
+              type: "requirement",
+            },
             {
               id: "ac_rcd",
               interface: "ac_rcd",
@@ -1559,13 +1384,13 @@ export default {
               type: "requirement",
             },
             {
-              id: "hlc",
-              interface: "ISO15118_charger",
+              id: "imd",
+              interface: "isolation_monitor",
               type: "requirement",
             },
             {
-              id: "imd",
-              interface: "isolation_monitor",
+              id: "over_voltage_monitor",
+              interface: "over_voltage_monitor",
               type: "requirement",
             },
             {
@@ -1584,8 +1409,13 @@ export default {
               type: "requirement",
             },
             {
-              id: "slac",
-              interface: "slac",
+              id: "store",
+              interface: "kvs",
+              type: "requirement",
+            },
+            {
+              id: "hlc",
+              interface: "ISO15118_charger",
               type: "requirement",
             },
           ],
@@ -1593,21 +1423,21 @@ export default {
       },
       evse_manager_2: {
         position: {
-          x: 13,
-          y: 16,
+          x: 2,
+          y: -16,
         },
         terminals: {
           top: [
             {
-              id: "evse",
-              interface: "evse_manager",
+              id: "energy_grid",
+              interface: "energy",
               type: "provide",
             },
           ],
           right: [
             {
-              id: "energy_grid",
-              interface: "energy",
+              id: "evse",
+              interface: "evse_manager",
               type: "provide",
             },
             {
@@ -1624,23 +1454,8 @@ export default {
           bottom: [],
           left: [
             {
-              id: "hlc",
-              interface: "ISO15118_charger",
-              type: "requirement",
-            },
-            {
               id: "ac_rcd",
               interface: "ac_rcd",
-              type: "requirement",
-            },
-            {
-              id: "bsp",
-              interface: "evse_board_support",
-              type: "requirement",
-            },
-            {
-              id: "connector_lock",
-              interface: "connector_lock",
               type: "requirement",
             },
             {
@@ -1649,12 +1464,22 @@ export default {
               type: "requirement",
             },
             {
-              id: "powermeter_car_side",
-              interface: "powermeter",
+              id: "over_voltage_monitor",
+              interface: "over_voltage_monitor",
               type: "requirement",
             },
             {
               id: "powermeter_grid_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_car_side",
               interface: "powermeter",
               type: "requirement",
             },
@@ -1664,17 +1489,312 @@ export default {
               type: "requirement",
             },
             {
+              id: "bsp",
+              interface: "evse_board_support",
+              type: "requirement",
+            },
+            {
               id: "slac",
               interface: "slac",
+              type: "requirement",
+            },
+            {
+              id: "store",
+              interface: "kvs",
+              type: "requirement",
+            },
+            {
+              id: "hlc",
+              interface: "ISO15118_charger",
               type: "requirement",
             },
           ],
         },
       },
+      yeti_driver_1: {
+        position: {
+          x: -42,
+          y: 8,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "provide",
+            },
+            {
+              id: "board_support",
+              interface: "evse_board_support",
+              type: "provide",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "provide",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "provide",
+            },
+            {
+              id: "rcd",
+              interface: "ac_rcd",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      yeti_driver_2: {
+        position: {
+          x: -42,
+          y: -13,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "provide",
+            },
+            {
+              id: "board_support",
+              interface: "evse_board_support",
+              type: "provide",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "provide",
+            },
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "provide",
+            },
+            {
+              id: "rcd",
+              interface: "ac_rcd",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      slac: {
+        position: {
+          x: -42,
+          y: -6,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "ev",
+              interface: "ev_slac",
+              type: "provide",
+            },
+            {
+              id: "evse",
+              interface: "slac",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      ev_manager_1: {
+        position: {
+          x: 2,
+          y: 2,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "car_simulator",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "slac",
+              interface: "ev_slac",
+              type: "requirement",
+            },
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "requirement",
+            },
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "requirement",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      ev_manager_2: {
+        position: {
+          x: 2,
+          y: -7,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "car_simulator",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "requirement",
+            },
+            {
+              id: "slac",
+              interface: "ev_slac",
+              type: "requirement",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      ocpp: {
+        position: {
+          x: 56,
+          y: 14,
+        },
+        terminals: {
+          top: [
+            {
+              id: "auth",
+              interface: "auth",
+              type: "requirement",
+            },
+            {
+              id: "reservation",
+              interface: "reservation",
+              type: "requirement",
+            },
+            {
+              id: "auth_validator",
+              interface: "auth_token_validator",
+              type: "provide",
+            },
+            {
+              id: "auth_provider",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+          right: [
+            {
+              id: "data_transfer",
+              interface: "ocpp_data_transfer",
+              type: "provide",
+            },
+            {
+              id: "session_cost",
+              interface: "session_cost",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "evse_energy_sink",
+              interface: "external_energy_limits",
+              type: "requirement",
+            },
+            {
+              id: "data_transfer",
+              interface: "ocpp_data_transfer",
+              type: "requirement",
+            },
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+            {
+              id: "display_message",
+              interface: "display_message",
+              type: "requirement",
+            },
+            {
+              id: "extensions_15118",
+              interface: "iso15118_extensions",
+              type: "requirement",
+            },
+            {
+              id: "security",
+              interface: "evse_security",
+              type: "requirement",
+            },
+            {
+              id: "system",
+              interface: "system",
+              type: "requirement",
+            },
+            {
+              id: "ocpp_generic",
+              interface: "ocpp",
+              type: "provide",
+            },
+          ],
+        },
+      },
+      persistent_store: {
+        position: {
+          x: 48,
+          y: -11,
+        },
+        terminals: {
+          top: [],
+          right: [],
+          bottom: [
+            {
+              id: "main",
+              interface: "kvs",
+              type: "provide",
+            },
+          ],
+          left: [],
+        },
+      },
       evse_security: {
         position: {
-          x: -40,
-          y: 3,
+          x: -48,
+          y: 15,
         },
         terminals: {
           top: [],
@@ -1689,10 +1809,180 @@ export default {
           left: [],
         },
       },
-      grid_connection_point: {
+      token_provider_1: {
         position: {
-          x: 32,
-          y: 23,
+          x: 71,
+          y: -1,
+        },
+        terminals: {
+          top: [],
+          right: [],
+          bottom: [],
+          left: [
+            {
+              id: "main",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+        },
+      },
+      auth: {
+        position: {
+          x: 48,
+          y: -1,
+        },
+        terminals: {
+          top: [
+            {
+              id: "kvs",
+              interface: "kvs",
+              type: "requirement",
+            },
+          ],
+          right: [
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "requirement",
+            },
+          ],
+          bottom: [
+            {
+              id: "main",
+              interface: "auth",
+              type: "provide",
+            },
+            {
+              id: "reservation",
+              interface: "reservation",
+              type: "provide",
+            },
+            {
+              id: "token_validator",
+              interface: "auth_token_validator",
+              type: "requirement",
+            },
+          ],
+          left: [
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      energy_manager: {
+        position: {
+          x: 22,
+          y: -49,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "energy_manager",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_trunk",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          left: [],
+        },
+      },
+      evse_manager_1_ocpp_sink: {
+        position: {
+          x: 2,
+          y: 20,
+        },
+        terminals: {
+          top: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          right: [
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+          ],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      evse_manager_2_ocpp_sink: {
+        position: {
+          x: 2,
+          y: -24,
+        },
+        terminals: {
+          top: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+          ],
+          right: [
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      evse_manager_1_api_sink: {
+        position: {
+          x: 2,
+          y: 28,
         },
         terminals: {
           top: [
@@ -1729,132 +2019,145 @@ export default {
           ],
         },
       },
-      iso15118_car: {
+      evse_manager_2_api_sink: {
         position: {
-          x: -40,
-          y: 10,
+          x: 2,
+          y: -32,
         },
         terminals: {
           top: [],
-          right: [],
-          bottom: [],
-          left: [
+          right: [
             {
-              id: "ev",
-              interface: "ISO15118_ev",
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
               type: "provide",
             },
           ],
-        },
-      },
-      iso15118_charger: {
-        position: {
-          x: -21,
-          y: -10,
-        },
-        terminals: {
-          top: [],
-          right: [],
           bottom: [
             {
-              id: "charger",
-              interface: "ISO15118_charger",
-              type: "provide",
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
             },
           ],
           left: [
             {
-              id: "security",
-              interface: "evse_security",
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
               type: "requirement",
             },
           ],
         },
       },
-      ocpp: {
+      grid_connection_point: {
         position: {
-          x: 24,
-          y: 7,
+          x: 22,
+          y: -41,
         },
         terminals: {
           top: [
             {
-              id: "auth_provider",
-              interface: "auth_token_provider",
+              id: "energy_grid",
+              interface: "energy",
               type: "provide",
-            },
-            {
-              id: "auth_validator",
-              interface: "auth_token_validator",
-              type: "provide",
-            },
-            {
-              id: "auth",
-              interface: "auth",
-              type: "requirement",
             },
           ],
           right: [
             {
-              id: "data_transfer",
-              interface: "ocpp_data_transfer",
-              type: "provide",
-            },
-            {
-              id: "main",
-              interface: "empty",
-              type: "provide",
-            },
-            {
-              id: "ocpp_generic",
-              interface: "ocpp",
+              id: "external_limits",
+              interface: "external_energy_limits",
               type: "provide",
             },
           ],
-          bottom: [],
-          left: [
+          bottom: [
             {
-              id: "data_transfer",
-              interface: "ocpp_data_transfer",
+              id: "energy_consumer",
+              interface: "energy",
               type: "requirement",
             },
+          ],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      api: {
+        position: {
+          x: 36,
+          y: 26,
+        },
+        terminals: {
+          top: [
             {
               id: "evse_manager",
               interface: "evse_manager",
               type: "requirement",
             },
             {
-              id: "security",
-              interface: "evse_security",
-              type: "requirement",
-            },
-            {
-              id: "system",
-              interface: "system",
+              id: "ocpp",
+              interface: "ocpp",
               type: "requirement",
             },
           ],
-        },
-      },
-      slac: {
-        position: {
-          x: -40,
-          y: 38,
-        },
-        terminals: {
-          top: [],
           right: [
             {
-              id: "evse",
-              interface: "slac",
+              id: "error_history",
+              interface: "error_history",
+              type: "requirement",
+            },
+            {
+              id: "main",
+              interface: "empty",
               type: "provide",
             },
           ],
           bottom: [],
           left: [
             {
-              id: "ev",
-              interface: "slac",
+              id: "evse_energy_sink",
+              interface: "external_energy_limits",
+              type: "requirement",
+            },
+            {
+              id: "random_delay",
+              interface: "uk_random_delay",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      error_history: {
+        position: {
+          x: 56,
+          y: 21,
+        },
+        terminals: {
+          top: [],
+          right: [],
+          bottom: [],
+          left: [
+            {
+              id: "error_history",
+              interface: "error_history",
               type: "provide",
             },
           ],
@@ -1862,8 +2165,8 @@ export default {
       },
       system: {
         position: {
-          x: -40,
-          y: 31,
+          x: 2,
+          y: 35,
         },
         terminals: {
           top: [],
@@ -1878,380 +2181,210 @@ export default {
           left: [],
         },
       },
-      token_provider_1: {
-        position: {
-          x: 12,
-          y: -21,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "main",
-              interface: "auth_token_provider",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [],
-        },
-      },
-      yeti_driver_1: {
-        position: {
-          x: -40,
-          y: 17,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "board_support",
-              interface: "evse_board_support",
-              type: "provide",
-            },
-            {
-              id: "connector_lock",
-              interface: "connector_lock",
-              type: "provide",
-            },
-            {
-              id: "powermeter",
-              interface: "powermeter",
-              type: "provide",
-            },
-            {
-              id: "rcd",
-              interface: "ac_rcd",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [
-            {
-              id: "yeti_simulation_control",
-              interface: "yeti_simulation_control",
-              type: "provide",
-            },
-          ],
-        },
-      },
-      yeti_driver_2: {
-        position: {
-          x: -40,
-          y: 24,
-        },
-        terminals: {
-          top: [],
-          right: [
-            {
-              id: "board_support",
-              interface: "evse_board_support",
-              type: "provide",
-            },
-            {
-              id: "connector_lock",
-              interface: "connector_lock",
-              type: "provide",
-            },
-            {
-              id: "powermeter",
-              interface: "powermeter",
-              type: "provide",
-            },
-            {
-              id: "rcd",
-              interface: "ac_rcd",
-              type: "provide",
-            },
-          ],
-          bottom: [],
-          left: [
-            {
-              id: "yeti_simulation_control",
-              interface: "yeti_simulation_control",
-              type: "provide",
-            },
-          ],
-        },
-      },
     },
   },
   "config-sil": {
+    settings: {
+      telemetry_enabled: true,
+    },
     active_modules: {
-      MyEvseManager: {
-        module: "EvseManager",
-        connections: {
-          ac_rcd: [
-            {
-              module_id: "connector_1_powerpath",
-              implementation_id: "rcd",
-            },
-          ],
-          bsp: [
-            {
-              module_id: "connector_1_powerpath",
-              implementation_id: "board_support",
-            },
-          ],
-          connector_lock: [
-            {
-              module_id: "connector_1_powerpath",
-              implementation_id: "connector_lock",
-            },
-          ],
-          hlc: [
-            {
-              module_id: "iso15118_charger",
-              implementation_id: "charger",
-            },
-          ],
-          powermeter_grid_side: [
-            {
-              module_id: "connector_1_powerpath",
-              implementation_id: "powermeter",
-            },
-          ],
-          slac: [
-            {
-              module_id: "slac",
-              implementation_id: "evse",
-            },
-          ],
-        },
-        config_module: {
-          ac_enforce_hlc: false,
-          ac_hlc_enabled: true,
-          ac_hlc_use_5percent: false,
-          ac_nominal_voltage: 230,
-          ac_with_soc: false,
-          autocharge_use_slac_instead_of_hlc: false,
-          charge_mode: "AC",
-          connector_id: 1,
-          country_code: "DE",
-          dbg_hlc_auth_after_tstep: false,
-          dc_isolation_voltage_V: 500,
-          disable_authentication: false,
-          ev_receipt_required: false,
-          evse_id: "DE*PNX*E12345*1",
-          evse_id_din: "49A80737A45678",
-          external_ready_to_start_charging: false,
-          hack_allow_bpt_with_iso2: false,
-          hack_fix_hlc_integer_current_requests: false,
-          hack_pause_imd_during_precharge: false,
-          hack_present_current_offset: 0,
-          hack_skoda_enyaq: false,
-          hack_sleep_in_cable_check: 0,
-          hack_sleep_in_cable_check_volkswagen: 0,
-          has_ventilation: true,
-          logfile_suffix: "session_uuid",
-          max_current_export_A: 32,
-          max_current_import_A: 32,
-          payment_enable_contract: true,
-          payment_enable_eim: true,
-          request_zero_power_in_idle: false,
-          sae_j2847_2_bpt_enabled: false,
-          sae_j2847_2_bpt_mode: "V2G",
-          session_logging: true,
-          session_logging_path: "/tmp/everest-logs",
-          session_logging_xml: false,
-          soft_over_current_measurement_noise_A: 0.5,
-          soft_over_current_tolerance_percent: 10,
-          switch_to_minimum_voltage_after_cable_check: false,
-          three_phases: true,
-        },
-      },
       api: {
-        module: "API",
         connections: {
           evse_manager: [
             {
-              module_id: "MyEvseManager",
               implementation_id: "evse",
+              module_id: "connector_1",
+            },
+          ],
+          error_history: [
+            {
+              module_id: "error_history",
+              implementation_id: "error_history",
             },
           ],
         },
-        config_module: {
-          charger_information_file: "",
-          hw_caps_max_current_export_decimal_places: 2,
-          hw_caps_max_current_export_round_to: 0,
-          hw_caps_max_current_import_decimal_places: 2,
-          hw_caps_max_current_import_round_to: 0,
-          hw_caps_max_plug_temperature_C_decimal_places: 2,
-          hw_caps_max_plug_temperature_C_round_to: 0,
-          hw_caps_min_current_export_decimal_places: 2,
-          hw_caps_min_current_export_round_to: 0,
-          hw_caps_min_current_import_decimal_places: 2,
-          hw_caps_min_current_import_round_to: 0,
-          limits_max_current_decimal_places: 2,
-          limits_max_current_round_to: 0,
-          powermeter_VAR_decimal_places: 2,
-          powermeter_VAR_round_to: 0,
-          powermeter_current_decimal_places: 2,
-          powermeter_current_round_to: 0,
-          powermeter_energy_export_decimal_places: 2,
-          powermeter_energy_export_round_to: 0,
-          powermeter_energy_import_decimal_places: 2,
-          powermeter_energy_import_round_to: 0,
-          powermeter_frequency_decimal_places: 2,
-          powermeter_frequency_round_to: 0,
-          powermeter_power_decimal_places: 2,
-          powermeter_power_round_to: 0,
-          powermeter_voltage_decimal_places: 2,
-          powermeter_voltage_round_to: 0,
-          telemetry_evse_temperature_C_decimal_places: 2,
-          telemetry_evse_temperature_C_round_to: 0,
-          telemetry_fan_rpm_decimal_places: 2,
-          telemetry_fan_rpm_round_to: 0,
-          telemetry_plug_temperature_C_decimal_places: 2,
-          telemetry_plug_temperature_C_round_to: 0,
-          telemetry_supply_voltage_12V_decimal_places: 2,
-          telemetry_supply_voltage_12V_round_to: 0,
-          telemetry_supply_voltage_minus_12V_decimal_places: 2,
-          telemetry_supply_voltage_minus_12V_round_to: 0,
+        module: "API",
+      },
+      error_history: {
+        module: "ErrorHistory",
+        config_implementation: {
+          error_history: {
+            database_path: "/tmp/error_history.db",
+          },
         },
       },
       auth: {
-        module: "Auth",
+        config_module: {
+          connection_timeout: 10,
+          prioritize_authorization_over_stopping_transaction: true,
+          selection_algorithm: "FindFirst",
+          ignore_connector_faults: true,
+        },
         connections: {
           evse_manager: [
             {
-              module_id: "MyEvseManager",
               implementation_id: "evse",
+              module_id: "connector_1",
             },
           ],
           token_provider: [
             {
-              module_id: "token_provider",
               implementation_id: "main",
+              module_id: "token_provider",
             },
           ],
           token_validator: [
             {
-              module_id: "token_validator",
               implementation_id: "main",
+              module_id: "token_validator",
             },
           ],
         },
-        config_module: {
-          connection_timeout: 10,
-          ignore_connector_faults: true,
-          master_pass_group_id: "",
-          prioritize_authorization_over_stopping_transaction: true,
-          selection_algorithm: "FindFirst",
-        },
+        module: "Auth",
       },
-      car_simulator: {
-        module: "JsCarSimulator",
-        connections: {
-          ev: [
-            {
-              module_id: "iso15118_car",
-              implementation_id: "ev",
-            },
-          ],
-          simulation_control: [
-            {
-              module_id: "connector_1_powerpath",
-              implementation_id: "yeti_simulation_control",
-            },
-          ],
-          slac: [
-            {
-              module_id: "slac",
-              implementation_id: "ev",
-            },
-          ],
-        },
+      ev_manager: {
         config_module: {
           auto_enable: true,
           auto_exec: false,
           auto_exec_commands: "sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug",
           connector_id: 1,
-          dc_discharge_max_current_limit: 300,
-          dc_discharge_max_power_limit: 150000,
-          dc_discharge_target_current: 5,
-          dc_discharge_v2g_minimal_soc: 20,
-          dc_energy_capacity: 60000,
-          dc_max_current_limit: 300,
-          dc_max_power_limit: 150000,
-          dc_max_voltage_limit: 900,
-          dc_target_current: 5,
-          dc_target_voltage: 200,
-          support_sae_j2847: false,
         },
-      },
-      connector_1_powerpath: {
-        module: "JsYetiSimulator",
-        connections: {},
-        config_module: {
-          connector_id: 1,
+        connections: {
+          ev: [
+            {
+              implementation_id: "ev",
+              module_id: "iso15118_car",
+            },
+          ],
+          ev_board_support: [
+            {
+              implementation_id: "ev_board_support",
+              module_id: "connector_1_powerpath",
+            },
+          ],
+          slac: [
+            {
+              implementation_id: "ev",
+              module_id: "slac",
+            },
+          ],
         },
+        module: "EvManager",
       },
       energy_manager: {
-        module: "EnergyManager",
+        config_module: {
+          switch_3ph1ph_while_charging_mode: "Both",
+          switch_3ph1ph_max_nr_of_switches_per_session: 5,
+          switch_3ph1ph_time_hysteresis_s: 20,
+          switch_3ph1ph_power_hysteresis_W: 1000,
+          switch_3ph1ph_switch_limit_stickyness: "SinglePhase",
+          schedule_interval_duration: 60,
+          schedule_total_duration: 10,
+          debug: false,
+        },
         connections: {
           energy_trunk: [
             {
-              module_id: "grid_connection_point",
               implementation_id: "energy_grid",
+              module_id: "grid_connection_point",
             },
           ],
         },
-        config_module: {
-          debug: false,
-          nominal_ac_voltage: 230,
-          schedule_interval_duration: 60,
-          schedule_total_duration: 1,
-          slice_ampere: 0.5,
-          slice_watt: 500,
-          update_interval: 1,
-        },
+        module: "EnergyManager",
       },
-      evse_security: {
-        module: "EvseSecurity",
-        connections: {},
+      connector_1: {
         config_module: {
-          csms_ca_bundle: "ca/v2g/V2G_ROOT_CA.pem",
-          csms_leaf_cert_directory: "client/csms",
-          csms_leaf_key_directory: "client/csms",
-          mf_ca_bundle: "ca/mf/MF_ROOT_CA.pem",
-          mo_ca_bundle: "ca/mo/MO_ROOT_CA.pem",
-          private_key_password: 123456,
-          secc_leaf_cert_directory: "client/cso",
-          secc_leaf_key_directory: "client/cso",
-          v2g_ca_bundle: "ca/v2g/V2G_ROOT_CA.pem",
+          ac_enforce_hlc: false,
+          ac_hlc_enabled: true,
+          ac_hlc_use_5percent: false,
+          ac_nominal_voltage: 230,
+          charge_mode: "AC",
+          connector_id: 1,
+          ev_receipt_required: false,
+          evse_id: "DE*PNX*E12345*1",
+          has_ventilation: true,
+          max_current_import_A: 32,
+          max_current_export_A: 32,
+          payment_enable_contract: true,
+          payment_enable_eim: true,
+          session_logging: true,
+          session_logging_path: "/tmp/everest-logs",
+          session_logging_xml: false,
+          switch_3ph1ph_delay_s: 5,
+          switch_3ph1ph_cp_state: "X1",
+        },
+        connections: {
+          bsp: [
+            {
+              implementation_id: "board_support",
+              module_id: "connector_1_powerpath",
+            },
+          ],
+          hlc: [
+            {
+              implementation_id: "charger",
+              module_id: "iso15118_charger",
+            },
+          ],
+          powermeter_grid_side: [
+            {
+              implementation_id: "powermeter",
+              module_id: "connector_1_powerpath",
+            },
+          ],
+          slac: [
+            {
+              implementation_id: "evse",
+              module_id: "slac",
+            },
+          ],
+          ac_rcd: [
+            {
+              implementation_id: "rcd",
+              module_id: "connector_1_powerpath",
+            },
+          ],
+          connector_lock: [
+            {
+              implementation_id: "connector_lock",
+              module_id: "connector_1_powerpath",
+            },
+          ],
+        },
+        module: "EvseManager",
+        telemetry: {
+          id: 1,
         },
       },
       grid_connection_point: {
-        module: "EnergyNode",
-        connections: {
-          energy_consumer: [
-            {
-              module_id: "MyEvseManager",
-              implementation_id: "energy_grid",
-            },
-          ],
-        },
         config_module: {
           fuse_limit_A: 40,
           phase_count: 3,
         },
+        connections: {
+          energy_consumer: [
+            {
+              implementation_id: "energy_grid",
+              module_id: "connector_1",
+            },
+          ],
+        },
+        module: "EnergyNode",
       },
       iso15118_car: {
-        module: "PyEvJosev",
-        connections: {},
         config_module: {
           device: "auto",
-          enforce_tls: false,
-          is_cert_install_needed: false,
-          supported_DIN70121: false,
           supported_ISO15118_2: true,
-          supported_ISO15118_20_AC: false,
-          supported_ISO15118_20_DC: false,
-          tls_active: false,
         },
+        connections: {},
+        module: "PyEvJosev",
       },
       iso15118_charger: {
+        config_module: {
+          device: "auto",
+          tls_security: "allow",
+          supported_DIN70121: false,
+        },
         module: "EvseV2G",
         connections: {
           security: [
@@ -2261,83 +2394,59 @@ export default {
             },
           ],
         },
+      },
+      evse_security: {
+        module: "EvseSecurity",
         config_module: {
-          auth_timeout_eim: 300,
-          auth_timeout_pnc: 55,
-          device: "auto",
-          supported_DIN70121: false,
-          supported_ISO15118_2: true,
-          terminate_connection_on_failed_response: false,
-          tls_key_logging: false,
-          tls_key_logging_path: "/tmp",
-          tls_security: "allow",
-          tls_timeout: 15000,
-          verify_contract_cert_chain: false,
+          private_key_password: "123456",
         },
       },
       persistent_store: {
-        module: "PersistentStore",
-        connections: {},
         config_module: {
           sqlite_db_file_path: "everest_persistent_store.db",
         },
+        connections: {},
+        module: "PersistentStore",
       },
       setup: {
-        module: "Setup",
-        connections: {
-          store: [
-            {
-              module_id: "persistent_store",
-              implementation_id: "main",
-            },
-          ],
-        },
         config_module: {
-          ap_interface: "wlan0",
-          ap_ipv4: "192.168.1.1/24",
           initialized_by_default: true,
           localization: true,
           online_check_host: "lfenergy.org",
-          release_metadata_file: "release.json",
           setup_simulation: true,
           setup_wifi: false,
         },
-      },
-      slac: {
-        module: "JsSlacSimulator",
-        connections: {},
-        config_implementation: {
-          ev: {
-            ev_id: "PIONIX_SAYS_HELLO",
-          },
-          evse: {
-            evse_id: "PIONIX_SAYS_HELLO",
-            nid: "pionix!",
-            number_of_sounds: 10,
-          },
-        },
-      },
-      token_provider: {
-        module: "DummyTokenProvider",
         connections: {
-          evse: [
+          store: [
             {
-              module_id: "MyEvseManager",
-              implementation_id: "evse",
+              implementation_id: "main",
+              module_id: "persistent_store",
             },
           ],
         },
+        module: "Setup",
+      },
+      slac: {
+        module: "SlacSimulator",
+      },
+      token_provider: {
         config_implementation: {
           main: {
             timeout: 10,
             token: "DEADBEEF",
-            type: "RFID",
           },
         },
+        connections: {
+          evse: [
+            {
+              implementation_id: "evse",
+              module_id: "connector_1",
+            },
+          ],
+        },
+        module: "DummyTokenProvider",
       },
       token_validator: {
-        module: "DummyTokenValidator",
-        connections: {},
         config_implementation: {
           main: {
             sleep: 0.25,
@@ -2345,75 +2454,21 @@ export default {
             validation_result: "Accepted",
           },
         },
+        connections: {},
+        module: "DummyTokenValidator",
+      },
+      connector_1_powerpath: {
+        config_module: {
+          connector_id: 1,
+        },
+        connections: {},
+        module: "YetiSimulator",
+        telemetry: {
+          id: 1,
+        },
       },
     },
     "x-module-layout": {
-      MyEvseManager: {
-        position: {
-          x: 13,
-          y: 23,
-        },
-        terminals: {
-          bottom: [
-            {
-              id: "powersupply_DC",
-              interface: "power_supply_DC",
-              type: "requirement",
-            },
-            {
-              id: "imd",
-              interface: "isolation_monitor",
-              type: "requirement",
-            },
-            {
-              id: "powermeter_car_side",
-              interface: "powermeter",
-              type: "requirement",
-            },
-            {
-              id: "token_provider",
-              interface: "auth_token_provider",
-              type: "provide",
-            },
-            {
-              id: "slac",
-              interface: "slac",
-              type: "requirement",
-            },
-          ],
-          left: [
-            {
-              id: "hlc",
-              interface: "ISO15118_charger",
-              type: "requirement",
-            },
-          ],
-          right: [
-            {
-              id: "bsp",
-              interface: "board_support_AC",
-              type: "requirement",
-            },
-            {
-              id: "powermeter_grid_side",
-              interface: "powermeter",
-              type: "requirement",
-            },
-          ],
-          top: [
-            {
-              id: "energy_grid",
-              interface: "energy",
-              type: "provide",
-            },
-            {
-              id: "evse",
-              interface: "evse_manager",
-              type: "provide",
-            },
-          ],
-        },
-      },
       api: {
         position: {
           x: 33,
@@ -2479,7 +2534,7 @@ export default {
           ],
         },
       },
-      car_simulator: {
+      ev_manager: {
         position: {
           x: 53,
           y: 33,
@@ -2501,7 +2556,7 @@ export default {
           right: [
             {
               id: "main",
-              interface: "car_simulator",
+              interface: "ev_manager",
               type: "provide",
             },
           ],
@@ -2510,6 +2565,72 @@ export default {
               id: "ev",
               interface: "ISO15118_ev",
               type: "requirement",
+            },
+          ],
+        },
+      },
+      connector_1: {
+        position: {
+          x: 13,
+          y: 23,
+        },
+        terminals: {
+          bottom: [
+            {
+              id: "powersupply_DC",
+              interface: "power_supply_DC",
+              type: "requirement",
+            },
+            {
+              id: "imd",
+              interface: "isolation_monitor",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_car_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+            {
+              id: "slac",
+              interface: "slac",
+              type: "requirement",
+            },
+          ],
+          left: [
+            {
+              id: "hlc",
+              interface: "ISO15118_charger",
+              type: "requirement",
+            },
+          ],
+          right: [
+            {
+              id: "bsp",
+              interface: "board_support_AC",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_grid_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+          ],
+          top: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+            {
+              id: "evse",
+              interface: "evse_manager",
+              type: "provide",
             },
           ],
         },
@@ -2587,24 +2708,6 @@ export default {
             {
               id: "main",
               interface: "energy_manager",
-              type: "provide",
-            },
-          ],
-          top: [],
-        },
-      },
-      evse_security: {
-        position: {
-          x: 9,
-          y: 2,
-        },
-        terminals: {
-          bottom: [],
-          left: [],
-          right: [
-            {
-              id: "main",
-              interface: "evse_security",
               type: "provide",
             },
           ],
