@@ -269,7 +269,532 @@ export default {
         },
       },
     },
-    "x-module-layout": {},
+    "x-module-layout": {
+      iso15118_charger: {
+        position: {
+          x: 12,
+          y: -7,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "charger",
+              interface: "ISO15118_charger",
+              type: "provide",
+            },
+            {
+              id: "extensions",
+              interface: "iso15118_extensions",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "security",
+              interface: "evse_security",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      iso15118_car: {
+        position: {
+          x: -8,
+          y: 35,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      evse_manager: {
+        position: {
+          x: 33,
+          y: 14,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "evse",
+              interface: "evse_manager",
+              type: "provide",
+            },
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+            {
+              id: "random_delay",
+              interface: "uk_random_delay",
+              type: "provide",
+            },
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "hlc",
+              interface: "ISO15118_charger",
+              type: "requirement",
+            },
+            {
+              id: "over_voltage_monitor",
+              interface: "over_voltage_monitor",
+              type: "requirement",
+            },
+            {
+              id: "imd",
+              interface: "isolation_monitor",
+              type: "requirement",
+            },
+            {
+              id: "powersupply_DC",
+              interface: "power_supply_DC",
+              type: "requirement",
+            },
+            {
+              id: "ac_rcd",
+              interface: "ac_rcd",
+              type: "requirement",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_grid_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "store",
+              interface: "kvs",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_car_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "slac",
+              interface: "slac",
+              type: "requirement",
+            },
+            {
+              id: "bsp",
+              interface: "evse_board_support",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      powersupply_dc: {
+        position: {
+          x: -8,
+          y: 14,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "power_supply_DC",
+              type: "provide",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      yeti_driver: {
+        position: {
+          x: -8,
+          y: 28,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "board_support",
+              interface: "evse_board_support",
+              type: "provide",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "provide",
+            },
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "provide",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "provide",
+            },
+            {
+              id: "rcd",
+              interface: "ac_rcd",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      slac: {
+        position: {
+          x: -8,
+          y: 21,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "evse",
+              interface: "slac",
+              type: "provide",
+            },
+            {
+              id: "ev",
+              interface: "ev_slac",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      imd: {
+        position: {
+          x: -8,
+          y: 7,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "isolation_monitor",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      ovm: {
+        position: {
+          x: -8,
+          y: 0,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "over_voltage_monitor",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      ev_manager: {
+        position: {
+          x: 33,
+          y: 23,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "car_simulator",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "slac",
+              interface: "ev_slac",
+              type: "requirement",
+            },
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "requirement",
+            },
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      auth: {
+        position: {
+          x: 77,
+          y: 6,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "auth",
+              type: "provide",
+            },
+            {
+              id: "reservation",
+              interface: "reservation",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "token_validator",
+              interface: "auth_token_validator",
+              type: "requirement",
+            },
+            {
+              id: "kvs",
+              interface: "kvs",
+              type: "requirement",
+            },
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "requirement",
+            },
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      token_provider: {
+        position: {
+          x: 54,
+          y: 4,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "evse",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      token_validator: {
+        position: {
+          x: 54,
+          y: -4,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "auth_token_validator",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      evse_security: {
+        position: {
+          x: -8,
+          y: -7,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "evse_security",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      energy_manager: {
+        position: {
+          x: 77,
+          y: 21,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "energy_manager",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "energy_trunk",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      grid_connection_point: {
+        position: {
+          x: 54,
+          y: 29,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      api: {
+        position: {
+          x: 77,
+          y: 13,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "empty",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "evse_energy_sink",
+              interface: "external_energy_limits",
+              type: "requirement",
+            },
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+            {
+              id: "ocpp",
+              interface: "ocpp",
+              type: "requirement",
+            },
+            {
+              id: "random_delay",
+              interface: "uk_random_delay",
+              type: "requirement",
+            },
+            {
+              id: "error_history",
+              interface: "error_history",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      error_history: {
+        position: {
+          x: 54,
+          y: 17,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "error_history",
+              interface: "error_history",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+    },
   },
   "config-sil-ocpp201": {
     active_modules: {
@@ -750,9 +1275,913 @@ export default {
       },
       system: {
         module: "System",
+        connections: {},
+        config_module: {
+          DefaultRetries: 1,
+          DefaultRetryInterval: 1,
+          ResetDelay: 0,
+        },
       },
     },
-    "x-module-layout": {},
+    "x-module-layout": {
+      iso15118_charger: {
+        position: {
+          x: -29,
+          y: 21,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "charger",
+              interface: "ISO15118_charger",
+              type: "provide",
+            },
+            {
+              id: "extensions",
+              interface: "iso15118_extensions",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "security",
+              interface: "evse_security",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      iso15118_car: {
+        position: {
+          x: -42,
+          y: 1,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      evse_manager_1: {
+        position: {
+          x: 2,
+          y: 10,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "evse",
+              interface: "evse_manager",
+              type: "provide",
+            },
+            {
+              id: "random_delay",
+              interface: "uk_random_delay",
+              type: "provide",
+            },
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+          ],
+          left: [
+            {
+              id: "slac",
+              interface: "slac",
+              type: "requirement",
+            },
+            {
+              id: "ac_rcd",
+              interface: "ac_rcd",
+              type: "requirement",
+            },
+            {
+              id: "bsp",
+              interface: "evse_board_support",
+              type: "requirement",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "requirement",
+            },
+            {
+              id: "imd",
+              interface: "isolation_monitor",
+              type: "requirement",
+            },
+            {
+              id: "over_voltage_monitor",
+              interface: "over_voltage_monitor",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_car_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_grid_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "powersupply_DC",
+              interface: "power_supply_DC",
+              type: "requirement",
+            },
+            {
+              id: "store",
+              interface: "kvs",
+              type: "requirement",
+            },
+            {
+              id: "hlc",
+              interface: "ISO15118_charger",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      evse_manager_2: {
+        position: {
+          x: 2,
+          y: -16,
+        },
+        terminals: {
+          top: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+          ],
+          right: [
+            {
+              id: "evse",
+              interface: "evse_manager",
+              type: "provide",
+            },
+            {
+              id: "random_delay",
+              interface: "uk_random_delay",
+              type: "provide",
+            },
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "ac_rcd",
+              interface: "ac_rcd",
+              type: "requirement",
+            },
+            {
+              id: "imd",
+              interface: "isolation_monitor",
+              type: "requirement",
+            },
+            {
+              id: "over_voltage_monitor",
+              interface: "over_voltage_monitor",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_grid_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "requirement",
+            },
+            {
+              id: "powermeter_car_side",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "powersupply_DC",
+              interface: "power_supply_DC",
+              type: "requirement",
+            },
+            {
+              id: "bsp",
+              interface: "evse_board_support",
+              type: "requirement",
+            },
+            {
+              id: "slac",
+              interface: "slac",
+              type: "requirement",
+            },
+            {
+              id: "store",
+              interface: "kvs",
+              type: "requirement",
+            },
+            {
+              id: "hlc",
+              interface: "ISO15118_charger",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      yeti_driver_1: {
+        position: {
+          x: -42,
+          y: 8,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "provide",
+            },
+            {
+              id: "board_support",
+              interface: "evse_board_support",
+              type: "provide",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "provide",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "provide",
+            },
+            {
+              id: "rcd",
+              interface: "ac_rcd",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      yeti_driver_2: {
+        position: {
+          x: -42,
+          y: -13,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "provide",
+            },
+            {
+              id: "board_support",
+              interface: "evse_board_support",
+              type: "provide",
+            },
+            {
+              id: "connector_lock",
+              interface: "connector_lock",
+              type: "provide",
+            },
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "provide",
+            },
+            {
+              id: "rcd",
+              interface: "ac_rcd",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      slac: {
+        position: {
+          x: -42,
+          y: -6,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "ev",
+              interface: "ev_slac",
+              type: "provide",
+            },
+            {
+              id: "evse",
+              interface: "slac",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      ev_manager_1: {
+        position: {
+          x: 2,
+          y: 2,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "car_simulator",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "slac",
+              interface: "ev_slac",
+              type: "requirement",
+            },
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "requirement",
+            },
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "requirement",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      ev_manager_2: {
+        position: {
+          x: 2,
+          y: -7,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "car_simulator",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "ev_board_support",
+              interface: "ev_board_support",
+              type: "requirement",
+            },
+            {
+              id: "slac",
+              interface: "ev_slac",
+              type: "requirement",
+            },
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "ev",
+              interface: "ISO15118_ev",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      ocpp: {
+        position: {
+          x: 56,
+          y: 14,
+        },
+        terminals: {
+          top: [
+            {
+              id: "auth",
+              interface: "auth",
+              type: "requirement",
+            },
+            {
+              id: "reservation",
+              interface: "reservation",
+              type: "requirement",
+            },
+            {
+              id: "auth_validator",
+              interface: "auth_token_validator",
+              type: "provide",
+            },
+            {
+              id: "auth_provider",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+          right: [
+            {
+              id: "data_transfer",
+              interface: "ocpp_data_transfer",
+              type: "provide",
+            },
+            {
+              id: "session_cost",
+              interface: "session_cost",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "evse_energy_sink",
+              interface: "external_energy_limits",
+              type: "requirement",
+            },
+            {
+              id: "data_transfer",
+              interface: "ocpp_data_transfer",
+              type: "requirement",
+            },
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+            {
+              id: "display_message",
+              interface: "display_message",
+              type: "requirement",
+            },
+            {
+              id: "extensions_15118",
+              interface: "iso15118_extensions",
+              type: "requirement",
+            },
+            {
+              id: "security",
+              interface: "evse_security",
+              type: "requirement",
+            },
+            {
+              id: "system",
+              interface: "system",
+              type: "requirement",
+            },
+            {
+              id: "ocpp_generic",
+              interface: "ocpp",
+              type: "provide",
+            },
+          ],
+        },
+      },
+      persistent_store: {
+        position: {
+          x: 48,
+          y: -11,
+        },
+        terminals: {
+          top: [],
+          right: [],
+          bottom: [
+            {
+              id: "main",
+              interface: "kvs",
+              type: "provide",
+            },
+          ],
+          left: [],
+        },
+      },
+      evse_security: {
+        position: {
+          x: -48,
+          y: 15,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "evse_security",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+      token_provider_1: {
+        position: {
+          x: 71,
+          y: -1,
+        },
+        terminals: {
+          top: [],
+          right: [],
+          bottom: [],
+          left: [
+            {
+              id: "main",
+              interface: "auth_token_provider",
+              type: "provide",
+            },
+          ],
+        },
+      },
+      auth: {
+        position: {
+          x: 48,
+          y: -1,
+        },
+        terminals: {
+          top: [
+            {
+              id: "kvs",
+              interface: "kvs",
+              type: "requirement",
+            },
+          ],
+          right: [
+            {
+              id: "token_provider",
+              interface: "auth_token_provider",
+              type: "requirement",
+            },
+          ],
+          bottom: [
+            {
+              id: "main",
+              interface: "auth",
+              type: "provide",
+            },
+            {
+              id: "reservation",
+              interface: "reservation",
+              type: "provide",
+            },
+            {
+              id: "token_validator",
+              interface: "auth_token_validator",
+              type: "requirement",
+            },
+          ],
+          left: [
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      energy_manager: {
+        position: {
+          x: 22,
+          y: -49,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "energy_manager",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_trunk",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          left: [],
+        },
+      },
+      evse_manager_1_ocpp_sink: {
+        position: {
+          x: 2,
+          y: 20,
+        },
+        terminals: {
+          top: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          right: [
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+          ],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      evse_manager_2_ocpp_sink: {
+        position: {
+          x: 2,
+          y: -24,
+        },
+        terminals: {
+          top: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+          ],
+          right: [
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      evse_manager_1_api_sink: {
+        position: {
+          x: 2,
+          y: 28,
+        },
+        terminals: {
+          top: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          right: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      evse_manager_2_api_sink: {
+        position: {
+          x: 2,
+          y: -32,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      grid_connection_point: {
+        position: {
+          x: 22,
+          y: -41,
+        },
+        terminals: {
+          top: [
+            {
+              id: "energy_grid",
+              interface: "energy",
+              type: "provide",
+            },
+          ],
+          right: [
+            {
+              id: "external_limits",
+              interface: "external_energy_limits",
+              type: "provide",
+            },
+          ],
+          bottom: [
+            {
+              id: "energy_consumer",
+              interface: "energy",
+              type: "requirement",
+            },
+          ],
+          left: [
+            {
+              id: "powermeter",
+              interface: "powermeter",
+              type: "requirement",
+            },
+            {
+              id: "price_information",
+              interface: "energy_price_information",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      api: {
+        position: {
+          x: 36,
+          y: 26,
+        },
+        terminals: {
+          top: [
+            {
+              id: "evse_manager",
+              interface: "evse_manager",
+              type: "requirement",
+            },
+            {
+              id: "ocpp",
+              interface: "ocpp",
+              type: "requirement",
+            },
+          ],
+          right: [
+            {
+              id: "error_history",
+              interface: "error_history",
+              type: "requirement",
+            },
+            {
+              id: "main",
+              interface: "empty",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [
+            {
+              id: "evse_energy_sink",
+              interface: "external_energy_limits",
+              type: "requirement",
+            },
+            {
+              id: "random_delay",
+              interface: "uk_random_delay",
+              type: "requirement",
+            },
+          ],
+        },
+      },
+      error_history: {
+        position: {
+          x: 56,
+          y: 21,
+        },
+        terminals: {
+          top: [],
+          right: [],
+          bottom: [],
+          left: [
+            {
+              id: "error_history",
+              interface: "error_history",
+              type: "provide",
+            },
+          ],
+        },
+      },
+      system: {
+        position: {
+          x: 2,
+          y: 35,
+        },
+        terminals: {
+          top: [],
+          right: [
+            {
+              id: "main",
+              interface: "system",
+              type: "provide",
+            },
+          ],
+          bottom: [],
+          left: [],
+        },
+      },
+    },
   },
   "config-sil": {
     settings: {
