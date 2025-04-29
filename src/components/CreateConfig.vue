@@ -111,8 +111,11 @@ const showErrorDialog = computed(() => errors.hasError);
 
 function onAcceptBtnClick() {
   if (validateConfigName() === true) {
-    resetDialog();
+    errors.clearError();
+    state.value = ComponentStates.DEFAULT;
     emit("createConfig", configName.value, configContent.value ?? undefined);
+    configName.value = "";
+    configContent.value = null;
   }
 }
 

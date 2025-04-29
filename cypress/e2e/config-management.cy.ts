@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+/// <reference types="cypress" />
+
 import { faker } from "@faker-js/faker";
 
 describe("ConfigManagement", () => {
