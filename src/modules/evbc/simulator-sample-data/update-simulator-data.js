@@ -6,6 +6,7 @@ import fs from "fs";
 import path, { dirname } from "path";
 import process from "process";
 import { fileURLToPath } from "url";
+import * as yaml from "js-yaml";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -117,13 +118,13 @@ function compileConfigFiles() {
   const configs = {};
 
   configFiles.forEach((file) => {
-    if (path.extname(file) === ".json") {
-      const configName = path.basename(file, ".json");
+    if (path.extname(file) === ".yaml") {
+      const configName = path.basename(file, ".yaml");
       const filePath = path.join(configDirPath, file);
       const fileContent = fs.readFileSync(filePath, "utf8");
-      configs[`${configName}`] = JSON.parse(fileContent);
+      configs[`${configName}`] = yaml.load(fileContent);
     } else {
-      console.warn(`Ignoring file ${file} as it is not a JSON file.`);
+      console.warn(`Ignoring file ${file} as it is not a yaml file.`);
     }
   });
 
