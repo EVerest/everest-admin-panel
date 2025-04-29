@@ -194,9 +194,13 @@ function load_config(name: string | null) {
     return;
   }
   show_dialog.value = false;
-  const new_config = evbc.load_config(name);
-  evbcStore.setOpenedConfig(new_config);
-  expansionPanelState.value = ["modules"];
+  try {
+    const new_config = evbc.load_config(name);
+    evbcStore.setOpenedConfig(new_config);
+    expansionPanelState.value = ["modules"];
+  } catch (err) {
+    errorStore.setError(err.toString());
+  }
 }
 
 function restart_modules() {
