@@ -1,7 +1,5 @@
-/*
- * SPDX-License-Identifier: Apache-2.0
- * Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
- */
+// SPDX-License-Identifier: Apache-2.0
+// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
