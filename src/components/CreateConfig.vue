@@ -73,7 +73,7 @@
     <v-card color="danger">
       <v-card-title>Couldn't load config</v-card-title>
       <v-card-text>
-        <pre style="white-space: pre-wrap"><code>{{ errors.getError() }}</code></pre>
+        <pre style="white-space: pre-wrap"><code>{{ errorStore.getError() }}</code></pre>
       </v-card-text>
       <v-card-actions>
         <v-btn color="primary" @click="resetDialog()"> OK </v-btn>
@@ -106,12 +106,12 @@ const emit = defineEmits<{
 }>();
 const { available_configs } = storeToRefs(evbcStore);
 const configContent = ref<EverestConfig>(null);
-const errors = useErrorStore();
-const showErrorDialog = computed(() => errors.hasError);
+const errorStore = useErrorStore();
+const showErrorDialog = computed(() => errorStore.hasError);
 
 function onAcceptBtnClick() {
   if (validateConfigName() === true) {
-    errors.clearError();
+    errorStore.clearError();
     state.value = ComponentStates.DEFAULT;
     emit("createConfig", configName.value, configContent.value ?? undefined);
     configName.value = "";
@@ -123,7 +123,7 @@ function resetDialog() {
   state.value = ComponentStates.DEFAULT;
   configName.value = "";
   configContent.value = null;
-  errors.clearError();
+  errorStore.clearError();
 }
 
 function uploadConfigPrompt() {
@@ -142,7 +142,7 @@ function uploadConfigPrompt() {
           configName.value = file.name.replace(/\.[^.]+$/, ""); // remove file extension
           state.value = ComponentStates.ASK_USER_FOR_CONFIG_NAME;
         } else {
-          errors.setError(parseResult.errors);
+          errorStore.setError(parseResult.errors);
         }
       };
       reader.readAsText(file);

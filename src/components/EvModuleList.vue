@@ -176,7 +176,6 @@ function create_config(name: string, content?: EverestConfig) {
     expansionPanelState.value = ["modules"];
   } catch (err) {
     errorStore.setError(err.toString());
-    console.log(`error in config: ${errorStore.getError()}`);
   }
 }
 
