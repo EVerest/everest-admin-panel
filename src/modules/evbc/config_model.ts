@@ -11,6 +11,7 @@ import {
   EverestConfig,
   EverestDefinitions,
   EverestModuleConfig,
+  EverestModuleDefinition,
   EverestModuleDefinitionList,
   ModuleInstanceID,
   ModuleInstanceModel,
@@ -280,6 +281,7 @@ class EVConfigModel {
       modules_config[instance.id] = {
         module: instance.type,
         connections,
+        ...(instance.mapping && { mapping: instance.mapping }),
       };
 
       config["x-module-layout"][instance.id] = instance.view_config;
@@ -317,6 +319,68 @@ class EVConfigModel {
     });
   }
 
+  _setup_mapping_config_set(
+    module_definition: EverestModuleDefinition,
+    mapping?: {
+      module?: { evse?: number; connector?: number };
+      implementations?: Record<string, { evse: number; connector?: number }>;
+    },
+  ): ConfigSetWithSchema {
+    const schema_entries = [];
+
+    // Add module-level mapping fields
+    if (mapping?.module || Object.keys(module_definition.provides || {}).length > 0) {
+      schema_entries.push({
+        schema: {
+          title: "Module EVSE ID",
+          description: "EVSE ID for this module",
+          type: "integer",
+          minimum: 1,
+        },
+        model: mapping?.module?.evse || null,
+      });
+
+      schema_entries.push({
+        schema: {
+          title: "Module Connector ID",
+          description: "Connector ID for this module (optional)",
+          type: "integer",
+          minimum: 1,
+        },
+        model: mapping?.module?.connector || null,
+      });
+    }
+
+    // Add implementation-level mapping fields
+    if (module_definition.provides) {
+      Object.entries(module_definition.provides).forEach(([impl_name]) => {
+        const impl_mapping = mapping?.implementations?.[impl_name];
+
+        schema_entries.push({
+          schema: {
+            title: `${impl_name} Implementation EVSE ID`,
+            description: `EVSE ID for ${impl_name} implementation`,
+            type: "integer",
+            minimum: 1,
+          },
+          model: impl_mapping?.evse || null,
+        });
+
+        schema_entries.push({
+          schema: {
+            title: `${impl_name} Implementation Connector ID`,
+            description: `Connector ID for ${impl_name} implementation (optional)`,
+            type: "integer",
+            minimum: 1,
+          },
+          model: impl_mapping?.connector || null,
+        });
+      });
+    }
+
+    return schema_entries.length > 0 ? schema_entries : undefined;
+  }
+
   _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig): number {
     if (!(type in this._module_definitions)) {
       throw Error(
@@ -341,6 +405,38 @@ class EVConfigModel {
 
     const instance_id = this._next_instance_id;
     this._next_instance_id++;
+
+    // Auto-assign mapping for new EvseManager instances
+    let auto_mapping = config?.mapping;
+    if (type === "EvseManager" && !auto_mapping) {
+      const evse_manager_count = Object.values(this._instances).filter(
+        (instance) => instance.type === "EvseManager",
+      ).length;
+      auto_mapping = {
+        module: {
+          evse: evse_manager_count + 1,
+          connector: 1,
+        },
+      };
+    }
+
+    // Apply fallback logic: if both module and implementations exist, keep implementations only
+    let final_mapping = auto_mapping;
+    if (final_mapping?.module && final_mapping?.implementations) {
+      // Invalid state: both module and implementations exist
+      // Fallback: remove module, keep implementations (more complex mode)
+      final_mapping = {
+        implementations: final_mapping.implementations,
+      };
+    }
+
+    // Initialize mapping with defaults if none exists (only for modules that need mappings)
+    if (!final_mapping && this.needs_mapping_ui(type)) {
+      final_mapping = {
+        module: { evse: 0 }, // Default to charging station level
+      };
+    }
+
     this._instances[instance_id] = {
       id,
       type,
@@ -353,6 +449,8 @@ class EVConfigModel {
             position: null,
             terminals: default_terminals(manifest),
           },
+      mapping: final_mapping,
+      mapping_config: this._setup_mapping_config_set(manifest, final_mapping),
     };
 
     // FIXME (aw): notify about new module instance
@@ -426,6 +524,69 @@ class EVConfigModel {
     if (index > -1) {
       connection_list.splice(index, 1);
     }
+  }
+
+  is_mapping_needed(): boolean {
+    const evse_managers = Object.values(this._instances).filter((instance) => instance.type === "EvseManager");
+    return evse_managers.length > 1;
+  }
+
+  get_available_evse_ids(): number[] {
+    const evse_ids = new Set<number>();
+
+    // Always include EVSE ID 0 (charging station level)
+    evse_ids.add(0);
+
+    // Generate EVSE IDs based on EvseManager count
+    const evse_manager_count = Object.values(this._instances).filter(
+      (instance) => instance.type === "EvseManager",
+    ).length;
+
+    // Generate 1..N sequence based on EvseManager count
+    for (let i = 1; i <= evse_manager_count; i++) {
+      evse_ids.add(i);
+    }
+
+    return Array.from(evse_ids).sort((a, b) => a - b);
+  }
+
+  validate_mapping_configuration(): { valid: boolean; warnings: string[] } {
+    const warnings: string[] = [];
+    const evse_manager_count = Object.values(this._instances).filter(
+      (instance) => instance.type === "EvseManager",
+    ).length;
+
+    // Check for mapping values that exceed available EvseManager count
+    Object.values(this._instances).forEach((instance) => {
+      if (instance.mapping?.module?.evse !== undefined) {
+        const evse_id = instance.mapping.module.evse;
+        if (evse_id > evse_manager_count) {
+          warnings.push(
+            `Module "${instance.id}" has EVSE ID ${evse_id} but only ${evse_manager_count} EvseManager modules exist.`,
+          );
+        }
+      }
+
+      if (instance.mapping?.implementations) {
+        Object.entries(instance.mapping.implementations).forEach(([impl_name, impl_mapping]) => {
+          if (impl_mapping.evse > evse_manager_count) {
+            warnings.push(
+              `Module "${instance.id}" implementation "${impl_name}" has EVSE ID ${impl_mapping.evse} but only ${evse_manager_count} EvseManager modules exist.`,
+            );
+          }
+        });
+      }
+    });
+
+    return { valid: warnings.length === 0, warnings };
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  needs_mapping_ui(module_type: string): boolean {
+    // TODO: Implement smarter detection logic based on module type/interfaces
+    // For now, show mapping UI for all modules when multiple EVSE managers exist
+    // Let users decide if they need mappings for their specific use case
+    return this.is_mapping_needed();
   }
 }
 
