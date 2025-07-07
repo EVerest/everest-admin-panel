@@ -310,7 +310,7 @@ export default defineComponent({
       return current_config.value.is_mapping_needed();
     });
 
-    // Always show the mapping section - let users decide
+    // Always show the mapping section for now - let users decide. TODO: Make this more intelligent at some point in the future.
     const showMappingSection = computed(() => {
       return !!module_node.value;
     });
