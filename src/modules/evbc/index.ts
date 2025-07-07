@@ -69,6 +69,20 @@ export type ModuleInstanceModel = {
   implementation_config?: Record<string, ConfigSetWithSchema>;
   view_config: ModuleViewConfig;
   connections: ConnectionID[];
+  mapping?: {
+    module?: {
+      evse?: number;
+      connector?: number;
+    };
+    implementations?: Record<
+      string,
+      {
+        evse: number;
+        connector?: number;
+      }
+    >;
+  };
+  mapping_config?: ConfigSetWithSchema;
 };
 
 export type EverestModuleConfig = {
@@ -82,6 +96,19 @@ export type EverestModuleConfig = {
       implementation_id: string;
     }>
   >;
+  mapping?: {
+    module?: {
+      evse?: number;
+      connector?: number;
+    };
+    implementations?: Record<
+      string,
+      {
+        evse: number;
+        connector?: number;
+      }
+    >;
+  };
 };
 
 export type EverestInterfaceDefinition = {

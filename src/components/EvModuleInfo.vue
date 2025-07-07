@@ -43,6 +43,105 @@
             </v-expansion-panel>
           </v-expansion-panels>
         </template>
+        <template v-if="showMappingSection">
+          <v-divider />
+          <p class="font-weight-bold">EVSE/Connector Mapping</p>
+          <v-checkbox
+            v-model="enableMappingForThisModule"
+            label="Configure mapping for this module"
+            density="compact"
+            hide-details
+            class="mb-3"
+          />
+
+          <template v-if="enableMappingForThisModule">
+            <v-alert v-if="mappingValidation.warnings.length > 0" type="warning" variant="tonal" class="mb-4">
+              <v-icon icon="mdi-alert" />
+              <div><strong>Configuration Issues:</strong></div>
+              <ul class="mt-2">
+                <li v-for="warning in mappingValidation.warnings" :key="warning" class="ml-4">
+                  {{ warning }}
+                </li>
+              </ul>
+            </v-alert>
+
+            <p class="text-caption text-medium-emphasis mb-4">
+              Configure EVSE and connector mappings for this module.
+              <v-tooltip text="EVSE ID 0 = entire charging station, EVSE IDs 1+ = individual charging points">
+                <template #activator="{ props }">
+                  <v-icon v-bind="props" icon="mdi-help-circle" size="small" />
+                </template>
+              </v-tooltip>
+              Choose EVSE IDs from 0 to the number of EvseManager modules in your configuration.
+            </p>
+
+            <!-- Module-level mappings - only show when implementation mode is OFF -->
+            <div v-if="!showImplementationMappings && module_node.instance.mapping?.module">
+              <v-select
+                v-model="module_node.instance.mapping.module.evse"
+                :items="availableEvseIds"
+                label="Module EVSE ID"
+                hint="EVSE ID for this module (0 = charging station level)"
+                persistent-hint
+                clearable
+                class="mb-3"
+              />
+              <v-text-field
+                v-model.number="module_node.instance.mapping.module.connector"
+                label="Module Connector ID (optional)"
+                hint="Connector ID for this module (1-4 typical, optional)"
+                persistent-hint
+                type="number"
+                min="1"
+                clearable
+                class="mb-3"
+              />
+            </div>
+
+            <!-- Checkbox to switch between module and implementation mappings -->
+            <v-checkbox
+              v-if="hasImplementationMappings"
+              v-model="showImplementationMappings"
+              label="Use implementation-specific mappings (instead of module-level)"
+              density="compact"
+              class="mt-2 mb-3"
+            />
+
+            <!-- Implementation-level mappings -->
+            <div v-if="showImplementationMappings && module_node.instance.mapping?.implementations">
+              <v-divider class="mb-3" />
+              <p class="text-caption text-medium-emphasis mb-3">
+                Advanced: Configure specific mappings for individual implementations
+              </p>
+              <div
+                v-for="(implMapping, implName) in module_node.instance.mapping.implementations"
+                :key="implName"
+                class="mb-4"
+              >
+                <h4 class="text-subtitle-2 mb-2">{{ implName }} Implementation</h4>
+                <v-select
+                  v-model="implMapping.evse"
+                  :items="availableEvseIds"
+                  :label="`${implName} EVSE ID`"
+                  hint="EVSE ID for this implementation"
+                  persistent-hint
+                  clearable
+                  class="mb-3"
+                />
+                <v-text-field
+                  v-model.number="implMapping.connector"
+                  :label="`${implName} Connector ID (optional)`"
+                  hint="Connector ID for this implementation (1-4 typical, optional)"
+                  persistent-hint
+                  type="number"
+                  min="1"
+                  clearable
+                  class="mb-3"
+                />
+              </div>
+            </div>
+          </template>
+        </template>
       </v-form>
     </v-card-text>
     <v-card-actions>
@@ -169,6 +268,90 @@ export default defineComponent({
       current_config.value.delete_module_instance(id);
     }
 
+    // Checkbox state derived from mapping object (YAML-first)
+    const showImplementationMappings = computed({
+      get: () => !!module_node.value?.instance?.mapping?.implementations,
+      set: (useImplementations: boolean) => {
+        if (!module_node.value?.instance) return;
+
+        const instance = module_node.value.instance;
+        const module_definition = current_config.value.module_definitions[instance.type];
+
+        // Initialize mapping if it doesn't exist
+        if (!instance.mapping) {
+          instance.mapping = {};
+        }
+
+        if (useImplementations) {
+          // Switch to implementations mode: delete module, create implementations with defaults
+          if (instance.mapping.module) {
+            delete instance.mapping.module;
+          }
+
+          if (module_definition.provides) {
+            instance.mapping.implementations = {};
+            Object.keys(module_definition.provides).forEach((impl_name) => {
+              instance.mapping.implementations[impl_name] = { evse: 0 };
+            });
+          }
+        } else {
+          // Switch to module mode: delete implementations, create module with default
+          if (instance.mapping.implementations) {
+            delete instance.mapping.implementations;
+          }
+
+          instance.mapping.module = { evse: 0 };
+        }
+      },
+    });
+
+    // Computed properties for intelligent mapping UI
+    const isMappingNeeded = computed(() => {
+      return current_config.value.is_mapping_needed();
+    });
+
+    // Always show the mapping section for now - let users decide. TODO: Make this more intelligent at some point in the future.
+    const showMappingSection = computed(() => {
+      return !!module_node.value;
+    });
+
+    // User-controlled checkbox to enable mapping for this specific module
+    const enableMappingForThisModule = computed({
+      get: () => !!module_node.value?.instance?.mapping,
+      set: (enabled: boolean) => {
+        if (!module_node.value?.instance) return;
+
+        const instance = module_node.value.instance;
+
+        if (enabled) {
+          // Initialize mapping with default module-level mapping
+          instance.mapping = {
+            module: { evse: 0 },
+          };
+        } else {
+          // Remove mapping entirely
+          delete instance.mapping;
+        }
+      },
+    });
+
+    const availableEvseIds = computed(() => {
+      return current_config.value.get_available_evse_ids().map((id) => ({
+        title: id === 0 ? `${id} (Charging Station)` : `${id} (EVSE ${id})`,
+        value: id,
+      }));
+    });
+
+    const mappingValidation = computed(() => {
+      return current_config.value.validate_mapping_configuration();
+    });
+
+    const hasImplementationMappings = computed(() => {
+      if (!module_node.value?.instance) return false;
+      const module_definition = current_config.value.module_definitions[module_node.value.instance.type];
+      return !!(module_definition.provides && Object.keys(module_definition.provides).length > 0);
+    });
+
     return {
       module_node,
       terminal,
@@ -178,6 +361,13 @@ export default defineComponent({
       moduleIDRules,
       delete_connection,
       delete_module_instance,
+      isMappingNeeded,
+      showMappingSection,
+      enableMappingForThisModule,
+      availableEvseIds,
+      mappingValidation,
+      showImplementationMappings,
+      hasImplementationMappings,
     };
   },
 });
