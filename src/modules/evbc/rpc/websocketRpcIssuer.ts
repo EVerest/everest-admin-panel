@@ -5,7 +5,6 @@ import { ConnectionStatus } from "@/modules/evbc/connection";
 import { RpcIssuer } from "@/modules/evbc/rpc/abstractRpcIssuer";
 
 export class WebsocketRpcIssuer extends RpcIssuer {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private _pending_commands: Map<number, any> = new Map<number, any>();
   private _socket: WebSocket;
   private _rpc_timeout_ms: number = INITIAL_RPC_TIMEOUT_VALUE;
