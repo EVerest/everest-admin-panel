@@ -10,7 +10,6 @@ type ConfigSetSchemaEntry = {
 };
 export type ConfigSetSchema = Record<string, ConfigSetSchemaEntry>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ConfigSetEntry = any;
 
 export type ConfigSetWithSchema = Array<{

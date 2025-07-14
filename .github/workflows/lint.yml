@@ -29,7 +29,7 @@ jobs:
           reporter: github-pr-check
           fail_on_error: true
           filter_mode: 'nofilter'
-          eslint_flags: '--ignore-path .gitignore .'
+          eslint_flags: '.'
 
   vue-tsc:
     runs-on: ubuntu-latest
