@@ -116,7 +116,7 @@ importers:
         version: 9.32.0(eslint@8.57.1)
       eslint-plugin-vuetify:
         specifier: ^2.5.1
-        version: 2.5.1(eslint@8.57.1)(vuetify@3.7.19)
+        version: 2.5.2(eslint@8.57.1)(vuetify@3.7.19)
       prettier:
         specifier: ^3.5.2
         version: 3.5.2
@@ -1930,8 +1930,8 @@ packages:
     peerDependencies:
       eslint: ^6.2.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
 
-  eslint-plugin-vuetify@2.5.1:
-    resolution: {integrity: sha512-iTyPkTC7wOP2nlBPXevqbeTIDHQ+btt+Tt8abowMEiDZcFSdUjBCcggJgMF1pLcpWwFpbfOcnqFLf73g5WM2qA==}
+  eslint-plugin-vuetify@2.5.2:
+    resolution: {integrity: sha512-Gm3W2R+tmEcATI5Qk8W13uZKmsdajlykG/AdL44E6Lwt1ttAbMi50DNMfkgZrCg7WAq3qd2IRiYx0QKtkpdf/A==}
     peerDependencies:
       eslint: ^8.0.0 || ^9.0.0
       vuetify: ^3.0.0
@@ -5604,7 +5604,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-vuetify@2.5.1(eslint@8.57.1)(vuetify@3.7.19):
+  eslint-plugin-vuetify@2.5.2(eslint@8.57.1)(vuetify@3.7.19):
     dependencies:
       eslint: 8.57.1
       eslint-plugin-vue: 9.32.0(eslint@8.57.1)
