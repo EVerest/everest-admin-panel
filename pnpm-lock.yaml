@@ -149,7 +149,7 @@ importers:
         version: 6.3.5(@types/node@22.16.4)(sass@1.85.1)(terser@5.43.1)
       vite-plugin-pwa:
         specifier: ^1.0.0
-        version: 1.0.0(vite@6.3.5(@types/node@22.16.4)(sass@1.85.1)(terser@5.43.1))(workbox-build@7.3.0)(workbox-window@7.3.0)
+        version: 1.0.1(vite@6.3.5(@types/node@22.16.4)(sass@1.85.1)(terser@5.43.1))(workbox-build@7.3.0)(workbox-window@7.3.0)
       vite-plugin-vuetify:
         specifier: ^2.1.0
         version: 2.1.1(vite@6.3.5(@types/node@22.16.4)(sass@1.85.1)(terser@5.43.1))(vue@3.5.13(typescript@5.5.4))(vuetify@3.7.19)
@@ -3223,6 +3223,10 @@ packages:
     resolution: {integrity: sha512-mEwzpUgrLySlveBwEVDMKk5B57bhLPYovRfPAXD5gA/98Opn0rCDj3GtLwFvCvH5RK9uPCExUROW5NjDwvqkxw==}
     engines: {node: '>=12.0.0'}
 
+  tinyglobby@0.2.14:
+    resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
+    engines: {node: '>=12.0.0'}
+
   tinypool@1.1.1:
     resolution: {integrity: sha512-Zba82s87IFq9A9XmjiX5uZA/ARWDrB03OHlq+Vw1fSdt0I+4/Kutwy8BP4Y/y/aORMo61FQ0vIb5j44vSo5Pkg==}
     engines: {node: ^18.0.0 || >=20.0.0}
@@ -3393,12 +3397,12 @@ packages:
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
 
-  vite-plugin-pwa@1.0.0:
-    resolution: {integrity: sha512-X77jo0AOd5OcxmWj3WnVti8n7Kw2tBgV1c8MCXFclrSlDV23ePzv2eTDIALXI2Qo6nJ5pZJeZAuX0AawvRfoeA==}
+  vite-plugin-pwa@1.0.1:
+    resolution: {integrity: sha512-STyUomQbydj7vGamtgQYIJI0YsUZ3T4pJLGBQDQPhzMse6aGSncmEN21OV35PrFsmCvmtiH+Nu1JS1ke4RqBjQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       '@vite-pwa/assets-generator': ^1.0.0
-      vite: ^3.1.0 || ^4.0.0 || ^5.0.0 || ^6.0.0
+      vite: ^3.1.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
       workbox-build: ^7.3.0
       workbox-window: ^7.3.0
     peerDependenciesMeta:
@@ -7019,6 +7023,11 @@ snapshots:
       fdir: 6.4.4(picomatch@4.0.2)
       picomatch: 4.0.2
 
+  tinyglobby@0.2.14:
+    dependencies:
+      fdir: 6.4.6(picomatch@4.0.2)
+      picomatch: 4.0.2
+
   tinypool@1.1.1: {}
 
   tinyrainbow@2.0.0: {}
@@ -7193,11 +7202,11 @@ snapshots:
       - tsx
       - yaml
 
-  vite-plugin-pwa@1.0.0(vite@6.3.5(@types/node@22.16.4)(sass@1.85.1)(terser@5.43.1))(workbox-build@7.3.0)(workbox-window@7.3.0):
+  vite-plugin-pwa@1.0.1(vite@6.3.5(@types/node@22.16.4)(sass@1.85.1)(terser@5.43.1))(workbox-build@7.3.0)(workbox-window@7.3.0):
     dependencies:
       debug: 4.4.1(supports-color@8.1.1)
       pretty-bytes: 6.1.1
-      tinyglobby: 0.2.13
+      tinyglobby: 0.2.14
       vite: 6.3.5(@types/node@22.16.4)(sass@1.85.1)(terser@5.43.1)
       workbox-build: 7.3.0
       workbox-window: 7.3.0
