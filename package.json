@@ -47,7 +47,7 @@
     "@eslint/js": "^9.21.0",
     "@faker-js/faker": "^9.5.0",
     "@types/js-yaml": "^4.0.9",
-    "@types/node": "^22.13.5",
+    "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^8.36.0",
     "@typescript-eslint/parser": "^8.36.0",
     "@vitejs/plugin-vue": "^5.2.1",
