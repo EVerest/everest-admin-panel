@@ -2,13 +2,16 @@
 # Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 
-name: Generate and Publish npm-shrinkwrap
+name: Check and Generate npm-shrinkwrap
 # The purpose of this job is to generate an npm-shrinkwrap.json which is needed for the yocto layer
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   create-shrinkwrap:
@@ -32,6 +35,7 @@ jobs:
           npm shrinkwrap
 
       - name: Publish npm-shrinkwrap.json as Artifact
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: npm-shrinkwrap
