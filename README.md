@@ -1,5 +1,7 @@
 # EVerest Admin Panel
 
+[![Stable release](https://img.shields.io/badge/demo-click_to_open-brightgreen.svg)](https://everest.github.io/everest-admin-panel/stable)
+
 ## Introduction
 
 The EVerest Admin Panel is a beta-stage frontend tool designed for graphically
@@ -38,14 +40,17 @@ includes a simulator for experimenting without an actual EVerest instance.
 
 ## Demo
 
-We continuously deploy the latest version of the admin panel to
-GitHub Pages: [Demo](https://everest.github.io/everest-admin-panel/main).
+We continuously deploy the latest tagged version of the admin panel to
+GitHub Pages: [Demo](https://everest.github.io/everest-admin-panel/stable).
 This allows you to try out the admin panel without having to install it
 locally.
 
 For every pull request we deploy a version to
 `https://everest.github.io/everest-admin-panel/pr-<PR_NUMBER>` so you can test
 the changes before a pull request is merged.
+
+The latest version of the main branch is deployed to
+`https://everest.github.io/everest-admin-panel/main`.
 
 ## Development
 
