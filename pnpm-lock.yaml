@@ -116,7 +116,7 @@ importers:
         version: 14.6.0(eslint-plugin-vue@10.3.0(@typescript-eslint/parser@8.37.0(eslint@9.31.0)(typescript@5.5.4))(eslint@9.31.0)(vue-eslint-parser@10.2.0(eslint@9.31.0)))(eslint@9.31.0)(typescript@5.5.4)
       cypress:
         specifier: ^14.0.3
-        version: 14.5.1
+        version: 14.5.2
       eslint:
         specifier: ^9.31.0
         version: 9.31.0
@@ -1830,8 +1830,8 @@ packages:
   csstype@3.1.3:
     resolution: {integrity: sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==}
 
-  cypress@14.5.1:
-    resolution: {integrity: sha512-vYBeZKW3UAtxwv5mFuSlOBCYhyO0H86TeDKRJ7TgARyHiREIaiDjeHtqjzrXRFrdz9KnNavqlm+z+hklC7v8XQ==}
+  cypress@14.5.2:
+    resolution: {integrity: sha512-O4E4CEBqDHLDrJD/dfStHPcM+8qFgVVZ89Li7xDU0yL/JxO/V0PEcfF2I8aGa7uA2MGNLkNUAnghPM83UcHOJw==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
 
@@ -2166,8 +2166,8 @@ packages:
   forever-agent@0.6.1:
     resolution: {integrity: sha512-j0KLYPhm6zeac4lz3oJ3o65qvgQCcPubiyotZrXqEaG4hNagNYO8qdlUrX5vwqv9ohqeT/Z3j6+yW067yWWdUw==}
 
-  form-data@4.0.3:
-    resolution: {integrity: sha512-qsITQPfmvMOSAdeyZ+12I1c+CKSstAFAwu+97zrnWAbIr5u8wfsExUzCesVLC8NgHuRUqNN4Zy6UPWUTRGslcA==}
+  form-data@4.0.4:
+    resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
     engines: {node: '>= 6'}
 
   fs-extra@9.1.0:
@@ -4354,7 +4354,7 @@ snapshots:
       combined-stream: 1.0.8
       extend: 3.0.2
       forever-agent: 0.6.1
-      form-data: 4.0.3
+      form-data: 4.0.4
       http-signature: 1.4.0
       is-typedarray: 1.0.0
       isstream: 0.1.2
@@ -5517,7 +5517,7 @@ snapshots:
 
   csstype@3.1.3: {}
 
-  cypress@14.5.1:
+  cypress@14.5.2:
     dependencies:
       '@cypress/request': 3.0.8
       '@cypress/xvfb': 1.2.4(supports-color@8.1.1)
@@ -5991,7 +5991,7 @@ snapshots:
 
   forever-agent@0.6.1: {}
 
-  form-data@4.0.3:
+  form-data@4.0.4:
     dependencies:
       asynckit: 0.4.0
       combined-stream: 1.0.8
