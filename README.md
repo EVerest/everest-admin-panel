@@ -1,6 +1,6 @@
 # EVerest Admin Panel
 
-[![Stable release](https://img.shields.io/badge/demo-stable-brightgreen.svg)](https://everest.github.io/everest-admin-panel/stable)
+[![Stable release](https://img.shields.io/badge/demo-click_to_open-brightgreen.svg)](https://everest.github.io/everest-admin-panel/stable)
 
 ## Introduction
 
