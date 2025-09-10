@@ -63,7 +63,7 @@
     "prettier": "3.6.2",
     "sass": "1.89.2",
     "typescript": "5.5.4",
-    "vite": "7.0.6",
+    "vite": "7.0.7",
     "vite-plugin-pwa": "1.0.1",
     "vite-plugin-vuetify": "2.1.1",
     "vitest": "3.2.4",
