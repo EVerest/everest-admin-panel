@@ -27,8 +27,8 @@ importers:
         specifier: 28.0.6
         version: 28.0.6(rollup@2.79.2)
       '@vue/compat':
-        specifier: 3.5.18
-        version: 3.5.18(vue@3.5.18(typescript@5.5.4))
+        specifier: 3.5.21
+        version: 3.5.21(vue@3.5.18(typescript@5.5.4))
       ajv:
         specifier: 8.17.1
         version: 8.17.1
@@ -1443,10 +1443,10 @@ packages:
   '@volar/typescript@2.4.22':
     resolution: {integrity: sha512-6ZczlJW1/GWTrNnkmZxJp4qyBt/SGVlcTuCWpI5zLrdPdCZsj66Aff9ZsfFaT3TyjG8zVYgBMYPuCm/eRkpcpQ==}
 
-  '@vue/compat@3.5.18':
-    resolution: {integrity: sha512-9nJUhd2+1JBW2YRxPkF0JZ+UieK2U7FEVla+7V4d9IlzD9HztQFSFj9VVR3sy/aTIUTyEhysKvsv7geD1jEiKg==}
+  '@vue/compat@3.5.21':
+    resolution: {integrity: sha512-uakoBcdx+7qb1dv+rYJ4Bgex7fz7guWrr5Iv0gHCqdl7ijyNXyDJ0BqpZrvxDej82O+113i5LGZmIxfVMyPy/Q==}
     peerDependencies:
-      vue: 3.5.18
+      vue: 3.5.21
 
   '@vue/compiler-core@3.5.18':
     resolution: {integrity: sha512-3slwjQrrV1TO8MoXgy3aynDQ7lslj5UqDxuHnrzHtpON5CBinhWjJETciPngpin/T3OuW3tXUf86tEurusnztw==}
@@ -5107,7 +5107,7 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
-  '@vue/compat@3.5.18(vue@3.5.18(typescript@5.5.4))':
+  '@vue/compat@3.5.21(vue@3.5.18(typescript@5.5.4))':
     dependencies:
       '@babel/parser': 7.28.3
       estree-walker: 2.0.2
