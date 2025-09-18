@@ -6,5 +6,6 @@
         ":gitSignOff",
         ":semanticCommitTypeAll(chore)"
     ],
+    "minimumReleaseAge": "14 days",
     "rangeStrategy": "pin"
 }
