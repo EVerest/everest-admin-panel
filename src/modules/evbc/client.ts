@@ -5,6 +5,9 @@ import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
+import { i18n } from "@/plugins/i18n";
+
+const { t } = i18n.global;
 
 type ConnectionStateEvent = {
   type: "INFO" | "INITIALIZED" | "FAILED" | "RECONNECT" | "IDLE";
@@ -70,7 +73,7 @@ class EVBackendClient {
   // - it would be nice, if we got an object after successful connection, that contains that
   load_config(name: string) {
     if (!(name in this.evbcStore.available_configs)) {
-      throw Error(`Configuration "${name}" not found`);
+      throw Error(t("evbc.client.configurationNotFound", { name }));
     }
     const config = this.evbcStore.available_configs[name];
     return new EVConfigModel(this.everest_definitions, name, config);
@@ -94,21 +97,21 @@ class EVBackendClient {
   _connection_state_listener(status: ConnectionStatus) {
     let event: ConnectionStateEvent = null;
     if (status.type === "OPEN") {
-      event = { type: "INFO", text: `Opening WebSocket connection to ${status.url}` };
+      event = { type: "INFO", text: t("evbc.client.openConnection", { connectionUrl: status.url }) };
     } else if (status.type === "OPENED") {
       // FIXME (aw): this state handling is not production ready yet, in fact it will be probably quite complicated
       if (!this.initialized) {
-        event = { type: "INFO", text: "Successfully opened WebSocket connection" };
+        event = { type: "INFO", text: t("evbc.client.openConnectionSuccess") };
         this._on_connected();
       } else {
-        event = { type: "INITIALIZED", text: "Successfully reconnected" };
+        event = { type: "INITIALIZED", text: t("evbc.client.reconnectedSuccess") };
       }
     } else if (status.type === "ERROR") {
-      event = { type: "FAILED", text: "Connection failed. Trying to reconnect." };
+      event = { type: "FAILED", text: t("evbc.client.connectionFailed") };
     } else if (status.type === "CLOSED") {
-      event = { type: "RECONNECT", text: "Trying to reconnect" };
+      event = { type: "RECONNECT", text: t("evbc.client.reconnecting") };
     } else if (status.type === "DISCONNECTED") {
-      event = { type: "IDLE", text: "Disconnected" };
+      event = { type: "IDLE", text: t("evbc.client.disconnected") };
     }
 
     if (event) {
@@ -119,7 +122,7 @@ class EVBackendClient {
   _on_connected() {
     this._reload_instance_data().then(() => {
       this.initialized = true;
-      this._publish("connection_state", { type: "INITIALIZED", text: "Done initializing" });
+      this._publish("connection_state", { type: "INITIALIZED", text: t("evbc.client.initialized") });
     });
   }
 
@@ -127,7 +130,7 @@ class EVBackendClient {
     this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
     this._publish("connection_state", {
       type: "INFO",
-      text: `Received ${Object.keys(this.everest_definitions.modules).length} module files`,
+      text: t("evbc.client.receivedModuleFiles", { count: Object.keys(this.everest_definitions.modules).length }),
     });
   }
 
@@ -135,14 +138,14 @@ class EVBackendClient {
     this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
     this._publish("connection_state", {
       type: "INFO",
-      text: `Received ${Object.keys(this.everest_definitions.interfaces).length} interfaces definitions`,
+      text: t("evbc.client.receivedInterfacesDefinitions", { count: Object.keys(this.everest_definitions.interfaces).length }),
     });
   }
 
   async _reload_configs(): Promise<void> {
     const cfgs = await this._cxn.rpc_issuer.get_configs();
     Object.assign(this.evbcStore.available_configs, cfgs);
-    this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(cfgs).length} config files` });
+    this._publish("connection_state", { type: "INFO", text: t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }) });
   }
 
   _reload_instance_data(): Promise<void[]> {

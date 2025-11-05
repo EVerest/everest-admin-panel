@@ -1,0 +1,139 @@
+{
+    "config_model": {
+        "connectionExistsError": "连接 \"{connection}\" 已存在",
+        "deleteConnectionError": "ID 为 \"{id}\" 的连接未知",
+        "deleteModelInstanceError": "实例 ID 为 \"{id}\" 的模块实例不存在。",
+        "evseIdCountWarning": "模块 \"{instanceId}\" 的 EVSE ID 为 {evseId}，但只有 {evseManagerCount} 个 EvseManager 模块存在。",
+        "interfaceMismatchError": "提供 ({provider}) 和要求 ({requirement}) 的接口不匹配",
+        "moduleExistsError": "ID 为 {moduleId} 的模块实例已存在",
+        "moduleImplementationCountWarning": "模块 \"{instanceId}\" 实现 \"{implementationName}\" 的 EVSE ID 为 {evseId}，但只有 {evseManagerCount} 个 EvseManager 模块存在。",
+        "moduleInvalidError": "无效的模块类型: {type}。您是否在模拟器模式下运行？如果是，这可能意味着模拟器模式下的 Admin Panel 版本尚不支持此模块。请确保您运行的是正确的 admin panel 或连接到实时实例。",
+        "providingInstanceDoesNotExistError": "提供实例 ID 为 {instanceId} 的实例不存在。您是否在模拟器模式下运行？如果是，这可能意味着模拟器模式下的 Admin Panel 版本尚不支持此接口。请确保您运行的是正确的 admin panel 或连接到实时实例。",
+        "providingModuleDoesNotProvideError": "类型为 \"{moduleType}\" 的提供模块不提供名为 \"{implementationName}\" 的实现。您是否在模拟器模式下运行？如果是，这可能意味着模拟器模式下的 Admin Panel 版本尚不支持此功能。请确保您运行的是正确的 admin panel 或连接到实时实例。",
+        "requiringInstanceDoesNotExistError": "要求实例 ID 为 {instanceId} 的实例不存在。您是否在模拟器模式下运行？如果是，这可能意味着模拟器模式下的 Admin Panel 版本尚不支持此接口。请确保您运行的是正确的 admin panel 或连接到实时实例。",
+        "requiringModuleDoesNotRequireError": "类型为 \"{moduleType}\" 的要求模块没有名为 \"{requirementName}\" 的要求。您是否在模拟器模式下运行？如果是，这可能意味着模拟器模式下的 Admin Panel 版本尚不支持此功能。请确保您运行的是正确的 admin panel 或连接到实时实例。"
+    },
+    "configPage": {
+        "toolbarTitle": "EVerest 配置"
+    },
+    "connectPage": {
+        "componentDefinition": {
+            "localhostInstanceId": "本地主机上的实例",
+            "simulatorMockHint": "用于测试的模拟 EVerest 实例：在没有真实数据传输的情况下模拟行为。虽然不完美，但对开发很有用。",
+            "simulatorMockId": "模拟器 / 模拟"
+        },
+        "instanceCard": {
+            "connectAutomaticallyLabel": "自动连接到此实例"
+        },
+        "instanceForm": {
+            "hostAddressFieldHint": "例如，localhost",
+            "hostAddressFieldLabel": "EVerest 实例主机地址",
+            "hostEmptyError": "请输入主机",
+            "hostPortError": "请勿在此处输入端口。",
+            "hostProtocolError": "请输入不带任何协议的域名（例如，\"test.pionix.de\"）。",
+            "instanceIdEmptyError": "请输入至少包含一个字符的名称。",
+            "instanceNameFieldHint": "例如 'Local', 'Development'...",
+            "instanceNameFieldLabel": "EVerest 实例名称",
+            "portFieldHint": "例如，8849",
+            "portFieldLabel": "端口",
+            "portInvalidError": "请输入有效的端口号。",
+            "protocolSelectFieldLabel": "协议",
+            "titleAdd": "添加服务器实例",
+            "titleEdit": "编辑服务器实例"
+        },
+        "toolbarTitle": "选择 EVerest 实例"
+    },
+    "createConfig": {
+        "abortTooltip": "中止",
+        "configNamePlaceholder": "配置名称",
+        "createConfigTooltip": "创建配置",
+        "errorDialogTitle": "无法加载配置",
+        "uploadConfigTooltip": "上传配置",
+        "validateConfigNameCharacters": "名称只能包含字母、数字、连字符和下划线",
+        "validateConfigNameFileExtension": "名称不能包含文件扩展名",
+        "validateConfigNameMissing": "请输入名称",
+        "validateConfigNameUnique": "名称必须唯一"
+    },
+    "evbc": {
+        "client": {
+            "configurationNotFound": "未找到配置 {name}",
+            "connectionFailed": "连接失败。正在尝试重新连接。",
+            "disconnected": "已断开连接",
+            "initialized": "初始化完成",
+            "openConnection": "正在打开到 {connectionUrl} 的 WebSocket 连接",
+            "openConnectionSuccess": "成功打开 WebSocket 连接",
+            "receivedConfigFiles": "未收到配置文件 | 收到一个配置文件 | 收到 {count} 个配置文件",
+            "receivedInterfacesDefinitions": "未收到接口定义 | 收到一个接口定义 | 收到 {count} 个接口定义",
+            "receivedModuleFiles": "未收到模块文件 | 收到一个模块文件 | 收到 {count} 个模块文件",
+            "reconnectedSuccess": "成功重新连接",
+            "reconnecting": "正在尝试重新连接",
+            "requirementFulfilledText": "模块 <code>{toId}</code> 的要求 <code>{toName}</code> 已由模块 <code>{fromId}</code> 的实现 <code>{fromName}</code> 满足"
+        }
+    },
+    "evConfigCanvas": {
+        "failedToSaveNotification": "保存 {config} 失败\n原因: {error}",
+        "resetViewTooltip": "重置视图",
+        "saveConfigTooltip": "保存配置",
+        "showConfigPreviewTooltip": "显示配置预览",
+        "successfullySavedNotification": "成功保存 {config}"
+    },
+    "evModuleInfo": {
+        "closeTitle": "放弃选择",
+        "configurationIssues": "配置问题：",
+        "configureMappingLabel": "为此模块配置映射",
+        "configureMappingText1": "为此模块配置 EVSE 和连接器映射。",
+        "configureMappingText2": "从 0 到配置中 EvseManager 模块数量选择 EVSE ID。",
+        "configureMappingTooltip": "EVSE ID 0 = 整个充电站，EVSE ID 1+ = 单个充电点",
+        "configureSpecificMappings": "高级：为各个实现配置特定映射",
+        "connectionTitle": "连接",
+        "deleteConnectionTooltip": "删除连接",
+        "deleteInstanceTooltip": "删除实例",
+        "discardSelectionTooltip": "放弃选择",
+        "evseConnectorMapping": "EVSE/连接器映射",
+        "implementationConfigurations": "实现配置",
+        "implementationConnectorIdHint": "此实现的连接器 ID（1-4 通常，可选）",
+        "implementationConnectorIdLabel": "{implementationName} 连接器 ID（可选）",
+        "implementationEvseIdHint": "此实现的 EVSE ID",
+        "implementationEvseIdLabel": "{implementationName} EVSE ID",
+        "implementationSubtitle": "{implementationName} 实现",
+        "interfaceTypeText": "接口类型：{interface}",
+        "moduleConfiguration": "模块配置",
+        "moduleConnectorIdHint": "此模块的连接器 ID（1-4 通常，可选）",
+        "moduleConnectorIdLabel": "模块连接器 ID（可选）",
+        "moduleEvseIdHint": "此模块的 EVSE ID（0 = 充电站级别）",
+        "moduleEvseIdLabel": "模块 EVSE ID",
+        "moduleId": "模块 ID",
+        "moduleType": "模块类型：{moduleType}",
+        "title": "模块实例信息",
+        "useImplementationSpecificMappings": "使用实现特定映射（而不是模块级别）"
+    },
+    "evModuleList": {
+        "commandsPanelRestart": "重启模块",
+        "commandsPanelTitle": "发送命令",
+        "configsPanelTitle": "可用配置",
+        "configsPanelTitleNone": "无可用配置",
+        "configWarningDialogAcceptText": "加载配置",
+        "configWarningDialogDenyText": "不加载配置",
+        "configWarningDialogText": "您想要放弃当前配置并加载新配置吗？",
+        "configWarningDialogTitle": "警告",
+        "modulesPanelTitle": "可用模块",
+        "restartModules": "已发送重启模块命令"
+    },
+    "mainPanel": {
+        "changeInstance": {
+            "disconnectNotification": "正在断开与 EVerest 后端的连接..."
+        },
+        "navigationDrawer": {
+            "change": "更改 EVerest 实例",
+            "config": "配置",
+            "connectedTo": "已连接到 {connectionUrl}",
+            "version": "版本：{version}"
+        },
+        "overlay": {
+            "textTryingToReconnect": "正在尝试重新连接...",
+            "titleLostConnection": "与 EVerest 后端的连接已丢失"
+        },
+        "toolbarTitle": "EVerest 管理面板"
+    }
+}
+

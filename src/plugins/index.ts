@@ -5,6 +5,7 @@ import { App } from "vue";
 import { router } from "@/router";
 import evbcPlugin from "@/plugins/evbc";
 import vuetify from "@/plugins/vuetify";
+import { i18n } from "@/plugins/i18n";
 import pinia from "@/store";
 import hljs from "highlight.js/lib/core";
 import hljsVuePlugin from "@highlightjs/vue-plugin";
@@ -16,5 +17,5 @@ hljs.registerLanguage("yaml", yaml);
 hljs.registerLanguage("json", json);
 
 export function registerPlugins(app: App) {
-  app.use(pinia).use(evbcPlugin).use(vuetify).use(router).use(hljsVuePlugin);
+  app.use(i18n).use(pinia).use(evbcPlugin).use(vuetify).use(router).use(hljsVuePlugin);
 }

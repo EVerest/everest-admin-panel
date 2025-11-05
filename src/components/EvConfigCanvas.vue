@@ -17,7 +17,7 @@
                 icon="mdi-code-tags"
               />
             </template>
-            <span>Show config preview</span>
+            <span>{{ $t("evConfigCanvas.showConfigPreviewTooltip") }}</span>
           </v-tooltip>
         </template>
       </config-preview>
@@ -25,13 +25,13 @@
         <template #activator="{ props }">
           <v-btn id="reset-view-button" icon="mdi-undo" color="primary" v-bind="props" @click="reset_view" />
         </template>
-        <span>Reset View</span>
+        <span>{{ $t("evConfigCanvas.resetViewTooltip") }}</span>
       </v-tooltip>
       <v-tooltip v-if="current_config" location="left">
         <template #activator="{ props }">
           <v-btn id="config-save-button" icon="mdi-content-save" color="primary" v-bind="props" @click="save_config" />
         </template>
-        <span>Save Config</span>
+        <span>{{ $t("evConfigCanvas.saveConfigTooltip") }}</span>
       </v-tooltip>
     </div>
   </v-sheet>
@@ -46,6 +46,7 @@ import EVBackendClient from "@/modules/evbc/client";
 import { Notyf } from "notyf";
 import ConfigPreview from "@/components/ConfigPreview.vue";
 import { storeToRefs } from "pinia";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   components: { ConfigPreview },
@@ -55,6 +56,7 @@ export default defineComponent({
     const selected_interface: string | null = null;
     const notyf = inject<Notyf>("notyf");
     const { current_config: current_config } = storeToRefs(evbcStore);
+    const { t } = useI18n({ useScope: "global" });
 
     ref(false);
 
@@ -89,10 +91,10 @@ export default defineComponent({
       evbc
         .save_config(current_config.value)
         .then(() => {
-          notyf.success(`Successfully saved ${current_config.value._name}`);
+          notyf.success(t("evConfigCanvas.successfullySavedNotification", { config: current_config.value._name }));
         })
         .catch((error: string) => {
-          notyf.error(`Failed to save ${current_config.value._name}\nReason: ${error}`);
+          notyf.error(t("evConfigCanvas.failedToSaveNotification", { config: current_config.value._name, error: error }));
         });
     };
 

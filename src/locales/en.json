@@ -1,0 +1,138 @@
+{
+    "config_model": {
+        "connectionExistsError": "The connection \"{connection}\" already exists",
+        "deleteConnectionError": "Connection with id \"{id}\" unknown",
+        "deleteModelInstanceError": "Module instance with instance id \"{id}\" does not exist.",
+        "evseIdCountWarning": "Module \"{instanceId}\" has EVSE ID {evseId} but only {evseManagerCount} EvseManager modules exist.",
+        "interfaceMismatchError": "The interface for the provide ({provider}) and the requirement ({requirement}) do not match",
+        "moduleExistsError": "Module instance with id: {moduleId} already exists",
+        "moduleImplementationCountWarning": "Module \"{instanceId}\" implementation \"{implementationName}\" has EVSE ID {evseId} but only {evseManagerCount} EvseManager modules exist.",
+        "moduleInvalidError": "Invalid module type: {type}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this module yet. Make sure you are running the correct admin panel or connect to a live instance.",
+        "providingInstanceDoesNotExistError": "Providing instance with instance id {instanceId} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.",
+        "providingModuleDoesNotProvideError": "Providing module of type \"{moduleType}\" does not provide an implementation named \"{implementationName}\". Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance.",
+        "requiringInstanceDoesNotExistError": "Requiring instance with instance id {instanceId} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.",
+        "requiringModuleDoesNotRequireError": "Requiring module of type \"{moduleType}\" does not have an requirement called \"{requirementName}\". Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."
+    },
+    "configPage": {
+        "toolbarTitle": "EVerest Configuration"
+    },
+    "connectPage": {
+        "componentDefinition": {
+            "localhostInstanceId": "Instance on localhost",
+            "simulatorMockHint": "Mock EVerest Instance for testing: simulates behavior without real data transmission. Not perfect, but useful for development.",
+            "simulatorMockId": "Simulator / Mock"
+        },
+        "instanceCard": {
+            "connectAutomaticallyLabel": "Automatically connect to this instance"
+        },
+        "instanceForm": {
+            "hostAddressFieldHint": "For example, localhost",
+            "hostAddressFieldLabel": "EVerest instance host address",
+            "hostEmptyError": "Please enter a host",
+            "hostPortError": "Please don't enter a port here.",
+            "hostProtocolError": "Please enter a domain without any protocol (e.g., \"test.pionix.de\").",
+            "instanceIdEmptyError": "Please enter a name with at least one character.",
+            "instanceNameFieldHint": "For example 'Local', 'Development'...",
+            "instanceNameFieldLabel": "Name of EVerest instance",
+            "portFieldHint": "For example, 8849",
+            "portFieldLabel": "Port",
+            "portInvalidError": "Please enter a valid port number.",
+            "protocolSelectFieldLabel": "Protocol",
+            "titleAdd": "Add server instance",
+            "titleEdit": "Edit server instance"
+        },
+        "toolbarTitle": "Choose EVerest instance"
+    },
+    "createConfig": {
+        "abortTooltip": "Abort",
+        "configNamePlaceholder": "config name",
+        "createConfigTooltip": "Create Config",
+        "errorDialogTitle": "Couldn't load config",
+        "uploadConfigTooltip": "Upload Config",
+        "validateConfigNameCharacters": "The name must only contain letters, numbers, dashes, and underscores",
+        "validateConfigNameFileExtension": "The name must not contain the file extension",
+        "validateConfigNameMissing": "Please enter a name",
+        "validateConfigNameUnique": "The name must be unique"
+    },
+    "evbc": {
+        "client": {
+            "configurationNotFound": "Configuration {name} not found",
+            "connectionFailed": "Connection failed. Trying to reconnect.",
+            "disconnected": "Disconnected",
+            "initialized": "Done initializing",
+            "openConnection": "Opening WebSocket connection to {connectionUrl}",
+            "openConnectionSuccess": "Successfully opened WebSocket connection",
+            "receivedConfigFiles": "Received no config files | Received one config file | Received {count} config files",
+            "receivedInterfacesDefinitions": "Received no interfaces definitions | Received one interfaces definition | Received {count} interfaces definitions",
+            "receivedModuleFiles": "Received no module files | Received one module file | Received {count} module files",
+            "reconnectedSuccess": "Successfully reconnected",
+            "reconnecting": "Trying to reconnect",
+            "requirementFulfilledText": "The requirement <code>{toName}</code> of <code>{toId}</code> is fulfilled by implementation <code>{fromName}</code> of <code>{fromId}</code>"
+        }
+    },
+    "evConfigCanvas": {
+        "failedToSaveNotification": "Failed to save {config}\nReason: {error}",
+        "resetViewTooltip": "Reset View",
+        "saveConfigTooltip": "Save Config",
+        "showConfigPreviewTooltip": "Show config preview",
+        "successfullySavedNotification": "Successfully saved {config}"
+    },
+    "evModuleInfo": {
+        "closeTitle": "Discard selection",
+        "configurationIssues": "Configuration Issues:",
+        "configureMappingLabel": "Configure mapping for this module",
+        "configureMappingText1": "Configure EVSE and connector mappings for this module.",
+        "configureMappingText2": "Choose EVSE IDs from 0 to the number of EvseManager modules in your configuration.",
+        "configureMappingTooltip": "EVSE ID 0 = entire charging station, EVSE IDs 1+ = individual charging points",
+        "configureSpecificMappings": "Advanced: Configure specific mappings for individual implementations",
+        "connectionTitle": "Connection",
+        "deleteConnectionTooltip": "Delete connection",
+        "deleteInstanceTooltip": "Delete instance",
+        "discardSelectionTooltip": "Discard selection",
+        "evseConnectorMapping": "EVSE/Connector Mapping",
+        "implementationConfigurations": "Implementation configurations",
+        "implementationConnectorIdHint": "Connector ID for this implementation (1-4 typical, optional)",
+        "implementationConnectorIdLabel": "{implementationName} Connector ID (optional)",
+        "implementationEvseIdHint": "EVSE ID for this implementation",
+        "implementationEvseIdLabel": "{implementationName} EVSE ID",
+        "implementationSubtitle": "{implementationName} Implementation",
+        "interfaceTypeText": "Interface type: {interface}",
+        "moduleConfiguration": "Module configuration",
+        "moduleConnectorIdHint": "Connector ID for this module (1-4 typical, optional)",
+        "moduleConnectorIdLabel": "Module Connector ID (optional)",
+        "moduleEvseIdHint": "EVSE ID for this module (0 = charging station level)",
+        "moduleEvseIdLabel": "Module EVSE ID",
+        "moduleId": "Module ID",
+        "moduleType": "Module type: {moduleType}",
+        "title": "Module instance information",
+        "useImplementationSpecificMappings": "Use implementation-specific mappings (instead of module-level)"
+    },
+    "evModuleList": {
+        "commandsPanelRestart": "Restart modules",
+        "commandsPanelTitle": "Issue commands",
+        "configsPanelTitle": "Available configs",
+        "configsPanelTitleNone": "No configs available",
+        "configWarningDialogAcceptText": "Load config",
+        "configWarningDialogDenyText": "Don't load config",
+        "configWarningDialogText": "Do you want to discard the current config and load the new one?",
+        "configWarningDialogTitle": "Warning",
+        "modulesPanelTitle": "Available modules",
+        "restartModules": "Issued restart modules command"
+    },
+    "mainPanel": {
+        "changeInstance": {
+            "disconnectNotification": "Disconnecting from EVerest backend..."
+        },
+        "navigationDrawer": {
+            "change": "Change EVerest instance",
+            "config": "Config",
+            "connectedTo": "Connected to {connectionUrl}",
+            "version": "Version: {version}"
+        },
+        "overlay": {
+            "textTryingToReconnect": "Trying to reconnect...",
+            "titleLostConnection": "Lost connection to EVerest backend"
+        },
+        "toolbarTitle": "EVerest Admin Panel"
+    }
+}

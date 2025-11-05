@@ -7,13 +7,14 @@
       <v-app-bar-nav-icon data-cy="hamburger-menu" @click="drawer = !drawer" />
       <v-spacer />
       <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo_white.svg" />
-      <v-toolbar-title class="app-bar-title"> EVerest Admin Panel </v-toolbar-title>
+      <v-toolbar-title class="app-bar-title">{{ $t("mainPanel.toolbarTitle") }}</v-toolbar-title>
       <v-spacer />
+      <LanguageSelector />
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" position="fixed" temporary>
       <v-list nav density="compact">
         <v-list-item to="config" append-icon="mdi-cog" link>
-          <v-list-item-title>Config</v-list-item-title>
+          <v-list-item-title>{{ $t("mainPanel.navigationDrawer.config") }}</v-list-item-title>
         </v-list-item>
         <v-tooltip location="end">
           <template #activator="{ props }">
@@ -24,14 +25,14 @@
               data-cy="switch-instance"
               @click="changeInstance()"
             >
-              <v-list-item-title>Change EVerest instance</v-list-item-title>
+              <v-list-item-title>{{ $t("mainPanel.navigationDrawer.change") }}</v-list-item-title>
             </v-list-item>
           </template>
-          <span>Connected to {{ connectionUrl }}</span>
+          <span>{{ $t("mainPanel.navigationDrawer.connectedTo", { connectionUrl }) }}</span>
         </v-tooltip>
       </v-list>
       <v-list-item class="bottom-list d-flex flex-column">
-        <span>Version {{ version }}</span>
+        <span>{{ $t("mainPanel.navigationDrawer.version", { version }) }}</span>
       </v-list-item>
     </v-navigation-drawer>
 
@@ -43,24 +44,33 @@
           <template #actions>
             <v-progress-linear height="10" indeterminate />
           </template>
-          <v-card-title>Lost connection to EVerest backend</v-card-title>
-          <v-card-text>Trying to reconnect ...</v-card-text>
+          <v-card-title>{{ $t("mainPanel.overlay.titleLostConnection") }}</v-card-title>
+          <v-card-text>{{ $t("mainPanel.overlay.textTryingToReconnect") }}</v-card-text>
         </v-card>
       </v-overlay>
     </v-main>
   </v-app>
 </template>
 
+<script setup lang="ts">
+import { useI18n } from "vue-i18n";
+import LanguageSelector from "@/components/LanguageSelector.vue";
+
+const { t } = useI18n({ useScope: "global" });
+</script>
+
 <script lang="ts">
 import { defineComponent, inject } from "vue";
 import EVBackendClient from "@/modules/evbc/client";
 
-import { Router, useRouter } from "vue-router";
+import { Router, useRouter, useRoute } from "vue-router";
 import { Notyf } from "notyf";
+import { i18n } from "@/plugins/i18n";
 
 let evbc: EVBackendClient;
 let router: Router;
 let notyf: Notyf;
+
 export default defineComponent({
   data: () => ({
     drawer: false,
@@ -93,7 +103,7 @@ export default defineComponent({
       const timeout = setTimeout(() => {
         notification = notyf.open({
           type: "warning",
-          message: "Disconnecting from EVerest backend ...",
+          message: t("mainPanel.changeInstance.disconnectNotification"),
           ripple: false,
         });
       }, 250);
@@ -102,7 +112,10 @@ export default defineComponent({
       if (notification) {
         notyf.dismiss(notification);
       }
-      await router.push({ path: "/connect", query: { auto_connect: "false" } });
+
+      const route = this.$route
+
+      await router.push({ path: `/${route.params.locale}/connect`, query: { auto_connect: "false"} });
     },
   },
 });

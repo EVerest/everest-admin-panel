@@ -2,26 +2,27 @@
      Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-card v-if="module_node" :title="'Module instance information'">
+  <v-card v-if="module_node" :title="$t('evModuleInfo.title')">
     <template #append>
       <icon-button-with-tooltip
         icon="mdi-close"
-        title="Discard selection"
+        :title="$t('evModuleInfo.closeTitle')"
         variant="text"
         density="compact"
         @click="context.unselect()"
       />
     </template>
     <v-card-text>
-      <p class="font-weight-bold">Module type: {{ module_node?.instance?.type }}</p>
+      <p class="font-weight-bold">{{ $t("evModuleInfo.moduleType", { moduleType: module_node?.instance?.type }) }}</p>
       <v-form @submit.prevent>
         <!-- FIXME (aw): howto do the binding here? -->
-        <v-text-field :model-value="module_node?.instance.id" label="Module ID" :rules="moduleIDRules" />
+        <v-text-field :model-value="module_node?.instance.id" :label="$t('evModuleInfo.moduleId')" :rules="moduleIDRules" />
       </v-form>
       <v-form @submit.prevent>
         <template v-if="module_node.instance.module_config">
           <v-divider />
-          <p class="font-weight-bold">Module configuration</p>
+          <p class="font-weight-bold">{{ $t("evModuleInfo.moduleConfiguration") }}</p>
+          <!-- FIXME (pa): Use i18n for texts in schema -->
           <vjsf
             v-for="(item, index) in module_node.instance.module_config"
             :key="index"
@@ -31,7 +32,7 @@
         </template>
         <template v-if="module_node.instance.implementation_config">
           <v-divider />
-          <p class="font-weight-bold">Implementation configurations</p>
+          <p class="font-weight-bold">{{ $t("evModuleInfo.implementationConfigurations") }}</p>
           <v-expansion-panels>
             <v-expansion-panel v-for="(impl_config, id) in module_node.instance.implementation_config" :key="id">
               <v-expansion-panel-title>
@@ -45,10 +46,10 @@
         </template>
         <template v-if="showMappingSection">
           <v-divider />
-          <p class="font-weight-bold">EVSE/Connector Mapping</p>
+          <p class="font-weight-bold">{{ $t("evModuleInfo.evseConnectorMapping") }}</p>
           <v-checkbox
             v-model="enableMappingForThisModule"
-            label="Configure mapping for this module"
+            :label="$t('evModuleInfo.configureMappingLabel')"
             density="compact"
             hide-details
             class="mb-3"
@@ -57,7 +58,7 @@
           <template v-if="enableMappingForThisModule">
             <v-alert v-if="mappingValidation.warnings.length > 0" type="warning" variant="tonal" class="mb-4">
               <v-icon icon="mdi-alert" />
-              <div><strong>Configuration Issues:</strong></div>
+              <div><strong>{{ $t("evModuleInfo.configurationIssues") }}</strong></div>
               <ul class="mt-2">
                 <li v-for="warning in mappingValidation.warnings" :key="warning" class="ml-4">
                   {{ warning }}
@@ -66,13 +67,13 @@
             </v-alert>
 
             <p class="text-caption text-medium-emphasis mb-4">
-              Configure EVSE and connector mappings for this module.
-              <v-tooltip text="EVSE ID 0 = entire charging station, EVSE IDs 1+ = individual charging points">
+              {{ $t("evModuleInfo.configureMappingText1") }}
+              <v-tooltip :text="$t('evModuleInfo.configureMappingTooltip')">
                 <template #activator="{ props }">
                   <v-icon v-bind="props" icon="mdi-help-circle" size="small" />
                 </template>
               </v-tooltip>
-              Choose EVSE IDs from 0 to the number of EvseManager modules in your configuration.
+              {{ $t("evModuleInfo.configureMappingText2") }}
             </p>
 
             <!-- Module-level mappings - only show when implementation mode is OFF -->
@@ -80,16 +81,16 @@
               <v-select
                 v-model="module_node.instance.mapping.module.evse"
                 :items="availableEvseIds"
-                label="Module EVSE ID"
-                hint="EVSE ID for this module (0 = charging station level)"
+                :label="$t('evModuleInfo.moduleEvseIdLabel')"
+                :hint="$t('evModuleInfo.moduleEvseIdHint')"
                 persistent-hint
                 clearable
                 class="mb-3"
               />
               <v-text-field
                 v-model.number="module_node.instance.mapping.module.connector"
-                label="Module Connector ID (optional)"
-                hint="Connector ID for this module (1-4 typical, optional)"
+                :label="$t('evModuleInfo.moduleConnectorIdLabel')"
+                :hint="$t('evModuleInfo.moduleConnectorIdHint')"
                 persistent-hint
                 type="number"
                 min="1"
@@ -102,7 +103,7 @@
             <v-checkbox
               v-if="hasImplementationMappings"
               v-model="showImplementationMappings"
-              label="Use implementation-specific mappings (instead of module-level)"
+              :label="$t('evModuleInfo.useImplementationSpecificMappings')"
               density="compact"
               class="mt-2 mb-3"
             />
@@ -111,27 +112,27 @@
             <div v-if="showImplementationMappings && module_node.instance.mapping?.implementations">
               <v-divider class="mb-3" />
               <p class="text-caption text-medium-emphasis mb-3">
-                Advanced: Configure specific mappings for individual implementations
+                {{ $t("evModuleInfo.configureSpecificMappings") }}
               </p>
               <div
                 v-for="(implMapping, implName) in module_node.instance.mapping.implementations"
                 :key="implName"
                 class="mb-4"
               >
-                <h4 class="text-subtitle-2 mb-2">{{ implName }} Implementation</h4>
+                <h4 class="text-subtitle-2 mb-2">{{ $t("evModuleInfo.implementationSubtitle", { implementationName: implName }) }}</h4>
                 <v-select
                   v-model="implMapping.evse"
                   :items="availableEvseIds"
-                  :label="`${implName} EVSE ID`"
-                  hint="EVSE ID for this implementation"
+                  :label="$t('evModuleInfo.implementationEvseIdHint', { implementationName: implName})"
+                  :hint="$t('evModuleInfo.implementationEvseIdHint')"
                   persistent-hint
                   clearable
                   class="mb-3"
                 />
                 <v-text-field
                   v-model.number="implMapping.connector"
-                  :label="`${implName} Connector ID (optional)`"
-                  hint="Connector ID for this implementation (1-4 typical, optional)"
+                  :label="$t('evModuleInfo.implementationConnectorIdLabel', { implementationName: implName})"
+                  :hint="$t('evModuleInfo.implementationConnectorIdHint')"
                   persistent-hint
                   type="number"
                   min="1"
@@ -147,28 +148,32 @@
     <v-card-actions>
       <icon-button-with-tooltip
         icon="mdi-delete"
-        title="Delete instance"
+        :title="$t('evModuleInfo.deleteInstanceTooltip')"
         @click="delete_module_instance(module_node.instance_id)"
       />
     </v-card-actions>
   </v-card>
   <v-card v-else-if="connection">
     <v-card-title>
-      Connection
+      {{ $t("evModuleInfo.connectionTitle") }}
       <icon-button-with-tooltip
         icon="mdi-close"
-        title="Discard selection"
+        :title="$t('evModuleInfo.discardSelectionTooltip')"
         variant="text"
         density="compact"
         @click="context.unselect()"
       />
     </v-card-title>
     <v-card-text>
-      The requirement <code>{{ connection.to.name }}</code> of <code>{{ connection.to.id }}</code> is fulfilled by
-      implementation <code>{{ connection.from.name }}</code> of <code>{{ connection.from.id }}</code>
+      {{ $t("evModuleInfo.connectionTitle", {
+        toName: connection.to.name,
+        toId: connection.to.id,
+        fromName: connection.from.name,
+        fromId: connection.from.id
+       }) }}
     </v-card-text>
     <v-card-actions>
-      <icon-button-with-tooltip icon="mdi-delete" title="Delete connection" @click="delete_connection(connection.id)" />
+      <icon-button-with-tooltip icon="mdi-delete" :title="$t('evModuleInfo.deleteConnectionTooltip')" @click="delete_connection(connection.id)" />
     </v-card-actions>
   </v-card>
   <v-card v-else-if="terminal">
@@ -176,14 +181,14 @@
       {{ terminal.type === "provide" ? "Implementation" : "Requirement" }}: <code>{{ terminal.id }}</code>
       <icon-button-with-tooltip
         icon="mdi-close"
-        title="Discard selection"
+        :title="$t('evModuleInfo.discardSelectionTooltip')"
         variant="text"
         density="compact"
         @click="context.unselect()"
       />
     </v-card-title>
     <v-card-text>
-      Interface type: <code>{{ terminal.interface }}</code>
+      {{ $t("evModuleInfo.interfaceTypeText", { interface: terminal.interface }) }}
     </v-card-text>
   </v-card>
 </template>
@@ -196,6 +201,7 @@ import { ConnectionID, ModuleInstanceID } from "@/modules/evbc";
 import ConfigStageContext from "@/modules/evconf_konva/stage_context";
 import { useEvbcStore } from "@/store/evbc";
 import { storeToRefs } from "pinia";
+import { useI18n } from "vue-i18n";
 
 export default defineComponent({
   components: {
@@ -203,6 +209,7 @@ export default defineComponent({
     IconButtonWithTooltip,
   },
   setup() {
+    const { t } = useI18n({ useScope: "global" });
     const evbcStore = useEvbcStore();
     const { current_config } = storeToRefs(evbcStore);
 
