@@ -5,9 +5,9 @@ import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
-import { i18n } from "@/plugins/i18n";
+import { useI18n } from "vue-i18n";
 
-const { t } = i18n.global;
+const { t } = useI18n({ useScope: "global" });
 
 type ConnectionStateEvent = {
   type: "INFO" | "INITIALIZED" | "FAILED" | "RECONNECT" | "IDLE";

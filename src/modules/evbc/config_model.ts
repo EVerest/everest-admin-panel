@@ -22,9 +22,9 @@ import {
 import { default_terminals, generate_interface_parents_map, InterfaceParentMap } from "./utils";
 
 import clone from "just-clone";
-import { i18n } from "@/plugins/i18n";
+import { useI18n } from "vue-i18n";
 
-const { t } = i18n.global;
+const { t } = useI18n({ useScope: "global" });
 
 function get_next_available_name(prefix: string, name_list: string[]): string {
   const valid_integral_endings = name_list
