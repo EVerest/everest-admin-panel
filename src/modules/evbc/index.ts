@@ -2,9 +2,12 @@
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 // FIXME (aw): clean up all the different types, introduce namespaces?
+import type { ComputedRef } from "vue";
+
+export type LocalizedString = string | ComputedRef<string>;
 
 type ConfigSetSchemaEntry = {
-  description: string;
+  description: LocalizedString;
   type: string;
   default?: unknown;
 };
@@ -20,13 +23,13 @@ export type ConfigSetWithSchema = Array<{
 export type ConfigSet = Record<string, ConfigSetEntry>;
 
 export type EverestModuleDefinition = {
-  description: string;
+  description: LocalizedString;
   config?: ConfigSetSchema;
   provides?: Record<
     string,
     {
       interface: string;
-      description: string;
+      description: LocalizedString;
       config?: ConfigSetSchema;
     }
   >;
@@ -111,7 +114,7 @@ export type EverestModuleConfig = {
 };
 
 export type EverestInterfaceDefinition = {
-  description: string;
+  description: LocalizedString;
   parent?: string;
   // FIXME (aw): to be done ...
   cmds?: unknown;

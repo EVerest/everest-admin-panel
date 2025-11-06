@@ -17,7 +17,7 @@
                 icon="mdi-code-tags"
               />
             </template>
-            <span>{{ $t("evConfigCanvas.showConfigPreviewTooltip") }}</span>
+            <span>{{ t("evConfigCanvas.showConfigPreviewTooltip") }}</span>
           </v-tooltip>
         </template>
       </config-preview>
@@ -25,13 +25,13 @@
         <template #activator="{ props }">
           <v-btn id="reset-view-button" icon="mdi-undo" color="primary" v-bind="props" @click="reset_view" />
         </template>
-        <span>{{ $t("evConfigCanvas.resetViewTooltip") }}</span>
+        <span>{{ t("evConfigCanvas.resetViewTooltip") }}</span>
       </v-tooltip>
       <v-tooltip v-if="current_config" location="left">
         <template #activator="{ props }">
           <v-btn id="config-save-button" icon="mdi-content-save" color="primary" v-bind="props" @click="save_config" />
         </template>
-        <span>{{ $t("evConfigCanvas.saveConfigTooltip") }}</span>
+        <span>{{ t("evConfigCanvas.saveConfigTooltip") }}</span>
       </v-tooltip>
     </div>
   </v-sheet>
@@ -112,6 +112,7 @@ export default defineComponent({
       current_config,
       reset_view,
       save_config,
+      t,
     };
   },
 });

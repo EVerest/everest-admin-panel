@@ -117,7 +117,8 @@
         "configWarningDialogText": "Do you want to discard the current config and load the new one?",
         "configWarningDialogTitle": "Warning",
         "modulesPanelTitle": "Available modules",
-        "restartModules": "Issued restart modules command"
+        "restartModules": "Issued restart modules command",
+        "searchFieldLabel": "Search"
     },
     "mainPanel": {
         "changeInstance": {
@@ -134,5 +135,8 @@
             "titleLostConnection": "Lost connection to EVerest backend"
         },
         "toolbarTitle": "EVerest Admin Panel"
+    },
+    "module": {
+        "terminalTooltip": "Interface type: {interface}"
     }
 }

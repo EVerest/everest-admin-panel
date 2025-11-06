@@ -10,7 +10,7 @@
             <v-card elevation="10">
               <v-toolbar dark color="primary">
                 <template v-if="currentView === ComponentViews.LIST">
-                  <v-toolbar-title>{{ $t('connectPage.toolbarTitle') }}</v-toolbar-title>
+                  <v-toolbar-title>{{ t('connectPage.toolbarTitle') }}</v-toolbar-title>
                   <v-spacer />
                   <LanguageSelector />
                   <v-btn
@@ -22,7 +22,7 @@
                 </template>
                 <template v-else>
                   <v-toolbar-title
-                    >{{ currentView === ComponentViews.ADD ? $t('connectPage.instanceForm.titleAdd') : $t('connectPage.instanceForm.titleEdit') }}</v-toolbar-title
+                    >{{ currentView === ComponentViews.ADD ? t('connectPage.instanceForm.titleAdd') : t('connectPage.instanceForm.titleEdit') }}</v-toolbar-title
                   >
                 </template>
               </v-toolbar>
@@ -34,9 +34,9 @@
                       <v-col cols="12" sm="12">
                         <v-text-field
                           v-model="instanceId.value.value"
-                          :label="$t('connectPage.instanceForm.instanceNameFieldLabel')"
+                          :label="t('connectPage.instanceForm.instanceNameFieldLabel')"
                           :error-messages="instanceId.errorMessage.value"
-                          :hint="$t('connectPage.instanceForm.instanceNameFieldHint')"
+                          :hint="t('connectPage.instanceForm.instanceNameFieldHint')"
                           data-cy="instance-name-field"
                         />
                       </v-col>
@@ -46,7 +46,7 @@
                         <v-select
                           v-model="protocol.value.value"
                           :error-messages="protocol.errorMessage.value"
-                          :label="$t('connectPage.instanceForm.protocolSelectFieldLabel')"
+                          :label="t('connectPage.instanceForm.protocolSelectFieldLabel')"
                           data-cy="protocol-select-field"
                           :items="[
                             { value: 'ws', title: 'ws://' },
@@ -57,20 +57,20 @@
                       <v-col cols="6" sm="6">
                         <v-text-field
                           v-model="host.value.value"
-                          :label="$t('connectPage.instanceForm.hostAddressFieldLabel')"
+                          :label="t('connectPage.instanceForm.hostAddressFieldLabel')"
                           :error-messages="host.errorMessage.value"
                           data-cy="host-address-field"
-                          :hint="$t('connectPage.instanceForm.hostAddressFieldHint')"
+                          :hint="t('connectPage.instanceForm.hostAddressFieldHint')"
                         />
                       </v-col>
                       <v-col cols="3" sm="3">
                         <v-text-field
                           v-model="port.value.value"
                           type="number"
-                          :label="$t('connectPage.instanceForm.portFieldLabel')"
+                          :label="t('connectPage.instanceForm.portFieldLabel')"
                           :error-messages="port.errorMessage.value"
                           data-cy="port-field"
-                          :hint="$t('connectPage.instanceForm.portFieldHint')"
+                          :hint="t('connectPage.instanceForm.portFieldHint')"
                         />
                       </v-col>
                     </v-row>
@@ -132,7 +132,7 @@
                   <v-checkbox
                     v-model="connectAutomatically"
                     data-cy="auto-connect-checkbox"
-                    :label="$t('connectPage.instanceCard.connectAutomaticallyLabel')"
+                    :label="t('connectPage.instanceCard.connectAutomaticallyLabel')"
                   />
                   <v-alert
                     v-model="error.active"
@@ -358,7 +358,9 @@ export default defineComponent({
             connectionStatus.value = ev.text;
           } else if (ev.type === "INITIALIZED") {
             unsubscribe();
-            router.push({ name: "main", params: { locale: i18n.global.locale.value } });
+            const localeRaw = i18n.global.locale as unknown;
+            const localeParam = typeof localeRaw === "string" ? localeRaw : (localeRaw as { value: string }).value;
+            router.push({ name: "main", params: { locale: localeParam } });
           } else if (ev.type === "FAILED") {
             connecting.value = false;
             error.active = true;
@@ -392,6 +394,7 @@ export default defineComponent({
       currentView,
       currentlyEditing,
       ComponentViews,
+      t,
     };
   },
 });

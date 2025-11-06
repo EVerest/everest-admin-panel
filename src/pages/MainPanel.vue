@@ -7,14 +7,14 @@
       <v-app-bar-nav-icon data-cy="hamburger-menu" @click="drawer = !drawer" />
       <v-spacer />
       <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo_white.svg" />
-      <v-toolbar-title class="app-bar-title">{{ $t("mainPanel.toolbarTitle") }}</v-toolbar-title>
+      <v-toolbar-title class="app-bar-title">{{ t("mainPanel.toolbarTitle") }}</v-toolbar-title>
       <v-spacer />
       <LanguageSelector />
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" position="fixed" temporary>
       <v-list nav density="compact">
         <v-list-item to="config" append-icon="mdi-cog" link>
-          <v-list-item-title>{{ $t("mainPanel.navigationDrawer.config") }}</v-list-item-title>
+          <v-list-item-title>{{ t("mainPanel.navigationDrawer.config") }}</v-list-item-title>
         </v-list-item>
         <v-tooltip location="end">
           <template #activator="{ props }">
@@ -25,14 +25,14 @@
               data-cy="switch-instance"
               @click="changeInstance()"
             >
-              <v-list-item-title>{{ $t("mainPanel.navigationDrawer.change") }}</v-list-item-title>
+              <v-list-item-title>{{ t("mainPanel.navigationDrawer.change") }}</v-list-item-title>
             </v-list-item>
           </template>
-          <span>{{ $t("mainPanel.navigationDrawer.connectedTo", { connectionUrl }) }}</span>
+          <span>{{ t("mainPanel.navigationDrawer.connectedTo", { connectionUrl }) }}</span>
         </v-tooltip>
       </v-list>
       <v-list-item class="bottom-list d-flex flex-column">
-        <span>{{ $t("mainPanel.navigationDrawer.version", { version }) }}</span>
+        <span>{{ t("mainPanel.navigationDrawer.version", { version }) }}</span>
       </v-list-item>
     </v-navigation-drawer>
 
@@ -44,8 +44,8 @@
           <template #actions>
             <v-progress-linear height="10" indeterminate />
           </template>
-          <v-card-title>{{ $t("mainPanel.overlay.titleLostConnection") }}</v-card-title>
-          <v-card-text>{{ $t("mainPanel.overlay.textTryingToReconnect") }}</v-card-text>
+          <v-card-title>{{ t("mainPanel.overlay.titleLostConnection") }}</v-card-title>
+          <v-card-text>{{ t("mainPanel.overlay.textTryingToReconnect") }}</v-card-text>
         </v-card>
       </v-overlay>
     </v-main>
@@ -63,9 +63,8 @@ const { t } = useI18n({ useScope: "global" });
 import { defineComponent, inject } from "vue";
 import EVBackendClient from "@/modules/evbc/client";
 
-import { Router, useRouter, useRoute } from "vue-router";
+import { Router, useRouter } from "vue-router";
 import { Notyf } from "notyf";
-import { i18n } from "@/plugins/i18n";
 
 let evbc: EVBackendClient;
 let router: Router;
@@ -113,9 +112,9 @@ export default defineComponent({
         notyf.dismiss(notification);
       }
 
-      const route = this.$route
+      const route = router.currentRoute.value;
 
-      await router.push({ path: `/${route.params.locale}/connect`, query: { auto_connect: "false"} });
+      await router.push({ path: `/${route.params.locale}/connect`, query: { auto_connect: "false" } });
     },
   },
 });

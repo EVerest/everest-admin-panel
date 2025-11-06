@@ -15,7 +15,7 @@
           @click="uploadConfigPrompt()"
         />
       </template>
-      <span>{{ $t("createConfig.uploadConfigTooltip") }}</span>
+      <span>{{ t("createConfig.uploadConfigTooltip") }}</span>
     </v-tooltip>
     <v-tooltip v-if="state == ComponentStates.DEFAULT" location="right" open-delay="500">
       <template #activator="{ props }">
@@ -29,7 +29,7 @@
           @click="state = ComponentStates.ASK_USER_FOR_CONFIG_NAME"
         />
       </template>
-      <span>{{ $t("createConfig.createConfigTooltip") }}</span>
+      <span>{{ t("createConfig.createConfigTooltip") }}</span>
     </v-tooltip>
     <v-tooltip v-if="state == ComponentStates.ASK_USER_FOR_CONFIG_NAME" location="right" open-delay="500">
       <template #activator="{ props }">
@@ -43,7 +43,7 @@
           @click="resetDialog()"
         />
       </template>
-      <span>{{ $t("createConfig.abortTooltip") }}</span>
+      <span>{{ t("createConfig.abortTooltip") }}</span>
     </v-tooltip>
     <v-tooltip v-if="state == ComponentStates.ASK_USER_FOR_CONFIG_NAME" location="right" open-delay="500">
       <template #activator="{ props }">
@@ -58,7 +58,7 @@
           @click="onAcceptBtnClick()"
         />
       </template>
-      <span>{{ $t("createConfig.createConfigTooltip") }}</span>
+      <span>{{ t("createConfig.createConfigTooltip") }}</span>
     </v-tooltip>
   </div>
   <v-text-field
@@ -66,12 +66,12 @@
     v-model="configName"
     density="compact"
     data-cy="config-name-input"
-    :placeholder="$t('createConfig.configNamePlaceholder')"
+    :placeholder="t('createConfig.configNamePlaceholder')"
     :rules="[validateConfigName]"
   />
   <v-dialog v-model="showErrorDialog" @click:outside="resetDialog()">
     <v-card color="danger">
-      <v-card-title>{{ $t("createConfig.errorDialogTitle") }}</v-card-title>
+      <v-card-title>{{ t("createConfig.errorDialogTitle") }}</v-card-title>
       <v-card-text>
         <pre style="white-space: pre-wrap"><code>{{ errorStore.getError() }}</code></pre>
       </v-card-text>

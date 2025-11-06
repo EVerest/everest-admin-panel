@@ -4,13 +4,13 @@
 <template>
   <v-expansion-panels v-model="expansionPanelState" class="ma-0">
     <v-expansion-panel data-cy="modules-expansion-panel" value="modules" :disabled="!current_config">
-      <v-expansion-panel-title>{{ $t("evModuleList.modulesPanelTitle") }}</v-expansion-panel-title>
+      <v-expansion-panel-title>{{ t("evModuleList.modulesPanelTitle") }}</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-text-field
           v-if="show_search"
           v-model="search"
           hide-details
-          label="Search"
+          :label="t('evModuleList.searchFieldLabel')"
           density="compact"
           variant="outlined"
           data-cy="modules-search"
@@ -37,7 +37,7 @@
     </v-expansion-panel>
     <v-expansion-panel value="configs">
       <v-expansion-panel-title data-cy="configs-expansion-panel">
-        {{ config_list.length == 0 ? $t("evModuleList.configsPanelTitleNone") : $t("evModuleList.configsPanelTitle") }}
+        {{ config_list.length == 0 ? t("evModuleList.configsPanelTitleNone") : t("evModuleList.configsPanelTitle") }}
       </v-expansion-panel-title>
       <v-expansion-panel-text>
         <create-config @create-config="create_config" />
@@ -61,19 +61,19 @@
       </v-expansion-panel-text>
       <ev-dialog
         :show-dialog="show_dialog"
-        :title="$t('evModuleList.configWarningDialogTitle')"
-        :text="$t('evModuleList.configWarningDialogText')"
-        :accept-text="$t('evModuleList.configWarningDialogAcceptText')"
-        :deny-text="$t('evModuleList.configWarningDialogDenyText')"
+        :title="t('evModuleList.configWarningDialogTitle')"
+        :text="t('evModuleList.configWarningDialogText')"
+        :accept-text="t('evModuleList.configWarningDialogAcceptText')"
+        :deny-text="t('evModuleList.configWarningDialogDenyText')"
         @accept="load_config(config_to_load)"
         @deny="close_dialog()"
       />
     </v-expansion-panel>
     <v-expansion-panel value="commands">
-      <v-expansion-panel-title>{{ $t("evModuleList.commandsPanelTitle") }}</v-expansion-panel-title>
+      <v-expansion-panel-title>{{ t("evModuleList.commandsPanelTitle") }}</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-list>
-          <v-list-item :title="$t('evModuleList.commandsPanelRestart')" @click="restart_modules()">
+          <v-list-item :title="t('evModuleList.commandsPanelRestart')" @click="restart_modules()">
             <template #append>
               <v-icon>mdi-run</v-icon>
             </template>
@@ -132,11 +132,17 @@ const filtered_module_list = computed(() => {
   } else {
     return Object.entries(evbc.everest_definitions.modules)
       .filter(([key, value]) => {
+        // Description can be a string or a computed ref
+        const descStr =
+          typeof value.description === "string"
+            ? value.description
+            : (value.description as any)?.value ?? "";
+
         return (
           !search.value ||
           search.value.trim() === "" ||
           key.toLowerCase().includes(search.value.toLowerCase()) ||
-          value.description.toLowerCase().includes(search.value.toLowerCase())
+          descStr.toLowerCase().includes(search.value.toLowerCase())
         );
       })
       .map(([key, value]) => ({

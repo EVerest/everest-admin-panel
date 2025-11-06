@@ -1,17 +1,17 @@
 {
     "config_model": {
         "connectionExistsError": "Die Verbindung \"{connection}\" existiert bereits",
-        "deleteConnectionError": "Verbindung mit der ID \"{id}\" ist unbekannt",
-        "deleteModelInstanceError": "Modulinstantz mit der ID \"{id}\" existiert nicht.",
-        "evseIdCountWarning": "Modul \"{instanceId}\" hat EVSE ID {evseId}, aber nur {evseManagerCount} EvseManager Module existieren.",
+        "deleteConnectionError": "Verbindung mit der ID \"{id}\" ist nicht bekannt",
+        "deleteModelInstanceError": "Modulinstanz mit der Instanz-ID \"{id}\" existiert nicht.",
+        "evseIdCountWarning": "Modul \"{instanceId}\" hat EVSE ID {evseId}, aber nur {evseManagerCount} EvseManager-Module existieren.",
         "interfaceMismatchError": "Die Schnittstelle für den Anbieter ({provider}) und die Anforderung ({requirement}) stimmen nicht überein",
-        "moduleExistsError": "Modulinstantz mit der ID: {moduleId} existiert bereits",
-        "moduleImplementationCountWarning": "Modul \"{instanceId}\" Implementierung \"{implementationName}\" hat EVSE ID {evseId}, aber nur {evseManagerCount} EvseManager Module existieren.",
-        "moduleInvalidError": "Ungültiger Modultyp: {type}. Laufen Sie im Simulator-Modus? Falls ja bedeutet dies wahrscheinlich dass diese Version des Admin Panels im Simulator-Modus diesen Modultyp noch nicht unterstützt. Stellen Sie sicher dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen.",
-        "providingInstanceDoesNotExistError": "Anbieterinstanz mit der ID {instanceId} existiert nicht. Laufen Sie im Simulator-Modus? Falls ja bedeutet dies wahrscheinlich dass diese Version des Admin Panels im Simulator-Modus diese Schnittstelle noch nicht unterstützt. Stellen Sie sicher dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen.",
-        "providingModuleDoesNotProvideError": "Anbietermodul des Typs \"{moduleType}\" stellt keine Implementierung namens \"{implementationName}\" zur Verfügung. Laufen Sie im Simulator-Modus? Falls ja bedeutet dies wahrscheinlich dass diese Version des Admin Panels im Simulator-Modus dies noch nicht unterstützt. Stellen Sie sicher dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen.",
-        "requiringInstanceDoesNotExistError": "Anforderungsinstanz mit der ID {instanceId} existiert nicht. Laufen Sie im Simulator-Modus? Falls ja bedeutet dies wahrscheinlich dass diese Version des Admin Panels im Simulator-Modus diese Schnittstelle noch nicht unterstützt. Stellen Sie sicher dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen.",
-        "requiringModuleDoesNotRequireError": "Anforderungsmodul des Typs \"{moduleType}\" hat keine Anforderung namens \"{requirementName}\". Laufen Sie im Simulator-Modus? Falls ja bedeutet dies wahrscheinlich dass diese Version des Admin Panels im Simulator-Modus dies noch nicht unterstützt. Stellen Sie sicher dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen."
+        "moduleExistsError": "Modulinstanz mit der ID: {moduleId} existiert bereits",
+        "moduleImplementationCountWarning": "Modul \"{instanceId}\" Implementierung \"{implementationName}\" hat EVSE ID {evseId}, aber nur {evseManagerCount} EvseManager-Module existieren.",
+        "moduleInvalidError": "Ungültiger Modultyp: {type}. Laufen Sie im Simulator-Modus? Falls ja, bedeutet dies wahrscheinlich, dass diese Version des Admin Panels im Simulator-Modus diesen Modultyp noch nicht unterstützt. Stellen Sie sicher, dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen.",
+        "providingInstanceDoesNotExistError": "Bereitstellungsinstanz mit der Instanz-ID {instanceId} existiert nicht. Laufen Sie im Simulator-Modus? Falls ja, bedeutet dies wahrscheinlich, dass diese Version des Admin Panels im Simulator-Modus diese Schnittstelle noch nicht unterstützt. Stellen Sie sicher, dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen.",
+        "providingModuleDoesNotProvideError": "Bereitstellungsmodul des Typs \"{moduleType}\" stellt keine Implementierung namens \"{implementationName}\" zur Verfügung. Laufen Sie im Simulator-Modus? Falls ja, bedeutet dies wahrscheinlich, dass diese Version des Admin Panels im Simulator-Modus dies noch nicht unterstützt. Stellen Sie sicher, dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen.",
+        "requiringInstanceDoesNotExistError": "Anforderungsinstanz mit der Instanz-ID {instanceId} existiert nicht. Laufen Sie im Simulator-Modus? Falls ja, bedeutet dies wahrscheinlich, dass diese Version des Admin Panels im Simulator-Modus diese Schnittstelle noch nicht unterstützt. Stellen Sie sicher, dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen.",
+        "requiringModuleDoesNotRequireError": "Anforderungsmodul des Typs \"{moduleType}\" hat keine Anforderung namens \"{requirementName}\". Laufen Sie im Simulator-Modus? Falls ja, bedeutet dies wahrscheinlich, dass diese Version des Admin Panels im Simulator-Modus dies noch nicht unterstützt. Stellen Sie sicher, dass Sie das richtige Admin Panel ausführen oder eine Verbindung zu einer Live-Instanz herstellen."
     },
     "configPage": {
         "toolbarTitle": "EVerest-Konfiguration"
@@ -32,7 +32,7 @@
             "hostPortError": "Bitte geben Sie hier keinen Port ein.",
             "hostProtocolError": "Bitte geben Sie eine Domain ohne Protokoll ein (z.B. \"test.pionix.de\").",
             "instanceIdEmptyError": "Bitte geben Sie einen Namen mit mindestens einem Zeichen ein.",
-            "instanceNameFieldHint": "Zum Beispiel 'Lokal', 'Entwicklung'...",
+            "instanceNameFieldHint": "Zum Beispiel 'Lokal', 'Entwicklung'.",
             "instanceNameFieldLabel": "Name der EVerest Instanz",
             "portFieldHint": "Zum Beispiel 8849",
             "portFieldLabel": "Port",
@@ -57,21 +57,21 @@
     "evbc": {
         "client": {
             "configurationNotFound": "Konfiguration {name} nicht gefunden",
-            "connectionFailed": "Verbindung fehlgeschlagen. Versuche erneut zu verbinden.",
+            "connectionFailed": "Verbindung fehlgeschlagen. Versuche, erneut zu verbinden.",
             "disconnected": "Getrennt",
             "initialized": "Initialisierung abgeschlossen",
             "openConnection": "Öffne WebSocket Verbindung zu {connectionUrl}",
-            "openConnectionSuccess": "WebSocket Verbindung erfolgreich geöffnet",
-            "receivedConfigFiles": "Keine Konfigurationsdateien erhalten | Eine Konfigurationsdatei erhalten | {count} Konfigurationsdateien erhalten",
-            "receivedInterfacesDefinitions": "Keine Schnittstellendefinitionen erhalten | Eine Schnittstellendefinition erhalten | {count} Schnittstellendefinitionen erhalten",
-            "receivedModuleFiles": "Keine Moduldateien erhalten | Eine Moduldatei erhalten | {count} Moduldateien erhalten",
+            "openConnectionSuccess": "Erfolgreich WebSocket Verbindung geöffnet",
+            "receivedConfigFiles": "Keine Konfigurationsdateien empfangen | Eine Konfigurationsdatei empfangen | {count} Konfigurationsdateien empfangen",
+            "receivedInterfacesDefinitions": "Keine Schnittstellendefinitionen empfangen | Eine Schnittstellendefinition empfangen | {count} Schnittstellendefinitionen empfangen",
+            "receivedModuleFiles": "Keine Moduldateien empfangen | Eine Moduldatei empfangen | {count} Moduldateien empfangen",
             "reconnectedSuccess": "Erfolgreich wieder verbunden",
-            "reconnecting": "Versuche erneut zu verbinden",
+            "reconnecting": "Versuche, erneut zu verbinden",
             "requirementFulfilledText": "Die Anforderung <code>{toName}</code> von <code>{toId}</code> wird durch die Implementierung <code>{fromName}</code> von <code>{fromId}</code> erfüllt"
         }
     },
     "evConfigCanvas": {
-        "failedToSaveNotification": "Fehler beim Speichern von {config}\nGrund: {error}",
+        "failedToSaveNotification": "Speichern von {config} fehlgeschlagen\nUrsache: {error}",
         "resetViewTooltip": "Ansicht zurücksetzen",
         "saveConfigTooltip": "Konfiguration speichern",
         "showConfigPreviewTooltip": "Konfigurationsvorschau anzeigen",
@@ -81,7 +81,7 @@
         "closeTitle": "Auswahl verwerfen",
         "configurationIssues": "Konfigurationsprobleme:",
         "configureMappingLabel": "Zuordnung für dieses Modul konfigurieren",
-        "configureMappingText1": "Konfigurieren Sie EVSE- und Connector-Zuordnungen für dieses Modul.",
+        "configureMappingText1": "EVSE- und Connector-Zuordnungen für dieses Modul konfigurieren.",
         "configureMappingText2": "Wählen Sie EVSE IDs von 0 bis zur Anzahl der EvseManager Module in Ihrer Konfiguration.",
         "configureMappingTooltip": "EVSE ID 0 = gesamte Ladestation, EVSE IDs 1+ = individuelle Ladepunkte",
         "configureSpecificMappings": "Erweitert: Spezifische Zuordnungen für individuelle Implementierungen konfigurieren",
@@ -104,8 +104,8 @@
         "moduleEvseIdLabel": "Modul EVSE ID",
         "moduleId": "Modul ID",
         "moduleType": "Modultyp: {moduleType}",
-        "title": "Modulinformationsseite",
-        "useImplementationSpecificMappings": "Verwende spezifische Zuordnungen für die Implementierung (anstelle der Modul-Ebene)"
+        "title": "Modulinstanzinformationen",
+        "useImplementationSpecificMappings": "Verwenden Sie spezifische Zuordnungen für die Implementierung (anstelle der Modul-Ebene)"
     },
     "evModuleList": {
         "commandsPanelRestart": "Module neu starten",
@@ -117,7 +117,8 @@
         "configWarningDialogText": "Möchten Sie die aktuelle Konfiguration verwerfen und die neue laden?",
         "configWarningDialogTitle": "Warnung",
         "modulesPanelTitle": "Verfügbare Module",
-        "restartModules": "Neustart-Befehl für Module ausgeführt"
+        "restartModules": "Neustart-Befehl für Module ausgeführt",
+        "searchFieldLabel": "Suche"
     },
     "mainPanel": {
         "changeInstance": {
@@ -130,10 +131,13 @@
             "version": "Version: {version}"
         },
         "overlay": {
-            "textTryingToReconnect": "Versuche erneut zu verbinden...",
+            "textTryingToReconnect": "Versuche, erneut zu verbinden...",
             "titleLostConnection": "Verbindung zum EVerest Backend unterbrochen"
         },
         "toolbarTitle": "EVerest Admin Panel"
+    },
+    "module": {
+        "terminalTooltip": "Schnittstellentyp: {interface}"
     }
 }
 

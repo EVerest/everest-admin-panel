@@ -9,6 +9,7 @@ import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
 import { TerminalPlacement } from "./shapes/connection";
 import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
 import { currentTheme } from "@/plugins/vuetify";
+import { t } from "@/plugins/i18n";
 
 // FIXME (aw): the TerminalPlacement type belongs to a shared place!
 type TerminalPlacementWithID = TerminalPlacement & { id: number };
@@ -85,7 +86,7 @@ export default class ModuleView {
         this._vm.set_cursor("pointer");
         const showTooltip: ShowTooltipEvent = {
           type: "SHOW_TOOLTIP",
-          text: `Interface type: ${item.terminal.interface}`,
+          text: t("module.terminalTooltip", { interface: item.terminal.interface }),
         };
         this._vm.notify_stage_context(showTooltip);
       });
