@@ -4,7 +4,6 @@
 // This file is generated, see README.md for more information.
 
 import {EverestConfigList} from "../index";
-import { tc } from "@/plugins/i18n";
 
 export default {
   'config-sil-dc': {

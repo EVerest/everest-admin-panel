@@ -5,9 +5,7 @@ import { computed, ComputedRef, nextTick } from "vue";
 import { createI18n, I18n, I18nOptions } from "vue-i18n";
 import defaultMessages from "@/locales/en.json";
 import defaultModuleMessages from "@/locales/en_module_info";
-import defaultInterfacesMessages from "@/locales/en_interfaces_list";
 import { en as vuetifyMessages } from "vuetify/locale";
-import { verify } from "crypto";
 
 export const SUPPORTED_LOCALES = ["en", "de", "zh"];
 export const LOCALE_ITEMS = [

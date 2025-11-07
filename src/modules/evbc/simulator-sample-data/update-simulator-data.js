@@ -109,14 +109,17 @@ function findAndReplaceDescriptions(obj, jsonPath) {
   const result = { ...obj };
 
   for (const key in result) {
-    if (key === 'description' && typeof result[key] === 'string') {
+    if (typeof key === 'string' && key === 'description' && typeof result[key] === 'string') {
       result[key] = `tc("${jsonPath}.${key}")`;
     } else if (typeof result[key] === 'object' && result[key] !== null) {
+      // Sanitize key to avoid injection into generated code strings
+      const safeKey = String(key).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
       // Recursively process nested objects
       if (jsonPath === "") {
-        result[key] = findAndReplaceDescriptions(result[key], key);
+        result[key] = findAndReplaceDescriptions(result[key], safeKey);
       } else {
-        result[key] = findAndReplaceDescriptions(result[key], `${jsonPath}.${key}`);
+        result[key] = findAndReplaceDescriptions(result[key], `${jsonPath}.${safeKey}`);
       }
     }
   }
@@ -137,16 +140,19 @@ function extractDescriptions(obj, jsonPath) {
   const result = {};
 
   for (const key in obj) {
-    if (key === 'description' && typeof obj[key] === 'string') {
-      result[key] = obj[key];
+    if (typeof key === 'string' && key === 'description' && typeof obj[key] === 'string') {
     } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-      // Recursively process nested objects
-      const nestedResult = extractDescriptions(obj[key], jsonPath === "" ? key : `${jsonPath}.${key}`);
+      // Sanitize key to avoid injection into generated code strings
+      const safeKey = String(key).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+      // Recursively process nested objects; sanitize key to avoid injection into generated code strings
+      const nestedResult = extractDescriptions(obj[key], jsonPath === "" ? safeKey : `${jsonPath}.${safeKey}`);
 
       if (nestedResult !== undefined && Object.keys(nestedResult).length > 0) {
         // Only add the nested result if it contains meaningful data
         result[key] = nestedResult;
       }
+    }
     }
   }
 
@@ -156,10 +162,16 @@ function extractDescriptions(obj, jsonPath) {
 function generateContent(data, typecast) {
   let content = licenseHeader();
   content += '// This file is generated, see README.md for more information.\n\n'
-  content += `import {${typecast}} from "../index";\nimport { tc } from "@/plugins/i18n";\n\n`;
+  content += `import {${typecast}} from "../index";\n`;
 
   const sampleData = findAndReplaceDescriptions(data, "");
-  content += `export default ${inspect(sampleData, { depth: null, colors: false })} as ${typecast};\n`;
+  const sampleContent = `export default ${inspect(sampleData, { depth: null, colors: false })} as ${typecast};\n`;
+
+  if (sampleContent.includes('tc("')) {
+    content += 'import { tc } from "@/plugins/i18n";\n';
+  }
+
+  content += "\n" + sampleContent;
 
   // Convert tc function calls from string to literal.
   content = content.replace(/'tc\("(.*?)"\)'/g, "tc('$1')");
