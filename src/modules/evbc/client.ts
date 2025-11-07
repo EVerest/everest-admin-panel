@@ -6,10 +6,13 @@ import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
 import { t } from "@/plugins/i18n";
+import type { ComputedRef } from "vue";
+
+type LocalizedString = string | ComputedRef<string>;
 
 type ConnectionStateEvent = {
   type: "INFO" | "INITIALIZED" | "FAILED" | "RECONNECT" | "IDLE";
-  text: string;
+  text?: LocalizedString;
 };
 
 type ClientEventMap = {
