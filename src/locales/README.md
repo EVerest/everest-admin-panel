@@ -1,4 +1,5 @@
 # Locales
+
 This folder contains the internationalization files for the EVerest Admin
 Panel user interface. For every supported language, it contains files in
 pairs of three, like the English "en" locale:
@@ -13,8 +14,8 @@ English with its "en" locale is the default language, and it serves as the
 fallback language for other locales. If a locale file is missing a specific
 key, the English translation will be used.
 
-
 ## Automatic Generation
+
 The two TypeScript files `en.module_info.ts` and `en.interfaces_list.ts` are
 automatically generated from the latest EVerest version during nightly builds.
 The script `src/modules/evbc/simulator-sample-data/update-simulator-data.js` is
@@ -22,8 +23,8 @@ used to generate these files.
 
 All other files in this folder are created and updated manually.
 
-
 ## Adding a New Language
+
 To add a new language, add the language code to `SUPPORTED_LOCALES` and `LOCALE_ITEMS` in `src/plugins/i18n.ts`. Next, create the three files for the
 new language, e.g. for Korean create `ko.json`, `ko.module_info.ts` and
 `ko.interfaces_list.ts`.
@@ -62,8 +63,8 @@ from the TypeScript files, as only `en_module_info.ts` and
 
 You now have added a new language to the EVerest project, congratulations!
 
-
 ## Future Work
+
 * TypeScript files should be generated automatically for all languages. It
   would be best to manage translations in the repositories of the modules
   themselves, instead of in this repository. Modules will be constantly

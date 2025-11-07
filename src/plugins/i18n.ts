@@ -30,7 +30,7 @@ options.messages[DEFAULT_LOCALE] = {
     $vuetify: { ...vuetifyMessages },
 };
 // See: https://vuetifyjs.com/en/features/internationalization/#vue-i18n
-options.messages[DEFAULT_LOCALE]["$vuetify"] = { ...vuetifyMessages };
+options.messages[DEFAULT_LOCALE].$vuetify = { ...vuetifyMessages };
 
 async function setupI18n(options: I18nOptions) {
   const i18n = createI18n(options);
