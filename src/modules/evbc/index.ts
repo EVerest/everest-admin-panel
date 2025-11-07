@@ -7,7 +7,7 @@ import type { ComputedRef } from "vue";
 export type LocalizedString = string | ComputedRef<string>;
 
 type ConfigSetSchemaEntry = {
-  description: LocalizedString;
+  description?: LocalizedString;
   type: string;
   default?: unknown;
 };
@@ -23,13 +23,13 @@ export type ConfigSetWithSchema = Array<{
 export type ConfigSet = Record<string, ConfigSetEntry>;
 
 export type EverestModuleDefinition = {
-  description: LocalizedString;
+  description?: LocalizedString;
   config?: ConfigSetSchema;
   provides?: Record<
     string,
     {
       interface: string;
-      description: LocalizedString;
+      description?: LocalizedString;
       config?: ConfigSetSchema;
     }
   >;
@@ -114,7 +114,7 @@ export type EverestModuleConfig = {
 };
 
 export type EverestInterfaceDefinition = {
-  description: LocalizedString;
+  description?: LocalizedString;
   parent?: string;
   // FIXME (aw): to be done ...
   cmds?: unknown;
