@@ -94,7 +94,9 @@ export default defineComponent({
           notyf.success(t("evConfigCanvas.successfullySavedNotification", { config: current_config.value._name }));
         })
         .catch((error: string) => {
-          notyf.error(t("evConfigCanvas.failedToSaveNotification", { config: current_config.value._name, error: error }));
+          notyf.error(
+            t("evConfigCanvas.failedToSaveNotification", { config: current_config.value._name, error: error }),
+          );
         });
     };
 

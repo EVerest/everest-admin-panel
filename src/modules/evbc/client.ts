@@ -139,14 +139,19 @@ class EVBackendClient {
     this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
     this._publish("connection_state", {
       type: "INFO",
-      text: t("evbc.client.receivedInterfacesDefinitions", { count: Object.keys(this.everest_definitions.interfaces).length }),
+      text: t("evbc.client.receivedInterfacesDefinitions", {
+        count: Object.keys(this.everest_definitions.interfaces).length,
+      }),
     });
   }
 
   async _reload_configs(): Promise<void> {
     const cfgs = await this._cxn.rpc_issuer.get_configs();
     Object.assign(this.evbcStore.available_configs, cfgs);
-    this._publish("connection_state", { type: "INFO", text: t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }) });
+    this._publish("connection_state", {
+      type: "INFO",
+      text: t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }),
+    });
   }
 
   _reload_instance_data(): Promise<void[]> {

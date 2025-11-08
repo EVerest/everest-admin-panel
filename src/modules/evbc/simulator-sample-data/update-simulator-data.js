@@ -141,6 +141,7 @@ function extractDescriptions(obj, jsonPath) {
 
   for (const key in obj) {
     if (typeof key === 'string' && key === 'description' && typeof obj[key] === 'string') {
+      result[key] = obj[key];
     } else if (typeof obj[key] === 'object' && obj[key] !== null) {
       // Sanitize key to avoid injection into generated code strings
       const safeKey = String(key).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
@@ -153,16 +154,15 @@ function extractDescriptions(obj, jsonPath) {
         result[key] = nestedResult;
       }
     }
-    }
   }
 
   return result;
-}  
+}
 
 function generateContent(data, typecast) {
   let content = licenseHeader();
   content += '// This file is generated, see README.md for more information.\n\n'
-  content += `import {${typecast}} from "../index";\n`;
+  content += `import { ${typecast} } from "../index";\n`;
 
   const sampleData = findAndReplaceDescriptions(data, "");
   const sampleContent = `export default ${inspect(sampleData, { depth: null, colors: false })} as ${typecast};\n`;
@@ -171,7 +171,10 @@ function generateContent(data, typecast) {
     content += 'import { tc } from "@/plugins/i18n";\n';
   }
 
-  content += "\n" + sampleContent;
+  // `inspect()` will generate output that conflicts with Prettier rules
+  content += '\n/* eslint-disable prettier/prettier */\n';
+
+  content += sampleContent;
 
   // Convert tc function calls from string to literal.
   content = content.replace(/'tc\("(.*?)"\)'/g, "tc('$1')");
@@ -184,6 +187,10 @@ function generateI18nContent(data) {
 
   let content = licenseHeader();
   content += '// This file is generated, see README.md for more information.\n\n'
+
+  // `inspect()` will generate output that conflicts with Prettier rules
+  content += '/* eslint-disable prettier/prettier */\n';
+
   content += `export default ${inspect(extractedDescriptions, { depth: null, colors: false })} as const;\n`;
 
   // Convert tc function calls from string to literal.

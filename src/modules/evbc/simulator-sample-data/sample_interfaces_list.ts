@@ -3,9 +3,10 @@
 
 // This file is generated, see README.md for more information.
 
-import {EverestInterfaceDefinitionList} from "../index";
+import { EverestInterfaceDefinitionList } from "../index";
 import { tc } from "@/plugins/i18n";
 
+/* eslint-disable prettier/prettier */
 export default {
   ISO15118_charger: {
     cmds: {

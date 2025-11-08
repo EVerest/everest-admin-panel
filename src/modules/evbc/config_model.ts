@@ -476,11 +476,21 @@ class EVConfigModel {
     const req_manifest = this._module_definitions[req_module];
 
     if (!(conn.providing_impl_name in prov_manifest.provides)) {
-      throw Error(t("config_model.providingModuleDoesNotProvideError", { moduleType: prov_module, implementationName: conn.providing_impl_name }));
+      throw Error(
+        t("config_model.providingModuleDoesNotProvideError", {
+          moduleType: prov_module,
+          implementationName: conn.providing_impl_name,
+        }),
+      );
     }
 
     if (!(conn.requirement_name in req_manifest.requires)) {
-      throw Error(t("config_model.requiringModuleDoesNotRequireError", { moduleType: req_module, requirementName: conn.requirement_name }));
+      throw Error(
+        t("config_model.requiringModuleDoesNotRequireError", {
+          moduleType: req_module,
+          requirementName: conn.requirement_name,
+        }),
+      );
     }
 
     const prov_interface = prov_manifest.provides[conn.providing_impl_name].interface;
@@ -551,14 +561,27 @@ class EVConfigModel {
       if (instance.mapping?.module?.evse !== undefined) {
         const evse_id = instance.mapping.module.evse;
         if (evse_id > evse_manager_count) {
-          warnings.push(t("config_model.evseIdCountWarning", { instanceId: instance.id, evseId: evse_id, evseManagerCount: evse_manager_count }));
+          warnings.push(
+            t("config_model.evseIdCountWarning", {
+              instanceId: instance.id,
+              evseId: evse_id,
+              evseManagerCount: evse_manager_count,
+            }),
+          );
         }
       }
 
       if (instance.mapping?.implementations) {
         Object.entries(instance.mapping.implementations).forEach(([impl_name, impl_mapping]) => {
           if (impl_mapping.evse > evse_manager_count) {
-            warnings.push(t("config_model.moduleImplementationCountWarning", { instanceId: instance.id, implementation: impl_name, evseId: impl_mapping.evse, evseManagerCount: evse_manager_count }));
+            warnings.push(
+              t("config_model.moduleImplementationCountWarning", {
+                instanceId: instance.id,
+                implementation: impl_name,
+                evseId: impl_mapping.evse,
+                evseManagerCount: evse_manager_count,
+              }),
+            );
           }
         });
       }

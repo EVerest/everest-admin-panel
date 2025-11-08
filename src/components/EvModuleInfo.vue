@@ -16,7 +16,11 @@
       <p class="font-weight-bold">{{ t("evModuleInfo.moduleType", { moduleType: module_node?.instance?.type }) }}</p>
       <v-form @submit.prevent>
         <!-- FIXME (aw): howto do the binding here? -->
-        <v-text-field :model-value="module_node?.instance.id" :label="t('evModuleInfo.moduleId')" :rules="moduleIDRules" />
+        <v-text-field
+          :model-value="module_node?.instance.id"
+          :label="t('evModuleInfo.moduleId')"
+          :rules="moduleIDRules"
+        />
       </v-form>
       <v-form @submit.prevent>
         <template v-if="module_node.instance.module_config">
@@ -58,7 +62,9 @@
           <template v-if="enableMappingForThisModule">
             <v-alert v-if="mappingValidation.warnings.length > 0" type="warning" variant="tonal" class="mb-4">
               <v-icon icon="mdi-alert" />
-              <div><strong>{{ t("evModuleInfo.configurationIssues") }}</strong></div>
+              <div>
+                <strong>{{ t("evModuleInfo.configurationIssues") }}</strong>
+              </div>
               <ul class="mt-2">
                 <li v-for="warning in mappingValidation.warnings" :key="warning" class="ml-4">
                   {{ warning }}
@@ -119,11 +125,13 @@
                 :key="implName"
                 class="mb-4"
               >
-                <h4 class="text-subtitle-2 mb-2">{{ t("evModuleInfo.implementationSubtitle", { implementationName: implName }) }}</h4>
+                <h4 class="text-subtitle-2 mb-2">
+                  {{ t("evModuleInfo.implementationSubtitle", { implementationName: implName }) }}
+                </h4>
                 <v-select
                   v-model="implMapping.evse"
                   :items="availableEvseIds"
-                  :label="t('evModuleInfo.implementationEvseIdHint', { implementationName: implName})"
+                  :label="t('evModuleInfo.implementationEvseIdHint', { implementationName: implName })"
                   :hint="t('evModuleInfo.implementationEvseIdHint')"
                   persistent-hint
                   clearable
@@ -131,7 +139,7 @@
                 />
                 <v-text-field
                   v-model.number="implMapping.connector"
-                  :label="t('evModuleInfo.implementationConnectorIdLabel', { implementationName: implName})"
+                  :label="t('evModuleInfo.implementationConnectorIdLabel', { implementationName: implName })"
                   :hint="t('evModuleInfo.implementationConnectorIdHint')"
                   persistent-hint
                   type="number"
@@ -165,15 +173,21 @@
       />
     </v-card-title>
     <v-card-text>
-      {{ t("evModuleInfo.connectionTitle", {
-        toName: connection.to.name,
-        toId: connection.to.id,
-        fromName: connection.from.name,
-        fromId: connection.from.id
-       }) }}
+      {{
+        t("evModuleInfo.connectionTitle", {
+          toName: connection.to.name,
+          toId: connection.to.id,
+          fromName: connection.from.name,
+          fromId: connection.from.id,
+        })
+      }}
     </v-card-text>
     <v-card-actions>
-      <icon-button-with-tooltip icon="mdi-delete" :title="t('evModuleInfo.deleteConnectionTooltip')" @click="delete_connection(connection.id)" />
+      <icon-button-with-tooltip
+        icon="mdi-delete"
+        :title="t('evModuleInfo.deleteConnectionTooltip')"
+        @click="delete_connection(connection.id)"
+      />
     </v-card-actions>
   </v-card>
   <v-card v-else-if="terminal">

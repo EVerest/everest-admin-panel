@@ -134,9 +134,7 @@ const filtered_module_list = computed(() => {
       .filter(([key, value]) => {
         // Description can be a string or a computed ref
         const descStr =
-          typeof value.description === "string"
-            ? value.description
-            : (value.description as any)?.value ?? "";
+          typeof value.description === "string" ? value.description : ((value.description as any)?.value ?? "");
 
         return (
           !search.value ||

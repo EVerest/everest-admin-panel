@@ -3,9 +3,10 @@
 
 // This file is generated, see README.md for more information.
 
-import {EverestModuleDefinitionList} from "../index";
+import { EverestModuleDefinitionList } from "../index";
 import { tc } from "@/plugins/i18n";
 
+/* eslint-disable prettier/prettier */
 export default {
   API: {
     config: {

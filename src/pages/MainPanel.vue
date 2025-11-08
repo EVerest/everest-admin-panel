@@ -52,16 +52,10 @@
   </v-app>
 </template>
 
-<script setup lang="ts">
-import { useI18n } from "vue-i18n";
-import LanguageSelector from "@/components/LanguageSelector.vue";
-
-const { t } = useI18n({ useScope: "global" });
-</script>
-
 <script lang="ts">
 import { defineComponent, inject } from "vue";
 import EVBackendClient from "@/modules/evbc/client";
+import LanguageSelector from "@/components/LanguageSelector.vue";
 
 import { Router, useRouter } from "vue-router";
 import { Notyf } from "notyf";
@@ -71,6 +65,9 @@ let router: Router;
 let notyf: Notyf;
 
 export default defineComponent({
+  components: {
+    LanguageSelector,
+  },
   data: () => ({
     drawer: false,
     evbc_disconnected: false,
@@ -87,7 +84,7 @@ export default defineComponent({
     router = useRouter();
     notyf = inject<Notyf>("notyf");
     evbc.on("connection_state", (ev) => {
-      this.evbc_status = ev.text;
+      this.evbc_status = String(this.$t(ev.text));
       if (ev.type === "RECONNECT" || ev.type === "IDLE") {
         this.evbc_disconnected = true;
       } else if (ev.type === "INITIALIZED") {
@@ -102,7 +99,7 @@ export default defineComponent({
       const timeout = setTimeout(() => {
         notification = notyf.open({
           type: "warning",
-          message: t("mainPanel.changeInstance.disconnectNotification"),
+          message: String(this.$t("mainPanel.changeInstance.disconnectNotification")),
           ripple: false,
         });
       }, 250);

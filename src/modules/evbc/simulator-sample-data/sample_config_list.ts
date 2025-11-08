@@ -3,8 +3,9 @@
 
 // This file is generated, see README.md for more information.
 
-import {EverestConfigList} from "../index";
+import { EverestConfigList } from "../index";
 
+/* eslint-disable prettier/prettier */
 export default {
   'config-sil-dc': {
     active_modules: {

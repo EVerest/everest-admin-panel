@@ -2,19 +2,10 @@
   <div class="text-center">
     <v-menu>
       <template v-slot:activator="{ props: menu }">
-        <v-btn
-            icon="mdi-web"
-            v-bind="menu"
-        >
-        </v-btn>
+        <v-btn icon="mdi-web" v-bind="menu"> </v-btn>
       </template>
       <v-list>
-        <v-list-item
-          v-for="(item, index) in items"
-          :key="index"
-          :value="index"
-          @click="updateLocale(index)"
-        >
+        <v-list-item v-for="(item, index) in items" :key="index" :value="index" @click="updateLocale(index)">
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list>
@@ -29,7 +20,6 @@ import { useRouter, useRoute } from "vue-router";
 const route = useRoute();
 const router = useRouter();
 const items = LOCALE_ITEMS;
-const model = defineModel();
 
 async function updateLocale(index: number) {
   const selectedLocale = items[index].value;
@@ -47,7 +37,6 @@ async function updateLocale(index: number) {
     },
     query: route.query,
     hash: route.hash,
-  });  
+  });
 }
 </script>
-

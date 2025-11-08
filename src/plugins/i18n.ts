@@ -2,16 +2,16 @@
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 import { computed, ComputedRef, nextTick } from "vue";
-import { createI18n, Composer } from "vue-i18n";
+import { createI18n } from "vue-i18n";
 import defaultMessages from "@/locales/en.json";
 import defaultModuleMessages from "@/locales/en_module_info";
 import { en as vuetifyMessages } from "vuetify/locale";
 
 export const SUPPORTED_LOCALES = ["en", "de", "zh"];
 export const LOCALE_ITEMS = [
-    { "title": "English", "value": "en" },
-    { "title": "Deutsch", "value": "de" },
-    { "title": "简体中文", "value": "zh" }
+  { title: "English", value: "en" },
+  { title: "Deutsch", value: "de" },
+  { title: "简体中文", value: "zh" },
 ];
 const DEFAULT_LOCALE = "en";
 
@@ -46,19 +46,19 @@ async function loadLocaleMessages(locale: string) {
     ...messages.default,
     ...moduleMessages.default,
     ...interfacesMessages.default,
-    "$vuetify": vuetifyLocale,
+    $vuetify: vuetifyLocale,
   };
 
   i18n.global.setLocaleMessage(locale, allMessages);
-  return nextTick()
+  return nextTick();
 }
 
 export function verifyLocale(locale: string) {
-    if (SUPPORTED_LOCALES.includes(locale)) {
-        return locale;
-    } else {
-        return DEFAULT_LOCALE;
-    }
+  if (SUPPORTED_LOCALES.includes(locale)) {
+    return locale;
+  } else {
+    return DEFAULT_LOCALE;
+  }
 }
 
 export async function establishLocale(paramsLocale: string) {
@@ -74,7 +74,7 @@ export async function establishLocale(paramsLocale: string) {
 }
 
 /**
- * Synchronous translator usable at module scope. 
+ * Synchronous translator usable at module scope.
  * Returns i18n.global.t(...) when available, falls back to returning the key
  * string otherwise
  */
@@ -111,9 +111,9 @@ export function tc(key: string, ...args: unknown[]): ComputedRef<string> {
 }
 
 options.messages[DEFAULT_LOCALE] = {
-    ...defaultMessages,
-    ...defaultModuleMessages,
-    $vuetify: { ...vuetifyMessages },
+  ...defaultMessages,
+  ...defaultModuleMessages,
+  $vuetify: { ...vuetifyMessages },
 };
 options.messages[DEFAULT_LOCALE].$vuetify = { ...vuetifyMessages };
 

@@ -10,7 +10,7 @@
             <v-card elevation="10">
               <v-toolbar dark color="primary">
                 <template v-if="currentView === ComponentViews.LIST">
-                  <v-toolbar-title>{{ t('connectPage.toolbarTitle') }}</v-toolbar-title>
+                  <v-toolbar-title>{{ t("connectPage.toolbarTitle") }}</v-toolbar-title>
                   <v-spacer />
                   <LanguageSelector />
                   <v-btn
@@ -21,9 +21,11 @@
                   />
                 </template>
                 <template v-else>
-                  <v-toolbar-title
-                    >{{ currentView === ComponentViews.ADD ? t('connectPage.instanceForm.titleAdd') : t('connectPage.instanceForm.titleEdit') }}</v-toolbar-title
-                  >
+                  <v-toolbar-title>{{
+                    currentView === ComponentViews.ADD
+                      ? t("connectPage.instanceForm.titleAdd")
+                      : t("connectPage.instanceForm.titleEdit")
+                  }}</v-toolbar-title>
                 </template>
               </v-toolbar>
 
@@ -181,7 +183,6 @@ enum ComponentViews {
   EDIT,
   ADD,
 }
-
 
 export default defineComponent({
   components: {

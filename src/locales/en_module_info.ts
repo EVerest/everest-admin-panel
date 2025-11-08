@@ -3,6 +3,7 @@
 
 // This file is generated, see README.md for more information.
 
+/* eslint-disable prettier/prettier */
 export default {
   API: {
     config: {
