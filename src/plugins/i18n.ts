@@ -2,7 +2,7 @@
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 import { computed, ComputedRef, nextTick } from "vue";
-import { createI18n, I18n, I18nOptions } from "vue-i18n";
+import { createI18n, Composer } from "vue-i18n";
 import defaultMessages from "@/locales/en.json";
 import defaultModuleMessages from "@/locales/en_module_info";
 import { en as vuetifyMessages } from "vuetify/locale";
@@ -23,31 +23,20 @@ const options = {
   locale: DEFAULT_LOCALE,
   fallbackLocale: DEFAULT_LOCALE,
   messages: {} as Record<string, any>,
-};
-options.messages[DEFAULT_LOCALE] = {
-    ...defaultMessages,
-    ...defaultModuleMessages,
-    $vuetify: { ...vuetifyMessages },
-};
-// See: https://vuetifyjs.com/en/features/internationalization/#vue-i18n
-options.messages[DEFAULT_LOCALE].$vuetify = { ...vuetifyMessages };
+} as const;
 
-async function setupI18n(options: I18nOptions) {
-  const i18n = createI18n(options);
-  setI18nLanguage(i18n, options.locale!);
-  return i18n;
-}
+export const i18n = createI18n(options);
 
-function setI18nLanguage(i18n: I18n, locale: string) {
+function setI18nLanguage(locale: string) {
   if (typeof i18n.global.locale !== "string" && "value" in i18n.global.locale) {
     i18n.global.locale.value = locale;
   } else {
-    i18n.global.locale = locale;
+    (i18n.global.locale as any) = locale;
   }
   document.querySelector("html").setAttribute("lang", locale);
 }
 
-async function loadLocaleMessages(i18n: I18n, locale: string) {
+async function loadLocaleMessages(locale: string) {
   const messages = await import(`../locales/${locale}.json`);
   const moduleMessages = await import(`../locales/${locale}_module_info.ts`);
   const interfacesMessages = await import(`../locales/${locale}_interfaces_list.ts`);
@@ -76,10 +65,10 @@ export async function establishLocale(paramsLocale: string) {
   const locale = verifyLocale(paramsLocale);
 
   if (!i18n.global.availableLocales.includes(locale)) {
-    await loadLocaleMessages(i18n, locale);
+    await loadLocaleMessages(locale);
   }
 
-  setI18nLanguage(i18n, locale);
+  setI18nLanguage(locale);
 
   return locale;
 }
@@ -90,9 +79,7 @@ export async function establishLocale(paramsLocale: string) {
  * string otherwise
  */
 export function t(key: string, params?: Record<string, unknown>): string {
-  // Explicitly guard and type the translator so static analysis tools don't
-  // consider this an unsafe call.
-  const tfn = (i18n?.global as any)?.t;
+  const tfn = i18n.global.t;
 
   if (typeof tfn === "function") {
     try {
@@ -110,9 +97,7 @@ export function t(key: string, params?: Record<string, unknown>): string {
  */
 export function tc(key: string, ...args: unknown[]): ComputedRef<string> {
   return computed(() => {
-    // Explicitly guard and type the translator function here so static
-    // analysis tools don't treat the call as unsafe.
-    const tfn = (i18n?.global as any)?.t;
+    const tfn = i18n.global.t;
 
     if (typeof tfn === "function") {
       try {
@@ -123,6 +108,14 @@ export function tc(key: string, ...args: unknown[]): ComputedRef<string> {
     }
     return String(key);
   });
- }
+}
 
-export const i18n = await setupI18n(options);
+options.messages[DEFAULT_LOCALE] = {
+    ...defaultMessages,
+    ...defaultModuleMessages,
+    $vuetify: { ...vuetifyMessages },
+};
+options.messages[DEFAULT_LOCALE].$vuetify = { ...vuetifyMessages };
+
+i18n.global.setLocaleMessage(DEFAULT_LOCALE, options.messages[DEFAULT_LOCALE]);
+setI18nLanguage(DEFAULT_LOCALE);
