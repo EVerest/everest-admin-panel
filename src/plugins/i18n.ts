@@ -90,10 +90,16 @@ export async function establishLocale(paramsLocale: string) {
  * string otherwise
  */
 export function t(key: string, params?: Record<string, unknown>): string {
-  // i18n is initialized by top-level await above; guard for safety
-  if (i18n?.global && typeof i18n.global.t === "function") {
-    // cast to any to avoid overly specific type issues
-    return (i18n.global.t as any)(key, params) as string;
+  // Explicitly guard and type the translator so static analysis tools don't
+  // consider this an unsafe call.
+  const tfn = (i18n?.global as any)?.t;
+
+  if (typeof tfn === "function") {
+    try {
+      return (tfn as (k: string, p?: Record<string, unknown>) => string)(key, params);
+    } catch {
+      return String(key);
+    }
   }
   return String(key);
 }
@@ -103,9 +109,20 @@ export function t(key: string, params?: Record<string, unknown>): string {
  * automatically updated when the global locale changes.
  */
 export function tc(key: string, ...args: unknown[]): ComputedRef<string> {
-  const t = i18n.global.t as (key: string, ...args: unknown[]) => string;
+  return computed(() => {
+    // Explicitly guard and type the translator function here so static
+    // analysis tools don't treat the call as unsafe.
+    const tfn = (i18n?.global as any)?.t;
 
-  return computed(() => t(key, ...args));
-}
+    if (typeof tfn === "function") {
+      try {
+        return (tfn as (k: string, ...a: unknown[]) => string)(key, ...args);
+      } catch {
+        return String(key);
+      }
+    }
+    return String(key);
+  });
+ }
 
 export const i18n = await setupI18n(options);
