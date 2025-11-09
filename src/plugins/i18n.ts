@@ -79,16 +79,19 @@ export async function establishLocale(paramsLocale: string) {
  * string otherwise
  */
 export function t(key: string, params?: Record<string, unknown>): string {
-  const tfn = i18n.global.t;
+  try {
+    const tfn = i18n?.global?.t;
 
-  if (typeof tfn === "function") {
-    try {
-      return (tfn as (k: string, p?: Record<string, unknown>) => string)(key, params);
-    } catch {
+    if (typeof tfn !== "function") {
       return String(key);
     }
+
+    const translator = tfn as (k: string, p?: Record<string, unknown>) => unknown;
+    const result = translator(key, params);
+    return typeof result === "string" ? result : String(key);
+  } catch {
+    return String(key);
   }
-  return String(key);
 }
 
 /**
@@ -96,26 +99,20 @@ export function t(key: string, params?: Record<string, unknown>): string {
  * automatically updated when the global locale changes.
  */
 export function tc(key: string, ...args: unknown[]): ComputedRef<string> {
-  type TFn = (k: string, ...a: unknown[]) => string;
-
-  function isTFn(x: unknown): x is TFn {
-    return typeof x === "function";
-  }
-
   return computed(() => {
-    // keep all values as `unknown` until we narrow
-    const globalUnknown: unknown = i18n.global;
-    const maybeGlobal = globalUnknown as Record<string, unknown> | null;
-    const maybeT: unknown = maybeGlobal?.t;
+    try {
+      const tfn = i18n?.global?.t;
 
-    if (isTFn(maybeT)) {
-      try {
-        return maybeT(key, ...args);
-      } catch {
+      if (typeof tfn !== "function") {
         return String(key);
       }
+
+      const translator = tfn as (...a: unknown[]) => unknown;
+      const result = translator(key, ...args);
+      return typeof result === "string" ? result : String(key);
+    } catch {
+      return String(key);
     }
-    return String(key);
   });
 }
 
