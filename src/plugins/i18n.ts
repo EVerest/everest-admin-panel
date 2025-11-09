@@ -96,12 +96,21 @@ export function t(key: string, params?: Record<string, unknown>): string {
  * automatically updated when the global locale changes.
  */
 export function tc(key: string, ...args: unknown[]): ComputedRef<string> {
-  return computed(() => {
-    const tfn = i18n.global.t;
+  type TFn = (k: string, ...a: unknown[]) => string;
 
-    if (typeof tfn === "function") {
+  function isTFn(x: unknown): x is TFn {
+    return typeof x === "function";
+  }
+
+  return computed(() => {
+    // keep all values as `unknown` until we narrow
+    const globalUnknown: unknown = i18n.global;
+    const maybeGlobal = globalUnknown as Record<string, unknown> | null;
+    const maybeT: unknown = maybeGlobal?.t;
+
+    if (isTFn(maybeT)) {
       try {
-        return (tfn as (k: string, ...a: unknown[]) => string)(key, ...args);
+        return maybeT(key, ...args);
       } catch {
         return String(key);
       }
