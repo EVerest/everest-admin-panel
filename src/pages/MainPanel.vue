@@ -53,12 +53,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent, inject, unref } from "vue";
 import EVBackendClient from "@/modules/evbc/client";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 
 import { Router, useRouter } from "vue-router";
 import { Notyf } from "notyf";
+import { useI18n } from "vue-i18n";
 
 let evbc: EVBackendClient;
 let router: Router;
@@ -67,6 +68,10 @@ let notyf: Notyf;
 export default defineComponent({
   components: {
     LanguageSelector,
+  },
+  setup() {
+    const { t } = useI18n();
+    return { t };
   },
   data: () => ({
     drawer: false,
@@ -84,7 +89,7 @@ export default defineComponent({
     router = useRouter();
     notyf = inject<Notyf>("notyf");
     evbc.on("connection_state", (ev) => {
-      this.evbc_status = String(this.$t(ev.text));
+      this.evbc_status = unref(ev.text);
       if (ev.type === "RECONNECT" || ev.type === "IDLE") {
         this.evbc_disconnected = true;
       } else if (ev.type === "INITIALIZED") {

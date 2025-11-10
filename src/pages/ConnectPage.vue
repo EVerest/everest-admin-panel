@@ -161,7 +161,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onMounted, reactive, ref, watch } from "vue";
+import { defineComponent, inject, onMounted, reactive, ref, unref, watch } from "vue";
 import { useField, useForm } from "vee-validate";
 import EVBackendClient from "@/modules/evbc/client";
 import { useRouter } from "vue-router";
@@ -356,7 +356,7 @@ export default defineComponent({
       if (evbc) {
         const unsubscribe = evbc.on("connection_state", (ev) => {
           if (ev.type === "INFO") {
-            connectionStatus.value = ev.text;
+            connectionStatus.value = unref(ev.text);
           } else if (ev.type === "INITIALIZED") {
             unsubscribe();
             const localeRaw = i18n.global.locale as unknown;
@@ -365,7 +365,7 @@ export default defineComponent({
           } else if (ev.type === "FAILED") {
             connecting.value = false;
             error.active = true;
-            error.status = ev.text;
+            error.status = unref(ev.text);
           } else if (ev.type === "IDLE") {
             connecting.value = false;
             connectionStatus.value = "";

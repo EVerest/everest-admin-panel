@@ -15,6 +15,8 @@ export const LOCALE_ITEMS = [
 ];
 const DEFAULT_LOCALE = "en";
 
+type LocaleMessages = Record<string, unknown>;
+
 const options = {
   legacy: false,
   useScope: "global",
@@ -22,7 +24,7 @@ const options = {
   // allowComposition: true, // XXX: via https://vue-i18n.intlify.dev/guide/migration/vue3
   locale: DEFAULT_LOCALE,
   fallbackLocale: DEFAULT_LOCALE,
-  messages: {} as Record<string, any>,
+  messages: {} as Record<string, LocaleMessages>,
 } as const;
 
 export const i18n = createI18n(options);
@@ -31,18 +33,31 @@ function setI18nLanguage(locale: string) {
   if (typeof i18n.global.locale !== "string" && "value" in i18n.global.locale) {
     i18n.global.locale.value = locale;
   } else {
-    (i18n.global.locale as any) = locale;
+    // vue-i18n has union type for locale, need to handle both cases
+    i18n.global.locale = locale as typeof i18n.global.locale;
   }
-  document.querySelector("html").setAttribute("lang", locale);
+  const htmlElement = document.querySelector("html");
+  if (htmlElement) {
+    htmlElement.setAttribute("lang", locale);
+  }
+}
+
+interface LocaleModule {
+  default: LocaleMessages;
+}
+
+interface VuetifyLocaleModule {
+  [key: string]: LocaleMessages;
+  default?: LocaleMessages;
 }
 
 async function loadLocaleMessages(locale: string) {
-  const messages = await import(`../locales/${locale}.json`);
-  const moduleMessages = await import(`../locales/${locale}_module_info.ts`);
-  const interfacesMessages = await import(`../locales/${locale}_interfaces_list.ts`);
-  const mod = await import("vuetify/locale");
-  const vuetifyLocale = (mod as Record<string, any>)[locale] ?? (mod as any).default;
-  const allMessages = {
+  const messages = (await import(`../locales/${locale}.json`)) as LocaleModule;
+  const moduleMessages = (await import(`../locales/${locale}_module_info.ts`)) as LocaleModule;
+  const interfacesMessages = (await import(`../locales/${locale}_interfaces_list.ts`)) as LocaleModule;
+  const mod = (await import("vuetify/locale")) as VuetifyLocaleModule;
+  const vuetifyLocale: LocaleMessages = mod[locale] ?? mod.default ?? {};
+  const allMessages: LocaleMessages = {
     ...messages.default,
     ...moduleMessages.default,
     ...interfacesMessages.default,
@@ -116,12 +131,13 @@ export function tc(key: string, ...args: unknown[]): ComputedRef<string> {
   });
 }
 
-options.messages[DEFAULT_LOCALE] = {
+const defaultLocaleMessages: LocaleMessages = {
   ...defaultMessages,
   ...defaultModuleMessages,
   $vuetify: { ...vuetifyMessages },
 };
-options.messages[DEFAULT_LOCALE].$vuetify = { ...vuetifyMessages };
 
-i18n.global.setLocaleMessage(DEFAULT_LOCALE, options.messages[DEFAULT_LOCALE]);
+options.messages[DEFAULT_LOCALE] = defaultLocaleMessages;
+
+i18n.global.setLocaleMessage(DEFAULT_LOCALE, defaultLocaleMessages);
 setI18nLanguage(DEFAULT_LOCALE);
