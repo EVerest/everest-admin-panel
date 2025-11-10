@@ -110,7 +110,7 @@ function findAndReplaceDescriptions(obj, jsonPath) {
 
   for (const key in result) {
     if (typeof key === 'string' && key === 'description' && typeof result[key] === 'string') {
-      result[key] = `tc("${jsonPath}.${key}")`;
+      result[key] = `tc("${jsonPath}.${key}") as LocalizedString`;
     } else if (typeof result[key] === 'object' && result[key] !== null) {
       // Sanitize key to avoid injection into generated code strings
       const safeKey = String(key).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
@@ -162,13 +162,15 @@ function extractDescriptions(obj, jsonPath) {
 function generateContent(data, typecast) {
   let content = licenseHeader();
   content += '// This file is generated, see README.md for more information.\n\n'
-  content += `import { ${typecast} } from "../index";\n`;
 
   const sampleData = findAndReplaceDescriptions(data, "");
   const sampleContent = `export default ${inspect(sampleData, { depth: null, colors: false })} as ${typecast};\n`;
 
   if (sampleContent.includes('tc("')) {
+    content += `import { ${typecast}, LocalizedString } from "../index";\n`;
     content += 'import { tc } from "@/plugins/i18n";\n';
+  } else {
+    content += `import { ${typecast} } from "../index";\n`;
   }
 
   // `inspect()` will generate output that conflicts with Prettier rules
@@ -177,7 +179,7 @@ function generateContent(data, typecast) {
   content += sampleContent;
 
   // Convert tc function calls from string to literal.
-  content = content.replace(/'tc\("(.*?)"\)'/g, "tc('$1')");
+  content = content.replace(/'tc\("(.*?)"\) as LocalizedString'/g, "tc('$1') as LocalizedString");
 
   return content;
 }
@@ -194,7 +196,7 @@ function generateI18nContent(data) {
   content += `export default ${inspect(extractedDescriptions, { depth: null, colors: false })} as const;\n`;
 
   // Convert tc function calls from string to literal.
-  content = content.replace(/'tc\("(.*?)"\)'/g, "tc('$1')");
+  content = content.replace(/'tc\("(.*?)"\) as LocalizedString'/g, "tc('$1') as LocalizedString");
 
   return content;
 }
