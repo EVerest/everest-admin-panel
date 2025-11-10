@@ -43,10 +43,11 @@ export class LoopbackRpcIssuer extends RpcIssuer {
     return this.random_wait_resolve<EverestConfigList>(configs);
   }
 
-  private static getConfigsFromLocalStorageOrDefault() {
+  private static getConfigsFromLocalStorageOrDefault(): EverestConfigList {
     const configsString = localStorage.getItem("configs");
     if (configsString) {
-      return Object.assign({}, SampleConfigList, JSON.parse(configsString));
+      const parsedConfigs = JSON.parse(configsString) as EverestConfigList;
+      return Object.assign({}, SampleConfigList, parsedConfigs);
     } else {
       return SampleConfigList;
     }
@@ -67,7 +68,7 @@ export class LoopbackRpcIssuer extends RpcIssuer {
     return this.random_wait_resolve<number>(5000);
   }
 
-  protected async issue_rpc<T>(): Promise<T> {
+  protected issue_rpc<T>(): Promise<T> {
     throw new Error("Method not implemented in LoopbackRpcIssuer.");
   }
 

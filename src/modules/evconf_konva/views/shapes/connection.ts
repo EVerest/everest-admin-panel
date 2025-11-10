@@ -48,18 +48,18 @@ export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig>
   }
 
   update_terminals(requirement: TerminalPlacement, provide: TerminalPlacement, animate = false) {
-    requirement = requirement || this.getAttr("requirement");
-    provide = provide || this.getAttr("provide");
+    const req = requirement || (this.getAttr("requirement") as TerminalPlacement);
+    const prov = provide || (this.getAttr("provide") as TerminalPlacement);
 
-    const req_x = requirement.x + correction[requirement.alignment].x;
-    const req_y = requirement.y + correction[requirement.alignment].y;
-    const prov_x = provide.x + correction[provide.alignment].x;
-    const prov_y = provide.y + correction[provide.alignment].y;
+    const req_x = req.x + correction[req.alignment].x;
+    const req_y = req.y + correction[req.alignment].y;
+    const prov_x = prov.x + correction[prov.alignment].x;
+    const prov_y = prov.y + correction[prov.alignment].y;
     const x_dist = prov_x - req_x;
     const y_dist = prov_y - req_y;
     const cps = [
-      [requirement.alignment, req_x, req_y, x_dist, y_dist],
-      [provide.alignment, prov_x, prov_y, -x_dist, -y_dist],
+      [req.alignment, req_x, req_y, x_dist, y_dist],
+      [prov.alignment, prov_x, prov_y, -x_dist, -y_dist],
     ].map((item) => {
       const [alignment, pos_x, pos_y, dist_x, dist_y] = item as [TerminalAlignment, number, number, number, number];
       if (alignment === "top") {

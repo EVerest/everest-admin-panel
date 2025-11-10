@@ -121,7 +121,7 @@ class EVBackendClient {
   }
 
   _on_connected() {
-    this._reload_instance_data().then(() => {
+    void this._reload_instance_data().then(() => {
       this.initialized = true;
       this._publish("connection_state", { type: "INITIALIZED", text: t("evbc.client.initialized") });
     });

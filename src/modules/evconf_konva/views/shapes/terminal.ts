@@ -41,15 +41,15 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
   }
 
   get terminal_type(): TerminalType {
-    return this.getAttr("terminal_type");
+    return this.getAttr("terminal_type") as TerminalType;
   }
 
   get terminal_id(): number {
-    return this.getAttr("terminal_id");
+    return this.getAttr("terminal_id") as number;
   }
 
   get terminal_alignment(): TerminalAlignment {
-    return this.getAttr("terminal_alignment");
+    return this.getAttr("terminal_alignment") as TerminalAlignment;
   }
 
   set_alignment(alignment: TerminalAlignment) {

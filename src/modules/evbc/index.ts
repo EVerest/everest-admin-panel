@@ -13,7 +13,7 @@ type ConfigSetSchemaEntry = {
 };
 export type ConfigSetSchema = Record<string, ConfigSetSchemaEntry>;
 
-type ConfigSetEntry = any;
+type ConfigSetEntry = unknown;
 
 export type ConfigSetWithSchema = Array<{
   readonly schema: ConfigSetSchemaEntry & { title: string };

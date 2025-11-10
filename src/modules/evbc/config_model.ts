@@ -39,9 +39,11 @@ function get_next_available_name(prefix: string, name_list: string[]): string {
 }
 
 function config_set_with_schema_to_config_set(config_set: ConfigSetWithSchema): ConfigSet {
-  const entries = config_set.filter((item) => item.model !== undefined).map((item) => [item.schema.title, item.model]);
+  const entries: Array<[string, unknown]> = config_set
+    .filter((item) => item.model !== undefined)
+    .map((item) => [item.schema.title, item.model]);
 
-  return Object.fromEntries(entries);
+  return Object.fromEntries(entries) as ConfigSet;
 }
 
 type ModulInstanceeAddedEvent = {
@@ -310,12 +312,12 @@ class EVConfigModel {
     return config;
   }
 
-  _setup_config_set(schema: ConfigSetSchema, config?: ConfigSet): ConfigSetWithSchema {
+  _setup_config_set(schema: ConfigSetSchema, config?: ConfigSet): ConfigSetWithSchema | undefined {
     if (schema === undefined) {
       return undefined;
     }
     return Object.entries(schema).map(([key, value]) => {
-      const config_value = config !== undefined && key in config ? config[key] : value.default;
+      const config_value: unknown = config !== undefined && key in config ? config[key] : value.default;
       return { schema: { ...value, title: key }, model: config_value };
     });
   }

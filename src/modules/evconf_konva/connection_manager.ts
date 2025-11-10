@@ -100,7 +100,7 @@ export default class ConnectionManager {
 
     const new_module: ModuleLookupItem = {
       view: half.module_view,
-      terminal_lookup: Array(half.module_view._terminal_views.length),
+      terminal_lookup: Array(half.module_view._terminal_views.length) as unknown as TerminalConnections[],
     };
 
     new_module.terminal_lookup[half.terminal_lookup_id] = {
