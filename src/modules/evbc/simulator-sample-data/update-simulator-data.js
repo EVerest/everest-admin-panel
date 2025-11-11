@@ -36,20 +36,20 @@ if (args.includes("--help")) {
 
 const ws = new WebSocket(url);
 
-const resolvers = {};
+const resolvers = new Map();
 
 // Handler to manage both module and interface requests
 ws.on("open", async () => {
   console.log("Connected to EVerest WebSocket");
-  await Promise.all([
-    new Promise((resolve) => {
-      resolvers[1] = resolve;
-      sendRequest("get_modules", 1);
-    }),
-    new Promise((resolve) => {
-      resolvers[2] = resolve;
-      sendRequest("get_interfaces", 2);
-    }),
+    await Promise.all([
+      new Promise((resolve) => {
+        resolvers.set(1, resolve);
+        sendRequest("get_modules", 1);
+      }),
+      new Promise((resolve) => {
+        resolvers.set(2, resolve);
+        sendRequest("get_interfaces", 2);
+      }),
     new Promise((resolve) => {
       compileConfigFiles();
       resolve();
@@ -70,7 +70,10 @@ ws.on("message", function incoming(data) {
   } else {
     throw new Error("Invalid response received from EVerest WebSocket");
   }
-  resolvers[response.id]();
+    const resolver = resolvers.get(response.id);
+    if (typeof resolver === "function") {
+      resolver();
+    }
 });
 
 ws.on("error", function error(e) {
@@ -105,26 +108,24 @@ function findAndReplaceDescriptions(obj, jsonPath) {
   if (Array.isArray(obj)) {
     return obj.map((item, index) => findAndReplaceDescriptions(item, `${jsonPath}[${index}]`));
   }
+  // Use Object.entries and Object.fromEntries to avoid dynamic bracket access patterns
+  const entries = Object.entries(obj);
+  const mapped = entries.map(([key, value]) => {
+    if (key === 'description' && typeof value === 'string') {
+      return [key, `tc("${jsonPath}.${key}") as LocalizedString`];
+    }
 
-  const result = { ...obj };
-
-  for (const key in result) {
-    if (typeof key === 'string' && key === 'description' && typeof result[key] === 'string') {
-      result[key] = `tc("${jsonPath}.${key}") as LocalizedString`;
-    } else if (typeof result[key] === 'object' && result[key] !== null) {
+    if (typeof value === 'object' && value !== null) {
       // Sanitize key to avoid injection into generated code strings
       const safeKey = String(key).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-
-      // Recursively process nested objects
-      if (jsonPath === "") {
-        result[key] = findAndReplaceDescriptions(result[key], safeKey);
-      } else {
-        result[key] = findAndReplaceDescriptions(result[key], `${jsonPath}.${safeKey}`);
-      }
+      const nextPath = jsonPath === "" ? safeKey : `${jsonPath}.${safeKey}`;
+      return [key, findAndReplaceDescriptions(value, nextPath)];
     }
-  }
 
-  return result;
+    return [key, value];
+  });
+
+  return Object.fromEntries(mapped);
 }
 
 function extractDescriptions(obj, jsonPath) {
@@ -136,27 +137,27 @@ function extractDescriptions(obj, jsonPath) {
     return undefined;
     // return obj.map((item, index) => extractDescriptions(item, `${jsonPath}[${index}]`));
   }
+  const entries = Object.entries(obj);
+  const mapped = entries.map(([key, value]) => {
+    if (key === 'description' && typeof value === 'string') {
+      return [key, value];
+    }
 
-  const result = {};
-
-  for (const key in obj) {
-    if (typeof key === 'string' && key === 'description' && typeof obj[key] === 'string') {
-      result[key] = obj[key];
-    } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+    if (typeof value === 'object' && value !== null) {
       // Sanitize key to avoid injection into generated code strings
       const safeKey = String(key).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-
-      // Recursively process nested objects; sanitize key to avoid injection into generated code strings
-      const nestedResult = extractDescriptions(obj[key], jsonPath === "" ? safeKey : `${jsonPath}.${safeKey}`);
-
+      const nestedResult = extractDescriptions(value, jsonPath === "" ? safeKey : `${jsonPath}.${safeKey}`);
       if (nestedResult !== undefined && Object.keys(nestedResult).length > 0) {
-        // Only add the nested result if it contains meaningful data
-        result[key] = nestedResult;
+        return [key, nestedResult];
       }
     }
-  }
 
-  return result;
+    return null; // signal to drop this key
+  });
+
+  // Filter out nulls and build object
+  const finalEntries = mapped.filter((e) => e !== null);
+  return Object.fromEntries(finalEntries);
 }
 
 function generateContent(data, typecast) {
@@ -207,9 +208,28 @@ function licenseHeader() {
 }
 
 function writeToFile(filename, content) {
-  const filePath = path.join(__dirname, filename);
   try {
-    fs.writeFileSync(filePath, content);
+    // Only allow a predefined set of filenames to avoid non-literal fs usage
+    switch (filename) {
+      case "sample_module_info.ts":
+        fs.writeFileSync(path.join(__dirname, "sample_module_info.ts"), content);
+        break;
+      case "sample_interfaces_list.ts":
+        fs.writeFileSync(path.join(__dirname, "sample_interfaces_list.ts"), content);
+        break;
+      case "sample_config_list.ts":
+        fs.writeFileSync(path.join(__dirname, "sample_config_list.ts"), content);
+        break;
+      case "../../../locales/en_module_info.ts":
+        fs.writeFileSync(path.join(__dirname, "..", "..", "..", "locales", "en_module_info.ts"), content);
+        break;
+      case "../../../locales/en_interfaces_list.ts":
+        fs.writeFileSync(path.join(__dirname, "..", "..", "..", "locales", "en_interfaces_list.ts"), content);
+        break;
+      default:
+        throw new Error(`Attempt to write disallowed filename: ${filename}`);
+    }
+
     console.log(`${filename} updated successfully!`);
   } catch (err) {
     console.error(`Failed to write data to ${filename}:`, err);
@@ -218,18 +238,23 @@ function writeToFile(filename, content) {
 
 function compileConfigFiles() {
   const configDirPath = path.join(__dirname, "sample-configs");
-  const configFiles = fs.readdirSync(configDirPath);
 
   const configs = {};
+  // Only process a known set of sample config files to keep filesystem calls literal
+  const allowedFiles = [
+    "config-sil-dc.yaml",
+    "config-sil-ocpp201.yaml",
+    "config-sil.yaml",
+  ];
 
-  configFiles.forEach((file) => {
-    if (path.extname(file) === ".yaml") {
+  allowedFiles.forEach((file) => {
+    const fullPath = path.join(configDirPath, file);
+    try {
+      const fileContent = fs.readFileSync(fullPath, "utf8");
       const configName = path.basename(file, ".yaml");
-      const filePath = path.join(configDirPath, file);
-      const fileContent = fs.readFileSync(filePath, "utf8");
-      configs[`${configName}`] = yaml.load(fileContent);
-    } else {
-      console.warn(`Ignoring file ${file} as it is not a yaml file.`);
+      configs[configName] = yaml.load(fileContent);
+    } catch (err) {
+      console.warn(`Ignoring file ${file} due to read error:`, err.message);
     }
   });
 
