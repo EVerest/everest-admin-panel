@@ -93,7 +93,7 @@ export async function establishLocale(paramsLocale: string) {
  * Returns i18n.global.t(...) when available, falls back to returning the key
  * string otherwise
  */
-export function t(key: string, params?: Record<string, unknown>): string {
+export function t(key: string, params?: Record<string, string | number | boolean>): string {
   try {
     const tfn = i18n?.global?.t;
 
@@ -101,8 +101,7 @@ export function t(key: string, params?: Record<string, unknown>): string {
       return String(key);
     }
 
-    const translator = tfn as (k: string, p?: Record<string, unknown>) => unknown;
-    const result = translator(key, params);
+    const result = tfn(key, params);
     return typeof result === "string" ? result : String(key);
   } catch {
     return String(key);
