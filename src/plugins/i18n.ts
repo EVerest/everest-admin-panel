@@ -17,6 +17,12 @@ const DEFAULT_LOCALE = "en";
 
 type LocaleMessages = Record<string, unknown>;
 
+const defaultLocaleMessages: LocaleMessages = {
+  ...defaultMessages,
+  ...defaultModuleMessages,
+  $vuetify: { ...vuetifyMessages },
+};
+
 const options = {
   legacy: false,
   useScope: "global",
@@ -24,7 +30,9 @@ const options = {
   // allowComposition: true, // XXX: via https://vue-i18n.intlify.dev/guide/migration/vue3
   locale: DEFAULT_LOCALE,
   fallbackLocale: DEFAULT_LOCALE,
-  messages: {} as Record<string, LocaleMessages>,
+  messages: {
+    [DEFAULT_LOCALE]: defaultLocaleMessages,
+  } as Record<string, LocaleMessages>,
 } as const;
 
 export const i18n = createI18n(options);
@@ -56,7 +64,7 @@ async function loadLocaleMessages(locale: string) {
   const moduleMessages = (await import(`../locales/${locale}_module_info.ts`)) as LocaleModule;
   const interfacesMessages = (await import(`../locales/${locale}_interfaces_list.ts`)) as LocaleModule;
   const mod = (await import("vuetify/locale")) as VuetifyLocaleModule;
-  const vuetifyLocale: LocaleMessages = mod[locale] ?? mod.default ?? {};
+  const vuetifyLocale: LocaleMessages = mod[locale] ?? {};
   const allMessages: LocaleMessages = {
     ...messages.default,
     ...moduleMessages.default,
@@ -95,7 +103,7 @@ export async function establishLocale(paramsLocale: string) {
  */
 export function t(key: string, params?: Record<string, string | number | boolean>): string {
   try {
-    const tfn = i18n?.global?.t;
+    const tfn = i18n.global?.t;
 
     if (typeof tfn !== "function") {
       return String(key);
@@ -112,31 +120,22 @@ export function t(key: string, params?: Record<string, string | number | boolean
  * Helper function to use computed translations in components that are not
  * automatically updated when the global locale changes.
  */
-export function tc(key: string, ...args: unknown[]): ComputedRef<string> {
+export function tc(key: string, params?: Record<string, string | number | boolean>): ComputedRef<string> {
   return computed(() => {
     try {
-      const tfn = i18n?.global?.t;
+      const tfn = i18n.global?.t;
 
       if (typeof tfn !== "function") {
         return String(key);
       }
 
-      const translator = tfn as (...a: unknown[]) => unknown;
-      const result = translator(key, ...args);
+      const result = tfn(key, params);
       return typeof result === "string" ? result : String(key);
     } catch {
       return String(key);
     }
   });
 }
-
-const defaultLocaleMessages: LocaleMessages = {
-  ...defaultMessages,
-  ...defaultModuleMessages,
-  $vuetify: { ...vuetifyMessages },
-};
-
-options.messages[DEFAULT_LOCALE] = defaultLocaleMessages;
 
 i18n.global.setLocaleMessage(DEFAULT_LOCALE, defaultLocaleMessages);
 setI18nLanguage(DEFAULT_LOCALE);
