@@ -102,18 +102,14 @@ export async function establishLocale(paramsLocale: string) {
  * string otherwise
  */
 export function t(key: string, params?: Record<string, string | number | boolean>): string {
-  try {
-    const tfn = i18n.global?.t;
+  const tfn = i18n.global?.t;
 
-    if (typeof tfn !== "function") {
-      return String(key);
-    }
-
-    const result = tfn(key, params);
-    return typeof result === "string" ? result : String(key);
-  } catch {
+  if (typeof tfn !== "function") {
     return String(key);
   }
+
+  const result = tfn(key, params);
+  return typeof result === "string" ? result : String(key);
 }
 
 /**
@@ -122,18 +118,14 @@ export function t(key: string, params?: Record<string, string | number | boolean
  */
 export function tc(key: string, params?: Record<string, string | number | boolean>): ComputedRef<string> {
   return computed(() => {
-    try {
-      const tfn = i18n.global?.t;
+    const tfn = i18n.global?.t;
 
-      if (typeof tfn !== "function") {
-        return String(key);
-      }
-
-      const result = tfn(key, params);
-      return typeof result === "string" ? result : String(key);
-    } catch {
+    if (typeof tfn !== "function") {
       return String(key);
     }
+
+    const result = tfn(key, params);
+    return typeof result === "string" ? result : String(key);
   });
 }
 
