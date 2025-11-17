@@ -37,14 +37,21 @@ const options = {
 
 // Make the concrete type explicit so analyzers can't treat `i18n` as unknown/error
 type I18nInstance = ReturnType<typeof createI18n>;
+const i18nInstance: I18nInstance = createI18n(options);
+
+// XXX: Remove once all imports use getI18n()
 export const i18n: I18nInstance = createI18n(options);
 
+export function getI18n(): I18nInstance {
+  return i18nInstance;
+}
+
 function setI18nLanguage(locale: string) {
-  if (typeof i18n.global.locale !== "string" && "value" in i18n.global.locale) {
-    i18n.global.locale.value = locale;
+  if (typeof i18nInstance.global.locale !== "string" && "value" in i18nInstance.global.locale) {
+    i18nInstance.global.locale.value = locale;
   } else {
     // vue-i18n has union type for locale, need to handle both cases
-    i18n.global.locale = locale as typeof i18n.global.locale;
+    i18nInstance.global.locale = locale as typeof i18nInstance.global.locale;
   }
   const htmlElement = document.querySelector("html");
   if (htmlElement) {
@@ -74,7 +81,7 @@ async function loadLocaleMessages(locale: string) {
     $vuetify: vuetifyLocale,
   };
 
-  i18n.global.setLocaleMessage(locale, allMessages);
+  i18nInstance.global.setLocaleMessage(locale, allMessages);
   return nextTick();
 }
 
@@ -89,7 +96,7 @@ export function verifyLocale(locale: string) {
 export async function establishLocale(paramsLocale: string) {
   const locale = verifyLocale(paramsLocale);
 
-  if (!i18n.global.availableLocales.includes(locale)) {
+  if (!i18nInstance.global.availableLocales.includes(locale)) {
     await loadLocaleMessages(locale);
   }
 
@@ -106,7 +113,7 @@ type TFn = (key: string, params?: Record<string, string | number | boolean>) => 
  * string otherwise
  */
 export function t(key: string, params?: Record<string, string | number | boolean>): string {
-  const tfn = i18n.global?.t as TFn | undefined;
+  const tfn = i18nInstance.global?.t as TFn | undefined;
 
   if (typeof tfn !== "function") {
     return String(key);
@@ -122,7 +129,7 @@ export function t(key: string, params?: Record<string, string | number | boolean
  */
 export function tc(key: string, params?: Record<string, string | number | boolean>): ComputedRef<string> {
   return computed(() => {
-    const tfn = i18n.global?.t as TFn | undefined;
+    const tfn = i18nInstance.global?.t as TFn | undefined;
 
     if (typeof tfn !== "function") {
       return String(key);
@@ -133,5 +140,5 @@ export function tc(key: string, params?: Record<string, string | number | boolea
   });
 }
 
-i18n.global.setLocaleMessage(DEFAULT_LOCALE, defaultLocaleMessages);
+i18nInstance.global.setLocaleMessage(DEFAULT_LOCALE, defaultLocaleMessages);
 setI18nLanguage(DEFAULT_LOCALE);

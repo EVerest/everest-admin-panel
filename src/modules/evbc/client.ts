@@ -5,7 +5,7 @@ import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
-import { i18n, t } from "@/plugins/i18n";
+import { getI18n, t } from "@/plugins/i18n";
 import type { ComputedRef } from "vue";
 
 type LocalizedString = string | ComputedRef<string>;
@@ -26,6 +26,8 @@ type ClientEventHandlerMap = {
 type LastEventMap = {
   [K in keyof ClientEventMap]?: ClientEventMap[K];
 };
+
+const i18n = getI18n();
 
 class EVBackendClient {
   initialized = false;
