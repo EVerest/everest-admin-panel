@@ -96,22 +96,22 @@ export async function establishLocale(paramsLocale: string) {
   return locale;
 }
 
+type TFn = (key: string, params?: Record<string, string | number | boolean>) => string | number;
+
 /**
  * Synchronous translator usable at module scope.
  * Returns i18n.global.t(...) when available, falls back to returning the key
  * string otherwise
  */
 export function t(key: string, params?: Record<string, string | number | boolean>): string {
-  const tfn = i18n.global?.t;
+  const tfn = i18n.global?.t as TFn | undefined;
 
   if (typeof tfn !== "function") {
     return String(key);
   }
 
-  // Explicitly cast the result to string to satisfy static analyzers
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-  const result = tfn(key, params) as string;
-  return result;
+  const result = tfn(key, params);
+  return typeof result === "number" ? String(result) : result;
 }
 
 /**
@@ -120,16 +120,14 @@ export function t(key: string, params?: Record<string, string | number | boolean
  */
 export function tc(key: string, params?: Record<string, string | number | boolean>): ComputedRef<string> {
   return computed(() => {
-    const tfn = i18n.global?.t;
+    const tfn = i18n.global?.t as TFn | undefined;
 
     if (typeof tfn !== "function") {
       return String(key);
     }
 
-    // Explicitly cast the result to string to satisfy static analyzers
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-    const result = tfn(key, params) as string;
-    return result;
+    const result = tfn(key, params);
+    return typeof result === "number" ? String(result) : result;
   });
 }
 
