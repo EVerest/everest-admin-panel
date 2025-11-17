@@ -35,7 +35,9 @@ const options = {
   } as Record<string, LocaleMessages>,
 } as const;
 
-export const i18n = createI18n(options);
+// Make the concrete type explicit so analyzers can't treat `i18n` as unknown/error
+type I18nInstance = ReturnType<typeof createI18n>;
+export const i18n: I18nInstance = createI18n(options);
 
 function setI18nLanguage(locale: string) {
   if (typeof i18n.global.locale !== "string" && "value" in i18n.global.locale) {
