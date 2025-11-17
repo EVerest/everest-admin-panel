@@ -5,7 +5,7 @@ import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
-import { t } from "@/plugins/i18n";
+import { i18n, t } from "@/plugins/i18n";
 import type { ComputedRef } from "vue";
 
 type LocalizedString = string | ComputedRef<string>;
@@ -108,7 +108,23 @@ class EVBackendClient {
         event = { type: "INITIALIZED", text: t("evbc.client.reconnectedSuccess") };
       }
     } else if (status.type === "ERROR") {
-      event = { type: "FAILED", text: t("evbc.client.connectionFailed") };
+      // explicitly typed global call + coercion to string
+      const tfn = i18n.global.t as
+        | ((k: string, p?: Record<string, string | number | boolean>) => string | number)
+        | undefined;
+
+      const raw = typeof tfn === "function" ? tfn("evbc.client.connectionFailed") : undefined;
+      let textSafe: string = null;
+
+      if (raw === undefined) {
+        textSafe = "evbc.client.connectionFailed";
+      } else if (typeof raw === "number") {
+        textSafe = String(raw);
+      } else {
+        textSafe = raw;
+      }
+
+      event = { type: "FAILED", text: textSafe };
     } else if (status.type === "CLOSED") {
       event = { type: "RECONNECT", text: t("evbc.client.reconnecting") };
     } else if (status.type === "DISCONNECTED") {
