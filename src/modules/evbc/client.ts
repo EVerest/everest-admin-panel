@@ -27,9 +27,6 @@ type LastEventMap = {
   [K in keyof ClientEventMap]?: ClientEventMap[K];
 };
 
-// Helper to narrowly type the translation function
-const s = (k: string, p?: Record<string, string | number | boolean>) => String(t(k, p));
-
 class EVBackendClient {
   initialized = false;
   _cxn: EVBackendConnection = null;
@@ -77,7 +74,7 @@ class EVBackendClient {
   // - it would be nice, if we got an object after successful connection, that contains that
   load_config(name: string) {
     if (!(name in this.evbcStore.available_configs)) {
-      throw Error(s("evbc.client.configurationNotFound", { name }));
+      throw Error(t("evbc.client.configurationNotFound", { name }));
     }
     const config = this.evbcStore.available_configs[name];
     return new EVConfigModel(this.everest_definitions, name, config);
@@ -101,21 +98,21 @@ class EVBackendClient {
   _connection_state_listener(status: ConnectionStatus) {
     let event: ConnectionStateEvent = null;
     if (status.type === "OPEN") {
-      event = { type: "INFO", text: s("evbc.client.openConnection", { connectionUrl: status.url }) };
+      event = { type: "INFO", text: t("evbc.client.openConnection", { connectionUrl: status.url }) };
     } else if (status.type === "OPENED") {
       // FIXME (aw): this state handling is not production ready yet, in fact it will be probably quite complicated
       if (!this.initialized) {
-        event = { type: "INFO", text: s("evbc.client.openConnectionSuccess") };
+        event = { type: "INFO", text: t("evbc.client.openConnectionSuccess") };
         this._on_connected();
       } else {
-        event = { type: "INITIALIZED", text: s("evbc.client.reconnectedSuccess") };
+        event = { type: "INITIALIZED", text: t("evbc.client.reconnectedSuccess") };
       }
     } else if (status.type === "ERROR") {
-      event = { type: "FAILED", text: s("evbc.client.connectionFailed") };
+      event = { type: "FAILED", text: t("evbc.client.connectionFailed") };
     } else if (status.type === "CLOSED") {
-      event = { type: "RECONNECT", text: s("evbc.client.reconnecting") };
+      event = { type: "RECONNECT", text: t("evbc.client.reconnecting") };
     } else if (status.type === "DISCONNECTED") {
-      event = { type: "IDLE", text: s("evbc.client.disconnected") };
+      event = { type: "IDLE", text: t("evbc.client.disconnected") };
     }
 
     if (event) {
@@ -126,7 +123,7 @@ class EVBackendClient {
   _on_connected() {
     void this._reload_instance_data().then(() => {
       this.initialized = true;
-      this._publish("connection_state", { type: "INITIALIZED", text: s("evbc.client.initialized") });
+      this._publish("connection_state", { type: "INITIALIZED", text: t("evbc.client.initialized") });
     });
   }
 
@@ -134,7 +131,7 @@ class EVBackendClient {
     this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
     this._publish("connection_state", {
       type: "INFO",
-      text: s("evbc.client.receivedModuleFiles", { count: Object.keys(this.everest_definitions.modules).length }),
+      text: t("evbc.client.receivedModuleFiles", { count: Object.keys(this.everest_definitions.modules).length }),
     });
   }
 
@@ -142,7 +139,7 @@ class EVBackendClient {
     this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
     this._publish("connection_state", {
       type: "INFO",
-      text: s("evbc.client.receivedInterfacesDefinitions", {
+      text: t("evbc.client.receivedInterfacesDefinitions", {
         count: Object.keys(this.everest_definitions.interfaces).length,
       }),
     });
@@ -153,7 +150,7 @@ class EVBackendClient {
     Object.assign(this.evbcStore.available_configs, cfgs);
     this._publish("connection_state", {
       type: "INFO",
-      text: s("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }),
+      text: t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }),
     });
   }
 
