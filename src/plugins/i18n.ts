@@ -3,6 +3,7 @@
 
 import { computed, ComputedRef, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
+import type { I18nOptions } from "vue-i18n";
 import defaultMessages from "@/locales/en.json";
 import defaultModuleMessages from "@/locales/en_module_info";
 import { en as vuetifyMessages } from "vuetify/locale";
@@ -15,17 +16,25 @@ export const LOCALE_ITEMS = [
 ];
 const DEFAULT_LOCALE = "en";
 
-type LocaleMessages = Record<string, unknown>;
+type MessageValue = string | ComputedRef<string> | { [key: string]: MessageValue };
+type LocaleMessages = Record<string, MessageValue>;
+
+const defaultMessagesTyped = defaultMessages as unknown as LocaleMessages;
+const defaultModuleMessagesTyped = defaultModuleMessages as unknown as LocaleMessages;
+const vuetifyMessagesTyped = vuetifyMessages as unknown as Record<string, Record<string, string>>;
 
 const defaultLocaleMessages: LocaleMessages = {
-  ...defaultMessages,
-  ...defaultModuleMessages,
-  $vuetify: { ...vuetifyMessages },
+  ...defaultMessagesTyped,
+  ...defaultModuleMessagesTyped,
+
+  // Trust vuetify messages to not inject anything malicious for a valid locale
+  // eslint-disable-next-line security/detect-object-injection
+  $vuetify: { ...(vuetifyMessagesTyped[DEFAULT_LOCALE] ?? {}) },
 };
 
-const options = {
+const options: I18nOptions = {
   legacy: false,
-  useScope: "global",
+  // useScope: "global",
   globalInjection: true,
   // allowComposition: true, // XXX: via https://vue-i18n.intlify.dev/guide/migration/vue3
   locale: DEFAULT_LOCALE,
@@ -47,7 +56,11 @@ export function getI18n(): I18nInstance {
 }
 
 function setI18nLanguage(locale: string) {
-  if (typeof i18nInstance.global.locale !== "string" && "value" in i18nInstance.global.locale) {
+  if (
+    typeof i18nInstance.global.locale !== "string" &&
+    typeof i18nInstance.global.locale === "object" &&
+    "value" in i18nInstance.global.locale
+  ) {
     i18nInstance.global.locale.value = locale;
   } else {
     // vue-i18n has union type for locale, need to handle both cases
@@ -69,11 +82,19 @@ interface VuetifyLocaleModule {
 }
 
 async function loadLocaleMessages(locale: string) {
+  if (!isValidLocale(locale)) {
+    return nextTick();
+  }
+
   const messages = (await import(`../locales/${locale}.json`)) as LocaleModule;
   const moduleMessages = (await import(`../locales/${locale}_module_info.ts`)) as LocaleModule;
   const interfacesMessages = (await import(`../locales/${locale}_interfaces_list.ts`)) as LocaleModule;
   const mod = (await import("vuetify/locale")) as VuetifyLocaleModule;
+
+  // Trust vuetify messages to not inject anything malicious for a valid locale
+  // eslint-disable-next-line security/detect-object-injection
   const vuetifyLocale: LocaleMessages = mod[locale] ?? {};
+
   const allMessages: LocaleMessages = {
     ...messages.default,
     ...moduleMessages.default,
@@ -85,8 +106,12 @@ async function loadLocaleMessages(locale: string) {
   return nextTick();
 }
 
+function isValidLocale(locale: string) {
+  return SUPPORTED_LOCALES.includes(locale);
+}
+
 export function verifyLocale(locale: string) {
-  if (SUPPORTED_LOCALES.includes(locale)) {
+  if (isValidLocale(locale)) {
     return locale;
   } else {
     return DEFAULT_LOCALE;
@@ -113,7 +138,7 @@ type TFn = (key: string, params?: Record<string, string | number | boolean>) => 
  * string otherwise
  */
 export function t(key: string, params?: Record<string, string | number | boolean>): string {
-  const tfn = i18nInstance.global?.t as TFn | undefined;
+  const tfn = i18nInstance.global.t as TFn | undefined;
 
   if (typeof tfn !== "function") {
     return String(key);
