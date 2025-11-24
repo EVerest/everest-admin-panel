@@ -5,8 +5,8 @@ import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
-import { getI18n, t } from "@/plugins/i18n";
-import type { ComputedRef } from "vue";
+import { t } from "@/plugins/i18n";
+import { computed, type ComputedRef } from "vue";
 
 type LocalizedString = string | ComputedRef<string>;
 
@@ -98,39 +98,21 @@ class EVBackendClient {
   _connection_state_listener(status: ConnectionStatus) {
     let event: ConnectionStateEvent = null;
     if (status.type === "OPEN") {
-      event = { type: "INFO", text: t("evbc.client.openConnection", { connectionUrl: status.url }) };
+      event = { type: "INFO", text: String(t("evbc.client.openConnection", { connectionUrl: status.url })) };
     } else if (status.type === "OPENED") {
       // FIXME (aw): this state handling is not production ready yet, in fact it will be probably quite complicated
       if (!this.initialized) {
-        event = { type: "INFO", text: t("evbc.client.openConnectionSuccess") };
+        event = { type: "INFO", text: String(t("evbc.client.openConnectionSuccess")) };
         this._on_connected();
       } else {
-        event = { type: "INITIALIZED", text: t("evbc.client.reconnectedSuccess") };
+        event = { type: "INITIALIZED", text: String(t("evbc.client.reconnectedSuccess")) };
       }
     } else if (status.type === "ERROR") {
-      const i18n = getI18n();
-
-      // explicitly typed global call + coercion to string
-      const tfn = i18n.global.t as
-        | ((k: string, p?: Record<string, string | number | boolean>) => string | number)
-        | undefined;
-
-      const raw = typeof tfn === "function" ? tfn("evbc.client.connectionFailed") : undefined;
-      let textSafe: string = null;
-
-      if (raw === undefined) {
-        textSafe = "evbc.client.connectionFailed";
-      } else if (typeof raw === "number") {
-        textSafe = String(raw);
-      } else {
-        textSafe = raw;
-      }
-
-      event = { type: "FAILED", text: textSafe };
+      event = { type: "FAILED", text: computed(() => t("evbc.client.connectionFailed")) };
     } else if (status.type === "CLOSED") {
-      event = { type: "RECONNECT", text: t("evbc.client.reconnecting") };
+      event = { type: "RECONNECT", text: String(t("evbc.client.reconnecting")) };
     } else if (status.type === "DISCONNECTED") {
-      event = { type: "IDLE", text: t("evbc.client.disconnected") };
+      event = { type: "IDLE", text: String(t("evbc.client.disconnected")) };
     }
 
     if (event) {
@@ -141,7 +123,7 @@ class EVBackendClient {
   _on_connected() {
     void this._reload_instance_data().then(() => {
       this.initialized = true;
-      this._publish("connection_state", { type: "INITIALIZED", text: t("evbc.client.initialized") });
+      this._publish("connection_state", { type: "INITIALIZED", text: String(t("evbc.client.initialized")) });
     });
   }
 
@@ -149,7 +131,9 @@ class EVBackendClient {
     this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
     this._publish("connection_state", {
       type: "INFO",
-      text: t("evbc.client.receivedModuleFiles", { count: Object.keys(this.everest_definitions.modules).length }),
+      text: String(
+        t("evbc.client.receivedModuleFiles", { count: Object.keys(this.everest_definitions.modules).length }),
+      ),
     });
   }
 
@@ -157,9 +141,11 @@ class EVBackendClient {
     this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
     this._publish("connection_state", {
       type: "INFO",
-      text: t("evbc.client.receivedInterfacesDefinitions", {
-        count: Object.keys(this.everest_definitions.interfaces).length,
-      }),
+      text: String(
+        t("evbc.client.receivedInterfacesDefinitions", {
+          count: Object.keys(this.everest_definitions.interfaces).length,
+        }),
+      ),
     });
   }
 
@@ -168,7 +154,7 @@ class EVBackendClient {
     Object.assign(this.evbcStore.available_configs, cfgs);
     this._publish("connection_state", {
       type: "INFO",
-      text: t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }),
+      text: String(t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length })),
     });
   }
 

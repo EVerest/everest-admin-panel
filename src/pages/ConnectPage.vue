@@ -161,7 +161,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onMounted, reactive, ref, unref, watch } from "vue";
+import { computed, ComputedRef, defineComponent, inject, onMounted, reactive, ref, unref, watch } from "vue";
 import { useField, useForm } from "vee-validate";
 import EVBackendClient from "@/modules/evbc/client";
 import { useRouter } from "vue-router";
@@ -169,7 +169,9 @@ import { useI18n } from "vue-i18n";
 import { i18n, tc } from "@/plugins/i18n";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 
-type ServerItem = {
+type LocalizedString = string | ComputedRef<string>;
+
+  type ServerItem = {
   id: string | unknown;
   host: string;
   editable: boolean;
@@ -193,7 +195,7 @@ export default defineComponent({
     const evbc = inject<EVBackendClient>("evbc");
     const servers = reactive<ServerItem[]>([
       {
-        id: tc("connectPage.componentDefinition.simulatorMockId"),
+        id: computed(() => t("connectPage.componentDefinition.simulatorMockId")),
         host: "loopback",
         editable: false,
         protocol: "ws",
@@ -216,7 +218,7 @@ export default defineComponent({
     const currentlyEditing = ref<ServerItem | null>(null);
     const connecting = ref(false);
     const connectionStatus = ref<string | null>(null);
-    const error = reactive({ active: false, status: "" });
+    const error = reactive<{ active: boolean; status: LocalizedString }>({ active: false, status: "" });
 
     const { meta, handleSubmit } = useForm({
       validationSchema: {
@@ -277,7 +279,7 @@ export default defineComponent({
       protocol.value.value = servers[index].protocol;
       host.value.value = servers[index].host;
       port.value.value = servers[index].port;
-      instanceId.value.value = servers[index].id;
+      instanceId.value.value = unref(servers[index].id) as string;
       currentView.value = ComponentViews.EDIT;
     };
 
@@ -365,7 +367,7 @@ export default defineComponent({
           } else if (ev.type === "FAILED") {
             connecting.value = false;
             error.active = true;
-            error.status = unref(ev.text);
+            error.status = ev.text;
           } else if (ev.type === "IDLE") {
             connecting.value = false;
             connectionStatus.value = "";
