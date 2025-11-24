@@ -47,6 +47,7 @@
         "abortTooltip": "中止",
         "configNamePlaceholder": "配置名称",
         "createConfigTooltip": "创建配置",
+        "errorDialogOk": "确定",
         "errorDialogTitle": "无法加载配置",
         "uploadConfigTooltip": "上传配置",
         "validateConfigNameCharacters": "名称只能包含字母、数字、连字符和下划线",

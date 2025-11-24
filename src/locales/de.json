@@ -47,6 +47,7 @@
         "abortTooltip": "Abbrechen",
         "configNamePlaceholder": "Konfigurationsname",
         "createConfigTooltip": "Konfiguration erstellen",
+        "errorDialogOk": "OK",
         "errorDialogTitle": "Konfiguration konnte nicht geladen werden",
         "uploadConfigTooltip": "Konfiguration hochladen",
         "validateConfigNameCharacters": "Der Name darf nur Buchstaben, Zahlen, Bindestriche und Unterstriche enthalten",

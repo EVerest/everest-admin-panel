@@ -47,6 +47,7 @@
         "abortTooltip": "Abort",
         "configNamePlaceholder": "config name",
         "createConfigTooltip": "Create Config",
+        "errorDialogOk": "OK",
         "errorDialogTitle": "Couldn't load config",
         "uploadConfigTooltip": "Upload Config",
         "validateConfigNameCharacters": "The name must only contain letters, numbers, dashes, and underscores",

@@ -76,7 +76,7 @@
         <pre style="white-space: pre-wrap"><code>{{ errorStore.getError() }}</code></pre>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" @click="resetDialog()"> OK </v-btn>
+        <v-btn color="primary" @click="resetDialog()">{{ t("createConfig.errorDialogOk") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
