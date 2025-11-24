@@ -6,7 +6,7 @@ import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
 import { i18n } from "@/plugins/i18n";
-import { computed, unref, type ComputedRef } from "vue";
+import { computed, type ComputedRef } from "vue";
 import { ComposerTranslation } from "vue-i18n";
 
 type LocalizedString = string | ComputedRef<string>;
