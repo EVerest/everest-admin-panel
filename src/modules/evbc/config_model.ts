@@ -22,7 +22,8 @@ import {
 import { default_terminals, generate_interface_parents_map, InterfaceParentMap } from "./utils";
 
 import clone from "just-clone";
-import { t } from "@/plugins/i18n";
+import { i18n } from "@/plugins/i18n";
+import { ComposerTranslation } from "vue-i18n";
 
 function get_next_available_name(prefix: string, name_list: string[]): string {
   const valid_integral_endings = name_list
@@ -155,6 +156,8 @@ class EVConfigModel {
   }
 
   delete_module_instance(id: ModuleInstanceID) {
+    const t = i18n.global.t as ComposerTranslation;
+
     if (!(id in this._instances)) {
       throw Error(t("config_model.deleteModelInstanceError", { id }));
     }
@@ -229,6 +232,8 @@ class EVConfigModel {
   }
 
   delete_connection(connection_id: ConnectionID) {
+    const t = i18n.global.t as ComposerTranslation;
+
     if (!(connection_id in this._connections)) {
       throw Error(t("config_model.deleteConnectionError", { id: connection_id }));
     }
@@ -386,6 +391,8 @@ class EVConfigModel {
   }
 
   _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig): number {
+    const t = i18n.global.t as ComposerTranslation;
+
     if (!(type in this._module_definitions)) {
       throw Error(t("config_model.moduleInvalidError", { type }));
     }
@@ -461,6 +468,7 @@ class EVConfigModel {
   }
 
   _validate_connection(conn: Connection) {
+    const t = i18n.global.t as ComposerTranslation;
     const prov_id = conn.providing_instance_id;
     if (!(prov_id in this._instances)) {
       throw Error(t("config_model.providingInstanceDoesNotExistError", { instanceId: prov_id }));
@@ -504,6 +512,8 @@ class EVConfigModel {
   }
 
   _connection_exists(conn: Connection) {
+    const t = i18n.global.t as ComposerTranslation;
+
     for (const [, other_conn] of Object.entries(this._connections)) {
       if (
         conn.providing_impl_name === other_conn.providing_impl_name &&
@@ -553,6 +563,7 @@ class EVConfigModel {
   }
 
   validate_mapping_configuration(): { valid: boolean; warnings: string[] } {
+    const t = i18n.global.t as ComposerTranslation;
     const warnings: string[] = [];
     const evse_manager_count = Object.values(this._instances).filter(
       (instance) => instance.type === "EvseManager",

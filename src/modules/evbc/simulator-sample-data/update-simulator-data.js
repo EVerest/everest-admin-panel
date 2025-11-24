@@ -116,7 +116,7 @@ function findAndReplaceDescriptions(obj, jsonPath) {
   const entries = Object.entries(obj);
   const mapped = entries.map(([key, value]) => {
     if (key === 'description' && typeof value === 'string') {
-      return [key, `tc("${jsonPath}.${key}") as LocalizedString`];
+      return [key, `computed(() => String(t("${jsonPath}.${key}"))) as LocalizedString`];
     }
 
     if (typeof value === 'object' && value !== null) {
@@ -171,9 +171,12 @@ function generateContent(data, typecast) {
   const sampleData = findAndReplaceDescriptions(data, "");
   const sampleContent = `export default ${inspect(sampleData, { depth: null, colors: false })} as ${typecast};\n`;
 
-  if (sampleContent.includes('tc("')) {
+  if (sampleContent.includes('t("')) {
     content += `import { ${typecast}, LocalizedString } from "../index";\n`;
-    content += 'import { tc } from "@/plugins/i18n";\n';
+    content += 'import { computed } from "vue";\n';
+    content += 'import { i18n } from "@/plugins/i18n";\n';
+    content += 'import { ComposerTranslation } from "vue-i18n";\n\n';
+    content += "const t = i18n.global.t as ComposerTranslation;\n";
   } else {
     content += `import { ${typecast} } from "../index";\n`;
   }
@@ -183,8 +186,8 @@ function generateContent(data, typecast) {
 
   content += sampleContent;
 
-  // Convert tc function calls from string to literal.
-  content = content.replace(/'tc\("(.*?)"\) as LocalizedString'/g, "tc('$1') as LocalizedString");
+  // Convert function calls from string to literal.
+  content = content.replace(/'computed\(\(\) => String\(t\("(.*?)"\)\)\) as LocalizedString'/g, "computed(() => String(t(\"$1\"))) as LocalizedString");
 
   return content;
 }
@@ -201,7 +204,7 @@ function generateI18nContent(data) {
   content += `export default ${inspect(extractedDescriptions, { depth: null, colors: false })} as const;\n`;
 
   // Convert tc function calls from string to literal.
-  content = content.replace(/'tc\("(.*?)"\) as LocalizedString'/g, "tc('$1') as LocalizedString");
+  content = content.replace(/'t\("(.*?)"\) as LocalizedString'/g, "t('$1') as LocalizedString");
 
   return content;
 }

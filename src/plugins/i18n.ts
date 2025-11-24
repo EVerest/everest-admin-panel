@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
-import { computed, ComputedRef, nextTick } from "vue";
+import { ComputedRef, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import type { I18nOptions } from "vue-i18n";
 import defaultMessages from "@/locales/en.json";
@@ -121,41 +121,6 @@ export async function establishLocale(paramsLocale: string) {
   setI18nLanguage(locale);
 
   return locale;
-}
-
-type TFn = (key: string, params?: Record<string, string | number | boolean>) => string | number;
-
-/**
- * Synchronous translator usable at module scope.
- * Returns i18n.global.t(...) when available, falls back to returning the key
- * string otherwise
- */
-export function t(key: string, params?: Record<string, string | number | boolean>): string {
-  const tfn = i18n.global.t as TFn | undefined;
-
-  if (typeof tfn !== "function") {
-    return String(key);
-  }
-
-  const result = tfn(key, params);
-  return typeof result === "number" ? String(result) : result;
-}
-
-/**
- * Helper function to use computed translations in components that are not
- * automatically updated when the global locale changes.
- */
-export function tc(key: string, params?: Record<string, string | number | boolean>): ComputedRef<string> {
-  return computed(() => {
-    const tfn = i18n.global?.t as TFn | undefined;
-
-    if (typeof tfn !== "function") {
-      return String(key);
-    }
-
-    const result = tfn(key, params);
-    return typeof result === "number" ? String(result) : result;
-  });
 }
 
 i18n.global.setLocaleMessage(DEFAULT_LOCALE, defaultLocaleMessages);

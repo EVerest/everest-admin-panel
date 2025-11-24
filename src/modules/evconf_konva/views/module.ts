@@ -9,7 +9,8 @@ import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
 import { TerminalPlacement } from "./shapes/connection";
 import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
 import { currentTheme } from "@/plugins/vuetify";
-import { t } from "@/plugins/i18n";
+import { i18n } from "@/plugins/i18n";
+import { ComposerTranslation } from "vue-i18n";
 
 // FIXME (aw): the TerminalPlacement type belongs to a shared place!
 type TerminalPlacementWithID = TerminalPlacement & { id: number };
@@ -63,6 +64,8 @@ export default class ModuleView {
   _observers: ModuleViewEventHandler[] = [];
 
   constructor(view_model: ModuleViewModel) {
+    const t = i18n.global.t as ComposerTranslation;
+
     // FIXME (aw): refactor all these inline functions !!!
     this.group = new Konva.Group({
       draggable: true,

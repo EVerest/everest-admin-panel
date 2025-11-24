@@ -165,18 +165,18 @@ import { computed, ComputedRef, defineComponent, inject, onMounted, reactive, re
 import { useField, useForm } from "vee-validate";
 import EVBackendClient from "@/modules/evbc/client";
 import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { i18n, tc } from "@/plugins/i18n";
+import { i18n } from "@/plugins/i18n";
+import { ComposerTranslation } from "vue-i18n";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 
 type LocalizedString = string | ComputedRef<string>;
 
-  type ServerItem = {
+type ServerItem = {
   id: string | unknown;
   host: string;
   editable: boolean;
   protocol: "ws" | "wss";
-  hint?: string | unknown;
+  hint?: LocalizedString;
   port: number;
 };
 
@@ -191,7 +191,7 @@ export default defineComponent({
     LanguageSelector,
   },
   setup() {
-    const { t } = useI18n({ useScope: "global" });
+    const t = i18n.global.t as ComposerTranslation;
     const evbc = inject<EVBackendClient>("evbc");
     const servers = reactive<ServerItem[]>([
       {
@@ -199,11 +199,11 @@ export default defineComponent({
         host: "loopback",
         editable: false,
         protocol: "ws",
-        hint: tc("connectPage.componentDefinition.simulatorMockHint"),
+        hint: computed(() => t("connectPage.componentDefinition.simulatorMockHint")),
         port: 8849,
       },
       {
-        id: tc("connectPage.componentDefinition.localhostInstanceId"),
+        id: computed(() => t("connectPage.componentDefinition.localhostInstanceId")),
         host: "localhost",
         editable: true,
         protocol: "ws",
@@ -279,7 +279,7 @@ export default defineComponent({
       protocol.value.value = servers[index].protocol;
       host.value.value = servers[index].host;
       port.value.value = servers[index].port;
-      instanceId.value.value = unref(servers[index].id) as string;
+      instanceId.value.value = servers[index].id;
       currentView.value = ComponentViews.EDIT;
     };
 
