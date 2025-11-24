@@ -5,8 +5,9 @@ import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
-import { t } from "@/plugins/i18n";
-import { computed, type ComputedRef } from "vue";
+import { i18n } from "@/plugins/i18n";
+import { computed, unref, type ComputedRef } from "vue";
+import { ComposerTranslation } from "vue-i18n";
 
 type LocalizedString = string | ComputedRef<string>;
 
@@ -74,6 +75,7 @@ class EVBackendClient {
   // - it would be nice, if we got an object after successful connection, that contains that
   load_config(name: string) {
     if (!(name in this.evbcStore.available_configs)) {
+      const t = i18n.global.t as ComposerTranslation;
       throw Error(t("evbc.client.configurationNotFound", { name }));
     }
     const config = this.evbcStore.available_configs[name];
@@ -97,22 +99,31 @@ class EVBackendClient {
 
   _connection_state_listener(status: ConnectionStatus) {
     let event: ConnectionStateEvent = null;
+    const t = i18n.global.t as ComposerTranslation;
+
     if (status.type === "OPEN") {
-      event = { type: "INFO", text: String(t("evbc.client.openConnection", { connectionUrl: status.url })) };
+      event = {
+        type: "INFO",
+        // XXX (pa): Not sure if computed refs should be used in event texts. E.g. it works
+        // for errors shown in Vue components. It would not work for errors logged to a file.
+        // If not desired, change to unref() as string. Like so:
+        // text: unref(t("evbc.client.openConnection", { connectionUrl: status.url })) as string,
+        text: computed(() => String(t("evbc.client.openConnection", { connectionUrl: status.url }))),
+      };
     } else if (status.type === "OPENED") {
       // FIXME (aw): this state handling is not production ready yet, in fact it will be probably quite complicated
       if (!this.initialized) {
-        event = { type: "INFO", text: String(t("evbc.client.openConnectionSuccess")) };
+        event = { type: "INFO", text: computed(() => String(t("evbc.client.openConnectionSuccess"))) };
         this._on_connected();
       } else {
-        event = { type: "INITIALIZED", text: String(t("evbc.client.reconnectedSuccess")) };
+        event = { type: "INITIALIZED", text: computed(() => String(t("evbc.client.reconnectedSuccess"))) };
       }
     } else if (status.type === "ERROR") {
-      event = { type: "FAILED", text: computed(() => t("evbc.client.connectionFailed")) };
+      event = { type: "FAILED", text: computed(() => String(t("evbc.client.connectionFailed"))) };
     } else if (status.type === "CLOSED") {
-      event = { type: "RECONNECT", text: String(t("evbc.client.reconnecting")) };
+      event = { type: "RECONNECT", text: computed(() => String(t("evbc.client.reconnecting"))) };
     } else if (status.type === "DISCONNECTED") {
-      event = { type: "IDLE", text: String(t("evbc.client.disconnected")) };
+      event = { type: "IDLE", text: computed(() => String(t("evbc.client.disconnected"))) };
     }
 
     if (event) {
@@ -121,23 +132,36 @@ class EVBackendClient {
   }
 
   _on_connected() {
+    const t = i18n.global.t as ComposerTranslation;
+
     void this._reload_instance_data().then(() => {
       this.initialized = true;
-      this._publish("connection_state", { type: "INITIALIZED", text: String(t("evbc.client.initialized")) });
+      this._publish("connection_state", {
+        type: "INITIALIZED",
+        text: computed(() => String(t("evbc.client.initialized"))),
+      });
     });
   }
 
   async _reload_modules(): Promise<void> {
+    const t = i18n.global.t as ComposerTranslation;
+
     this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
     this._publish("connection_state", {
       type: "INFO",
-      text: String(
-        t("evbc.client.receivedModuleFiles", { count: Object.keys(this.everest_definitions.modules).length }),
+      text: computed(() =>
+        String(
+          t("evbc.client.receivedModuleFiles", {
+            count: Object.keys(this.everest_definitions.modules).length,
+          }),
+        ),
       ),
     });
   }
 
   async _reload_interfaces(): Promise<void> {
+    const t = i18n.global.t as ComposerTranslation;
+
     this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
     this._publish("connection_state", {
       type: "INFO",
@@ -150,11 +174,13 @@ class EVBackendClient {
   }
 
   async _reload_configs(): Promise<void> {
+    const t = i18n.global.t as ComposerTranslation;
+
     const cfgs = await this._cxn.rpc_issuer.get_configs();
     Object.assign(this.evbcStore.available_configs, cfgs);
     this._publish("connection_state", {
       type: "INFO",
-      text: String(t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length })),
+      text: computed(() => String(t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }))),
     });
   }
 
