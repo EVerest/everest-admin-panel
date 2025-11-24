@@ -27,8 +27,6 @@ type LastEventMap = {
   [K in keyof ClientEventMap]?: ClientEventMap[K];
 };
 
-const i18n = getI18n();
-
 class EVBackendClient {
   initialized = false;
   _cxn: EVBackendConnection = null;
@@ -110,6 +108,8 @@ class EVBackendClient {
         event = { type: "INITIALIZED", text: t("evbc.client.reconnectedSuccess") };
       }
     } else if (status.type === "ERROR") {
+      const i18n = getI18n();
+
       // explicitly typed global call + coercion to string
       const tfn = i18n.global.t as
         | ((k: string, p?: Record<string, string | number | boolean>) => string | number)
