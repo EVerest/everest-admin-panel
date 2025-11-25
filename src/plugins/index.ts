@@ -5,7 +5,7 @@ import { App, Plugin } from "vue";
 import { router } from "@/router";
 import evbcPlugin from "@/plugins/evbc";
 import vuetify from "@/plugins/vuetify";
-import { i18n } from "@/plugins/i18n";
+import { i18n } from "../plugins/i18n";
 import pinia from "@/store";
 import hljs from "highlight.js/lib/core";
 import hljsVuePlugin from "@highlightjs/vue-plugin";

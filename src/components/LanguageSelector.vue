@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { LOCALE_ITEMS, establishLocale } from "@/plugins/i18n";
+import { LOCALE_ITEMS, establishLocale } from "../plugins/i18n";
 import { useRouter, useRoute } from "vue-router";
 
 const route = useRoute();

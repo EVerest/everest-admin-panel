@@ -22,7 +22,7 @@ import {
 import { default_terminals, generate_interface_parents_map, InterfaceParentMap } from "./utils";
 
 import clone from "just-clone";
-import { i18n } from "@/plugins/i18n";
+import { i18n } from "../../plugins/i18n";
 import { ComposerTranslation } from "vue-i18n";
 
 function get_next_available_name(prefix: string, name_list: string[]): string {

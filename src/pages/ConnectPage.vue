@@ -165,7 +165,7 @@ import { computed, ComputedRef, defineComponent, inject, onMounted, reactive, re
 import { useField, useForm } from "vee-validate";
 import EVBackendClient from "@/modules/evbc/client";
 import { useRouter } from "vue-router";
-import { i18n } from "@/plugins/i18n";
+import { i18n } from "../plugins/i18n";
 import { ComposerTranslation } from "vue-i18n";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 

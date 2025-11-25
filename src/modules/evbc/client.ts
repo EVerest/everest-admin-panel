@@ -5,7 +5,7 @@ import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
 import { useEvbcStore } from "@/store/evbc";
-import { i18n } from "@/plugins/i18n";
+import { i18n } from "../../plugins/i18n";
 import { computed, type ComputedRef } from "vue";
 import { ComposerTranslation } from "vue-i18n";
 

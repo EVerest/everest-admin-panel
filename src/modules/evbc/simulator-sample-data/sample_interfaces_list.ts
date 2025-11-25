@@ -5,7 +5,7 @@
 
 import { EverestInterfaceDefinitionList, LocalizedString } from "../index";
 import { computed } from "vue";
-import { i18n } from "@/plugins/i18n";
+import { i18n } from "../../../plugins/i18n";
 import { ComposerTranslation } from "vue-i18n";
 
 const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;

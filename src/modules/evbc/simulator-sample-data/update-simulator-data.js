@@ -174,7 +174,7 @@ function generateContent(data, typecast) {
   if (sampleContent.includes('t("')) {
     content += `import { ${typecast}, LocalizedString } from "../index";\n`;
     content += 'import { computed } from "vue";\n';
-    content += 'import { i18n } from "@/plugins/i18n";\n';
+    content += 'import { i18n } from "../../../plugins/i18n";\n';
     content += 'import { ComposerTranslation } from "vue-i18n";\n\n';
     content += "const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;\n";
   } else {

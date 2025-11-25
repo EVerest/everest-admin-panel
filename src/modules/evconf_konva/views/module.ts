@@ -9,7 +9,7 @@ import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
 import { TerminalPlacement } from "./shapes/connection";
 import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
 import { currentTheme } from "@/plugins/vuetify";
-import { i18n } from "@/plugins/i18n";
+import { i18n } from "../../../plugins/i18n";
 import { ComposerTranslation } from "vue-i18n";
 
 // FIXME (aw): the TerminalPlacement type belongs to a shared place!
