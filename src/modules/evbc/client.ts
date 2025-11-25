@@ -4,7 +4,7 @@
 import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
-import { useEvbcStore } from "@/store/evbc";
+import { useEvbcStore } from "../../store/evbc";
 import { i18n } from "../../plugins/i18n";
 import { computed, type ComputedRef } from "vue";
 import { ComposerTranslation } from "vue-i18n";
@@ -177,10 +177,16 @@ class EVBackendClient {
     const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     const cfgs = await this._cxn.rpc_issuer.get_configs();
-    Object.assign(this.evbcStore.available_configs, cfgs as unknown as Record<string, unknown>);
+    Object.assign(this.evbcStore.available_configs, cfgs);
     this._publish("connection_state", {
       type: "INFO",
-      text: computed(() => String(t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }))),
+      text: computed(() =>
+        String(
+          t("evbc.client.receivedConfigFiles", {
+            count: Object.keys(cfgs).length,
+          }),
+        ),
+      ),
     });
   }
 
