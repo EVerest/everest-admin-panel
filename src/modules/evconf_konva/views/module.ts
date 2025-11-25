@@ -64,8 +64,6 @@ export default class ModuleView {
   _observers: ModuleViewEventHandler[] = [];
 
   constructor(view_model: ModuleViewModel) {
-    const t = i18n.global.t as ComposerTranslation;
-
     // FIXME (aw): refactor all these inline functions !!!
     this.group = new Konva.Group({
       draggable: true,
@@ -86,6 +84,8 @@ export default class ModuleView {
       view.on("dragmove", () => this._terminal_dragmove_handler(view));
       view.on("dragend", () => this._terminal_dragend_handler(view));
       view.on("mouseenter", () => {
+        const t = i18n.global.t as ComposerTranslation;
+
         this._vm.set_cursor("pointer");
         const showTooltip: ShowTooltipEvent = {
           type: "SHOW_TOOLTIP",
