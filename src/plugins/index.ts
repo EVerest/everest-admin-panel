@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
-import { App } from "vue";
+import { App, Plugin } from "vue";
 import { router } from "@/router";
 import evbcPlugin from "@/plugins/evbc";
 import vuetify from "@/plugins/vuetify";
@@ -17,5 +17,11 @@ hljs.registerLanguage("yaml", yaml);
 hljs.registerLanguage("json", json);
 
 export function registerPlugins(app: App) {
-  app.use(i18n).use(pinia).use(evbcPlugin).use(vuetify).use(router).use(hljsVuePlugin);
+  app
+    .use(i18n as unknown as Plugin)
+    .use(pinia)
+    .use(evbcPlugin)
+    .use(vuetify)
+    .use(router)
+    .use(hljsVuePlugin);
 }
