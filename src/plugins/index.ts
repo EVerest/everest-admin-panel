@@ -20,8 +20,8 @@ export function registerPlugins(app: App) {
   app
     .use(i18n as unknown as Plugin)
     .use(pinia)
-    .use(evbcPlugin)
-    .use(vuetify)
-    .use(router)
-    .use(hljsVuePlugin);
+    .use(evbcPlugin as unknown as Plugin)
+    .use(vuetify as unknown as Plugin)
+    .use(router as unknown as Plugin)
+    .use(hljsVuePlugin as unknown as Plugin);
 }
