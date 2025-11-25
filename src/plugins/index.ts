@@ -19,7 +19,7 @@ hljs.registerLanguage("json", json);
 export function registerPlugins(app: App) {
   app
     .use(i18n as unknown as Plugin)
-    .use(pinia)
+    .use(pinia as unknown as Plugin)
     .use(evbcPlugin as unknown as Plugin)
     .use(vuetify as unknown as Plugin)
     .use(router as unknown as Plugin)
