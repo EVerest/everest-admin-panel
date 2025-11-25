@@ -172,7 +172,7 @@ import LanguageSelector from "@/components/LanguageSelector.vue";
 type LocalizedString = string | ComputedRef<string>;
 
 type ServerItem = {
-  id: string | unknown;
+  id: LocalizedString;
   host: string;
   editable: boolean;
   protocol: "ws" | "wss";
