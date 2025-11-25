@@ -156,7 +156,7 @@ class EVConfigModel {
   }
 
   delete_module_instance(id: ModuleInstanceID) {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     if (!(id in this._instances)) {
       throw Error(t("config_model.deleteModelInstanceError", { id }));
@@ -232,7 +232,7 @@ class EVConfigModel {
   }
 
   delete_connection(connection_id: ConnectionID) {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     if (!(connection_id in this._connections)) {
       throw Error(t("config_model.deleteConnectionError", { id: connection_id }));
@@ -391,7 +391,7 @@ class EVConfigModel {
   }
 
   _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig): number {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     if (!(type in this._module_definitions)) {
       throw Error(t("config_model.moduleInvalidError", { type }));
@@ -468,7 +468,7 @@ class EVConfigModel {
   }
 
   _validate_connection(conn: Connection) {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
     const prov_id = conn.providing_instance_id;
     if (!(prov_id in this._instances)) {
       throw Error(t("config_model.providingInstanceDoesNotExistError", { instanceId: prov_id }));
@@ -512,7 +512,7 @@ class EVConfigModel {
   }
 
   _connection_exists(conn: Connection) {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     for (const [, other_conn] of Object.entries(this._connections)) {
       if (
@@ -563,7 +563,7 @@ class EVConfigModel {
   }
 
   validate_mapping_configuration(): { valid: boolean; warnings: string[] } {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
     const warnings: string[] = [];
     const evse_manager_count = Object.values(this._instances).filter(
       (instance) => instance.type === "EvseManager",

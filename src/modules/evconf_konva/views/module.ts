@@ -84,7 +84,7 @@ export default class ModuleView {
       view.on("dragmove", () => this._terminal_dragmove_handler(view));
       view.on("dragend", () => this._terminal_dragend_handler(view));
       view.on("mouseenter", () => {
-        const t = i18n.global.t as ComposerTranslation;
+        const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
         this._vm.set_cursor("pointer");
         const showTooltip: ShowTooltipEvent = {

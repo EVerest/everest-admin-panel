@@ -176,7 +176,7 @@ function generateContent(data, typecast) {
     content += 'import { computed } from "vue";\n';
     content += 'import { i18n } from "@/plugins/i18n";\n';
     content += 'import { ComposerTranslation } from "vue-i18n";\n\n';
-    content += "const t = i18n.global.t as ComposerTranslation;\n";
+    content += "const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;\n";
   } else {
     content += `import { ${typecast} } from "../index";\n`;
   }

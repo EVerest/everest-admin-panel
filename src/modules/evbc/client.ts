@@ -99,7 +99,7 @@ class EVBackendClient {
 
   _connection_state_listener(status: ConnectionStatus) {
     let event: ConnectionStateEvent = null;
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     if (status.type === "OPEN") {
       event = {
@@ -132,7 +132,7 @@ class EVBackendClient {
   }
 
   _on_connected() {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     void this._reload_instance_data().then(() => {
       this.initialized = true;
@@ -144,7 +144,7 @@ class EVBackendClient {
   }
 
   async _reload_modules(): Promise<void> {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
     this._publish("connection_state", {
@@ -160,7 +160,7 @@ class EVBackendClient {
   }
 
   async _reload_interfaces(): Promise<void> {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
     this._publish("connection_state", {
@@ -174,7 +174,7 @@ class EVBackendClient {
   }
 
   async _reload_configs(): Promise<void> {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     const cfgs = await this._cxn.rpc_issuer.get_configs();
     Object.assign(this.evbcStore.available_configs, cfgs);

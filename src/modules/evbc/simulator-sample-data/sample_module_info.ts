@@ -8,7 +8,7 @@ import { computed } from "vue";
 import { i18n } from "@/plugins/i18n";
 import { ComposerTranslation } from "vue-i18n";
 
-const t = i18n.global.t as ComposerTranslation;
+const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
 /* eslint-disable prettier/prettier */
 export default {

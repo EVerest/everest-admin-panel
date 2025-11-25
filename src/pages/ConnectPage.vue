@@ -191,7 +191,7 @@ export default defineComponent({
     LanguageSelector,
   },
   setup() {
-    const t = i18n.global.t as ComposerTranslation;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
     const evbc = inject<EVBackendClient>("evbc");
     const servers = reactive<ServerItem[]>([
       {
