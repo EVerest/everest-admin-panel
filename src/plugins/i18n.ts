@@ -48,7 +48,7 @@ const options: I18nOptions = {
 type I18nInstance = ReturnType<typeof createI18n>;
 export const i18n: I18nInstance = createI18n(options);
 
-function setI18nLanguage(locale: string) {
+function setI18nLanguage(locale: string): void {
   if (
     typeof i18n.global.locale !== "string" &&
     typeof i18n.global.locale === "object" &&
@@ -74,7 +74,7 @@ interface VuetifyLocaleModule {
   default?: LocaleMessages;
 }
 
-async function loadLocaleMessages(locale: string) {
+async function loadLocaleMessages(locale: string): Promise<void> {
   if (!isValidLocale(locale)) {
     return nextTick();
   }
@@ -99,7 +99,7 @@ async function loadLocaleMessages(locale: string) {
   return nextTick();
 }
 
-function isValidLocale(locale: string) {
+function isValidLocale(locale: string): boolean {
   return SUPPORTED_LOCALES.includes(locale);
 }
 
@@ -111,7 +111,7 @@ export function verifyLocale(locale?: string): string {
   }
 }
 
-export async function establishLocale(paramsLocale: string) {
+export async function establishLocale(paramsLocale: string): Promise<string> {
   const locale = verifyLocale(paramsLocale);
 
   if (!i18n.global.availableLocales.includes(locale)) {
