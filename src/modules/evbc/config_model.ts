@@ -40,7 +40,7 @@ function get_next_available_name(prefix: string, name_list: string[]): string {
 }
 
 function config_set_with_schema_to_config_set(config_set: ConfigSetWithSchema): ConfigSet {
-  const entries: Array<[string, unknown]> = config_set
+  const entries: [string, unknown][] = config_set
     .filter((item) => item.model !== undefined)
     .map((item) => [item.schema.title, item.model]);
 
