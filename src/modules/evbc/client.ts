@@ -177,7 +177,7 @@ class EVBackendClient {
     const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
     const cfgs = await this._cxn.rpc_issuer.get_configs();
-    Object.assign(this.evbcStore.available_configs, cfgs);
+    Object.assign(this.evbcStore.available_configs, cfgs as unknown as Record<string, unknown>);
     this._publish("connection_state", {
       type: "INFO",
       text: computed(() => String(t("evbc.client.receivedConfigFiles", { count: Object.keys(cfgs).length }))),
