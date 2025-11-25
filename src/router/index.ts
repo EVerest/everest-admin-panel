@@ -8,7 +8,7 @@ import ConnectPage from "../pages/ConnectPage.vue";
 import ConfigPage from "../pages/ConfigPage.vue";
 import EVBackendClient from "@/modules/evbc/client";
 import { inject } from "vue";
-import { verifyLocale, establishLocale } from "@/plugins/i18n";
+import { verifyLocale, establishLocale } from "../plugins/i18n";
 
 const routes: RouteRecordRaw[] = [
   {
