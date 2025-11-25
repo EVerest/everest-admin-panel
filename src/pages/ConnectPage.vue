@@ -367,7 +367,7 @@ export default defineComponent({
           } else if (ev.type === "FAILED") {
             connecting.value = false;
             error.active = true;
-            error.status = ev.text;
+            error.status = unref(ev.text) ?? "";
           } else if (ev.type === "IDLE") {
             connecting.value = false;
             connectionStatus.value = "";
