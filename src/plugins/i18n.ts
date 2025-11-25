@@ -103,8 +103,8 @@ function isValidLocale(locale: string) {
   return SUPPORTED_LOCALES.includes(locale);
 }
 
-export function verifyLocale(locale: string) {
-  if (isValidLocale(locale)) {
+export function verifyLocale(locale?: string): string {
+  if (typeof locale === "string" && isValidLocale(locale)) {
     return locale;
   } else {
     return DEFAULT_LOCALE;
