@@ -42,7 +42,14 @@ export const router = createRouter({
 router.beforeEach((to, from, next) => {
   const evbc = inject<EVBackendClient>("evbc");
   const userIsConnected = evbc?.initialized;
-  const paramsLocale = to.params.locale as string | undefined;
+  let paramsLocale = "";
+
+  if (typeof to.params.locale === "string") {
+    paramsLocale = to.params.locale;
+  } else if (Array.isArray(to.params.locale) && to.params.locale.length > 0) {
+    paramsLocale = to.params.locale[0];
+  }
+
   const locale = verifyLocale(paramsLocale);
 
   if (paramsLocale !== locale) {
