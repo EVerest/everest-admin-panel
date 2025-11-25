@@ -75,7 +75,7 @@ class EVBackendClient {
   // - it would be nice, if we got an object after successful connection, that contains that
   load_config(name: string) {
     if (!(name in this.evbcStore.available_configs)) {
-      const t = i18n.global.t as ComposerTranslation;
+      const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
       throw Error(t("evbc.client.configurationNotFound", { name }));
     }
     const config = this.evbcStore.available_configs[name];
