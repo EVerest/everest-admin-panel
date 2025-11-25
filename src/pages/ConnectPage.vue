@@ -239,7 +239,7 @@ export default defineComponent({
           }
 
           // Prevent user from entering a domain with port
-          const domainPattern = /.*:\d+$/;
+          const domainPattern = /:\d+$/;
           if (domainPattern.test(value)) {
             return t("connectPage.instanceForm.hostPortError");
           } else {
