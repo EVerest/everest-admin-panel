@@ -75,7 +75,14 @@ router.beforeEach((to, from, next) => {
 router.beforeResolve(async (to) => {
   // Use beforeResolve() to lazy load locale messages, because using async
   // in combination with inject() in beforeEach() results in a warning.
-  const paramsLocale = to.params.locale as string | undefined;
+  let paramsLocale = "";
+
+  if (typeof to.params.locale === "string") {
+    paramsLocale = to.params.locale;
+  } else if (Array.isArray(to.params.locale) && to.params.locale.length > 0) {
+    paramsLocale = to.params.locale[0];
+  }
+
   await establishLocale(paramsLocale);
   return true;
 });
