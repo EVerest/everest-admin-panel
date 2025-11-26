@@ -237,9 +237,9 @@ function writeToFile(filename, content) {
         throw new Error(`Attempt to write disallowed filename: ${filename}`);
     }
 
-    console.log(`${filename} updated successfully!`);
+    console.log("%s updated successfully!", filename);
   } catch (err) {
-    console.error(`Failed to write data to ${filename}:`, err);
+    console.error("Failed to write data to %s:", filename, err);
   }
 }
 
@@ -267,7 +267,7 @@ function compileConfigFiles() {
       const configName = path.basename(filename, ".yaml");
       configs[configName] = yaml.load(fileContent);
     } catch (err) {
-      console.warn(`Failed to read file ${filename}:`, err);
+      console.warn("Failed to read file %s:", filename, err);
     }
   }
 
