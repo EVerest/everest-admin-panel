@@ -321,10 +321,8 @@ class EVConfigModel {
     if (schema === undefined) {
       return undefined;
     }
-    const cfg = config as Record<string, unknown> | undefined;
     return Object.entries(schema).map(([key, value]) => {
-      const config_value: unknown =
-        cfg !== undefined && Object.prototype.hasOwnProperty.call(cfg, key) ? cfg[key] : value.default;
+      const config_value: unknown = config !== undefined && key in config ? config[key] : value.default;
       return { schema: { ...value, title: key }, model: config_value };
     });
   }
