@@ -33,7 +33,7 @@ class EVBackendClient {
   _cxn: EVBackendConnection = null;
   _event_handler_map: ClientEventHandlerMap = {};
   _last_event_map: LastEventMap = {};
-  private evbcStore = useEvbcStore();
+  private evbcStore: ReturnType<typeof useEvbcStore> = useEvbcStore();
   readonly everest_definitions: EverestDefinitions = {
     modules: null,
     interfaces: null,
@@ -183,7 +183,7 @@ class EVBackendClient {
       text: computed(() =>
         String(
           t("evbc.client.receivedConfigFiles", {
-            count: Object.keys(cfgs).length,
+            count: Object.keys(cfgs as unknown as Record<string, EverestConfig>).length,
           }),
         ),
       ),
