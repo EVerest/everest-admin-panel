@@ -33,7 +33,11 @@ class EVBackendClient {
   _cxn: EVBackendConnection = null;
   _event_handler_map: ClientEventHandlerMap = {};
   _last_event_map: LastEventMap = {};
-  private evbcStore: ReturnType<typeof useEvbcStore> = useEvbcStore();
+
+  private get evbcStore(): { available_configs: Record<string, EverestConfig> } {
+    return (useEvbcStore as unknown as () => { available_configs: Record<string, EverestConfig> })();
+  }
+
   readonly everest_definitions: EverestDefinitions = {
     modules: null,
     interfaces: null,
