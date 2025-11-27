@@ -46,8 +46,26 @@ export class LoopbackRpcIssuer extends RpcIssuer {
   private static getConfigsFromLocalStorageOrDefault(): EverestConfigList {
     const configsString = localStorage.getItem("configs");
     if (configsString) {
-      const parsedConfigs = JSON.parse(configsString) as EverestConfigList;
-      return Object.assign({}, SampleConfigList, parsedConfigs);
+      const parsedConfigs = JSON.parse(configsString) as Record<string, unknown>;
+
+      // Safely merge parsedConfigs into a fresh copy of SampleConfigList.
+      // Only accept own properties and only values that look like plain objects
+      // (basic shape check) to avoid prototype pollution / mass-assignment issues.
+      const safeMerge: Record<string, EverestConfig> = { ...SampleConfigList };
+
+      for (const key of Object.keys(parsedConfigs)) {
+        if (!Object.prototype.hasOwnProperty.call(parsedConfigs, key)) {
+          continue;
+        }
+
+        const val = parsedConfigs[key];
+
+        if (val && typeof val === "object" && !Array.isArray(val)) {
+          // Accept the value as an EverestConfig; further validation can be added here.
+          safeMerge[key] = val as EverestConfig;
+        }
+      }
+      return safeMerge as EverestConfigList;
     } else {
       return SampleConfigList;
     }
