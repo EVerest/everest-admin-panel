@@ -5,8 +5,11 @@ import { ConnectionStatus } from "@/modules/evbc/connection";
 import { RpcIssuer } from "@/modules/evbc/rpc/abstractRpcIssuer";
 
 interface PendingCommand<T = unknown> {
-  resolve: (_value: T) => void;
-  reject: (_reason: Error) => void;
+  // These definitions are valid, but the linter finds false positives
+  // and complains about unused vars. Disable the rule for these lines.
+  resolve: (value: T) => void; // eslint-disable-line no-unused-vars
+  reject: (reason: Error) => void; // eslint-disable-line no-unused-vars
+
   timeout_id: ReturnType<typeof setTimeout>;
 }
 
@@ -84,7 +87,9 @@ export class WebsocketRpcIssuer extends RpcIssuer {
         reject(new Error(`RPC communication timeout to everest controller process after '${this._rpc_timeout_ms}'ms`));
       }, this._rpc_timeout_ms);
       this._pending_commands.set(id, {
-        resolve: resolve as (_value: unknown) => void,
+        // This definition is valid, but the linter finds a false positive
+        // and complains about unused var. Disable the rule for this lines.
+        resolve: resolve as (value: unknown) => void, // eslint-disable-line no-unused-vars
         reject,
         timeout_id,
       });
