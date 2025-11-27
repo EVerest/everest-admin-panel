@@ -5,8 +5,8 @@ import { ConnectionStatus } from "@/modules/evbc/connection";
 import { RpcIssuer } from "@/modules/evbc/rpc/abstractRpcIssuer";
 
 interface PendingCommand<T = unknown> {
-  resolve: (value: T) => void;
-  reject: (reason: Error) => void;
+  resolve: (_value: T) => void;
+  reject: (_reason: Error) => void;
   timeout_id: ReturnType<typeof setTimeout>;
 }
 
@@ -84,7 +84,7 @@ export class WebsocketRpcIssuer extends RpcIssuer {
         reject(new Error(`RPC communication timeout to everest controller process after '${this._rpc_timeout_ms}'ms`));
       }, this._rpc_timeout_ms);
       this._pending_commands.set(id, {
-        resolve: resolve as (value: unknown) => void,
+        resolve: resolve as (_value: unknown) => void,
         reject,
         timeout_id,
       });
