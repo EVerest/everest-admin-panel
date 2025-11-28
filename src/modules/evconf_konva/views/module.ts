@@ -24,6 +24,16 @@ type TerminalsUpdatedEvent = {
 export type ModuleViewEvent = TerminalsUpdatedEvent;
 type ModuleViewEventHandler = (ev: ModuleViewEvent) => void;
 
+function safeTerminalInterface(item: unknown): string {
+  if (typeof item !== "object" || item === null) return "";
+  const rec = item as Record<string, unknown>;
+  const term = rec.terminal;
+  if (typeof term !== "object" || term === null) return "";
+  const raw = (term as Record<string, unknown>).interface;
+  if (typeof raw === "string") return raw;
+  return String(raw ?? "");
+}
+
 function check_hit(x: number, y: number, terminal_distribution: Record<TerminalAlignment, number[]>) {
   let align: TerminalAlignment = null;
   let index = null;
@@ -86,16 +96,12 @@ export default class ModuleView {
         view.on("dragend", () => this._terminal_dragend_handler(view));
         view.on("mouseenter", () => {
           const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
-          const i: {
-            readonly terminal: Terminal;
-            alignment: TerminalAlignment;
-            index: number;
-          } = item;
 
           this._vm.set_cursor("pointer");
+          const iface = safeTerminalInterface(item);
           const showTooltip: ShowTooltipEvent = {
             type: "SHOW_TOOLTIP",
-            text: t("module.terminalTooltip", { interface: i.terminal.interface }),
+            text: t("module.terminalTooltip", { interface: iface }),
           };
           this._vm.notify_stage_context(showTooltip);
         });
