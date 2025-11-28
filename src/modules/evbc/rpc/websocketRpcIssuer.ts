@@ -38,9 +38,13 @@ export class WebsocketRpcIssuer extends RpcIssuer {
 
   private _handle_socket_opened() {
     this.publish_connection_state({ type: "OPENED" });
-    void this.get_rpc_timeout().then((timeout) => {
-      this._rpc_timeout_ms = timeout;
-    });
+    void (async () => {
+      try {
+        this._rpc_timeout_ms = await this.get_rpc_timeout();
+      } catch (err) {
+        console.warn("Failed to get RPC timeout:", err);
+      }
+    })();
   }
 
   private _handle_socket_error() {
