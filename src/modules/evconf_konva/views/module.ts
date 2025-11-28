@@ -87,9 +87,11 @@ export default class ModuleView {
         const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
         this._vm.set_cursor("pointer");
+        const rawIface = item?.terminal?.interface;
+        const iface = typeof rawIface === "string" ? rawIface : String(rawIface ?? "");
         const showTooltip: ShowTooltipEvent = {
           type: "SHOW_TOOLTIP",
-          text: t("module.terminalTooltip", { interface: item.terminal.interface }),
+          text: t("module.terminalTooltip", { interface: iface }),
         };
         this._vm.notify_stage_context(showTooltip);
       });
