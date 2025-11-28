@@ -130,10 +130,12 @@ export class LoopbackRpcIssuer extends RpcIssuer {
 
         // Make sure that only valid EverestConfig objects are merged.
         if (LoopbackRpcIssuer.isEverestConfig(val)) {
+          const cfg: EverestConfig = val;
+
           // There is no object injection possible here, `key` is valid.
           // Prevent ESlint from flagging a false positive for `safeMerge[key]`.
           // eslint-disable-next-line security/detect-object-injection
-          safeMerge[key] = val;
+          safeMerge[key] = cfg;
         }
       }
       return safeMerge as EverestConfigList;
