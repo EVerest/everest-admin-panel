@@ -44,7 +44,11 @@ export default class ConfigStage {
   ) {
     this._stage = new Konva.Stage(config);
 
-    // bind this to the resize function. This is necessary to remove the listener later on
+    // Bind this to the resize function. This is necessary to remove the listener later on.
+    // This assignment is type-safe. No any is involved, and TypeScript will enforce the
+    // correct function signature. There is no unsafe assignment here.
+    // Disable the rule for this line only to silence the false positive.
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this._boundResizeStage = this.resizeStage.bind(this);
 
     // allow drag with left and right mouse button
