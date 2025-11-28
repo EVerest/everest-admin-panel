@@ -72,46 +72,48 @@ export default class ModuleView {
     // initialize member variables
     this._vm = view_model;
 
-    this._terminal_views = view_model.terminal_lookup.map((item, terminal_id) => {
-      const view = new TerminalShape<TerminalConfig>({
-        terminal_type: item.terminal.type,
-        terminal_id,
-        terminal_alignment: item.alignment,
-      });
+    this._terminal_views = view_model.terminal_lookup.map(
+      (item: { readonly terminal: Terminal; alignment: TerminalAlignment; index: number }, terminal_id) => {
+        const view = new TerminalShape<TerminalConfig>({
+          terminal_type: item.terminal.type,
+          terminal_id,
+          terminal_alignment: item.alignment,
+        });
 
-      view.setDraggable(true);
-      view.on("dragstart", () => this._terminal_dragstart_handler(view));
-      view.on("dragmove", () => this._terminal_dragmove_handler(view));
-      view.on("dragend", () => this._terminal_dragend_handler(view));
-      view.on("mouseenter", () => {
-        const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
-        const i: {
-          readonly terminal: Terminal;
-          alignment: TerminalAlignment;
-          index: number;
-        } = item;
+        view.setDraggable(true);
+        view.on("dragstart", () => this._terminal_dragstart_handler(view));
+        view.on("dragmove", () => this._terminal_dragmove_handler(view));
+        view.on("dragend", () => this._terminal_dragend_handler(view));
+        view.on("mouseenter", () => {
+          const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+          const i: {
+            readonly terminal: Terminal;
+            alignment: TerminalAlignment;
+            index: number;
+          } = item;
 
-        this._vm.set_cursor("pointer");
-        const showTooltip: ShowTooltipEvent = {
-          type: "SHOW_TOOLTIP",
-          text: t("module.terminalTooltip", { interface: i.terminal.interface }),
-        };
-        this._vm.notify_stage_context(showTooltip);
-      });
-      view.on("mouseleave", () => {
-        this._vm.set_cursor("default");
-        const hideTooltip: HideTooltipEvent = {
-          type: "HIDE_TOOLTIP",
-        };
-        this._vm.notify_stage_context(hideTooltip);
-      });
-      view.on("pointerclick", (ev) => {
-        view_model.clicked_terminal(terminal_id);
-        ev.cancelBubble = true;
-      });
+          this._vm.set_cursor("pointer");
+          const showTooltip: ShowTooltipEvent = {
+            type: "SHOW_TOOLTIP",
+            text: t("module.terminalTooltip", { interface: i.terminal.interface }),
+          };
+          this._vm.notify_stage_context(showTooltip);
+        });
+        view.on("mouseleave", () => {
+          this._vm.set_cursor("default");
+          const hideTooltip: HideTooltipEvent = {
+            type: "HIDE_TOOLTIP",
+          };
+          this._vm.notify_stage_context(hideTooltip);
+        });
+        view.on("pointerclick", (ev) => {
+          view_model.clicked_terminal(terminal_id);
+          ev.cancelBubble = true;
+        });
 
-      return view;
-    });
+        return view;
+      },
+    );
 
     // initialize correct terminal positions
     Object.entries(view_model.terminal_dist).forEach(([_alignment, terminal_ids]) => {
