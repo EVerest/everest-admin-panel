@@ -58,10 +58,15 @@ export class LoopbackRpcIssuer extends RpcIssuer {
           continue;
         }
 
+        // There is no object injection possible here, `key` is valid.
+        // Prevent ESlint from flagging a false positive for `parsedConfigs[key]`.
+        // eslint-disable-next-line security/detect-object-injection
         const val = parsedConfigs[key];
 
         if (val && typeof val === "object" && !Array.isArray(val)) {
-          // Accept the value as an EverestConfig; further validation can be added here.
+          // There is no object injection possible here, `key` is valid.
+          // Prevent ESlint from flagging a false positive for `safeMerge[key]`.
+          // eslint-disable-next-line security/detect-object-injection
           safeMerge[key] = val as EverestConfig;
         }
       }

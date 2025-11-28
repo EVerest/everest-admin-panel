@@ -265,6 +265,10 @@ function compileConfigFiles() {
       }
 
       const configName = path.basename(filename, ".yaml");
+      
+      // There is no object injection possible here, `configName` is valid.
+      // Prevent ESlint from flagging a false positive for `configs[configName]`.
+      // eslint-disable-next-line security/detect-object-injection
       configs[configName] = yaml.load(fileContent);
     } catch (err) {
       console.warn("Failed to read file %s:", filename, err);
