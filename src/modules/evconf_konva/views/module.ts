@@ -2,7 +2,7 @@
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
-import { TerminalAlignment } from "@/modules/evbc";
+import { Terminal, TerminalAlignment } from "@/modules/evbc";
 import { MONO_TEXT, NORMAL_TEXT, SIZE } from "./constants";
 import { TerminalConfig, TerminalShape } from "./shapes/terminal";
 import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
@@ -85,13 +85,16 @@ export default class ModuleView {
       view.on("dragend", () => this._terminal_dragend_handler(view));
       view.on("mouseenter", () => {
         const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+        const i: {
+          readonly terminal: Terminal;
+          alignment: TerminalAlignment;
+          index: number;
+        } = item;
 
         this._vm.set_cursor("pointer");
-        const rawIface = item?.terminal?.interface;
-        const iface = typeof rawIface === "string" ? rawIface : String(rawIface ?? "");
         const showTooltip: ShowTooltipEvent = {
           type: "SHOW_TOOLTIP",
-          text: t("module.terminalTooltip", { interface: iface }),
+          text: t("module.terminalTooltip", { interface: i.terminal.interface }),
         };
         this._vm.notify_stage_context(showTooltip);
       });
