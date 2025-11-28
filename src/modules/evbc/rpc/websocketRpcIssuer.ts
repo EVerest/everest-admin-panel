@@ -2,7 +2,7 @@
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 import { INITIAL_RPC_TIMEOUT_VALUE } from "@/modules/evconf_konva/views/constants";
 import { ConnectionStatus } from "@/modules/evbc/connection";
-import { RpcIssuer } from "@/modules/evbc/rpc/abstractRpcIssuer";
+import { RpcIssuer } from "../../../modules/evbc/rpc/abstractRpcIssuer";
 
 interface PendingCommand<T = unknown> {
   // These definitions are valid, but the linter finds false positives
@@ -38,13 +38,9 @@ export class WebsocketRpcIssuer extends RpcIssuer {
 
   private _handle_socket_opened() {
     this.publish_connection_state({ type: "OPENED" });
-    void (async () => {
-      try {
-        this._rpc_timeout_ms = await this.get_rpc_timeout();
-      } catch (err) {
-        console.warn("Failed to get RPC timeout:", err);
-      }
-    })();
+    void this.get_rpc_timeout().then((timeout) => {
+      this._rpc_timeout_ms = timeout;
+    });
   }
 
   private _handle_socket_error() {
