@@ -5,7 +5,7 @@ import Konva from "konva";
 import { TerminalAlignment } from "@/modules/evbc";
 import { MONO_TEXT, NORMAL_TEXT, SIZE } from "./constants";
 import { TerminalConfig, TerminalShape } from "./shapes/terminal";
-import ModuleViewModel, { TerminalItem, ViewModelChangeEvent } from "../view_models/module";
+import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
 import { TerminalPlacement } from "./shapes/connection";
 import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
 import { currentTheme } from "@/plugins/vuetify";
@@ -72,7 +72,7 @@ export default class ModuleView {
     // initialize member variables
     this._vm = view_model;
 
-    this._terminal_views = view_model.terminal_lookup.map((item: TerminalItem, terminal_id: number) => {
+    this._terminal_views = view_model.terminal_lookup.map((item, terminal_id) => {
       const view = new TerminalShape<TerminalConfig>({
         terminal_type: item.terminal.type,
         terminal_id,
