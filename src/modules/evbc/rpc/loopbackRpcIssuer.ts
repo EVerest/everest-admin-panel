@@ -85,6 +85,9 @@ export class LoopbackRpcIssuer extends RpcIssuer {
       if (!Object.prototype.hasOwnProperty.call(am, k)) {
         continue;
       }
+      // There is no object injection possible here, `k` is valid.
+      // Prevent ESlint from flagging a false positive for `am[k]`.
+      // eslint-disable-next-line security/detect-object-injection
       const entry = (am as Record<string, unknown>)[k];
       if (!LoopbackRpcIssuer.isEverestModuleConfig(entry)) {
         return false;
