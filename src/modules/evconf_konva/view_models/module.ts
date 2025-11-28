@@ -13,12 +13,13 @@ import EVConfigModel from "@/modules/evbc/config_model";
 import ConfigStageContext, { ConfigStageContextEvent } from "../stage_context";
 
 type TerminalDistribution = Record<TerminalAlignment, number[]>;
-type TerminalLookup = Array<{
+export type TerminalItem = {
   // FIXME (aw): we need a better name for structure
   readonly terminal: Terminal;
   alignment: TerminalAlignment;
   index: number;
-}>;
+};
+type TerminalLookup = Array<TerminalItem>;
 
 type ModifyTerminalsEvent = {
   readonly type: "TERMINAL_MODIFY_APPEARENCE";
