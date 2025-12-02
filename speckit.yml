@@ -1,0 +1,10 @@
+name: everest-admin-panel
+output: docs/speckit
+include:
+  - src/**
+  - public/**
+  - package.json
+  - README.md
+  - build-tools/**
+  - cypress/**
+  - src/modules/**
