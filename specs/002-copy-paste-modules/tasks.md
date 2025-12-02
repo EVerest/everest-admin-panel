@@ -42,7 +42,7 @@ description: "Task list for Copy/Paste Modules feature"
 - [ ] T006 [US3] Implement rectangle drag selection logic in `src/modules/evconf_konva/config_stage.ts` (handle background pointer events)
 - [ ] T007 [US3] Implement visual feedback for multi-selection in `ModuleView` (update stroke/highlight based on selection state)
 - [ ] T008 [US3] Update `ModuleView` drag handler to move ALL selected modules when one is dragged
-- [ ] T009 [US3] Update right bar logic (if applicable) to handle multiple selection (or ensure it doesn't crash)
+- [ ] T009 [US3] Update right bar logic to detect multi-selection and show a 'Multiple items selected' placeholder state
 
 **Checkpoint**: Multi-selection and group dragging working.
 
@@ -56,9 +56,9 @@ description: "Task list for Copy/Paste Modules feature"
 
 - [ ] T010 [P] [US1] Implement `Smart Increment` name generation utility in `src/modules/evbc/utils.ts` (or `config_model.ts`)
 - [ ] T011 [US1] Implement `Copy` logic in `src/modules/evconf_konva/config_stage.ts`: serialize selected modules to `ClipboardSnapshot`
-- [ ] T012 [US1] Implement `Paste` logic in `src/modules/evconf_konva/config_stage.ts`: deserialize, generate names, map IDs, recreate connections
+- [ ] T012 [US1] Implement `Paste` logic in `src/modules/evconf_konva/config_stage.ts`: deserialize, generate names, map IDs, recreate connections, apply offset (+20px)
 - [ ] T013 [US1] Register keyboard shortcuts (Cmd/Ctrl+C, Cmd/Ctrl+V) in `src/modules/evconf_konva/config_stage.ts`
-- [ ] T014 [US1] Add visual confirmation (Toast) for Copy action (using existing UI components if available)
+- [ ] T014 [US1] Add visual confirmation (Toast) for Copy action using Vuetify `VSnackbar`
 
 **Checkpoint**: Copy/Paste working for single and multiple modules.
 
@@ -79,3 +79,8 @@ description: "Task list for Copy/Paste Modules feature"
 
 - [ ] T017 Verify performance with ~50 modules (ensure no lag during drag/paste)
 - [ ] T018 Ensure clipboard clears on page reload (implicit by in-memory storage, but verify)
+
+## Phase 7: Testing & Verification (Constitution Principle II)
+
+- [ ] T019 [Test] Write Unit Tests for Smart Increment logic in `src/modules/evbc/utils.test.ts` (create if needed)
+- [ ] T020 [Test] Write Cypress E2E test for Copy/Paste flow in `cypress/e2e/copy-paste.cy.ts`
