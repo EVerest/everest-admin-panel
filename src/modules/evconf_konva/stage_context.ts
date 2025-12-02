@@ -10,7 +10,7 @@ type TerminalSelection = {
 
 type ModuleInstanceSelection = {
   type: "MODULE_INSTANCE";
-  id: ModuleInstanceID;
+  ids: ModuleInstanceID[];
 };
 
 type ConnectionSelection = {
@@ -52,6 +52,7 @@ export default class ConfigStageContext {
   container: HTMLDivElement;
 
   _current_selected_terminal: Terminal & { module_instance_id: ModuleInstanceID } = null;
+  _selected_instances: Set<ModuleInstanceID> = new Set();
 
   // constructor() {}
 
@@ -71,9 +72,56 @@ export default class ConfigStageContext {
     this._current_selected_terminal = null;
   }
 
-  clicked_instance(id: ModuleInstanceID) {
+  _clear_instance_selection() {
+    this._selected_instances.clear();
+  }
+
+  select_instances(ids: ModuleInstanceID[]) {
     this._clear_terminal_selection();
-    this._publish({ type: "SELECT", selection: { type: "MODULE_INSTANCE", id } });
+    this._clear_instance_selection();
+    ids.forEach((id) => this._selected_instances.add(id));
+    this._publish_selection();
+  }
+
+  add_instances(ids: ModuleInstanceID[]) {
+    this._clear_terminal_selection();
+    ids.forEach((id) => this._selected_instances.add(id));
+    this._publish_selection();
+  }
+
+  toggle_instance_selection(id: ModuleInstanceID) {
+    this._clear_terminal_selection();
+    if (this._selected_instances.has(id)) {
+      this._selected_instances.delete(id);
+    } else {
+      this._selected_instances.add(id);
+    }
+    this._publish_selection();
+  }
+
+  clicked_instance(id: ModuleInstanceID) {
+    this.select_instances([id]);
+  }
+
+  get_selected_instances(): ModuleInstanceID[] {
+    return Array.from(this._selected_instances);
+  }
+
+  _publish_selection() {
+    if (this._selected_instances.size > 0) {
+      this._publish({
+        type: "SELECT",
+        selection: {
+          type: "MODULE_INSTANCE",
+          ids: Array.from(this._selected_instances),
+        },
+      });
+    } else {
+      this._publish({
+        type: "SELECT",
+        selection: { type: "NONE" },
+      });
+    }
   }
 
   clicked_terminal(terminal: Terminal, module_instance_id: ModuleInstanceID) {
@@ -106,6 +154,7 @@ export default class ConfigStageContext {
 
   unselect() {
     this._clear_terminal_selection();
+    this._clear_instance_selection();
     this._publish({
       type: "SELECT",
       selection: { type: "NONE" },

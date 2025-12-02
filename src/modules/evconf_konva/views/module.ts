@@ -70,6 +70,7 @@ export default class ModuleView {
   readonly _vm: ModuleViewModel;
   readonly _terminal_views: Array<TerminalShape>;
   readonly _title: Konva.Text;
+  readonly _frame: Konva.Rect;
 
   _observers: ModuleViewEventHandler[] = [];
 
@@ -151,6 +152,7 @@ export default class ModuleView {
       fillAfterStrokeEnabled: true,
       listening: true,
     });
+    this._frame = frame;
 
     const strokeWidth = 8;
     const topStroke = new Konva.Line({
@@ -204,7 +206,7 @@ export default class ModuleView {
         this._vm.set_cursor("default");
       });
       e.on("pointerclick", (ev) => {
-        this._vm.clicked_title();
+        this._vm.clicked_title(ev.evt.shiftKey);
         ev.cancelBubble = true;
       });
     });
@@ -252,6 +254,17 @@ export default class ModuleView {
       }
     } else if (ev.type === "MODULE_MODEL_UPDATE") {
       this._title.setText(this._vm.id);
+      if (this.group.children.length > 0) {
+        this.group.cache();
+      }
+    } else if (ev.type === "MODULE_SELECTION_CHANGED") {
+      if (ev.selected) {
+        this._frame.stroke("white");
+        this._frame.strokeWidth(2);
+      } else {
+        this._frame.stroke(null);
+        this._frame.strokeWidth(0);
+      }
       if (this.group.children.length > 0) {
         this.group.cache();
       }

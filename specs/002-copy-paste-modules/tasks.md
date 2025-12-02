@@ -18,14 +18,14 @@ description: "Task list for Copy/Paste Modules feature"
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Verify `just-clone` dependency is available (used in `config_model.ts`)
+- [x] T001 Verify `just-clone` dependency is available (used in `config_model.ts`)
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
-- [ ] T002 Define Clipboard types (`ClipboardSnapshot`, `CopiedModule`, `CopiedConnection`) in `src/modules/evconf_konva/types.ts` (or new file)
-- [ ] T003 Update `ConfigStageContext` in `src/modules/evconf_konva/stage_context.ts` to support multi-selection state (`Set<ModuleInstanceID>`)
+- [x] T002 Define Clipboard types (`ClipboardSnapshot`, `CopiedModule`, `CopiedConnection`) in `src/modules/evconf_konva/types.ts` (or new file)
+- [x] T003 Update `ConfigStageContext` in `src/modules/evconf_konva/stage_context.ts` to support multi-selection state (`Set<ModuleInstanceID>`)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -37,12 +37,12 @@ description: "Task list for Copy/Paste Modules feature"
 
 ### Implementation for User Story 3
 
-- [ ] T004 [US3] Implement `select_instances` and `toggle_instance_selection` methods in `src/modules/evconf_konva/stage_context.ts`
-- [ ] T005 [US3] Update `ModuleView` in `src/modules/evconf_konva/views/module.ts` to handle Shift+Click (additive selection)
-- [ ] T006 [US3] Implement rectangle drag selection logic in `src/modules/evconf_konva/config_stage.ts` (handle background pointer events)
-- [ ] T007 [US3] Implement visual feedback for multi-selection in `ModuleView` (update stroke/highlight based on selection state)
-- [ ] T008 [US3] Update `ModuleView` drag handler to move ALL selected modules when one is dragged
-- [ ] T009 [US3] Update right bar logic to detect multi-selection and show a 'Multiple items selected' placeholder state
+- [x] T004 [US3] Implement `select_instances` and `toggle_instance_selection` methods in `src/modules/evconf_konva/stage_context.ts`
+- [x] T005 [US3] Update `ModuleView` in `src/modules/evconf_konva/views/module.ts` to handle Shift+Click (additive selection)
+- [x] T006 [US3] Implement rectangle drag selection logic in `src/modules/evconf_konva/config_stage.ts` (handle background pointer events)
+- [x] T007 [US3] Implement visual feedback for multi-selection in `ModuleView` (update stroke/highlight based on selection state)
+- [x] T008 [US3] Update `ModuleView` drag handler to move ALL selected modules when one is dragged
+- [x] T009 [US3] Update right bar logic to detect multi-selection and show a 'Multiple items selected' placeholder state
 
 **Checkpoint**: Multi-selection and group dragging working.
 
@@ -54,11 +54,11 @@ description: "Task list for Copy/Paste Modules feature"
 
 ### Implementation for User Story 1
 
-- [ ] T010 [P] [US1] Implement `Smart Increment` name generation utility in `src/modules/evbc/utils.ts` (or `config_model.ts`)
-- [ ] T011 [US1] Implement `Copy` logic in `src/modules/evconf_konva/config_stage.ts`: serialize selected modules to `ClipboardSnapshot`
-- [ ] T012 [US1] Implement `Paste` logic in `src/modules/evconf_konva/config_stage.ts`: deserialize, generate names, map IDs, recreate connections, apply offset (+20px)
-- [ ] T013 [US1] Register keyboard shortcuts (Cmd/Ctrl+C, Cmd/Ctrl+V) in `src/modules/evconf_konva/config_stage.ts`
-- [ ] T014 [US1] Add visual confirmation (Toast) for Copy action using Vuetify `VSnackbar`
+- [x] T010 [P] [US1] Implement `Smart Increment` name generation utility in `src/modules/evbc/utils.ts` (or `config_model.ts`)
+- [x] T011 [US1] Implement `Copy` logic in `src/modules/evconf_konva/config_stage.ts`: serialize selected modules to `ClipboardSnapshot`
+- [x] T012 [US1] Implement `Paste` logic in `src/modules/evconf_konva/config_stage.ts`: deserialize, generate names, map IDs, recreate connections, apply offset (+20px)
+- [x] T013 [US1] Register keyboard shortcuts (Cmd/Ctrl+C, Cmd/Ctrl+V) in `src/modules/evconf_konva/config_stage.ts`
+- [x] T014 [US1] Add visual confirmation (Toast) for Copy action using Vuetify `VSnackbar`
 
 **Checkpoint**: Copy/Paste working for single and multiple modules.
 
@@ -70,17 +70,17 @@ description: "Task list for Copy/Paste Modules feature"
 
 ### Implementation for User Story 2
 
-- [ ] T015 [US2] Implement `Cut` logic in `src/modules/evconf_konva/config_stage.ts`: Copy + Delete selected instances
-- [ ] T016 [US2] Register keyboard shortcut (Cmd/Ctrl+X) in `src/modules/evconf_konva/config_stage.ts`
+- [x] T015 [US2] Implement `Cut` logic in `src/modules/evconf_konva/config_stage.ts`: Copy + Delete selected instances
+- [x] T016 [US2] Register keyboard shortcut (Cmd/Ctrl+X) in `src/modules/evconf_konva/config_stage.ts`
 
 **Checkpoint**: Cut/Paste working.
 
 ## Phase 6: Polish & Cross-Cutting
 
-- [ ] T017 Verify performance with ~50 modules (ensure no lag during drag/paste)
-- [ ] T018 Ensure clipboard clears on page reload (implicit by in-memory storage, but verify)
+- [x] T017 Verify performance with ~50 modules (ensure no lag during drag/paste)
+- [x] T018 Ensure clipboard clears on page reload (implicit by in-memory storage, but verify)
 
 ## Phase 7: Testing & Verification (Constitution Principle II)
 
-- [ ] T019 [Test] Write Unit Tests for Smart Increment logic in `src/modules/evbc/utils.test.ts` (create if needed)
-- [ ] T020 [Test] Write Cypress E2E test for Copy/Paste flow in `cypress/e2e/copy-paste.cy.ts`
+- [x] T019 [Test] Write Unit Tests for Smart Increment logic in `src/modules/evbc/utils.test.ts` (create if needed)
+- [x] T020 [Test] Write Cypress E2E test for Copy/Paste flow in `cypress/e2e/copy-paste.cy.ts`

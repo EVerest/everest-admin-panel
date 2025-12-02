@@ -2,7 +2,19 @@
      Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-card v-if="module_node" :title="t('evModuleInfo.title')">
+  <v-card v-if="module_node && module_node.isMultiSelect" title="Multiple Selection">
+    <template #append>
+      <icon-button-with-tooltip
+        icon="mdi-close"
+        :title="t('evModuleInfo.closeTitle')"
+        variant="text"
+        density="compact"
+        @click="context.unselect()"
+      />
+    </template>
+    <v-card-text> {{ module_node.count }} items selected. </v-card-text>
+  </v-card>
+  <v-card v-else-if="module_node" :title="t('evModuleInfo.title')">
     <template #append>
       <icon-button-with-tooltip
         icon="mdi-close"
@@ -20,6 +32,7 @@
           :model-value="module_node?.instance.id"
           :label="t('evModuleInfo.moduleId')"
           :rules="moduleIDRules"
+          data-cy="module-id-input"
         />
       </v-form>
       <v-form @submit.prevent>
@@ -228,6 +241,14 @@ export default defineComponent({
     const { current_config } = storeToRefs(evbcStore);
 
     const module_node = computed(() => {
+      const selected_instances = evbcStore.get_selected_module_instances();
+      if (selected_instances.length > 1) {
+        return {
+          isMultiSelect: true,
+          count: selected_instances.length,
+        };
+      }
+
       const instance_id = evbcStore.get_selected_module_instance();
       if (instance_id === null) {
         return null;

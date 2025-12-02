@@ -31,7 +31,12 @@ type ModuleModelUpdateEvent = {
   readonly type: "MODULE_MODEL_UPDATE";
 };
 
-export type ViewModelChangeEvent = ModifyTerminalsEvent | ModuleModelUpdateEvent;
+type ModuleSelectionChangedEvent = {
+  readonly type: "MODULE_SELECTION_CHANGED";
+  readonly selected: boolean;
+};
+
+export type ViewModelChangeEvent = ModifyTerminalsEvent | ModuleModelUpdateEvent | ModuleSelectionChangedEvent;
 type ViewModelChangeHandler = (ev: ViewModelChangeEvent) => void;
 
 export default class ModuleViewModel {
@@ -112,8 +117,12 @@ export default class ModuleViewModel {
     this._stage_context.clicked_terminal(terminal, this._instance_id);
   }
 
-  clicked_title() {
-    this._stage_context.clicked_instance(this._instance_id);
+  clicked_title(shiftKey: boolean = false) {
+    if (shiftKey) {
+      this._stage_context.toggle_instance_selection(this._instance_id);
+    } else {
+      this._stage_context.clicked_instance(this._instance_id);
+    }
   }
 
   set_cursor(type: string) {
@@ -125,6 +134,19 @@ export default class ModuleViewModel {
       return;
     }
     const selection_event = event.selection;
+
+    if (selection_event.type === "MODULE_INSTANCE") {
+      const isSelected = selection_event.ids.includes(this._instance_id);
+      this._notify({
+        type: "MODULE_SELECTION_CHANGED",
+        selected: isSelected,
+      });
+    } else if (selection_event.type === "NONE") {
+      this._notify({
+        type: "MODULE_SELECTION_CHANGED",
+        selected: false,
+      });
+    }
 
     if (selection_event.type === "TERMINAL") {
       const modify_event: ModifyTerminalsEvent = {
@@ -169,8 +191,29 @@ export default class ModuleViewModel {
 
   // returns diff or null
   set grid_position(pos: { x: number; y: number }) {
+    const old_pos = this._grid_position;
+    const dx = pos.x - old_pos.x;
+    const dy = pos.y - old_pos.y;
+
     this._grid_position = pos;
     this._config_model.update_module_view_position(this._instance_id, pos);
+
+    if (dx === 0 && dy === 0) return;
+
+    const selectedIds = this._stage_context.get_selected_instances();
+    if (selectedIds.includes(this._instance_id) && selectedIds.length > 1) {
+      selectedIds.forEach((id) => {
+        if (id === this._instance_id) return;
+        const instance = this._config_model.get_module_instance(id);
+        if (instance) {
+          const new_pos = {
+            x: instance.view_config.position.x + dx,
+            y: instance.view_config.position.y + dy,
+          };
+          this._config_model.update_module_view_position(id, new_pos);
+        }
+      });
+    }
   }
 
   move_terminal(terminal_id: number, new_align: TerminalAlignment, new_index: number): TerminalAlignment[] {

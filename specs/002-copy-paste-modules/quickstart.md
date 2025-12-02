@@ -35,10 +35,11 @@ This feature adds Copy, Cut, and Paste functionality to the admin panel canvas.
 
 4.  **Connections**:
     *   Connect "A" to "B".
+    *   Connect "B" to "C".
     *   Select both "A" and "B".
     *   Copy and Paste.
     *   **Verify**: New modules "A (1)" and "B (1)" appear and are connected to *each other*.
-    *   **Verify**: They are NOT connected to "A" or "B".
+    *   **Verify**: They are NOT connected to "A", "B", or "C".
 
 ## Development
 

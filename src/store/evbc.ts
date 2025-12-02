@@ -28,7 +28,11 @@ export const useEvbcStore = defineStore("evbc", () => {
   const get_is_config_opened = (): boolean => !!current_config.value;
   const get_config_context = (): ConfigStageContext => config_context;
   const get_selected_module_instance = (): ModuleInstanceID | null =>
-    get_is_config_opened() && selection.value.type === "MODULE_INSTANCE" ? selection.value.id : null;
+    get_is_config_opened() && selection.value.type === "MODULE_INSTANCE" && selection.value.ids.length > 0
+      ? selection.value.ids[selection.value.ids.length - 1]
+      : null;
+  const get_selected_module_instances = (): ModuleInstanceID[] =>
+    get_is_config_opened() && selection.value.type === "MODULE_INSTANCE" ? selection.value.ids : [];
   const get_selected_terminal = (): Terminal | null =>
     get_is_config_opened() && selection.value.type === "TERMINAL" ? selection.value.terminal : null;
   const get_selected_connection = (): ConnectionID | null =>
@@ -42,6 +46,7 @@ export const useEvbcStore = defineStore("evbc", () => {
     setOpenedConfig,
     get_config_context,
     get_selected_module_instance,
+    get_selected_module_instances,
     get_selected_terminal,
     get_selected_connection,
   };

@@ -3,12 +3,16 @@
 
 import Konva from "konva";
 import { StageConfig } from "konva/lib/Stage";
+import clone from "just-clone";
+import { Notyf } from "notyf";
 import { ConnectionID, ModuleInstanceID } from "@/modules/evbc";
 import EVConfigModel, { ConfigModelEvent } from "@/modules/evbc/config_model";
+import { smart_increment_name } from "@/modules/evbc/utils";
 import ModuleView from "./views/module";
 import ModuleViewModel from "./view_models/module";
 import ConfigStageContext, { ConfigStageContextEvent } from "./stage_context";
 import ConnectionManager from "./connection_manager";
+import { ClipboardSnapshot, CopiedModule, CopiedConnection } from "./types";
 import { NORMAL_TEXT, TOOLTIP } from "./views/constants";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Vector2d } from "konva/lib/types";
@@ -23,7 +27,15 @@ export default class ConfigStage {
     tooltip: Konva.Text;
     static_layer: Konva.Layer;
     anim_layer: Konva.Layer;
+    selectionRect: Konva.Rect;
   };
+
+  _selectionRect: Konva.Rect;
+  _isSelecting = false;
+  _isPanning = false;
+  _panStart: Vector2d = { x: 0, y: 0 };
+  _selectionStart: Vector2d = { x: 0, y: 0 };
+  _clipboard: ClipboardSnapshot | null = null;
 
   _module_views: Record<ModuleInstanceID, ModuleView> = {};
 
@@ -37,10 +49,12 @@ export default class ConfigStage {
   private _stage: Stage;
   private _bg: Konva.Rect;
   private _boundResizeStage: () => void;
+  private _boundKeyDown: (e: KeyboardEvent) => void;
 
   constructor(
     private config: StageConfig,
     context: ConfigStageContext,
+    private notyf?: Notyf,
   ) {
     this._stage = new Konva.Stage(config);
 
@@ -50,6 +64,7 @@ export default class ConfigStage {
     // Disable the rule for this line only to silence the false positive.
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this._boundResizeStage = this.resizeStage.bind(this);
+    this._boundKeyDown = this._onKeyDown.bind(this);
 
     // allow drag with left and right mouse button
     Konva.dragButtons = [0, 2];
@@ -92,9 +107,20 @@ export default class ConfigStage {
     tooltipLayer.add(tooltip);
 
     const static_layer = new Konva.Layer({
-      draggable: true,
+      draggable: false,
     });
     this._reset_static_layer(static_layer);
+
+    this._selectionRect = new Konva.Rect({
+      fill: "rgba(0, 161, 255, 0.3)",
+      visible: false,
+      listening: false,
+    });
+    static_layer.add(this._selectionRect);
+
+    this._stage.on("mousedown", (e: KonvaEventObject<MouseEvent>) => this._onMouseDown(e));
+    this._stage.on("mousemove", (e: KonvaEventObject<MouseEvent>) => this._onMouseMove(e));
+    this._stage.on("mouseup", (e: KonvaEventObject<MouseEvent>) => this._onMouseUp(e));
 
     this._stage.on("wheel", (event: KonvaEventObject<WheelEvent>) => {
       // FIXME (aw): review this code, got copied from Konva docs ...
@@ -145,6 +171,7 @@ export default class ConfigStage {
       tooltip,
       static_layer,
       anim_layer: null,
+      selectionRect: this._selectionRect,
     };
 
     this.context = context;
@@ -166,10 +193,12 @@ export default class ConfigStage {
 
   private registerListeners() {
     window.addEventListener("resize", this._boundResizeStage);
+    window.addEventListener("keydown", this._boundKeyDown);
   }
 
   private unregisterListeners() {
     window.removeEventListener("resize", this._boundResizeStage);
+    window.removeEventListener("keydown", this._boundKeyDown);
   }
 
   public destroy() {
@@ -240,6 +269,210 @@ export default class ConfigStage {
       delete this._module_vms[id];
       this.context.unselect();
     }
+  }
+
+  cut() {
+    this.copy();
+    const selectedIds = this.context.get_selected_instances();
+    selectedIds.forEach((id) => {
+      this._model.delete_module_instance(id);
+    });
+    this.context.unselect();
+  }
+
+  copy() {
+    const selectedIds = this.context.get_selected_instances();
+    if (selectedIds.length === 0) return;
+
+    const modules: CopiedModule[] = [];
+    const connections: CopiedConnection[] = [];
+
+    selectedIds.forEach((id) => {
+      const instance = this._model.get_module_instance(id);
+      if (instance) {
+        modules.push({
+          original_id: String(id),
+          name: instance.id,
+          type: instance.type,
+          config: clone(instance.module_config),
+          view_config: clone(instance.view_config),
+        });
+      }
+    });
+
+    Object.values(this._model.connections).forEach((conn) => {
+      if (
+        selectedIds.includes(conn.providing_instance_id) &&
+        selectedIds.includes(conn.requiring_instance_id)
+      ) {
+        connections.push({
+          provider_original_id: String(conn.providing_instance_id),
+          provider_impl: conn.providing_impl_name,
+          requirer_original_id: String(conn.requiring_instance_id),
+          requirement: conn.requirement_name,
+        });
+      }
+    });
+
+    this._clipboard = {
+      timestamp: Date.now(),
+      modules,
+      connections,
+    };
+
+    if (this.notyf) {
+      this.notyf.success("Modules copied to clipboard");
+    }
+  }
+
+  paste() {
+    if (!this._clipboard) return;
+
+    const snapshot = this._clipboard;
+    const offset = { x: 20, y: 20 };
+
+    const idMap = new Map<string, ModuleInstanceID>();
+    const existingNames = new Set(this._model.get_existing_module_ids());
+    const newInstanceIds: ModuleInstanceID[] = [];
+
+    snapshot.modules.forEach((mod) => {
+      const newName = smart_increment_name(mod.name, existingNames);
+      existingNames.add(newName);
+
+      const newViewConfig = clone(mod.view_config);
+      newViewConfig.position.x += offset.x;
+      newViewConfig.position.y += offset.y;
+
+      const newId = this._model.add_new_module_instance(mod.type, newName, clone(mod.config), newViewConfig);
+      idMap.set(mod.original_id, newId);
+      newInstanceIds.push(newId);
+    });
+
+    snapshot.connections.forEach((conn) => {
+      const providerId = idMap.get(conn.provider_original_id);
+      const requirerId = idMap.get(conn.requirer_original_id);
+
+      if (providerId !== undefined && requirerId !== undefined) {
+        this._model.add_connection({
+          providing_instance_id: providerId,
+          providing_impl_name: conn.provider_impl,
+          requiring_instance_id: requirerId,
+          requirement_name: conn.requirement,
+        });
+      }
+    });
+
+    this.context.select_instances(newInstanceIds);
+  }
+
+  _onKeyDown(e: KeyboardEvent) {
+    if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      return;
+    }
+
+    const cmd = e.metaKey || e.ctrlKey;
+
+    if (cmd && e.key === "c") {
+      this.copy();
+      e.preventDefault();
+    } else if (cmd && e.key === "v") {
+      this.paste();
+      e.preventDefault();
+    } else if (cmd && e.key === "x") {
+      this.cut();
+      e.preventDefault();
+    }
+  }
+
+  _onMouseDown(e: KonvaEventObject<MouseEvent>) {
+    if (e.target !== this._stage && e.target !== this._bg) {
+      return;
+    }
+
+    const pos = this._stage.getPointerPosition();
+    if (!pos) return;
+
+    if (e.evt.button === 0) {
+      this._isSelecting = true;
+      const transform = this._konva.static_layer.getAbsoluteTransform().copy();
+      transform.invert();
+      const layerPos = transform.point(pos);
+      this._selectionStart = layerPos;
+
+      this._selectionRect.width(0);
+      this._selectionRect.height(0);
+      this._selectionRect.position(layerPos);
+      this._selectionRect.visible(true);
+
+      if (!e.evt.shiftKey) {
+        this.context.unselect();
+      }
+    } else if (e.evt.button === 2) {
+      this._isPanning = true;
+      this._panStart = pos;
+    }
+  }
+
+  _onMouseMove(e: KonvaEventObject<MouseEvent>) {
+    if (this._isSelecting) {
+      const pos = this._stage.getPointerPosition();
+      if (!pos) return;
+
+      const transform = this._konva.static_layer.getAbsoluteTransform().copy();
+      transform.invert();
+      const layerPos = transform.point(pos);
+
+      const x = Math.min(this._selectionStart.x, layerPos.x);
+      const y = Math.min(this._selectionStart.y, layerPos.y);
+      const w = Math.abs(layerPos.x - this._selectionStart.x);
+      const h = Math.abs(layerPos.y - this._selectionStart.y);
+
+      this._selectionRect.position({ x, y });
+      this._selectionRect.width(w);
+      this._selectionRect.height(h);
+      this._konva.static_layer.batchDraw();
+    } else if (this._isPanning) {
+      const pos = this._stage.getPointerPosition();
+      if (!pos) return;
+
+      const dx = pos.x - this._panStart.x;
+      const dy = pos.y - this._panStart.y;
+
+      this._konva.static_layer.position({
+        x: this._konva.static_layer.x() + dx,
+        y: this._konva.static_layer.y() + dy,
+      });
+      this._panStart = pos;
+      this._konva.static_layer.batchDraw();
+    }
+  }
+
+  _onMouseUp(e: KonvaEventObject<MouseEvent>) {
+    if (this._isSelecting) {
+      this._isSelecting = false;
+      this._selectionRect.visible(false);
+
+      const box = this._selectionRect.getClientRect();
+      const selectedIds: ModuleInstanceID[] = [];
+
+      for (const [id, view] of Object.entries(this._module_views)) {
+        if (Konva.Util.haveIntersection(box, view.group.getClientRect())) {
+          selectedIds.push(id);
+        }
+      }
+
+      if (selectedIds.length > 0) {
+        if (e.evt.shiftKey) {
+          this.context.add_instances(selectedIds);
+        } else {
+          this.context.select_instances(selectedIds);
+        }
+      }
+
+      this._konva.static_layer.batchDraw();
+    }
+
+    this._isPanning = false;
   }
 
   _handle_stage_context_event(ev: ConfigStageContextEvent) {

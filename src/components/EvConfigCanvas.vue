@@ -70,6 +70,7 @@ export default defineComponent({
           draggable: false, // we only want to have the static layer draggable
         },
         evbcStore.config_context,
+        notyf,
       );
       if (current_config.value) {
         stage.set_model(current_config.value);

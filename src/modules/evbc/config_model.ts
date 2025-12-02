@@ -130,6 +130,10 @@ class EVConfigModel {
     });
   }
 
+  get connections() {
+    return this._connections;
+  }
+
   _module_instance_id_from_module_id(module_id: string) {
     const pair = Object.entries(this._instances).find(([, instance]) => instance.id === module_id);
     return pair ? Number(pair[0]) : null;
@@ -145,14 +149,23 @@ class EVConfigModel {
     });
   }
 
-  add_new_module_instance(module_type: string, module_id?: string): ModuleInstanceID {
+  get_existing_module_ids(): string[] {
+    return Object.values(this._instances).map((i) => i.id);
+  }
+
+  add_new_module_instance(
+    module_type: string,
+    module_id?: string,
+    config?: EverestModuleConfig,
+    view_config?: ModuleViewConfig,
+  ): ModuleInstanceID {
     module_id =
       module_id ||
       get_next_available_name(
         module_type,
         Object.values(this._instances).map((item) => item.id),
       );
-    return this._add_module_instance(module_type, module_id);
+    return this._add_module_instance(module_type, module_id, config, view_config);
   }
 
   delete_module_instance(id: ModuleInstanceID) {
