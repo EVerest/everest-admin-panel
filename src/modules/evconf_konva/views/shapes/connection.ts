@@ -87,8 +87,8 @@ export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig>
     }
 
     this.setAttrs({
-      requirement,
-      provide,
+      requirement: req,
+      provide: prov,
     });
   }
 }

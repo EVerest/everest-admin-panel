@@ -13,11 +13,13 @@ This feature adds Copy, Cut, and Paste functionality to the admin panel canvas.
 
 ### Manual Test Steps
 
-1.  **Selection**:
+1.  **Selection & Navigation**:
     *   Click a module -> Selected.
     *   Shift+Click another -> Both selected.
     *   Click background -> Deselected.
-    *   Drag on background -> Rectangle selection selects enclosed modules.
+    *   **Left-Click Drag** on background -> Rectangle selection selects enclosed modules.
+    *   **Right-Click Drag** on background -> Pans the canvas.
+    *   **Zoom Buttons** -> Click (+) to zoom in, (-) to zoom out.
 
 2.  **Copy/Paste**:
     *   Select a module (e.g., named "Test").

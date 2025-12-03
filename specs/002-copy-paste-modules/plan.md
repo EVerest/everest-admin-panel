@@ -8,10 +8,11 @@
 ## Summary
 
 Implement Copy, Cut, and Paste functionality for the admin panel canvas. This involves:
-1.  **Selection**: Enhancing canvas interactions (Shift+Click, Rectangle Drag).
+1.  **Selection, Navigation & Zoom**: Enhancing canvas interactions (Shift+Click, Left-Click Rectangle Drag for selection, Right-Click Drag for panning, UI Buttons for Zoom).
 2.  **Clipboard**: In-memory storage of serialized module snapshots and internal connections.
 3.  **Paste Logic**: Re-instantiating modules with unique names (Smart Increment), preserving properties, and re-linking internal connections while dropping external ones.
-4.  **UX**: Keyboard shortcuts (Cmd/Ctrl+C/X/V) and visual feedback (Toast).
+4.  **Delete Logic**: Deleting selected modules with confirmation dialog, ensuring input fields are protected.
+5.  **UX**: Keyboard shortcuts (Cmd/Ctrl+C/X/V/Delete) and visual feedback (Toast, Dialog).
 
 ## Technical Context
 
@@ -30,7 +31,7 @@ Implement Copy, Cut, and Paste functionality for the admin panel canvas. This in
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 - **Code Quality**: TypeScript strictness enforced.
-- **Testing**: Unit tests for ID generation and connection mapping; E2E for canvas interactions.
+- **Testing**: Unit tests for ID generation and connection mapping; E2E for canvas interactions. Ensure modules are spaced out in E2E tests to avoid visual overlap and improve screenshot interpretability.
 - **UX Consistency**: Standard keyboard shortcuts; Toast notifications for feedback.
 - **Performance**: In-memory operations are fast; Konva handles rendering efficiently.
 - **Safety**: Input validation via `EVConfigModel` on paste.

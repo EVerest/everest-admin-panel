@@ -31,20 +31,23 @@ description: "Task list for Copy/Paste Modules feature"
 
 ## Phase 3: User Story 3 - Canvas Selection & Dragging (Priority: P1)
 
-**Goal**: Enable multi-selection via Shift+Click and Rectangle Drag to support group operations.
+**Goal**: Enable multi-selection via Shift+Click and Rectangle Drag to support group operations, and restore panning via Right-Click.
 
-**Independent Test**: Shift-click multiple modules, drag one to move all. Drag rectangle on background to select multiple.
+**Independent Test**: Shift-click multiple modules, drag one to move all. Drag rectangle on background (Left-Click) to select multiple. Drag background (Right-Click) to pan. Click Zoom In/Out buttons to scale canvas.
 
 ### Implementation for User Story 3
 
 - [x] T004 [US3] Implement `select_instances` and `toggle_instance_selection` methods in `src/modules/evconf_konva/stage_context.ts`
 - [x] T005 [US3] Update `ModuleView` in `src/modules/evconf_konva/views/module.ts` to handle Shift+Click (additive selection)
-- [x] T006 [US3] Implement rectangle drag selection logic in `src/modules/evconf_konva/config_stage.ts` (handle background pointer events)
-- [x] T007 [US3] Implement visual feedback for multi-selection in `ModuleView` (update stroke/highlight based on selection state)
-- [x] T008 [US3] Update `ModuleView` drag handler to move ALL selected modules when one is dragged
-- [x] T009 [US3] Update right bar logic to detect multi-selection and show a 'Multiple items selected' placeholder state
+- [x] T006 [US3] Implement rectangle drag selection logic (Left-Click) in `src/modules/evconf_konva/config_stage.ts`
+- [x] T007 [US3] Implement manual panning logic (Right-Click) in `src/modules/evconf_konva/config_stage.ts`
+- [x] T008 [US3] Implement Zoom In/Out logic in `src/modules/evconf_konva/config_stage.ts` (methods `zoomIn`, `zoomOut`)
+- [x] T009 [US3] Add Zoom In/Out buttons to `src/components/EvConfigCanvas.vue` and bind to `ConfigStage` methods
+- [x] T010 [US3] Implement visual feedback for multi-selection in `ModuleView` (update stroke/highlight based on selection state)
+- [x] T011 [US3] Update `ModuleView` drag handler to move ALL selected modules when one is dragged
+- [x] T012 [US3] Update right bar logic to detect multi-selection and show a 'Multiple items selected' placeholder state
 
-**Checkpoint**: Multi-selection and group dragging working.
+**Checkpoint**: Multi-selection, group dragging, panning, and zooming working.
 
 ## Phase 4: User Story 1 - Copy & Paste Modules (Priority: P1)
 
@@ -54,11 +57,11 @@ description: "Task list for Copy/Paste Modules feature"
 
 ### Implementation for User Story 1
 
-- [x] T010 [P] [US1] Implement `Smart Increment` name generation utility in `src/modules/evbc/utils.ts` (or `config_model.ts`)
-- [x] T011 [US1] Implement `Copy` logic in `src/modules/evconf_konva/config_stage.ts`: serialize selected modules to `ClipboardSnapshot`
-- [x] T012 [US1] Implement `Paste` logic in `src/modules/evconf_konva/config_stage.ts`: deserialize, generate names, map IDs, recreate connections, apply offset (+20px)
-- [x] T013 [US1] Register keyboard shortcuts (Cmd/Ctrl+C, Cmd/Ctrl+V) in `src/modules/evconf_konva/config_stage.ts`
-- [x] T014 [US1] Add visual confirmation (Toast) for Copy action using Vuetify `VSnackbar`
+- [x] T011 [P] [US1] Implement `Smart Increment` name generation utility in `src/modules/evbc/utils.ts` (or `config_model.ts`)
+- [x] T012 [US1] Implement `Copy` logic in `src/modules/evconf_konva/config_stage.ts`: serialize selected modules to `ClipboardSnapshot`
+- [x] T013 [US1] Implement `Paste` logic in `src/modules/evconf_konva/config_stage.ts`: deserialize, generate names, map IDs, recreate connections, apply offset (+20px)
+- [x] T014 [US1] Register keyboard shortcuts (Cmd/Ctrl+C, Cmd/Ctrl+V) in `src/modules/evconf_konva/config_stage.ts`
+- [x] T015 [US1] Add visual confirmation (Toast) for Copy action using Vuetify `VSnackbar`
 
 **Checkpoint**: Copy/Paste working for single and multiple modules.
 
@@ -70,17 +73,45 @@ description: "Task list for Copy/Paste Modules feature"
 
 ### Implementation for User Story 2
 
-- [x] T015 [US2] Implement `Cut` logic in `src/modules/evconf_konva/config_stage.ts`: Copy + Delete selected instances
-- [x] T016 [US2] Register keyboard shortcut (Cmd/Ctrl+X) in `src/modules/evconf_konva/config_stage.ts`
+- [x] T016 [US2] Implement `Cut` logic in `src/modules/evconf_konva/config_stage.ts`: Copy + Delete selected instances
+- [x] T017 [US2] Register keyboard shortcut (Cmd/Ctrl+X) in `src/modules/evconf_konva/config_stage.ts`
 
 **Checkpoint**: Cut/Paste working.
 
-## Phase 6: Polish & Cross-Cutting
+## Phase 6: User Story 4 - Delete Modules (Priority: P2)
 
-- [x] T017 Verify performance with ~50 modules (ensure no lag during drag/paste)
-- [x] T018 Ensure clipboard clears on page reload (implicit by in-memory storage, but verify)
+**Goal**: Enable deleting modules with confirmation.
 
-## Phase 7: Testing & Verification (Constitution Principle II)
+**Independent Test**: Select -> Delete -> Confirm (disappears). Select -> Delete -> Cancel (remains). Select -> Focus Input -> Type -> Delete (input char deleted, module remains).
 
-- [x] T019 [Test] Write Unit Tests for Smart Increment logic in `src/modules/evbc/utils.test.ts` (create if needed)
-- [x] T020 [Test] Write Cypress E2E test for Copy/Paste flow in `cypress/e2e/copy-paste.cy.ts`
+### Implementation for User Story 4
+
+- [x] T034 [US4] Implement `Delete` logic in `src/modules/evconf_konva/config_stage.ts`: Trigger confirmation dialog
+- [x] T035 [US4] Create Confirmation Dialog component (or use existing `EvDialog`) and integrate with `ConfigStage`
+- [x] T036 [US4] Register keyboard shortcut (Delete/Backspace) in `src/modules/evconf_konva/config_stage.ts`
+- [x] T037 [US4] Implement input focus check to prevent deletion when editing text
+
+**Checkpoint**: Delete with confirmation working.
+
+## Phase 7: Polish & Cross-Cutting
+
+- [x] T018 Verify performance with ~50 modules (ensure no lag during drag/paste)
+- [x] T019 Ensure clipboard clears on page reload (implicit by in-memory storage, but verify)
+
+## Phase 8: Testing & Verification (Constitution Principle II)
+
+- [x] T020 [Test] Write Unit Tests for Smart Increment logic in `src/modules/evbc/utils.test.ts` (create if needed)
+- [x] T021 [Test] Write Cypress E2E test for Copy/Paste flow in `cypress/e2e/copy-paste.cy.ts`
+- [x] T022 [Test] Verify FR-001 (Single selection) & FR-002 (Additive selection) in E2E tests
+- [x] T023 [Test] Verify FR-003 (Rectangle selection) & FR-005 (Group dragging) in E2E tests
+- [x] T024 [Test] Verify FR-004 (Right-click panning) in E2E tests
+- [x] T025 [Test] Verify FR-006 (Copy), FR-007 (Cut), FR-008 (Paste) basic flow in E2E tests
+- [x] T026 [Test] Verify FR-009 (Smart Increment naming) in E2E tests
+- [x] T027 [Test] Verify FR-010 (Offset positioning) & FR-011 (Property retention) in E2E tests
+- [x] T028 [Test] Verify FR-012 (Connection handling) in E2E tests
+- [x] T029 [Test] Verify FR-013 (Right bar summary) in E2E tests
+- [x] T030 [Test] Verify FR-014 (Toast confirmation) in E2E tests
+- [x] T031 [Test] Verify FR-015 (Zoom buttons) & FR-016 (No scroll zoom) in E2E tests
+- [x] T032 [Test] Verify connected module dragging stability (EvseSecurity -> EvseV2G -> EvseManager) in `cypress/e2e/connected-drag.cy.ts`
+- [x] T033 [Test] Verify multi-select dragging moves all selected modules in `cypress/e2e/multi-select-drag.cy.ts`
+- [x] T038 [Test] Verify FR-017 (Delete key), FR-018 (Confirmation), FR-019 (Input protection) in E2E tests

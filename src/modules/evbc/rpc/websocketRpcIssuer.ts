@@ -7,8 +7,8 @@ import { RpcIssuer } from "../../../modules/evbc/rpc/abstractRpcIssuer";
 interface PendingCommand<T = unknown> {
   // These definitions are valid, but the linter finds false positives
   // and complains about unused vars. Disable the rule for these lines.
-  resolve: (value: T) => void; // eslint-disable-line no-unused-vars
-  reject: (reason: Error) => void; // eslint-disable-line no-unused-vars
+  resolve: (value: T) => void;
+  reject: (reason: Error) => void;
 
   timeout_id: ReturnType<typeof setTimeout>;
 }
@@ -89,7 +89,7 @@ export class WebsocketRpcIssuer extends RpcIssuer {
       this._pending_commands.set(id, {
         // This definition is valid, but the linter finds a false positive
         // and complains about unused var. Disable the rule for this lines.
-        resolve: resolve as (value: unknown) => void, // eslint-disable-line no-unused-vars
+        resolve: resolve as (value: unknown) => void,
         reject,
         timeout_id,
       });

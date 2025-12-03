@@ -1,4 +1,4 @@
-import { EverestModuleConfig, ModuleViewConfig } from '../evbc/index';
+import { EverestModuleConfig, ModuleViewConfig, ConfigSetWithSchema } from "../evbc/index";
 
 export type CopiedModule = {
   /** The ID of the module at the time of copy (used for connection mapping) */
@@ -8,7 +8,7 @@ export type CopiedModule = {
   /** The module type (e.g., "EvseManager") */
   type: string;
   /** The configuration values (stripped of schema, similar to EverestModuleConfig) */
-  config: EverestModuleConfig;
+  config: ConfigSetWithSchema;
   /** The visual configuration (position, terminals) */
   view_config: ModuleViewConfig;
 };

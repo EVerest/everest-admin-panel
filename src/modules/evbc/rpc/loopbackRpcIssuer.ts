@@ -115,7 +115,7 @@ export class LoopbackRpcIssuer extends RpcIssuer {
       // (basic shape check) to avoid prototype pollution / mass-assignment issues.
       // There is no unsafe assignment of an 'any' value here, disable the rule
       // for the next line.
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       const safeMerge: Record<string, EverestConfig> = { ...SampleConfigList };
 
       for (const key of Object.keys(parsedConfigs)) {
@@ -133,7 +133,7 @@ export class LoopbackRpcIssuer extends RpcIssuer {
           // There is no object injection possible here, `key` is valid. Also, `val`
           // is safe due to the type guard above.
           // Prevent ESlint from flagging false positives for `safeMerge[key]` and `val`.
-          // eslint-disable-next-line security/detect-object-injection, @typescript-eslint/no-unsafe-assignment
+          // eslint-disable-next-line security/detect-object-injection
           safeMerge[key] = val;
         }
       }

@@ -142,7 +142,7 @@ export default class ModuleView {
       cornerRadius: 4,
       width: SIZE.FRAME_WIDTH,
       height: SIZE.FRAME_HEIGHT,
-      fill: currentTheme.colors.primary,
+      fill: currentTheme.colors["module-primary"],
       shadowBlur: 4,
       shadowOpacity: 0.4,
       shadowOffset: {
@@ -254,7 +254,7 @@ export default class ModuleView {
       }
     } else if (ev.type === "MODULE_MODEL_UPDATE") {
       this._title.setText(this._vm.id);
-      
+
       // Update position if it changed externally (e.g. via multi-selection drag)
       const new_group_pos = {
         x: this._vm.grid_position.x * SIZE.GRID,
@@ -283,11 +283,13 @@ export default class ModuleView {
       }
     } else if (ev.type === "MODULE_SELECTION_CHANGED") {
       if (ev.selected) {
-        this._frame.stroke("white");
-        this._frame.strokeWidth(2);
+        this._frame.stroke("black");
+        this._frame.strokeWidth(4);
+        this._frame.dash([10, 5]);
       } else {
         this._frame.stroke(null);
         this._frame.strokeWidth(0);
+        this._frame.dash([]);
       }
       if (this.group.children.length > 0) {
         this.group.cache();

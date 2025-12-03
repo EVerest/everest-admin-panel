@@ -16,6 +16,9 @@
     "configPage": {
         "toolbarTitle": "EVerest Configuration"
     },
+    "configStage": {
+        "modulesCopied": "Modules copied to clipboard"
+    },
     "connectPage": {
         "componentDefinition": {
             "localhostInstanceId": "Instance on localhost",
@@ -72,11 +75,19 @@
         }
     },
     "evConfigCanvas": {
+        "deleteDialog": {
+            "title": "Delete Modules",
+            "text": "Are you sure you want to delete this module? | Are you sure you want to delete {count} modules?",
+            "accept": "Delete",
+            "deny": "Cancel"
+        },
         "failedToSaveNotification": "Failed to save {config}\nReason: {error}",
         "resetViewTooltip": "Reset View",
         "saveConfigTooltip": "Save Config",
         "showConfigPreviewTooltip": "Show config preview",
-        "successfullySavedNotification": "Successfully saved {config}"
+        "successfullySavedNotification": "Successfully saved {config}",
+        "zoomInTooltip": "Zoom In",
+        "zoomOutTooltip": "Zoom Out"
     },
     "evModuleInfo": {
         "closeTitle": "Discard selection",

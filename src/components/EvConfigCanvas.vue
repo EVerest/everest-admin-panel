@@ -27,6 +27,18 @@
         </template>
         <span>{{ t("evConfigCanvas.resetViewTooltip") }}</span>
       </v-tooltip>
+      <v-tooltip location="left">
+        <template #activator="{ props }">
+          <v-btn id="zoom-in-button" icon="mdi-plus" color="primary" v-bind="props" @click="zoom_in" />
+        </template>
+        <span>{{ t("evConfigCanvas.zoomInTooltip") }}</span>
+      </v-tooltip>
+      <v-tooltip location="left">
+        <template #activator="{ props }">
+          <v-btn id="zoom-out-button" icon="mdi-minus" color="primary" v-bind="props" @click="zoom_out" />
+        </template>
+        <span>{{ t("evConfigCanvas.zoomOutTooltip") }}</span>
+      </v-tooltip>
       <v-tooltip v-if="current_config" location="left">
         <template #activator="{ props }">
           <v-btn id="config-save-button" icon="mdi-content-save" color="primary" v-bind="props" @click="save_config" />
@@ -34,6 +46,15 @@
         <span>{{ t("evConfigCanvas.saveConfigTooltip") }}</span>
       </v-tooltip>
     </div>
+    <ev-dialog
+      :show-dialog="showDeleteDialog"
+      :title="t('evConfigCanvas.deleteDialog.title')"
+      :text="t('evConfigCanvas.deleteDialog.text', { count: deleteCount })"
+      :accept-text="t('evConfigCanvas.deleteDialog.accept')"
+      :deny-text="t('evConfigCanvas.deleteDialog.deny')"
+      @accept="confirmDelete"
+      @deny="showDeleteDialog = false"
+    />
   </v-sheet>
 </template>
 
@@ -45,11 +66,12 @@ import EVConfigModel from "@/modules/evbc/config_model";
 import EVBackendClient from "@/modules/evbc/client";
 import { Notyf } from "notyf";
 import ConfigPreview from "@/components/ConfigPreview.vue";
+import EvDialog from "@/components/EvDialog.vue";
 import { storeToRefs } from "pinia";
 import { useI18n } from "vue-i18n";
 
 export default defineComponent({
-  components: { ConfigPreview },
+  components: { ConfigPreview, EvDialog },
   setup() {
     const evbcStore = useEvbcStore();
     const evbc = inject<EVBackendClient>("evbc");
@@ -59,6 +81,8 @@ export default defineComponent({
     const { t } = useI18n({ useScope: "global" });
 
     ref(false);
+    const showDeleteDialog = ref(false);
+    const deleteCount = ref(0);
 
     let stage: ConfigStage;
     onMounted(() => {
@@ -72,6 +96,14 @@ export default defineComponent({
         evbcStore.config_context,
         notyf,
       );
+      // Expose stage for Cypress tests
+      if ((window as any).Cypress) {
+        (window as any).configStage = stage;
+      }
+      stage.onDeleteRequest = (count: number) => {
+        deleteCount.value = count;
+        showDeleteDialog.value = true;
+      };
       if (current_config.value) {
         stage.set_model(current_config.value);
       }
@@ -83,6 +115,19 @@ export default defineComponent({
 
     const reset_view = () => {
       stage.reset_view();
+    };
+
+    const zoom_in = () => {
+      stage.zoomIn();
+    };
+
+    const zoom_out = () => {
+      stage.zoomOut();
+    };
+
+    const confirmDelete = () => {
+      stage.deleteSelected();
+      showDeleteDialog.value = false;
     };
 
     const save_config = () => {
@@ -114,8 +159,13 @@ export default defineComponent({
       stage,
       current_config,
       reset_view,
+      zoom_in,
+      zoom_out,
       save_config,
       t,
+      showDeleteDialog,
+      deleteCount,
+      confirmDelete,
     };
   },
 });

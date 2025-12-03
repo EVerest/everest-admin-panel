@@ -16,6 +16,9 @@
     "configPage": {
         "toolbarTitle": "EVerest 配置"
     },
+    "configStage": {
+        "modulesCopied": "模块已复制到剪贴板"
+    },
     "connectPage": {
         "componentDefinition": {
             "localhostInstanceId": "本地主机上的实例",
@@ -72,11 +75,19 @@
         }
     },
     "evConfigCanvas": {
+        "deleteDialog": {
+            "title": "删除模块",
+            "text": "您确定要删除此模块吗？ | 您确定要删除 {count} 个模块吗？",
+            "accept": "删除",
+            "deny": "取消"
+        },
         "failedToSaveNotification": "保存 {config} 失败\n原因: {error}",
         "resetViewTooltip": "重置视图",
         "saveConfigTooltip": "保存配置",
         "showConfigPreviewTooltip": "显示配置预览",
-        "successfullySavedNotification": "成功保存 {config}"
+        "successfullySavedNotification": "成功保存 {config}",
+        "zoomInTooltip": "放大",
+        "zoomOutTooltip": "缩小"
     },
     "evModuleInfo": {
         "closeTitle": "放弃选择",

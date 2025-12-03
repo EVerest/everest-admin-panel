@@ -73,6 +73,7 @@ export default class ModuleViewModel {
     stage_context.add_observer((ev) => this._handle_stage_context_event(ev));
     model.add_observer((ev) => {
       if (ev.type === "MODULE_INSTANCE_UPDATED" && ev.id === id) {
+        this._grid_position = this._module_instance.view_config.position;
         this._notify({ type: "MODULE_MODEL_UPDATE" });
       }
     });
@@ -118,6 +119,7 @@ export default class ModuleViewModel {
   }
 
   clicked_title(shiftKey: boolean = false) {
+    console.log("ModuleViewModel.clicked_title called", this._instance_id, shiftKey);
     if (shiftKey) {
       this._stage_context.toggle_instance_selection(this._instance_id);
     } else {
@@ -192,6 +194,15 @@ export default class ModuleViewModel {
   // returns diff or null
   set grid_position(pos: { x: number; y: number }) {
     const old_pos = this._grid_position;
+
+    // If old_pos is undefined (e.g. during initialization if view_config.position was missing),
+    // treat it as 0,0 or just set the new position without calculating diff.
+    if (!old_pos) {
+      this._grid_position = pos;
+      this._config_model.update_module_view_position(this._instance_id, pos);
+      return;
+    }
+
     const dx = pos.x - old_pos.x;
     const dy = pos.y - old_pos.y;
 

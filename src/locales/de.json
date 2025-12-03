@@ -16,6 +16,9 @@
     "configPage": {
         "toolbarTitle": "EVerest-Konfiguration"
     },
+    "configStage": {
+        "modulesCopied": "Module in die Zwischenablage kopiert"
+    },
     "connectPage": {
         "componentDefinition": {
             "localhostInstanceId": "Instanz auf localhost",
@@ -72,11 +75,19 @@
         }
     },
     "evConfigCanvas": {
+        "deleteDialog": {
+            "title": "Module löschen",
+            "text": "Möchten Sie dieses Modul wirklich löschen? | Möchten Sie wirklich {count} Module löschen?",
+            "accept": "Löschen",
+            "deny": "Abbrechen"
+        },
         "failedToSaveNotification": "Speichern von {config} fehlgeschlagen\nUrsache: {error}",
         "resetViewTooltip": "Ansicht zurücksetzen",
         "saveConfigTooltip": "Konfiguration speichern",
         "showConfigPreviewTooltip": "Konfigurationsvorschau anzeigen",
-        "successfullySavedNotification": "Erfolgreich gespeichert {config}"
+        "successfullySavedNotification": "Erfolgreich gespeichert {config}",
+        "zoomInTooltip": "Reinzoomen",
+        "zoomOutTooltip": "Rauszoomen"
     },
     "evModuleInfo": {
         "closeTitle": "Auswahl verwerfen",

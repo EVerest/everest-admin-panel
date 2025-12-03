@@ -229,6 +229,7 @@ class EVConfigModel {
   update_module_view_position(module_instance_id: ModuleInstanceID, pos: ModuleViewConfig["position"]) {
     const module_instance = this.get_module_instance(module_instance_id);
     module_instance.view_config.position = clone(pos);
+    this._notify({ type: "MODULE_INSTANCE_UPDATED", id: module_instance_id });
   }
 
   update_module_view_terminals(module_instance_id: ModuleInstanceID, arrangement: TerminalArrangement) {
@@ -258,6 +259,7 @@ class EVConfigModel {
 
     this._notify({ type: "CONNECTION_DELETED", id: connection_id });
   }
+
 
   get module_definitions() {
     return this._module_definitions;

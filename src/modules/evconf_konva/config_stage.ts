@@ -6,6 +6,7 @@ import { StageConfig } from "konva/lib/Stage";
 import clone from "just-clone";
 import { Notyf } from "notyf";
 import { ConnectionID, ModuleInstanceID } from "@/modules/evbc";
+import { EverestModuleConfig } from "@/modules/evbc/index";
 import EVConfigModel, { ConfigModelEvent } from "@/modules/evbc/config_model";
 import { smart_increment_name } from "@/modules/evbc/utils";
 import ModuleView from "./views/module";
@@ -17,6 +18,8 @@ import { NORMAL_TEXT, TOOLTIP } from "./views/constants";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Vector2d } from "konva/lib/types";
 import { currentTheme } from "@/plugins/vuetify";
+import { i18n } from "@/plugins/i18n";
+import { ComposerTranslation } from "vue-i18n";
 import Stage = Konva.Stage;
 import Layer = Konva.Layer;
 
@@ -36,6 +39,7 @@ export default class ConfigStage {
   _panStart: Vector2d = { x: 0, y: 0 };
   _selectionStart: Vector2d = { x: 0, y: 0 };
   _clipboard: ClipboardSnapshot | null = null;
+  _pasteCount = 0;
 
   _module_views: Record<ModuleInstanceID, ModuleView> = {};
 
@@ -44,6 +48,8 @@ export default class ConfigStage {
   _module_vms: Record<ModuleInstanceID, ModuleViewModel> = {};
 
   _conn_man: ConnectionManager;
+
+  onDeleteRequest?: (count: number) => void;
 
   readonly context: ConfigStageContext;
   private _stage: Stage;
@@ -62,7 +68,7 @@ export default class ConfigStage {
     // This assignment is type-safe. No any is involved, and TypeScript will enforce the
     // correct function signature. There is no unsafe assignment here.
     // Disable the rule for this line only to silence the false positive.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     this._boundResizeStage = this.resizeStage.bind(this);
     this._boundKeyDown = this._onKeyDown.bind(this);
 
@@ -111,58 +117,9 @@ export default class ConfigStage {
     });
     this._reset_static_layer(static_layer);
 
-    this._selectionRect = new Konva.Rect({
-      fill: "rgba(0, 161, 255, 0.3)",
-      visible: false,
-      listening: false,
-    });
-    static_layer.add(this._selectionRect);
-    static_layer.add(this._conn_man.group);
-
     this._stage.on("mousedown", (e: KonvaEventObject<MouseEvent>) => this._onMouseDown(e));
     this._stage.on("mousemove", (e: KonvaEventObject<MouseEvent>) => this._onMouseMove(e));
     this._stage.on("mouseup", (e: KonvaEventObject<MouseEvent>) => this._onMouseUp(e));
-
-    this._stage.on("wheel", (event: KonvaEventObject<WheelEvent>) => {
-      // FIXME (aw): review this code, got copied from Konva docs ...
-      event.evt.preventDefault();
-
-      const oldScale: number = static_layer.scaleX();
-      const pointer: Vector2d = this._stage.getPointerPosition();
-
-      if (!pointer) {
-        return;
-      }
-
-      const mousePointTo = {
-        x: (pointer.x - static_layer.x()) / oldScale,
-        y: (pointer.y - static_layer.y()) / oldScale,
-      };
-
-      // if a trackpad does not give a proper delta, we have to reduce the speed,
-      // because of the high amount of events triggered by a trackpad
-
-      let delta: number;
-      if (event.evt.deltaY === 1 || event.evt.deltaY === -1) {
-        delta = event.evt.deltaY * 0.2;
-      } else {
-        delta = event.evt.deltaY;
-      }
-
-      // invert delta as it is unnatural otherwise
-      delta = -delta;
-
-      const zoomIntensity = 0.005; // Adjust this value to control the zoom speed
-      const scaleBy = Math.exp(delta * zoomIntensity);
-
-      const newScale = oldScale * scaleBy;
-
-      const newPos = {
-        x: pointer.x - mousePointTo.x * newScale,
-        y: pointer.y - mousePointTo.y * newScale,
-      };
-      this.setNewPosAndScale(static_layer, newPos, newScale);
-    });
 
     this._stage.on("wheel", (event: KonvaEventObject<WheelEvent>) => {
       event.evt.preventDefault();
@@ -191,6 +148,12 @@ export default class ConfigStage {
     context.set_container(this._stage.container());
     this.context.add_observer((ev) => this._handle_stage_context_event(ev));
     this.registerListeners();
+
+    // Expose for Cypress testing
+
+    if ((window as any).Cypress) {
+      (window as any).configStage = this;
+    }
 
     setTimeout(() => this.resizeStage(), 1500); // we have to wait for the animation of the splitpanes to finish
   }
@@ -235,6 +198,36 @@ export default class ConfigStage {
 
   public reset_view(): void {
     this.setNewPosAndScale(this._konva.static_layer, { x: 0, y: 0 }, 1);
+  }
+
+  public zoomIn(): void {
+    this.zoom(1.2);
+  }
+
+  public zoomOut(): void {
+    this.zoom(1 / 1.2);
+  }
+
+  private zoom(scaleBy: number): void {
+    const oldScale = this._konva.static_layer.scaleX();
+    const newScale = oldScale * scaleBy;
+
+    const center = {
+      x: this._stage.width() / 2,
+      y: this._stage.height() / 2,
+    };
+
+    const mousePointTo = {
+      x: (center.x - this._konva.static_layer.x()) / oldScale,
+      y: (center.y - this._konva.static_layer.y()) / oldScale,
+    };
+
+    const newPos = {
+      x: center.x - mousePointTo.x * newScale,
+      y: center.y - mousePointTo.y * newScale,
+    };
+
+    this.setNewPosAndScale(this._konva.static_layer, newPos, newScale);
   }
 
   set_model(model: EVConfigModel) {
@@ -314,10 +307,7 @@ export default class ConfigStage {
     });
 
     Object.values(this._model.connections).forEach((conn) => {
-      if (
-        selectedIds.includes(conn.providing_instance_id) &&
-        selectedIds.includes(conn.requiring_instance_id)
-      ) {
+      if (selectedIds.includes(conn.providing_instance_id) && selectedIds.includes(conn.requiring_instance_id)) {
         connections.push({
           provider_original_id: String(conn.providing_instance_id),
           provider_impl: conn.providing_impl_name,
@@ -332,17 +322,20 @@ export default class ConfigStage {
       modules,
       connections,
     };
+    this._pasteCount = 0;
 
     if (this.notyf) {
-      this.notyf.success("Modules copied to clipboard");
+      const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+      this.notyf.success(t("configStage.modulesCopied"));
     }
   }
 
   paste() {
     if (!this._clipboard) return;
 
+    this._pasteCount++;
     const snapshot = this._clipboard;
-    const offset = { x: 20, y: 20 };
+    const offset = { x: 2 * this._pasteCount, y: 2 * this._pasteCount };
 
     const idMap = new Map<string, ModuleInstanceID>();
     const existingNames = new Set(this._model.get_existing_module_ids());
@@ -356,7 +349,12 @@ export default class ConfigStage {
       newViewConfig.position.x += offset.x;
       newViewConfig.position.y += offset.y;
 
-      const newId = this._model.add_new_module_instance(mod.type, newName, clone(mod.config), newViewConfig);
+      const newId = this._model.add_new_module_instance(
+        mod.type,
+        newName,
+        clone(mod.config) as unknown as EverestModuleConfig,
+        newViewConfig,
+      );
       idMap.set(mod.original_id, newId);
       newInstanceIds.push(newId);
     });
@@ -378,6 +376,21 @@ export default class ConfigStage {
     this.context.select_instances(newInstanceIds);
   }
 
+  requestDelete() {
+    const selectedIds = this.context.get_selected_instances();
+    if (selectedIds.length > 0 && this.onDeleteRequest) {
+      this.onDeleteRequest(selectedIds.length);
+    }
+  }
+
+  deleteSelected() {
+    const selectedIds = this.context.get_selected_instances();
+    selectedIds.forEach((id) => {
+      this._model.delete_module_instance(id);
+    });
+    this.context.unselect();
+  }
+
   _onKeyDown(e: KeyboardEvent) {
     if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
       return;
@@ -393,6 +406,9 @@ export default class ConfigStage {
       e.preventDefault();
     } else if (cmd && e.key === "x") {
       this.cut();
+      e.preventDefault();
+    } else if (e.key === "Delete" || e.key === "Backspace") {
+      this.requestDelete();
       e.preventDefault();
     }
   }
@@ -422,6 +438,13 @@ export default class ConfigStage {
       if (!e.evt.shiftKey) {
         this.context.unselect();
       }
+    } else if (e.evt.button === 2) {
+      this._isPanning = true;
+      this._stage.container().style.cursor = "grabbing";
+      this._panStart = {
+        x: pos.x - this._konva.static_layer.x(),
+        y: pos.y - this._konva.static_layer.y(),
+      };
     }
   }
 
@@ -443,6 +466,15 @@ export default class ConfigStage {
       this._selectionRect.width(w);
       this._selectionRect.height(h);
       this._konva.static_layer.batchDraw();
+    } else if (this._isPanning) {
+      const pos = this._stage.getPointerPosition();
+      if (!pos) return;
+
+      this._konva.static_layer.position({
+        x: pos.x - this._panStart.x,
+        y: pos.y - this._panStart.y,
+      });
+      this._konva.static_layer.batchDraw();
     }
   }
 
@@ -456,7 +488,7 @@ export default class ConfigStage {
 
       for (const [id, view] of Object.entries(this._module_views)) {
         if (Konva.Util.haveIntersection(box, view.group.getClientRect())) {
-          selectedIds.push(id);
+          selectedIds.push(Number(id));
         }
       }
 
@@ -470,6 +502,10 @@ export default class ConfigStage {
 
       this._konva.static_layer.batchDraw();
     }
+    if (this._isPanning) {
+      this._stage.container().style.cursor = "default";
+    }
+    this._isPanning = false;
   }
 
   _handle_stage_context_event(ev: ConfigStageContextEvent) {
@@ -559,12 +595,16 @@ export default class ConfigStage {
     });
     this._bg.on("pointerclick", () => this.context.unselect());
     static_layer.add(this._bg);
-    static_layer.on("dragstart", () => {
-      this._stage.container().style.cursor = "grab";
+
+    this._selectionRect = new Konva.Rect({
+      fill: "rgba(0, 161, 255, 0.3)",
+      visible: false,
+      listening: false,
     });
-    static_layer.on("dragend", () => {
-      this._stage.container().style.cursor = "default";
-      this._bg.setAbsolutePosition({ x: 0, y: 0 });
-    });
+    static_layer.add(this._selectionRect);
+
+    if (this._konva) {
+      this._konva.selectionRect = this._selectionRect;
+    }
   }
 }

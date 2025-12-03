@@ -27,6 +27,7 @@ export const everestTheme = {
     background: "#EFEDE8",
     surface: "#EFEDE8",
     primary: "#254C84",
+    "module-primary": "#1A365D", // Darker blue for modules
     secondary: "#35CE7C",
     error: "#b9352b",
     info: "#254C84",

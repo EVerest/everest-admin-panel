@@ -242,6 +242,7 @@ export default defineComponent({
 
     const module_node = computed(() => {
       const selected_instances = evbcStore.get_selected_module_instances();
+      console.log("EvModuleInfo: selected_instances", selected_instances);
       if (selected_instances.length > 1) {
         return {
           isMultiSelect: true,
