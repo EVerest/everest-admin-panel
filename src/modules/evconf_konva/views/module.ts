@@ -13,7 +13,7 @@ import { i18n } from "../../../plugins/i18n";
 import { ComposerTranslation } from "vue-i18n";
 
 // FIXME (aw): the TerminalPlacement type belongs to a shared place!
-type TerminalPlacementWithID = TerminalPlacement & { id: number };
+export type TerminalPlacementWithID = TerminalPlacement & { id: number };
 
 type TerminalsUpdatedEvent = {
   readonly type: "TERMINALS_UPDATED";
@@ -254,6 +254,30 @@ export default class ModuleView {
       }
     } else if (ev.type === "MODULE_MODEL_UPDATE") {
       this._title.setText(this._vm.id);
+      
+      // Update position if it changed externally (e.g. via multi-selection drag)
+      const new_group_pos = {
+        x: this._vm.grid_position.x * SIZE.GRID,
+        y: this._vm.grid_position.y * SIZE.GRID,
+      };
+      this.group.position(new_group_pos);
+
+      // Notify terminals updated so connections can redraw
+      const update_terminals = this._terminal_views.map((item, id): TerminalPlacementWithID => {
+        return {
+          alignment: item.terminal_alignment,
+          id,
+          x: item.x() + new_group_pos.x,
+          y: item.y() + new_group_pos.y,
+        };
+      });
+
+      this._notify({
+        type: "TERMINALS_UPDATED",
+        terminals: update_terminals,
+        module_moved: true,
+      });
+
       if (this.group.children.length > 0) {
         this.group.cache();
       }

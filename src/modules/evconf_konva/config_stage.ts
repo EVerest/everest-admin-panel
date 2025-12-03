@@ -117,6 +117,7 @@ export default class ConfigStage {
       listening: false,
     });
     static_layer.add(this._selectionRect);
+    static_layer.add(this._conn_man.group);
 
     this._stage.on("mousedown", (e: KonvaEventObject<MouseEvent>) => this._onMouseDown(e));
     this._stage.on("mousemove", (e: KonvaEventObject<MouseEvent>) => this._onMouseMove(e));
@@ -161,6 +162,18 @@ export default class ConfigStage {
         y: pointer.y - mousePointTo.y * newScale,
       };
       this.setNewPosAndScale(static_layer, newPos, newScale);
+    });
+
+    this._stage.on("wheel", (event: KonvaEventObject<WheelEvent>) => {
+      event.evt.preventDefault();
+      const dx = event.evt.deltaX;
+      const dy = event.evt.deltaY;
+
+      this._konva.static_layer.position({
+        x: this._konva.static_layer.x() - dx,
+        y: this._konva.static_layer.y() - dy,
+      });
+      this._konva.static_layer.batchDraw();
     });
 
     this._stage.add(static_layer);
@@ -385,6 +398,7 @@ export default class ConfigStage {
   }
 
   _onMouseDown(e: KonvaEventObject<MouseEvent>) {
+    // If we clicked on a module or connection, let them handle it
     if (e.target !== this._stage && e.target !== this._bg) {
       return;
     }
@@ -403,13 +417,11 @@ export default class ConfigStage {
       this._selectionRect.height(0);
       this._selectionRect.position(layerPos);
       this._selectionRect.visible(true);
+      this._selectionRect.moveToTop(); // Ensure selection rect is on top
 
       if (!e.evt.shiftKey) {
         this.context.unselect();
       }
-    } else if (e.evt.button === 2) {
-      this._isPanning = true;
-      this._panStart = pos;
     }
   }
 
@@ -430,19 +442,6 @@ export default class ConfigStage {
       this._selectionRect.position({ x, y });
       this._selectionRect.width(w);
       this._selectionRect.height(h);
-      this._konva.static_layer.batchDraw();
-    } else if (this._isPanning) {
-      const pos = this._stage.getPointerPosition();
-      if (!pos) return;
-
-      const dx = pos.x - this._panStart.x;
-      const dy = pos.y - this._panStart.y;
-
-      this._konva.static_layer.position({
-        x: this._konva.static_layer.x() + dx,
-        y: this._konva.static_layer.y() + dy,
-      });
-      this._panStart = pos;
       this._konva.static_layer.batchDraw();
     }
   }
@@ -471,8 +470,6 @@ export default class ConfigStage {
 
       this._konva.static_layer.batchDraw();
     }
-
-    this._isPanning = false;
   }
 
   _handle_stage_context_event(ev: ConfigStageContextEvent) {
