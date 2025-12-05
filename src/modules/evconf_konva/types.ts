@@ -1,4 +1,4 @@
-import { EverestModuleConfig, ModuleViewConfig, ConfigSetWithSchema } from "../evbc/index";
+import { ModuleViewConfig, ConfigSetWithSchema } from "../evbc/index";
 
 export type CopiedModule = {
   /** The ID of the module at the time of copy (used for connection mapping) */

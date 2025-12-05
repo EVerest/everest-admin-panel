@@ -46,6 +46,7 @@ description: "Task list for Copy/Paste Modules feature"
 - [x] T010 [US3] Implement visual feedback for multi-selection in `ModuleView` (update stroke/highlight based on selection state)
 - [x] T011 [US3] Update `ModuleView` drag handler to move ALL selected modules when one is dragged
 - [x] T012 [US3] Update right bar logic to detect multi-selection and show a 'Multiple items selected' placeholder state
+- [x] T039 [US3] Implement auto-zoom logic on config load in `src/modules/evconf_konva/config_stage.ts` to fit all modules
 
 **Checkpoint**: Multi-selection, group dragging, panning, and zooming working.
 
@@ -97,6 +98,25 @@ description: "Task list for Copy/Paste Modules feature"
 
 - [x] T018 Verify performance with ~50 modules (ensure no lag during drag/paste)
 - [x] T019 Ensure clipboard clears on page reload (implicit by in-memory storage, but verify)
+
+## Phase 8: User Story 5 - Connection Creation Overhaul (Priority: P1)
+
+**Goal**: Implement drag-to-connect workflow with visual feedback.
+
+**Independent Test**: Drag outgoing interface -> Incompatible modules ghost -> Drop on compatible module -> Connection created.
+
+### Implementation for User Story 5
+
+- [x] T040 [US5] Add `power-plug` and `power-socket` SVG paths to `src/modules/evconf_konva/views/constants.ts`
+- [x] T041 [US5] Update `TerminalShape` in `src/modules/evconf_konva/views/shapes/terminal.ts` to render icons based on type
+- [x] T042 [US5] Update `ModuleView` in `src/modules/evconf_konva/views/module.ts` to emit `TERMINAL_DRAG_START/MOVE/END` events to `ConfigStage` (unless Alt is pressed)
+- [x] T043 [US5] Implement `_handle_connection_drag_start` in `ConfigStage`: Initialize drag state, create temporary line, calculate compatibility
+- [x] T044 [US5] Implement `set_ghost` method in `ModuleView` and call it from `ConfigStage` for incompatible modules
+- [x] T045 [US5] Implement `set_highlight_terminals` method in `ModuleView` and call it from `ConfigStage` for compatible targets
+- [x] T046 [US5] Implement `_handle_connection_drag_move` in `ConfigStage`: Update drag line position, update highlighting
+- [x] T047 [US5] Implement `_handle_connection_drag_end` in `ConfigStage`: Check drop target, create connection via `evbc`, reset state
+- [x] T048 [US5] Verify legacy Alt+Drag behavior for terminal rearrangement
+
 
 ## Phase 8: Testing & Verification (Constitution Principle II)
 

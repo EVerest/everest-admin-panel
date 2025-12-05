@@ -2,7 +2,7 @@
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
-import { LineConfig } from "konva/lib/shapes/Line";
+import { ArrowConfig } from "konva/lib/shapes/Arrow";
 import { TerminalAlignment } from "@/modules/evbc";
 import { COLOR, SIZE } from "../constants";
 
@@ -12,39 +12,50 @@ export type TerminalPlacement = {
   y: number;
 };
 
-interface ConnectionConfig extends LineConfig {
+interface ConnectionConfig extends ArrowConfig {
   requirement: TerminalPlacement;
   provide: TerminalPlacement;
 }
 
 // FIXME (aw): do this lookup get unrolled for performance?
+const TERMINAL_OFFSET = 10;
 const correction = {
   top: {
     x: 0,
-    y: -SIZE.GRID / 2,
+    y: -TERMINAL_OFFSET,
   },
   right: {
-    x: SIZE.GRID / 2,
+    x: TERMINAL_OFFSET,
     y: 0,
   },
   bottom: {
     x: 0,
-    y: SIZE.GRID / 2,
+    y: TERMINAL_OFFSET,
   },
   left: {
-    x: -SIZE.GRID / 2,
+    x: -TERMINAL_OFFSET,
     y: 0,
   },
 };
 
-export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig> extends Konva.Line {
+export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig> extends Konva.Arrow {
   constructor(config: Config) {
     config.bezier = config.bezier || true;
     config.strokeWidth = config.strokeWidth || SIZE.CONNECTION_WIDTH;
     config.stroke = config.stroke || COLOR.CONNECTION;
+    config.fill = config.stroke;
+    config.pointerLength = 10;
+    config.pointerWidth = 10;
+    config.pointerAtBeginning = true;
+    config.pointerAtEnding = false;
     super(config);
 
     this.update_terminals(config.requirement, config.provide);
+  }
+
+  updateTheme() {
+    this.stroke(COLOR.CONNECTION);
+    this.fill(COLOR.CONNECTION);
   }
 
   update_terminals(requirement: TerminalPlacement, provide: TerminalPlacement, animate = false) {
@@ -76,7 +87,7 @@ export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig>
 
     const points = [req_x, req_y, cps[0][0], cps[0][1], cps[1][0], cps[1][1], prov_x, prov_y];
 
-    if (animate) {
+    if (animate && this.getLayer()) {
       this.to({
         points,
         duration: 0.2,

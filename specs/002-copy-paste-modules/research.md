@@ -32,3 +32,30 @@
     *   *Cons*: Requires permission prompts; complexity with serialization formats.
     *   *Decision*: Rejected for now (Out of Scope per spec assumptions), stick to in-memory.
 
+## Research: Connection Overhaul (Added 2025-12-04)
+
+### 1. Iconography
+- **Decision**: Use Material Design `power-plug` for outgoing (provides) and `power-socket` for incoming (requires) interfaces.
+- **Rationale**: Standard industry metaphor for connections. Clear visual distinction between source and sink.
+- **Implementation**: Add SVG paths to `src/modules/evconf_konva/views/constants.ts`.
+
+### 2. Drag Interaction Model
+- **Decision**: Implement a "Drag State Machine" in `ConfigStage`.
+- **States**:
+    - `IDLE`: Normal interaction.
+    - `CONNECTION_DRAG`: Active when dragging a terminal without Alt.
+    - `REARRANGE_DRAG`: Active when dragging a terminal with Alt.
+- **Rationale**: Centralized handling in `ConfigStage` allows for global effects like ghosting incompatible modules and drawing the temporary connection line, which crosses module boundaries.
+
+### 3. Visual Feedback (Ghosting & Enlarging)
+- **Decision**: Use `opacity` for ghosting and `scale` for enlarging.
+- **Rationale**: Konva handles these properties efficiently.
+- **Mechanism**:
+    - `ConfigStage` iterates over `_module_views`.
+    - Calls `set_ghost(boolean)` on incompatible modules.
+    - Calls `set_highlight_terminals(interface_name, type)` on compatible modules to enlarge specific terminals.
+
+### 4. Ambiguity Resolution
+- **Decision**: Connect to the closest compatible terminal on drop.
+- **Rationale**: User intent is usually spatial. If they drop on the module body, the closest terminal is the most likely target.
+

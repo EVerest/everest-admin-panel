@@ -4,7 +4,7 @@
 <template>
   <v-expansion-panels v-model="expansionPanelState" class="ma-0">
     <v-expansion-panel data-cy="modules-expansion-panel" value="modules" :disabled="!current_config">
-      <v-expansion-panel-title>{{ t("evModuleList.modulesPanelTitle") }}</v-expansion-panel-title>
+      <v-expansion-panel-title>{{ modulesPanelTitle }}</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-text-field
           v-if="show_search"
@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, inject } from "vue";
+import { ref, computed, inject, watch } from "vue";
 import { useEvbcStore } from "@/store/evbc";
 import EVBackendClient from "@/modules/evbc/client";
 import EvDialog from "@/components/EvDialog.vue";
@@ -95,6 +95,7 @@ import CreateConfig from "@/components/CreateConfig.vue";
 import { EverestConfig } from "@/modules/evbc";
 import { useErrorStore } from "@/store/errorStore";
 import { useI18n } from "vue-i18n";
+import { default_terminals } from "@/modules/evbc/utils";
 
 const evbcStore = useEvbcStore();
 const errorStore = useErrorStore();
@@ -109,6 +110,18 @@ const expansionPanelState = ref<string[]>(["configs"]);
 
 const current_config = computed<EVConfigModel | null>(() => evbcStore.current_config);
 const show_search = computed<boolean>(() => !evbcStore.get_selected_terminal());
+
+const modulesPanelTitle = computed(() => {
+  const selectedTerminal = evbcStore.get_selected_terminal();
+  if (selectedTerminal) {
+    if (selectedTerminal.type === "requirement") {
+      return t("evModuleList.modulesPanelTitleProviding", { interface: selectedTerminal.interface });
+    } else {
+      return t("evModuleList.modulesPanelTitleRequiring", { interface: selectedTerminal.interface });
+    }
+  }
+  return t("evModuleList.modulesPanelTitle");
+});
 
 const filtered_module_list = computed(() => {
   const selectedTerminal = evbcStore.get_selected_terminal();
@@ -154,10 +167,27 @@ const config_list = computed(() => {
   return Object.entries(evbcStore.available_configs).map(([key]) => key);
 });
 
+watch(
+  () => evbcStore.get_selected_terminal(),
+  (newVal) => {
+    if (newVal) {
+      expansionPanelState.value = ["modules"];
+    }
+  },
+);
+
 function add_module_to_config(type: string) {
   let added_module_id: number;
   if (evbcStore.current_config) {
-    added_module_id = evbcStore.current_config.add_new_module_instance(type);
+    const definition = evbc.everest_definitions.modules[type];
+    const terminals = default_terminals(definition);
+    const center = evbcStore.get_config_context().get_viewport_center?.();
+    const position = center ? { x: Math.round(center.x), y: Math.round(center.y) } : { x: 0, y: 0 };
+
+    added_module_id = evbcStore.current_config.add_new_module_instance(type, undefined, undefined, {
+      position,
+      terminals,
+    });
   } else {
     throw new Error("No config loaded");
   }
@@ -172,6 +202,7 @@ function add_module_to_config(type: string) {
       terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
     }
     evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
+    evbcStore.get_config_context().unselect();
   }
 }
 

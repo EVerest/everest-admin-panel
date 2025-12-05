@@ -29,13 +29,19 @@
       </v-tooltip>
       <v-tooltip location="left">
         <template #activator="{ props }">
-          <v-btn id="zoom-in-button" icon="mdi-plus" color="primary" v-bind="props" @click="zoom_in" />
+          <v-btn id="zoom-in-button" icon="mdi-magnify-plus-outline" color="primary" v-bind="props" @click="zoom_in" />
         </template>
         <span>{{ t("evConfigCanvas.zoomInTooltip") }}</span>
       </v-tooltip>
       <v-tooltip location="left">
         <template #activator="{ props }">
-          <v-btn id="zoom-out-button" icon="mdi-minus" color="primary" v-bind="props" @click="zoom_out" />
+          <v-btn
+            id="zoom-out-button"
+            icon="mdi-magnify-minus-outline"
+            color="primary"
+            v-bind="props"
+            @click="zoom_out"
+          />
         </template>
         <span>{{ t("evConfigCanvas.zoomOutTooltip") }}</span>
       </v-tooltip>
@@ -69,6 +75,7 @@ import ConfigPreview from "@/components/ConfigPreview.vue";
 import EvDialog from "@/components/EvDialog.vue";
 import { storeToRefs } from "pinia";
 import { useI18n } from "vue-i18n";
+import { useTheme } from "vuetify";
 
 export default defineComponent({
   components: { ConfigPreview, EvDialog },
@@ -79,6 +86,7 @@ export default defineComponent({
     const notyf = inject<Notyf>("notyf");
     const { current_config: current_config } = storeToRefs(evbcStore);
     const { t } = useI18n({ useScope: "global" });
+    const theme = useTheme();
 
     ref(false);
     const showDeleteDialog = ref(false);
@@ -98,8 +106,19 @@ export default defineComponent({
       );
       // Expose stage for Cypress tests
       if ((window as any).Cypress) {
-        (window as any).configStage = stage;
+        (window as any).configStage = this;
       }
+
+      stage.updateTheme(theme.global.current.value.colors as any);
+
+      watch(
+        () => theme.global.current.value.colors,
+        (newColors) => {
+          stage.updateTheme(newColors as any);
+        },
+        { deep: true },
+      );
+
       stage.onDeleteRequest = (count: number) => {
         deleteCount.value = count;
         showDeleteDialog.value = true;
@@ -114,7 +133,7 @@ export default defineComponent({
     });
 
     const reset_view = () => {
-      stage.reset_view();
+      stage.zoomToFit();
     };
 
     const zoom_in = () => {

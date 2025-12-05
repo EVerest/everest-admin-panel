@@ -6,7 +6,7 @@
     <v-app-bar color="primary">
       <v-app-bar-nav-icon data-cy="hamburger-menu" @click="drawer = !drawer" />
       <v-spacer />
-      <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo_white.svg" />
+      <v-img class="mx-4 rotateable" max-height="40" max-width="40" :src="logoSrc" :style="logoStyle" />
       <v-toolbar-title class="app-bar-title">{{ t("mainPanel.toolbarTitle") }}</v-toolbar-title>
       <v-spacer />
       <LanguageSelector />
@@ -60,6 +60,7 @@ import LanguageSelector from "@/components/LanguageSelector.vue";
 import { Router, useRouter } from "vue-router";
 import { Notyf } from "notyf";
 import { useI18n } from "vue-i18n";
+import { useTheme } from "vuetify";
 
 let evbc: EVBackendClient;
 let router: Router;
@@ -71,7 +72,8 @@ export default defineComponent({
   },
   setup() {
     const { t } = useI18n();
-    return { t };
+    const theme = useTheme();
+    return { t, theme };
   },
   data: () => ({
     drawer: false,
@@ -82,6 +84,12 @@ export default defineComponent({
   computed: {
     connectionUrl() {
       return evbc?.connection.url ?? "nothing";
+    },
+    logoSrc() {
+      return "/img/icons/everest_lf_logo_white.svg";
+    },
+    logoStyle() {
+      return this.theme.global.current.value.dark ? { filter: "brightness(0)" } : {};
     },
   },
   created() {

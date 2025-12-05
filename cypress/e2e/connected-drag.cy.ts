@@ -47,7 +47,7 @@ describe("Connected Module Dragging", () => {
     });
   };
 
-  const connectModules = (
+  const _connectModules = (
     sourceModule: string,
     sourceTerminalIndex: number,
     targetModule: string,

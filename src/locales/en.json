@@ -129,6 +129,8 @@
         "configWarningDialogText": "Do you want to discard the current config and load the new one?",
         "configWarningDialogTitle": "Warning",
         "modulesPanelTitle": "Available modules",
+        "modulesPanelTitleProviding": "Modules providing {interface}",
+        "modulesPanelTitleRequiring": "Modules requiring {interface}",
         "restartModules": "Issued restart modules command",
         "searchFieldLabel": "Search"
     },

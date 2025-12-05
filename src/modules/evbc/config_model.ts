@@ -89,6 +89,20 @@ class EVConfigModel {
   _instances: Record<ModuleInstanceID, ModuleInstanceModel> = {};
   _connections: Record<ConnectionID, Connection> = {};
 
+  is_terminal_connected(
+    instance_id: ModuleInstanceID,
+    terminal_id: string,
+    terminal_type: "provide" | "requirement",
+  ): boolean {
+    return Object.values(this._connections).some((conn) => {
+      if (terminal_type === "provide") {
+        return conn.providing_instance_id === instance_id && conn.providing_impl_name === terminal_id;
+      } else {
+        return conn.requiring_instance_id === instance_id && conn.requirement_name === terminal_id;
+      }
+    });
+  }
+
   // FIXME (aw): refactor this functionality like a mixin or something similar
   readonly _event_handlers: EventHandler<ConfigModelEvent>[] = [];
 
@@ -190,7 +204,10 @@ class EVConfigModel {
   add_connection(conn: Connection): ConnectionID {
     this._validate_connection(conn);
 
-    this._connection_exists(conn);
+    const existing_id = this._find_existing_connection_id(conn);
+    if (existing_id !== null) {
+      return existing_id;
+    }
 
     const new_connection_id = this._next_connection_id;
     this._next_connection_id++;
@@ -259,7 +276,6 @@ class EVConfigModel {
 
     this._notify({ type: "CONNECTION_DELETED", id: connection_id });
   }
-
 
   get module_definitions() {
     return this._module_definitions;
@@ -339,7 +355,6 @@ class EVConfigModel {
     return Object.entries(schema).map(([key, value]) => {
       // There is no object injection possible here, `key` is valid and checked.
       // Prevent ESlint from flagging a false positive for `config[key]`.
-      // eslint-disable-next-line security/detect-object-injection
       const config_value: unknown = config !== undefined && key in config ? config[key] : value.default;
       return { schema: { ...value, title: key }, model: config_value };
     });
@@ -503,7 +518,7 @@ class EVConfigModel {
     const req_module = this._instances[req_id].type;
     const req_manifest = this._module_definitions[req_module];
 
-    if (!(conn.providing_impl_name in prov_manifest.provides)) {
+    if (!prov_manifest.provides || !(conn.providing_impl_name in prov_manifest.provides)) {
       throw Error(
         t("config_model.providingModuleDoesNotProvideError", {
           moduleType: prov_module,
@@ -512,7 +527,7 @@ class EVConfigModel {
       );
     }
 
-    if (!(conn.requirement_name in req_manifest.requires)) {
+    if (!req_manifest.requires || !(conn.requirement_name in req_manifest.requires)) {
       throw Error(
         t("config_model.requiringModuleDoesNotRequireError", {
           moduleType: req_module,
@@ -529,19 +544,18 @@ class EVConfigModel {
     }
   }
 
-  _connection_exists(conn: Connection) {
-    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
-
-    for (const [, other_conn] of Object.entries(this._connections)) {
+  _find_existing_connection_id(conn: Connection): ConnectionID | null {
+    for (const [id, other_conn] of Object.entries(this._connections)) {
       if (
         conn.providing_impl_name === other_conn.providing_impl_name &&
         conn.providing_instance_id === other_conn.providing_instance_id &&
         conn.requirement_name === other_conn.requirement_name &&
         conn.requiring_instance_id === other_conn.requiring_instance_id
       ) {
-        throw Error(t("config_model.connectionExistsError", { connection: JSON.stringify(conn, null, 2) }));
+        return parseInt(id, 10);
       }
     }
+    return null;
   }
 
   _add_connection_to_instance(instance_id: ModuleInstanceID, connection_id: ConnectionID) {

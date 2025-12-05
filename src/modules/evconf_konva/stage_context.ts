@@ -6,6 +6,7 @@ import { Connection, ConnectionID, ModuleInstanceID, Terminal } from "../evbc";
 type TerminalSelection = {
   type: "TERMINAL";
   terminal: Terminal;
+  moduleId: ModuleInstanceID;
 };
 
 type ModuleInstanceSelection = {
@@ -50,9 +51,11 @@ type ConfigStageContextEventHandler = (ev: ConfigStageContextEvent) => void;
 export default class ConfigStageContext {
   readonly _event_handlers: ConfigStageContextEventHandler[] = [];
   container: HTMLDivElement;
+  get_viewport_center?: () => { x: number; y: number };
 
   _current_selected_terminal: Terminal & { module_instance_id: ModuleInstanceID } = null;
   _selected_instances: Set<ModuleInstanceID> = new Set();
+  _selected_connection_id: ConnectionID | null = null;
 
   // constructor() {}
 
@@ -61,7 +64,10 @@ export default class ConfigStageContext {
   }
 
   remove_observer(handler: ConfigStageContextEventHandler) {
-    this._event_handlers.splice(this._event_handlers.indexOf(handler), 1);
+    const index = this._event_handlers.indexOf(handler);
+    if (index !== -1) {
+      this._event_handlers.splice(index, 1);
+    }
   }
 
   set_container(container: HTMLDivElement) {
@@ -76,21 +82,28 @@ export default class ConfigStageContext {
     this._selected_instances.clear();
   }
 
+  _clear_connection_selection() {
+    this._selected_connection_id = null;
+  }
+
   select_instances(ids: ModuleInstanceID[]) {
     this._clear_terminal_selection();
     this._clear_instance_selection();
+    this._clear_connection_selection();
     ids.forEach((id) => this._selected_instances.add(id));
     this._publish_selection();
   }
 
   add_instances(ids: ModuleInstanceID[]) {
     this._clear_terminal_selection();
+    this._clear_connection_selection();
     ids.forEach((id) => this._selected_instances.add(id));
     this._publish_selection();
   }
 
   toggle_instance_selection(id: ModuleInstanceID) {
     this._clear_terminal_selection();
+    this._clear_connection_selection();
     if (this._selected_instances.has(id)) {
       this._selected_instances.delete(id);
     } else {
@@ -105,6 +118,10 @@ export default class ConfigStageContext {
 
   get_selected_instances(): ModuleInstanceID[] {
     return Array.from(this._selected_instances);
+  }
+
+  get_selected_connection(): ConnectionID | null {
+    return this._selected_connection_id;
   }
 
   _publish_selection() {
@@ -126,12 +143,34 @@ export default class ConfigStageContext {
 
   clicked_terminal(terminal: Terminal, module_instance_id: ModuleInstanceID) {
     if (!this._current_selected_terminal) {
-      this._publish({ type: "SELECT", selection: { type: "TERMINAL", terminal } });
+      this._clear_connection_selection();
+      this._publish({ type: "SELECT", selection: { type: "TERMINAL", terminal, moduleId: module_instance_id } });
       this._current_selected_terminal = {
         ...terminal,
         module_instance_id,
       };
 
+      return;
+    }
+
+    // If clicking the same terminal again, unselect it
+    if (
+      this._current_selected_terminal.id === terminal.id &&
+      this._current_selected_terminal.module_instance_id === module_instance_id &&
+      this._current_selected_terminal.type === terminal.type
+    ) {
+      this.unselect();
+      return;
+    }
+
+    // If clicking a terminal of the same type (e.g. both are requirements), switch selection to the new one
+    if (this._current_selected_terminal.type === terminal.type) {
+      this._clear_connection_selection();
+      this._publish({ type: "SELECT", selection: { type: "TERMINAL", terminal, moduleId: module_instance_id } });
+      this._current_selected_terminal = {
+        ...terminal,
+        module_instance_id,
+      };
       return;
     }
 
@@ -155,6 +194,7 @@ export default class ConfigStageContext {
   unselect() {
     this._clear_terminal_selection();
     this._clear_instance_selection();
+    this._clear_connection_selection();
     this._publish({
       type: "SELECT",
       selection: { type: "NONE" },
@@ -163,6 +203,8 @@ export default class ConfigStageContext {
 
   clicked_connection(id: ConnectionID) {
     this._clear_terminal_selection();
+    this._clear_instance_selection();
+    this._selected_connection_id = id;
     this._publish({
       type: "SELECT",
       selection: { type: "CONNECTION", id },

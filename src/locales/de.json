@@ -129,6 +129,8 @@
         "configWarningDialogText": "Möchten Sie die aktuelle Konfiguration verwerfen und die neue laden?",
         "configWarningDialogTitle": "Warnung",
         "modulesPanelTitle": "Verfügbare Module",
+        "modulesPanelTitleProviding": "Module, die {interface} bereitstellen",
+        "modulesPanelTitleRequiring": "Module, die {interface} benötigen",
         "restartModules": "Neustart-Befehl für Module ausgeführt",
         "searchFieldLabel": "Suche"
     },

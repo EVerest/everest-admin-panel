@@ -3,9 +3,10 @@
 
 import Konva from "konva";
 import { ConnectionID, TerminalType } from "../evbc";
-import ConfigStageContext from "./stage_context";
+import ConfigStageContext, { ConfigStageContextEvent } from "./stage_context";
 import ModuleView from "./views/module";
 import { ConnectionShape } from "./views/shapes/connection";
+import { SIZE } from "./views/constants";
 
 type ConnectionItem = {
   id: ConnectionID;
@@ -36,10 +37,37 @@ export default class ConnectionManager {
   readonly connections: ConnectionItem[] = [];
   readonly _registered_modules: ModuleLookup = [];
   readonly _stage_context: ConfigStageContext;
+  private _boundHandleStageContextEvent: (ev: ConfigStageContextEvent) => void;
 
   constructor(stage_context: ConfigStageContext) {
     this.group = new Konva.Group();
     this._stage_context = stage_context;
+    this._boundHandleStageContextEvent = this._handle_stage_context_event.bind(this);
+    this._stage_context.add_observer(this._boundHandleStageContextEvent);
+  }
+
+  destroy() {
+    this._stage_context.remove_observer(this._boundHandleStageContextEvent);
+    this.group.destroy();
+  }
+
+  updateTheme() {
+    this.connections.forEach((c) => c.view.updateTheme());
+  }
+
+  _handle_stage_context_event(ev: ConfigStageContextEvent) {
+    if (ev.type === "SELECT") {
+      const selectedId = ev.selection.type === "CONNECTION" ? ev.selection.id : null;
+      this.connections.forEach((cxn) => {
+        if (cxn.id === selectedId) {
+          cxn.view.strokeWidth(SIZE.CONNECTION_WIDTH * 2);
+          cxn.view.moveToTop();
+        } else {
+          cxn.view.strokeWidth(SIZE.CONNECTION_WIDTH);
+        }
+      });
+      this.group.getLayer()?.batchDraw();
+    }
   }
 
   add_connection(id: ConnectionID, provide: ConnectionHalf, requirement: ConnectionHalf) {
@@ -47,6 +75,7 @@ export default class ConnectionManager {
     const requiring_placement = requirement.module_view.get_terminal_placement(requirement.terminal_lookup_id);
 
     const connection_view = new ConnectionShape({
+      points: [],
       provide: providing_placement,
       requirement: requiring_placement,
       hitStrokeWidth: 12, // FIXME (aw): constant
@@ -77,7 +106,7 @@ export default class ConnectionManager {
     const cxn_index = this.connections.findIndex((cxn) => cxn.id === id);
     const cxn_item = this.connections[cxn_index];
     cxn_item.view.destroy();
-    this.connections.slice(cxn_index, 1);
+    this.connections.splice(cxn_index, 1);
   }
 
   // FIXME (aw): naming on half etc

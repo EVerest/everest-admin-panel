@@ -25,6 +25,7 @@ type ModifyTerminalsEvent = {
   readonly normal: number[];
   readonly disable: number[];
   readonly highlight: number[];
+  readonly connected: number[];
 };
 
 type ModuleModelUpdateEvent = {
@@ -75,8 +76,67 @@ export default class ModuleViewModel {
       if (ev.type === "MODULE_INSTANCE_UPDATED" && ev.id === id) {
         this._grid_position = this._module_instance.view_config.position;
         this._notify({ type: "MODULE_MODEL_UPDATE" });
+      } else if (ev.type === "CONNECTION_ADDED" || ev.type === "CONNECTION_DELETED") {
+        this.update_terminal_appearance();
       }
     });
+  }
+
+  is_terminal_connected(terminal_index: number): boolean {
+    const terminal = this.terminal_lookup[terminal_index].terminal;
+    return this._config_model.is_terminal_connected(this._instance_id, terminal.id, terminal.type);
+  }
+
+  update_terminal_appearance() {
+    const normal: number[] = [];
+    const connected: number[] = [];
+
+    this.terminal_lookup.forEach((_, index) => {
+      if (this.is_terminal_connected(index)) {
+        connected.push(index);
+      } else {
+        normal.push(index);
+      }
+    });
+
+    this._notify({
+      type: "TERMINAL_MODIFY_APPEARENCE",
+      normal,
+      connected,
+      disable: [],
+      highlight: [],
+    });
+  }
+
+  highlight_compatible_terminals(interfaceName: string, type: string, blockedTerminals: Set<number> = new Set()) {
+    const modify_event: ModifyTerminalsEvent = {
+      type: "TERMINAL_MODIFY_APPEARENCE",
+      disable: [],
+      highlight: [],
+      normal: [],
+      connected: [],
+    };
+
+    this.terminal_lookup.forEach((item, id) => {
+      if (
+        item.terminal.type !== type &&
+        (type === "provide"
+          ? this._config_model.interfaces_match(interfaceName, item.terminal.interface)
+          : this._config_model.interfaces_match(item.terminal.interface, interfaceName))
+      ) {
+        if (blockedTerminals.has(id)) {
+          modify_event.disable.push(id);
+        } else if (this.is_terminal_connected(id)) {
+          modify_event.connected.push(id);
+        } else {
+          modify_event.normal.push(id);
+        }
+        return;
+      }
+
+      modify_event.disable.push(id);
+    });
+    this._notify(modify_event);
   }
 
   _initialize_terminals(terminal_arrangement: TerminalArrangement) {
@@ -119,7 +179,6 @@ export default class ModuleViewModel {
   }
 
   clicked_title(shiftKey: boolean = false) {
-    console.log("ModuleViewModel.clicked_title called", this._instance_id, shiftKey);
     if (shiftKey) {
       this._stage_context.toggle_instance_selection(this._instance_id);
     } else {
@@ -156,17 +215,32 @@ export default class ModuleViewModel {
         disable: [],
         highlight: [],
         normal: [],
+        connected: [],
       };
 
       const terminal = selection_event.terminal;
 
       this.terminal_lookup.forEach((item, id) => {
         if (
+          this._instance_id === selection_event.moduleId &&
+          item.terminal.id === terminal.id &&
+          item.terminal.type === terminal.type
+        ) {
+          modify_event.connected.push(id);
+          return;
+        }
+
+        if (
           item.terminal.type !== terminal.type &&
           (terminal.type === "provide"
             ? this._config_model.interfaces_match(terminal.interface, item.terminal.interface)
             : this._config_model.interfaces_match(item.terminal.interface, terminal.interface))
         ) {
+          if (this.is_terminal_connected(id)) {
+            modify_event.connected.push(id);
+          } else {
+            modify_event.normal.push(id);
+          }
           return;
         }
 
@@ -174,12 +248,7 @@ export default class ModuleViewModel {
       });
       this._notify(modify_event);
     } else {
-      this._notify({
-        type: "TERMINAL_MODIFY_APPEARENCE",
-        normal: Array.from(this.terminal_lookup.keys()),
-        disable: [],
-        highlight: [],
-      });
+      this.update_terminal_appearance();
     }
   }
 

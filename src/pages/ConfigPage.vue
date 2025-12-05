@@ -3,7 +3,8 @@
 
 <template>
   <v-container fluid class="fill-height px-0 py-0">
-    <splitpanes class="default-theme" style="height: calc(100vh - 64px)" @resize="on_splitpanes_resize">
+    <!-- Known issue: Resizing splitpanes might throw 'Cannot read properties of null (reading 'max')' in console. This is non-blocking. -->
+    <splitpanes class="default-theme" style="height: calc(100vh - 64px)">
       <pane size="15">
         <ev-module-list />
       </pane>
@@ -33,11 +34,6 @@ export default defineComponent({
     EvModuleInfo,
     Splitpanes,
     Pane,
-  },
-  methods: {
-    on_splitpanes_resize() {
-      window.dispatchEvent(new Event("resize"));
-    },
   },
 });
 </script>

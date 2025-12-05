@@ -8,6 +8,7 @@ html {
 .splitpanes__pane {
   background-color: transparent !important;
   overflow-y: scroll !important;
+  overflow-x: hidden !important;
   padding: 0;
 
   &:nth-of-type(3) {
@@ -16,5 +17,10 @@ html {
 }
 
 .splitpanes__splitter {
-  background-color: rgba(var(--v-theme-on-background), 0.05) !important;
+  background-color: rgba(var(--v-theme-on-background), 0.12) !important;
+  z-index: 10 !important;
+}
+
+.default-theme.splitpanes--vertical > .splitpanes__splitter {
+  border-left: 1px solid rgba(var(--v-theme-on-background), 0.12) !important;
 }

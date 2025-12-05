@@ -16,7 +16,6 @@ export const useEvbcStore = defineStore("evbc", () => {
 
   config_context.add_observer((ev) => {
     if (ev.type === "SELECT") {
-      console.log("Store received SELECT event", ev.selection);
       selection.value = ev.selection;
     }
   });

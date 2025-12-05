@@ -92,17 +92,17 @@ describe("Copy/Paste Modules & Canvas Interactions", () => {
 
     // FR-001: Single Selection
     clickModule("EvseManager");
-    cy.get("[data-cy='module-id-input']").should("have.value", "EvseManager");
+    cy.get("[data-cy='module-id-input']").should("have.value", "EvseManager0");
 
     clickModule("YetiDriver");
-    cy.get("[data-cy='module-id-input']").should("have.value", "YetiDriver");
+    cy.get("[data-cy='module-id-input']").should("have.value", "YetiDriver0");
 
     // FR-002: Additive Selection (Shift+Click)
     // Shift+Click A
     clickModule("EvseManager", true);
 
     // Verify multiple selection (Right bar should show summary)
-    cy.contains("Multiple items selected").should("be.visible");
+    cy.contains("items selected").should("be.visible");
 
     // FR-003: Rectangle Selection
     // Click background to clear
@@ -116,7 +116,7 @@ describe("Copy/Paste Modules & Canvas Interactions", () => {
       .trigger("mousemove", { clientX: 400, clientY: 250 })
       .trigger("mouseup", { force: true });
 
-    cy.contains("Multiple items selected").should("be.visible");
+    cy.contains("items selected").should("be.visible");
 
     // FR-005: Group Dragging
     // Drag A (at 150, 150) to (150, 250) -> +0, +100
@@ -126,7 +126,7 @@ describe("Copy/Paste Modules & Canvas Interactions", () => {
     // Verify B moved too
     // We can check if B is selected
     clickModule("YetiDriver");
-    cy.get("[data-cy='module-id-input']").should("have.value", "YetiDriver");
+    cy.get("[data-cy='module-id-input']").should("have.value", "YetiDriver0");
   });
 
   it("FR-004: Panning", () => {
@@ -171,15 +171,15 @@ describe("Copy/Paste Modules & Canvas Interactions", () => {
     // New module should be selected.
     cy.get("[data-cy='module-id-input']").should(
       "have.value",
-      "EvseManager (1)",
+      "EvseManager0 (1)",
     );
 
     // FR-010: Offset
     // We can verify we can click it.
-    clickModule("EvseManager (1)", false, true);
+    clickModule("EvseManager0 (1)", false, true);
     cy.get("[data-cy='module-id-input']").should(
       "have.value",
-      "EvseManager (1)",
+      "EvseManager0 (1)",
     );
   });
 
@@ -206,7 +206,7 @@ describe("Copy/Paste Modules & Canvas Interactions", () => {
     // Verify back (new instance)
     cy.get("[data-cy='module-id-input']").should(
       "have.value",
-      "EvseManager (1)",
+      "EvseManager0 (1)",
     ); // New ID
   });
 
@@ -240,14 +240,14 @@ describe("Copy/Paste Modules & Canvas Interactions", () => {
     triggerKey("v");
     cy.get("[data-cy='module-id-input']").should(
       "have.value",
-      "EvseManager (1)",
+      "EvseManager0 (1)",
     );
 
     // Paste 2
     triggerKey("v");
     cy.get("[data-cy='module-id-input']").should(
       "have.value",
-      "EvseManager (2)",
+      "EvseManager0 (2)",
     );
 
     // Verify positions

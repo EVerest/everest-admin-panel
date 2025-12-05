@@ -35,8 +35,30 @@ export const everestTheme = {
     warning: "#c09112",
     "on-background": "#212121",
     "on-surface": "#212121",
+    "on-secondary": "#212121",
+    disabled: "#d5d4cc",
   },
 };
+
+export const everestThemeDark = {
+  dark: true,
+  colors: {
+    background: "#121212",
+    surface: "#212121",
+    primary: "#90CAF9",
+    "module-primary": "#0D47A1",
+    secondary: "#69F0AE",
+    error: "#CF6679",
+    info: "#2196F3",
+    success: "#4CAF50",
+    warning: "#FB8C00",
+    "on-background": "#FFFFFF",
+    "on-surface": "#FFFFFF",
+    "on-secondary": "#212121",
+    disabled: "#616161",
+  },
+};
+
 export const currentTheme = everestTheme;
 export default createVuetify({
   blueprint: md3,
@@ -44,6 +66,7 @@ export default createVuetify({
     defaultTheme: "everestTheme",
     themes: {
       everestTheme,
+      everestThemeDark,
     },
   },
   locale: {

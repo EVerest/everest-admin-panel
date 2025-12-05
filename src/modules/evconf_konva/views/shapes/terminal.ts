@@ -14,9 +14,11 @@ export interface TerminalConfig extends PathConfig {
 
 // this view sticks to the Konva infrastructure of shapes
 export class TerminalShape<Config extends TerminalConfig = TerminalConfig> extends Konva.Path {
+  private _currentLook: "DISABLED" | "NORMAL" | "PLACEHOLDER" | "CONNECTED" = "NORMAL";
+
   constructor(config: Config) {
     // FIXME (aw): the static path string should go to constants!
-    config.data = config.data || ICON_DATA.TERMINAL;
+    config.data = config.data || (config.terminal_type === "provide" ? ICON_DATA.PLUG : ICON_DATA.SOCKET);
 
     config.fill =
       config.fill || config.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE;
@@ -78,10 +80,11 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
   //   }
   // }
 
-  set_appearence(look: "DISABLED" | "NORMAL" | "PLACEHOLDER") {
+  set_appearence(look: "DISABLED" | "NORMAL" | "PLACEHOLDER" | "CONNECTED") {
+    this._currentLook = look;
     // FIXME (aw): this function might still assume some knowledge about the order in which the appearence was set
     if (look !== "DISABLED") {
-      this.data(ICON_DATA.TERMINAL);
+      this.data(this.terminal_type === "provide" ? ICON_DATA.PLUG : ICON_DATA.SOCKET);
     }
     if (look === "DISABLED") {
       this.data(ICON_DATA.DISABLED);
@@ -94,9 +97,17 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
         this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED,
       );
       this.listening(false);
+    } else if (look === "CONNECTED") {
+      this.data(ICON_DATA.CONNECTED);
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
+      this.listening(true);
     } else if (look === "NORMAL") {
       this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
       this.listening(true);
     }
+  }
+
+  updateTheme() {
+    this.set_appearence(this._currentLook);
   }
 }

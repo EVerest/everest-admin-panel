@@ -50,7 +50,7 @@ describe("Delete Modules", () => {
 
     // Verify confirmation dialog appears
     cy.contains("Delete Modules").should("be.visible");
-    cy.contains("Are you sure you want to delete 1 module(s)?").should(
+    cy.contains("Are you sure you want to delete this module?").should(
       "be.visible",
     );
 

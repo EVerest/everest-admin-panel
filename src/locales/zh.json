@@ -129,6 +129,8 @@
         "configWarningDialogText": "是否要丢弃当前配置并加载新配置？",
         "configWarningDialogTitle": "警告",
         "modulesPanelTitle": "可用模块",
+        "modulesPanelTitleProviding": "提供 {interface} 的模块",
+        "modulesPanelTitleRequiring": "需要 {interface} 的模块",
         "restartModules": "已发出重启模块命令",
         "searchFieldLabel": "搜索"
     },
