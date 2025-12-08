@@ -54,6 +54,7 @@ type CopiedConnection = {
 ## State Transitions
 
 ### Copy
+
 1.  Identify selected `ModuleInstanceID`s.
 2.  For each instance:
     *   Serialize config (Model -> `EverestModuleConfig`).
@@ -64,6 +65,7 @@ type CopiedConnection = {
 5.  Store `ClipboardSnapshot` in memory.
 
 ### Paste
+
 1.  Retrieve `ClipboardSnapshot`.
 2.  Calculate position offset (e.g., +20px).
 3.  For each `CopiedModule`:

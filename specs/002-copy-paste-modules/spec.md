@@ -107,12 +107,12 @@ As a user, I want to create connections by dragging from one module's interface 
 
 **Acceptance Scenarios**:
 
-1.  **Given** a module with outgoing interfaces, **When** user drags an outgoing interface icon, **Then** a connection line follows the mouse, and all modules NOT accepting this interface type fade out (ghosted).
-2.  **Given** a connection drag in progress, **When** the mouse hovers near a compatible module, **Then** the compatible incoming interface icons on that module enlarge (3x size).
-3.  **Given** a connection drag in progress, **When** user releases the mouse over a compatible module (body or terminal), **Then** a connection is created to the closest compatible terminal.
-4.  **Given** a connection drag in progress, **When** user releases the mouse over an incompatible module or background, **Then** the action is cancelled.
-5.  **Given** a module, **When** user holds **Alt** and drags a terminal, **Then** the terminal position on the module is rearranged (legacy behavior).
-6.  **Given** a module, **When** user drags a terminal WITHOUT Alt, **Then** a new connection drag is initiated.
+1. **Given** a module with outgoing interfaces, **When** user drags an outgoing interface icon, **Then** a connection line follows the mouse, and all modules NOT accepting this interface type fade out (ghosted).
+2. **Given** a connection drag in progress, **When** the mouse hovers near a compatible module, **Then** the compatible incoming interface icons on that module enlarge (3x size).
+3. **Given** a connection drag in progress, **When** user releases the mouse over a compatible module (body or terminal), **Then** a connection is created to the closest compatible terminal.
+4. **Given** a connection drag in progress, **When** user releases the mouse over an incompatible module or background, **Then** the action is cancelled.
+5. **Given** a module, **When** user holds **Alt** and drags a terminal, **Then** the terminal position on the module is rearranged (legacy behavior).
+6. **Given** a module, **When** user drags a terminal WITHOUT Alt, **Then** a new connection drag is initiated.
 
 ## Requirements *(mandatory)*
 
