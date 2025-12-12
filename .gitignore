@@ -35,3 +35,12 @@ cypress/screenshots
 
 # vitest
 /coverage
+
+# spec-kit
+.github/copilot-instructions.md
+.github/agents
+.github/prompts
+.github/workflows/speckit.yml
+.specify/scripts
+.specify/templates
+
