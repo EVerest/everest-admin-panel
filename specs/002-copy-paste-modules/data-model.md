@@ -55,26 +55,26 @@ type CopiedConnection = {
 
 ### Copy
 
-1.  Identify selected `ModuleInstanceID`s.
-2.  For each instance:
-    *   Serialize config (Model -> `EverestModuleConfig`).
-    *   Clone `view_config`.
-    *   Create `CopiedModule`.
-3.  Identify connections where `provider` AND `requirer` are in the selection.
-4.  Create `CopiedConnection`s.
-5.  Store `ClipboardSnapshot` in memory.
+1. Identify selected `ModuleInstanceID`s.
+2. For each instance:
+    * Serialize config (Model -> `EverestModuleConfig`).
+    * Clone `view_config`.
+    * Create `CopiedModule`.
+3. Identify connections where `provider` AND `requirer` are in the selection.
+4. Create `CopiedConnection`s.
+5. Store `ClipboardSnapshot` in memory.
 
 ### Paste
 
-1.  Retrieve `ClipboardSnapshot`.
-2.  Calculate position offset (e.g., +20px).
-3.  For each `CopiedModule`:
-    *   Generate new unique ID (Smart Increment).
-    *   Call `EVConfigModel.add_new_module_instance` with new ID and config.
-    *   Update `view_config` position.
-    *   Map `original_id` -> `new_id`.
-4.  For each `CopiedConnection`:
-    *   Resolve `new_provider_id` and `new_requirer_id` using the map.
-    *   Call `EVConfigModel.add_connection`.
-5.  Update selection to the newly created instances.
+1. Retrieve `ClipboardSnapshot`.
+2. Calculate position offset (e.g., +20px).
+3. For each `CopiedModule`:
+    * Generate new unique ID (Smart Increment).
+    * Call `EVConfigModel.add_new_module_instance` with new ID and config.
+    * Update `view_config` position.
+    * Map `original_id` -> `new_id`.
+4. For each `CopiedConnection`:
+    * Resolve `new_provider_id` and `new_requirer_id` using the map.
+    * Call `EVConfigModel.add_connection`.
+5. Update selection to the newly created instances.
 

@@ -9,13 +9,13 @@
 
 Implement Copy, Cut, and Paste functionality for the admin panel canvas, along with a graphical overhaul of connection creation. This involves:
 
-1.  **Selection, Navigation & Zoom**: Enhancing canvas interactions (Shift+Click, Left-Click Rectangle Drag for selection, Right-Click Drag for panning, UI Buttons for Zoom).
-2.  **Clipboard**: In-memory storage of serialized module snapshots and internal connections.
-3.  **Paste Logic**: Re-instantiating modules with unique names (Smart Increment), preserving properties, and re-linking internal connections while dropping external ones.
-4.  **Delete Logic**: Deleting selected modules with confirmation dialog, ensuring input fields are protected.
-5.  **UX**: Keyboard shortcuts (Cmd/Ctrl+C/X/V/Delete) and visual feedback (Toast, Dialog).
-6.  **Auto-Zoom**: Automatically adjusting zoom and pan to fit all modules when a config is loaded.
-7.  **Connection Overhaul**: Drag-to-connect workflow with visual feedback (ghosting incompatible modules, enlarging targets) and new icons (plug/socket).
+1. **Selection, Navigation & Zoom**: Enhancing canvas interactions (Shift+Click, Left-Click Rectangle Drag for selection, Right-Click Drag for panning, UI Buttons for Zoom).
+2. **Clipboard**: In-memory storage of serialized module snapshots and internal connections.
+3. **Paste Logic**: Re-instantiating modules with unique names (Smart Increment), preserving properties, and re-linking internal connections while dropping external ones.
+4. **Delete Logic**: Deleting selected modules with confirmation dialog, ensuring input fields are protected.
+5. **UX**: Keyboard shortcuts (Cmd/Ctrl+C/X/V/Delete) and visual feedback (Toast, Dialog).
+6. **Auto-Zoom**: Automatically adjusting zoom and pan to fit all modules when a config is loaded.
+7. **Connection Overhaul**: Drag-to-connect workflow with visual feedback (ghosting incompatible modules, enlarging targets) and new icons (plug/socket).
 
 ## Technical Context
 

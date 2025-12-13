@@ -6,6 +6,7 @@
 ## Stack Summary
 
 ### Dependencies
+
 - @fontsource/open-sans-condensed
 - @fontsource/roboto
 - @highlightjs/vue-plugin
@@ -33,6 +34,7 @@
 - vuetify
 
 ### DevDependencies
+
 - @babel/types
 - @eslint/compat
 - @eslint/js
@@ -62,6 +64,7 @@
 - ws
 
 ## Key folders
+
 - src/ — application source code
 - public/ — public assets
 - cypress/ — end-to-end tests
@@ -84,9 +87,9 @@
 
 ## Development Notes (copilot-instructions)
 
-# Project Overview
+## Project Overview
 
-## Stack
+### Stack
 
 - Vue 3 (Composition API) + TypeScript
 - Vite
@@ -94,18 +97,18 @@
 - Vuetify
 - Frontend app that communicates with a backend via RPC-over-WebSocket
 
-## Purpose
+### Purpose
 
 Admin UI for EVerest configuration data, module files, and runtime management. Main backend integration lives under `src/modules/evbc`.
 
-# High-level Architecture & Dataflow
+## High-level Architecture & Dataflow
 
 - **App bootstrap:** `src/main.ts` installs Vue plugins (`src/plugins/*`) and router (`src/router`).
 - **State management:** Pinia stores in `src/store` (see `evbc.ts`). Stores keep `available_configs`, connection state, and UI flags.
 - **Backend RPC:** `src/modules/evbc/connection.ts` implements connection + `rpc_issuer`. `client.ts` (`EVBackendClient`) wraps connection lifecycle and publishes connection events consumed by UI components.
 - **Config model:** `src/modules/evbc/config_model.ts` (`EVConfigModel`) encapsulates config load/serialize logic and is the canonical model for config manipulation.
 
-# Key Files & Directories
+## Key Files & Directories
 
 - `src/modules/evbc/` : connection, client, config model, rpc issuers
 - `src/modules/evbc/simulator-sample-data/` : simulator sample data and extractor script `update-simulator-data.js`. This extractor script is run on nightly builds to keep the simulator data in sync with the latest interface/module definitions from the main EVerest repository.
@@ -114,29 +117,35 @@ Admin UI for EVerest configuration data, module files, and runtime management. M
 - `public/schemas` and `build-tools/fetch-schemas-plugin.ts` : schema artifacts and build integration.
 - `cypress/` : E2E tests (fixtures + specs) and `cypress.config.ts`.
 
-# Developer Workflows & Short Commands
+## Developer Workflows & Short Commands
+
 - Install deps (repo uses `pnpm`):
 ```bash
 pnpm install
 ```
+
 - Run dev server:
 ```bash
 pnpm dev
 ```
+
 - Build / preview:
 ```bash
 pnpm build
 pnpm preview
 ```
+
 - Unit tests (Vitest):
 ```bash
 pnpm test
 ```
+
 - E2E tests (Cypress):
 ```bash
 pnpm run test:e2e      # headless
 pnpm run test:e2e:open # open interactive runner
 ```
+
 - Linting:
 ```bash
 pnpm lint
@@ -144,28 +153,27 @@ pnpm run lint:fix
 pnpm vue-tsc
 ```
 
-# Project-Specific Conventions
+## Project-Specific Conventions
 
 - **i18n in events:** Connection events often use computed `i18n` strings, e.g. `computed(() => String(t(...)))` in `client.ts`. When using these messages outside Vue rendering, unwrap them with `unref()`.
 - **RPC usage:** Use `this._cxn.rpc_issuer.<method>` for backend calls. These are async and often followed by store updates via `EVBackendClient` methods (e.g. `_reload_configs`).
 - **Config lifecycle:** Use `create_config_model(name, config?)` or `load_config(name)` from `EVBackendClient` to create `EVConfigModel` instances. Persist via `save_config()` which calls RPC and reloads configs.
 - **Simulator data:** For offline development, `src/modules/evbc/simulator-sample-data/` contains sample configs and interfaces that are safe to use in tests.
 
-# Testing & Debugging Tips
+## Testing & Debugging Tips
 
 - Run `pnpm dev` and open the browser console to see errors
 - To follow connection lifecycle, inspect `src/modules/evbc/client.ts` (event publishing) and `src/modules/evbc/connection.ts` (low-level socket behavior).
 - Use the simulator dataset to exercise UI flows without a backend.
 - Run Vitest with `-w 1` to simplify debugging output.
 
-
 ## README excerpt
 
-# EVerest Admin Panel
+## EVerest Admin Panel
 
 [![Stable release](https://img.shields.io/badge/demo-click_to_open-brightgreen.svg)](https://everest.github.io/everest-admin-panel/stable)
 
-## Introduction
+### Introduction
 
 The EVerest Admin Panel is a beta-stage frontend tool designed for graphically
 editing the EVerest configuration file and controlling or restarting the
@@ -173,24 +181,24 @@ EVerest process.
 It provides a user-friendly interface for managing EVerest instances and
 includes a simulator for experimenting without an actual EVerest instance.
 
-## Table of Contents
+### Table of Contents
 
-- [EVerest Admin Panel](#everest-admin-panel)
-  - [Introduction](#introduction)
-  - [Table of Contents](#table-of-contents)
-  - [Features](#features)
-  - [Demo](#demo)
-  - [Development](#development)
-    - [Releasing a new version](#releasing-a-new-version)
-    - [Updating the simulator data](#updating-the-simulator-data)
-    - [Updating config/interface-schemas](#updating-configinterface-schemas)
-  - [Documentation](#documentation)
-  - [Troubleshooting](#troubleshooting)
-  - [Contributing](#contributing)
-  - [Dependencies](#dependencies)
-  - [License](#license)
+- EVerest Admin Panel
+  - Introduction
+  - Table of Contents
+  - Features
+  - Demo
+  - Development
+    - Releasing a new version
+    - Updating the simulator data
+    - Updating config/interface-schemas
+  - Documentation
+  - Troubleshooting
+  - Contributing
+  - Dependencies
+  - License
 
-## Features
+### Features
 
 - **Edit EVerest Configuration Files**: Easily modify your EVerest
   configuration directly from the admin panel.
@@ -201,7 +209,7 @@ includes a simulator for experimenting without an actual EVerest instance.
 - **Restart EVerest**: Restart your EVerest instance with the click of a
   button.
 
-## Demo
+### Demo
 
 We continuously deploy the latest tagged version of the admin panel to
 GitHub Pages: [Demo](https://everest.github.io/everest-admin-panel/stable).

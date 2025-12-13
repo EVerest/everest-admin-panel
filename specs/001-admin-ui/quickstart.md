@@ -25,5 +25,6 @@ pnpm run test:e2e
 ```
 
 Developer notes
+
 - Use `src/modules/evbc/simulator-sample-data` to inspect sample configurations and interfaces.
 - Add AJV schemas under `specs/001-admin-ui/contracts/` and `public/schemas/` to enable schema-driven validation.

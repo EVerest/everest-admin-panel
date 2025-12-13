@@ -117,7 +117,6 @@ description: "Task list for Copy/Paste Modules feature"
 - [x] T047 [US5] Implement `_handle_connection_drag_end` in `ConfigStage`: Check drop target, create connection via `evbc`, reset state
 - [x] T048 [US5] Verify legacy Alt+Drag behavior for terminal rearrangement
 
-
 ## Phase 8: Testing & Verification (Constitution Principle II)
 
 - [x] T020 [Test] Write Unit Tests for Smart Increment logic in `src/modules/evbc/utils.test.ts` (create if needed)

@@ -8,9 +8,9 @@ This feature adds Copy, Cut, and Paste functionality to the admin panel canvas.
 
 ### Prerequisites
 
-1.  Run the dev server: `pnpm dev`.
-2.  Open the app and navigate to the Configuration editor.
-3.  Ensure you have at least one module on the canvas.
+1. Run the dev server: `pnpm dev`.
+2. Open the app and navigate to the Configuration editor.
+3. Ensure you have at least one module on the canvas.
 
 ### Manual Test Steps
 
