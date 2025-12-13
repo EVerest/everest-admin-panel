@@ -32,6 +32,7 @@ Rationale: High code quality reduces regressions and eases future automation and
 Testing is mandatory: unit tests for all library logic and component logic (Vitest), and E2E tests for critical user flows (Cypress). Tests MUST be deterministic and fast where possible.
 
 Rules:
+
 - Developers MUST add unit tests for new features and bug fixes.
 - Contract changes (public interfaces or RPC schemas) MUST include tests that demonstrate migration or backward compatibility behavior.
 - E2E tests should cover connection lifecycle, config create/save/load flows, and module selection flows.
@@ -43,6 +44,7 @@ Rationale: Tests are the single best protection against regression, and they ena
 The UI MUST present consistent interactions, labeling, and error handling across screens. Use centralized i18n messages and shared UI components for common behaviors (toasts, dialogs, confirmation flows).
 
 Rules:
+
 - All user-visible strings MUST go through `vue-i18n` and be present in `locales/`.
 - Shared components (buttons, dialogs, notifications) MUST be used instead of ad-hoc implementations.
 - Long-running operations MUST show progress and support cancellation where appropriate.
@@ -54,6 +56,7 @@ Rationale: Consistency reduces training and operational mistakes for administrat
 The application MUST remain responsive under typical admin workloads. Keep initial load time and runtime interactions performant.
 
 Rules:
+
 - Aim for reasonable bundle sizes (use code-splitting for infrequently used pages).
 - UI interactions (drag, drop, canvas redraw) MUST remain under 16ms where feasible; expensive operations should be throttled/debounced or moved off the main thread.
 - Use lazy-loading for large modules and images.
@@ -65,6 +68,7 @@ Rationale: Admins must quickly inspect and modify configuration; poor performanc
 External inputs (backend RPCs, localStorage, uploaded files) MUST be treated as untrusted. Validate at the perimeter and instrument operations for debugging.
 
 Rules:
+
 - Use runtime type guards or AJV schema validation before merging external JSON into app state.
 - Prevent prototype pollution by iterating own properties and rejecting keys like `__proto__`.
 - Log important lifecycle events and errors with structured messages; surface high-level connection states in the UI.

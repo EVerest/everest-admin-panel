@@ -77,4 +77,3 @@ type CopiedConnection = {
     * Resolve `new_provider_id` and `new_requirer_id` using the map.
     * Call `EVConfigModel.add_connection`.
 5. Update selection to the newly created instances.
-

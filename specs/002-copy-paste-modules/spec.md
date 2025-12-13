@@ -160,19 +160,19 @@ As a user, I want to create connections by dragging from one module's interface 
 
 ### Constraints & Out of Scope
 
-- **Undo/Redo**: A general Undo/Redo system is NOT included in this feature. Operations are immediate.
-- **Clipboard Persistence**: Clipboard is in-memory only and clears on page reload.
+* **Undo/Redo**: A general Undo/Redo system is NOT included in this feature. Operations are immediate.
+* **Clipboard Persistence**: Clipboard is in-memory only and clears on page reload.
 
 ### Key Entities
 
-- **Clipboard**: In-memory storage for a list of module snapshots and their internal connections.
-- **ModuleSnapshot**: A deep copy of a module's configuration and view state.
+* **Clipboard**: In-memory storage for a list of module snapshots and their internal connections.
+* **ModuleSnapshot**: A deep copy of a module's configuration and view state.
 
 ## Success Criteria *(mandatory)*
 
 ### Measurable Outcomes
 
-- **SC-001**: Copy/Paste of 50 modules completes in under 1 second.
-- **SC-002**: 100% of internal connections are preserved after paste.
-- **SC-003**: 0% of external connections are preserved after paste.
-- **SC-004**: Generated names are unique 100% of the time.
+* **SC-001**: Copy/Paste of 50 modules completes in under 1 second.
+* **SC-002**: 100% of internal connections are preserved after paste.
+* **SC-003**: 0% of external connections are preserved after paste.
+* **SC-004**: Generated names are unique 100% of the time.

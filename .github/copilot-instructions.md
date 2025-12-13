@@ -33,33 +33,39 @@ Admin UI for EVerest configuration data, module files, and runtime management. M
 ## Developer Workflows & Short Commands
 
 - Install deps (repo uses `pnpm`):
+
 ```bash
 pnpm install
 ```
 
 - Run dev server:
+
 ```bash
 pnpm dev
 ```
 
 - Build / preview:
+
 ```bash
 pnpm build
 pnpm preview
 ```
 
 - Unit tests (Vitest):
+
 ```bash
 pnpm test
 ```
 
 - E2E tests (Cypress):
+
 ```bash
 pnpm run test:e2e      # headless
 pnpm run test:e2e:open # open interactive runner
 ```
 
 - Linting:
+
 ```bash
 pnpm lint
 pnpm run lint:fix

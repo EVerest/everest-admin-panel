@@ -31,9 +31,9 @@
 ## Alternatives Considered
 
 * **Browser Clipboard API**: Storing JSON in the system clipboard.
-    * *Pros*: Allows copy/paste between tabs/windows.
-    * *Cons*: Requires permission prompts; complexity with serialization formats.
-    * *Decision*: Rejected for now (Out of Scope per spec assumptions), stick to in-memory.
+  * *Pros*: Allows copy/paste between tabs/windows.
+  * *Cons*: Requires permission prompts; complexity with serialization formats.
+  * *Decision*: Rejected for now (Out of Scope per spec assumptions), stick to in-memory.
 
 ## Research: Connection Overhaul (Added 2025-12-04)
 
@@ -47,9 +47,9 @@
 
 * **Decision**: Implement a "Drag State Machine" in `ConfigStage`.
 * **States**:
-    * `IDLE`: Normal interaction.
-    * `CONNECTION_DRAG`: Active when dragging a terminal without Alt.
-    * `REARRANGE_DRAG`: Active when dragging a terminal with Alt.
+  * `IDLE`: Normal interaction.
+  * `CONNECTION_DRAG`: Active when dragging a terminal without Alt.
+  * `REARRANGE_DRAG`: Active when dragging a terminal with Alt.
 * **Rationale**: Centralized handling in `ConfigStage` allows for global effects like ghosting incompatible modules and drawing the temporary connection line, which crosses module boundaries.
 
 ### 3. Visual Feedback (Ghosting & Enlarging)
@@ -57,9 +57,9 @@
 * **Decision**: Use `opacity` for ghosting and `scale` for enlarging.
 * **Rationale**: Konva handles these properties efficiently.
 * **Mechanism**:
-    * `ConfigStage` iterates over `_module_views`.
-    * Calls `set_ghost(boolean)` on incompatible modules.
-    * Calls `set_highlight_terminals(interface_name, type)` on compatible modules to enlarge specific terminals.
+  * `ConfigStage` iterates over `_module_views`.
+  * Calls `set_ghost(boolean)` on incompatible modules.
+  * Calls `set_highlight_terminals(interface_name, type)` on compatible modules to enlarge specific terminals.
 
 ### 4. Ambiguity Resolution
 
