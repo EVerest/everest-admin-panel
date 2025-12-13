@@ -21,6 +21,7 @@ Sync Impact Report
 All production code MUST be clearly typed, maintainable, and reviewed. Use TypeScript strictness and linter rules as the baseline. Avoid `any` unless accompanied by a code comment explaining why and an associated runtime guard.
 
 Rules:
+
 - Enforce `vue-tsc`/TypeScript checks in CI.
 - ESLint with `@typescript-eslint` rules MUST run in CI; rule exceptions require explicit justification in PR.
 - New files MUST include basic documentation/comments explaining non-obvious algorithms or domain rules.
