@@ -3,6 +3,9 @@
 
 /// <reference types="cypress" />
 
+// Make this file a module so helper types stay local
+export {};
+
 Cypress.on("uncaught:exception", (err, runnable) => {
   // returning false here prevents Cypress from
   // failing the test
@@ -15,12 +18,43 @@ Cypress.on("uncaught:exception", (err, runnable) => {
   }
 });
 
+type TerminalViewForTest = {
+  getAbsolutePosition: () => { x: number; y: number };
+};
+
+type ModuleViewForTest = {
+  _vm: {
+    type: string;
+    _instance_id: number;
+    terminal_lookup: Array<{ terminal: { id: string } }>;
+    _terminal_views?: TerminalViewForTest[];
+  };
+  _terminal_views: TerminalViewForTest[];
+  group: {
+    getAbsolutePosition: () => { x: number; y: number };
+    position?: (pos?: { x: number; y: number }) => { x: number; y: number };
+  };
+};
+
+type ConfigStageForTest = {
+  _module_views: Record<string, ModuleViewForTest>;
+  context: {
+    clicked_terminal: (terminal: unknown, instanceId: number) => void;
+  };
+  _conn_man: {
+    connections: unknown[];
+  };
+};
+
+const getStage = (win: unknown): ConfigStageForTest =>
+  (win as { configStage: ConfigStageForTest }).configStage;
+
 describe("Connected Module Dragging", () => {
   const dragModule = (moduleName: string, toX: number, toY: number) => {
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
+    cy.window().then((win) => {
+      const stage = getStage(win);
       const view = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === moduleName,
+        (v) => v._vm.type === moduleName,
       );
       if (view) {
         const pos = view.group.getAbsolutePosition();
@@ -53,13 +87,13 @@ describe("Connected Module Dragging", () => {
     targetModule: string,
     targetTerminalIndex: number,
   ) => {
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
+    cy.window().then((win) => {
+      const stage = getStage(win);
       const sourceView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === sourceModule,
+        (v) => v._vm.type === sourceModule,
       );
       const targetView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === targetModule,
+        (v) => v._vm.type === targetModule,
       );
 
       if (sourceView && targetView) {
@@ -136,14 +170,18 @@ describe("Connected Module Dragging", () => {
     dragModule("EvseManager", 800, 100);
 
     // 4. Connect EvseV2G (req: security) -> EvseSecurity (prov: main)
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
+    cy.window().then((win) => {
+      const stage = getStage(win);
       const v2gView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === "EvseV2G",
+        (v) => v._vm.type === "EvseV2G",
       );
       const secView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === "EvseSecurity",
+        (v) => v._vm.type === "EvseSecurity",
       );
+
+      if (!v2gView || !secView) {
+        throw new Error("Required module views not found on stage");
+      }
 
       const reqIndex = v2gView._vm.terminal_lookup.findIndex(
         (t: any) => t.terminal.id === "security",
@@ -163,14 +201,18 @@ describe("Connected Module Dragging", () => {
     cy.wait(500);
 
     // 5. Connect EvseManager (req: hlc) -> EvseV2G (prov: charger)
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
+    cy.window().then((win) => {
+      const stage = getStage(win);
       const mgrView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === "EvseManager",
+        (v) => v._vm.type === "EvseManager",
       );
       const v2gView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === "EvseV2G",
+        (v) => v._vm.type === "EvseV2G",
       );
+
+      if (!mgrView || !v2gView) {
+        throw new Error("Required module views not found on stage");
+      }
 
       const reqIndex = mgrView._vm.terminal_lookup.findIndex(
         (t: any) => t.terminal.id === "hlc",
@@ -190,8 +232,8 @@ describe("Connected Module Dragging", () => {
     cy.wait(500);
 
     // Verify connections exist
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
+    cy.window().then((win) => {
+      const stage = getStage(win);
       const connectionCount = stage._conn_man.connections.length;
       expect(connectionCount).to.be.gte(
         2,

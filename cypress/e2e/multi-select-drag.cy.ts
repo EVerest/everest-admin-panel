@@ -3,6 +3,9 @@
 
 /// <reference types="cypress" />
 
+// Make this file a module so helper types stay local
+export {};
+
 Cypress.on("uncaught:exception", (err, runnable) => {
   if (
     err.message.includes(
@@ -32,7 +35,9 @@ describe("Multi-Select Dragging", () => {
   const dragModule = (moduleName: string, toX: number, toY: number) => {
     cy.window().then((win) => {
       const stage = getStage(win);
-      const view = Object.values(stage._module_views).find((v) => v._vm.type === moduleName);
+      const view = Object.values(stage._module_views).find(
+        (v) => v._vm.type === moduleName,
+      );
       if (!view) throw new Error(`Module ${moduleName} not found on stage`);
 
       view.group.position({ x: toX, y: toY });
@@ -72,7 +77,8 @@ describe("Multi-Select Dragging", () => {
       const views = Object.values(stage._module_views);
       const evseView = views.find((v) => v._vm.type === "EvseManager");
       const tokenView = views.find((v) => v._vm.type === "DummyTokenProvider");
-      if (!evseView || !tokenView) throw new Error("Required module views not found on stage");
+      if (!evseView || !tokenView)
+        throw new Error("Required module views not found on stage");
 
       // Programmatically select modules using the ViewModel
       evseView._vm.clicked_title(false); // Click EvseManager
@@ -97,7 +103,8 @@ describe("Multi-Select Dragging", () => {
       const views = Object.values(stage._module_views);
       const evseView = views.find((v) => v._vm.type === "EvseManager");
       const tokenView = views.find((v) => v._vm.type === "DummyTokenProvider");
-      if (!evseView || !tokenView) throw new Error("Required module views not found on stage");
+      if (!evseView || !tokenView)
+        throw new Error("Required module views not found on stage");
 
       const evsePos = evseView.group.position();
       const tokenPos = tokenView.group.position();
