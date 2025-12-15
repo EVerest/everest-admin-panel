@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: Apache-2.0
-// SPDX-License-Identifier: Apache-2.0
 // Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
 
 import { defineStore } from "pinia";
@@ -27,16 +26,38 @@ export const useEvbcStore = defineStore("evbc", () => {
   // Getters
   const get_is_config_opened = (): boolean => !!current_config.value;
   const get_config_context = (): ConfigStageContext => config_context;
-  const get_selected_module_instance = (): ModuleInstanceID | null =>
-    get_is_config_opened() && selection.value.type === "MODULE_INSTANCE" && selection.value.ids.length > 0
-      ? selection.value.ids[selection.value.ids.length - 1]
-      : null;
-  const get_selected_module_instances = (): ModuleInstanceID[] =>
-    get_is_config_opened() && selection.value.type === "MODULE_INSTANCE" ? selection.value.ids : [];
-  const get_selected_terminal = (): Terminal | null =>
-    get_is_config_opened() && selection.value.type === "TERMINAL" ? selection.value.terminal : null;
-  const get_selected_connection = (): ConnectionID | null =>
-    get_is_config_opened() && selection.value.type === "CONNECTION" ? selection.value.id : null;
+
+  const get_selected_module_instance = (): ModuleInstanceID | null => {
+    if (!get_is_config_opened()) return null;
+    if (selection.value.type === "MODULE_INSTANCE" && selection.value.ids.length > 0) {
+      return selection.value.ids[selection.value.ids.length - 1];
+    }
+    return null;
+  };
+
+  const get_selected_module_instances = (): ModuleInstanceID[] => {
+    if (!get_is_config_opened()) return [];
+    if (selection.value.type === "MODULE_INSTANCE") {
+      return selection.value.ids;
+    }
+    return [];
+  };
+
+  const get_selected_terminal = (): Terminal | null => {
+    if (!get_is_config_opened()) return null;
+    if (selection.value.type === "TERMINAL") {
+      return selection.value.terminal;
+    }
+    return null;
+  };
+
+  const get_selected_connection = (): ConnectionID | null => {
+    if (!get_is_config_opened()) return null;
+    if (selection.value.type === "CONNECTION") {
+      return selection.value.id;
+    }
+    return null;
+  };
 
   return {
     available_configs,
