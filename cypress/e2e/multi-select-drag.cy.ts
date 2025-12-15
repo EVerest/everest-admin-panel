@@ -12,22 +12,32 @@ Cypress.on("uncaught:exception", (err, runnable) => {
     return false;
   }
 });
+type ModuleViewForTest = {
+  _vm: { type: string; clicked_title: (shift: boolean) => void };
+  group: {
+    position: (pos?: { x: number; y: number }) => { x: number; y: number };
+    fire: (event: string) => void;
+  };
+};
+
+type ConfigStageForTest = {
+  _module_views: Record<string, ModuleViewForTest>;
+  context: { get_selected_instances: () => number[] };
+};
+
+const getStage = (win: unknown): ConfigStageForTest =>
+  (win as { configStage: ConfigStageForTest }).configStage;
 
 describe("Multi-Select Dragging", () => {
   const dragModule = (moduleName: string, toX: number, toY: number) => {
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
-      const view = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === moduleName,
-      );
-      if (view) {
-        // Programmatically move and fire events to simulate drag
-        view.group.position({ x: toX, y: toY });
-        view.group.fire("dragmove");
-        view.group.fire("dragend");
-      } else {
-        throw new Error(`Module ${moduleName} not found on stage`);
-      }
+    cy.window().then((win) => {
+      const stage = getStage(win);
+      const view = Object.values(stage._module_views).find((v) => v._vm.type === moduleName);
+      if (!view) throw new Error(`Module ${moduleName} not found on stage`);
+
+      view.group.position({ x: toX, y: toY });
+      view.group.fire("dragmove");
+      view.group.fire("dragend");
     });
   };
 
@@ -57,24 +67,21 @@ describe("Multi-Select Dragging", () => {
     dragModule("DummyTokenProvider", 100, 300);
 
     // 3. Select both modules
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
-      const evseView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === "EvseManager",
-      );
-      const tokenView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === "DummyTokenProvider",
-      );
+    cy.window().then((win) => {
+      const stage = getStage(win);
+      const views = Object.values(stage._module_views);
+      const evseView = views.find((v) => v._vm.type === "EvseManager");
+      const tokenView = views.find((v) => v._vm.type === "DummyTokenProvider");
+      if (!evseView || !tokenView) throw new Error("Required module views not found on stage");
 
       // Programmatically select modules using the ViewModel
-      // This is more reliable than simulating clicks on canvas
       evseView._vm.clicked_title(false); // Click EvseManager
       tokenView._vm.clicked_title(true); // Shift+Click DummyTokenProvider
     });
 
     // Verify both are selected
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
+    cy.window().then((win) => {
+      const stage = getStage(win);
       const selected = stage.context.get_selected_instances();
       expect(selected.length).to.equal(2);
     });
@@ -85,14 +92,12 @@ describe("Multi-Select Dragging", () => {
     cy.wait(500);
 
     // 5. Verify positions
-    cy.window().then((win: any) => {
-      const stage = win.configStage;
-      const evseView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === "EvseManager",
-      );
-      const tokenView = Object.values(stage._module_views).find(
-        (v: any) => v._vm.type === "DummyTokenProvider",
-      );
+    cy.window().then((win) => {
+      const stage = getStage(win);
+      const views = Object.values(stage._module_views);
+      const evseView = views.find((v) => v._vm.type === "EvseManager");
+      const tokenView = views.find((v) => v._vm.type === "DummyTokenProvider");
+      if (!evseView || !tokenView) throw new Error("Required module views not found on stage");
 
       const evsePos = evseView.group.position();
       const tokenPos = tokenView.group.position();
