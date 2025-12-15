@@ -8,7 +8,7 @@ import ConfigStageContext, { SelectionType } from "@/modules/evconf_konva/stage_
 import { ConnectionID, EverestConfigList, ModuleInstanceID, Terminal } from "@/modules/evbc";
 
 export const useEvbcStore = defineStore("evbc", () => {
-  const selection = ref({ type: "NONE" } as SelectionType);
+  const selection = ref<SelectionType>({ type: "NONE" });
   const current_config = ref<EVConfigModel | null>(null);
   const config_context = reactive(new ConfigStageContext());
   const available_configs: Ref<EverestConfigList> = ref({});
@@ -29,10 +29,14 @@ export const useEvbcStore = defineStore("evbc", () => {
 
   const get_selected_module_instance = (): ModuleInstanceID | null => {
     if (!get_is_config_opened()) return null;
-    if (selection.value.type === "MODULE_INSTANCE" && selection.value.ids.length > 0) {
-      return selection.value.ids[selection.value.ids.length - 1];
-    }
-    return null;
+
+    const sel = selection.value;
+    if (sel.type !== "MODULE_INSTANCE") return null;
+
+    const ids = sel.ids;
+    if (!ids || ids.length === 0) return null;
+
+    return ids[ids.length - 1];
   };
 
   const get_selected_module_instances = (): ModuleInstanceID[] => {
