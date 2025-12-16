@@ -1,0 +1,45 @@
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2020 - 2025 Contributors to EVerest
+
+services:
+  everest-admin-panel:
+    image: ghcr.io/everest/everest-admin-panel
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: everest-admin-panel
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - everest-network
+
+  # Development service (optional)
+  everest-admin-panel-dev:
+    image: node:22-alpine
+    container_name: everest-admin-panel-dev
+    working_dir: /app
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: sh -c "npm install && npm run dev"
+    environment:
+      - NODE_ENV=development
+    networks:
+      - everest-network
+    profiles:
+      - dev
+
+networks:
+  everest-network:
+    driver: bridge
