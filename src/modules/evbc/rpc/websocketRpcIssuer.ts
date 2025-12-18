@@ -14,7 +14,7 @@ export class WebsocketRpcIssuer extends RpcIssuer {
     private publish_connection_state: (status: ConnectionStatus) => void,
   ) {
     super();
-    this._socket = new WebSocket(this._url);
+    this._socket = new WebSocket(this._url, "everest-controller");
     this._socket.onopen = this._handle_socket_opened.bind(this);
     this._socket.onmessage = this.handle_backend_message.bind(this);
     this._socket.onerror = this._handle_socket_error.bind(this);
