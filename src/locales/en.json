@@ -116,6 +116,7 @@
         "moduleEvseIdLabel": "Module EVSE ID",
         "moduleId": "Module ID",
         "moduleType": "Module type: {moduleType}",
+        "multipleSelection": "Multiple Selection",
         "title": "Module instance information",
         "useImplementationSpecificMappings": "Use implementation-specific mappings (instead of module-level)"
     },

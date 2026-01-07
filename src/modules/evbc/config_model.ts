@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 import {
   ConfigSet,
@@ -355,6 +355,7 @@ class EVConfigModel {
     return Object.entries(schema).map(([key, value]) => {
       // There is no object injection possible here, `key` is valid and checked.
       // Prevent ESlint from flagging a false positive for `config[key]`.
+      // eslint-disable-next-line security/detect-object-injection
       const config_value: unknown = config !== undefined && key in config ? config[key] : value.default;
       return { schema: { ...value, title: key }, model: config_value };
     });

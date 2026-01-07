@@ -1,17 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 /// <reference types="cypress" />
-
-Cypress.on("uncaught:exception", (err, runnable) => {
-  if (
-    err.message.includes(
-      "ResizeObserver loop completed with undelivered notifications",
-    )
-  ) {
-    return false;
-  }
-});
 
 describe("Connection Overhaul", () => {
   beforeEach(() => {
@@ -28,13 +18,8 @@ describe("Connection Overhaul", () => {
     cy.contains("div", "EvseManager").click();
     cy.wait(500);
 
-    // Add EnergyManager (requires Energy)
-    // Wait, EnergyManager might not exist or require Energy.
-    // Let's check definitions.
-    // EvseManager provides 'evse_manager' interface? No.
-    // Let's use EvseManager and YetiDriver.
-    // EvseManager requires 'board_support' (YetiDriver provides it).
-
+    // Let's use EvseManager and YetiDriver. EvseManager requires 'board_support'
+    // and YetiDriver provides it.
     cy.contains("div", "YetiDriver").click();
     cy.wait(500);
 
@@ -57,52 +42,6 @@ describe("Connection Overhaul", () => {
     // Drag from YetiDriver (provides board_support) to EvseManager (requires board_support)
     // YetiDriver provides 'board_support' on the right.
     // EvseManager requires 'board_support' on the left.
-
-    // We need to find the terminal position.
-    cy.window().then((win: any) => {
-      // const stage = win.configStage;
-      // const yetiView = Object.values(stage._module_views).find(
-      //   (v: any) => v._vm.type === "YetiDriver",
-      // );
-      // const evseView = Object.values(stage._module_views).find(
-      //   (v: any) => v._vm.type === "EvseManager",
-      // );
-      // Find 'board_support' provide terminal on YetiDriver
-      // const provideTerminalIndex = yetiView._vm.terminal_lookup.findIndex(
-      //   (t: any) =>
-      //     t.terminal.interface === "evse_board_support" &&
-      //     t.terminal.type === "provide",
-      // );
-      // const provideTerminalView =
-      //   yetiView._terminal_views[provideTerminalIndex];
-      // const providePos = provideTerminalView.getAbsolutePosition();
-      // Find 'board_support' requirement terminal on EvseManager
-      // const reqTerminalIndex = evseView._vm.terminal_lookup.findIndex(
-      //   (t: any) =>
-      //     t.terminal.interface === "evse_board_support" &&
-      //     t.terminal.type === "requirement",
-      // );
-      // const reqTerminalView = evseView._terminal_views[reqTerminalIndex];
-      // const reqPos = reqTerminalView.getAbsolutePosition();
-      // Simulate drag
-      // 1. Mousedown on provide terminal
-      // 2. Mousemove to requirement terminal
-      // 3. Mouseup
-      // We need to trigger events on the canvas container, but Konva handles events on the stage.
-      // Cypress triggers events on DOM elements.
-      // Trigger mousedown on the terminal shape?
-      // The terminal shape listens to 'dragstart'.
-      // Konva listens to mousedown/touchstart to initiate drag.
-      // Let's try triggering on the stage container at the coordinates.
-      // const container = cy.get("#konva-stage");
-      // Coordinates need to be relative to the viewport or element.
-      // Konva stage is usually at 0,0 of the container.
-      // We can use cy.trigger with clientX/clientY.
-      // We need to calculate client coordinates.
-      // Assuming the stage is visible and we can get its rect.
-    });
-
-    // Let's do it in a simpler way using cy commands
     cy.get("#konva-stage").then(($el) => {
       const rect = $el[0].getBoundingClientRect();
 

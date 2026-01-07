@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 import { ComputedRef, nextTick } from "vue";
 import { createI18n } from "vue-i18n";
@@ -21,15 +21,13 @@ type LocaleMessages = Record<string, MessageValue>;
 
 const defaultMessagesTyped = defaultMessages as unknown as LocaleMessages;
 const defaultModuleMessagesTyped = defaultModuleMessages as unknown as LocaleMessages;
-const vuetifyMessagesTyped = vuetifyMessages as unknown as Record<string, Record<string, string>>;
-
 const defaultLocaleMessages: LocaleMessages = {
   ...defaultMessagesTyped,
   ...defaultModuleMessagesTyped,
 
-  // Trust vuetify messages to not inject anything malicious for a valid locale
+  // Trust vuetify library messages to not inject anything malicious
   // eslint-disable-next-line security/detect-object-injection
-  $vuetify: { ...(vuetifyMessagesTyped[DEFAULT_LOCALE] ?? {}) },
+  $vuetify: { ...vuetifyMessages },
 };
 
 const options: I18nOptions = {

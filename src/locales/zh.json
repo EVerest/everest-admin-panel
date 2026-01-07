@@ -116,6 +116,7 @@
         "moduleEvseIdLabel": "模块 EVSE ID",
         "moduleId": "模块 ID",
         "moduleType": "模块类型: {moduleType}",
+        "multipleSelection": "多选",
         "title": "模块实例信息",
         "useImplementationSpecificMappings": "使用实现特定映射（而不是模块级别）"
     },

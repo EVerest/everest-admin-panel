@@ -1,8 +1,8 @@
 <!-- SPDX-License-Identifier: Apache-2.0
-     Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
+     Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-card v-if="module_node && module_node.isMultiSelect" title="Multiple Selection">
+  <v-card v-if="module_node && module_node.isMultiSelect" :title="t('evModuleInfo.multipleSelection')">
     <template #append>
       <icon-button-with-tooltip
         icon="mdi-close"
