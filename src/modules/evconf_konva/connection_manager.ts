@@ -52,7 +52,9 @@ export default class ConnectionManager {
   }
 
   updateTheme() {
-    this.connections.forEach((c) => c.view.updateTheme());
+    this.connections.forEach((c) => {
+      c.view.updateTheme();
+    });
   }
 
   _handle_stage_context_event(ev: ConfigStageContextEvent) {
@@ -71,8 +73,10 @@ export default class ConnectionManager {
   }
 
   add_connection(id: ConnectionID, provide: ConnectionHalf, requirement: ConnectionHalf) {
-    const providing_placement = provide.module_view.get_terminal_placement(provide.terminal_lookup_id);
-    const requiring_placement = requirement.module_view.get_terminal_placement(requirement.terminal_lookup_id);
+    const providing_placement = (provide.module_view as ModuleView).get_terminal_placement(provide.terminal_lookup_id);
+    const requiring_placement = (requirement.module_view as ModuleView).get_terminal_placement(
+      requirement.terminal_lookup_id
+    );
 
     const connection_view = new ConnectionShape({
       points: [],

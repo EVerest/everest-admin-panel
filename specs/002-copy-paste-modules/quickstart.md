@@ -15,38 +15,34 @@ This feature adds Copy, Cut, and Paste functionality to the admin panel canvas.
 ### Manual Test Steps
 
 1. **Selection & Navigation**:
-
-* Click a module -> Selected.
-* Shift+Click another -> Both selected.
-* Click background -> Deselected.
-* **Left-Click Drag** on background -> Rectangle selection selects enclosed modules.
-* **Right-Click Drag** on background -> Pans the canvas.
-* **Zoom Buttons** -> Click (+) to zoom in, (-) to zoom out.
+   * Click a module -> Selected.
+   * Shift+Click another -> Both selected.
+   * Click background -> Deselected.
+   * **Left-Click Drag** on background -> Rectangle selection selects enclosed modules.
+   * **Right-Click Drag** on background -> Pans the canvas.
+   * **Zoom Buttons** -> Click (+) to zoom in, (-) to zoom out.
 
 2. **Copy/Paste**:
-
-* Select a module (e.g., named "Test").
-* Press `Cmd+C` (or `Ctrl+C`).
-* Press `Cmd+V` (or `Ctrl+V`).
-* **Verify**: A new module "Test (1)" appears slightly offset.
-* **Verify**: "Test (1)" has the same configuration.
+   * Select a module (e.g., named "Test").
+   * Press `Cmd+C` (or `Ctrl+C`).
+   * Press `Cmd+V` (or `Ctrl+V`).
+   * **Verify**: A new module "Test (1)" appears slightly offset.
+   * **Verify**: "Test (1)" has the same configuration.
 
 3. **Cut/Paste**:
-
-* Select "Test (1)".
-* Press `Cmd+X`.
-* **Verify**: "Test (1)" disappears.
-* Press `Cmd+V`.
-* **Verify**: "Test (1)" reappears (or "Test (2)" if name collision logic applies to new ID generation, but logically it should try to reuse if possible or just generate new). *Note: Spec says new instance, so likely "Test (2)" if "Test (1)" is considered "taken" or if we just increment.*
+   * Select "Test (1)".
+   * Press `Cmd+X`.
+   * **Verify**: "Test (1)" disappears.
+   * Press `Cmd+V`.
+   * **Verify**: "Test (1)" reappears (or "Test (2)" if name collision logic applies to new ID generation, but logically it should try to reuse if possible or just generate new). *Note: Spec says new instance, so likely "Test (2)" if "Test (1)" is considered "taken" or if we just increment.*
 
 4. **Connections**:
-
-* Connect "A" to "B".
-* Connect "B" to "C".
-* Select both "A" and "B".
-* Copy and Paste.
-* **Verify**: New modules "A (1)" and "B (1)" appear and are connected to *each other*.
-* **Verify**: They are NOT connected to "A", "B", or "C".
+   * Connect "A" to "B".
+   * Connect "B" to "C".
+   * Select both "A" and "B".
+   * Copy and Paste.
+   * **Verify**: New modules "A (1)" and "B (1)" appear and are connected to *each other*.
+   * **Verify**: They are NOT connected to "A", "B", or "C".
 
 ## Development
 

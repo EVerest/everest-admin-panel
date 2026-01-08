@@ -11,11 +11,16 @@ export const COLOR = {
   CONNECTION: currentTheme.colors.secondary,
 };
 
-export const updateColors = (colors: typeof currentTheme.colors) => {
+interface SafeThemeColors {
+  secondary: string;
+  disabled?: string;
+}
+
+export const updateColors = (colors: SafeThemeColors) => {
   COLOR.TERMINAL_REQUIREMENT = colors.secondary;
-  COLOR.TERMINAL_REQUIREMENT_DISABLED = (colors as any).disabled || "#d5d4cc";
+  COLOR.TERMINAL_REQUIREMENT_DISABLED = colors.disabled || "#d5d4cc";
   COLOR.TERMINAL_PROVIDE = colors.secondary;
-  COLOR.TERMINAL_PROVIDE_DISABLED = (colors as any).disabled || "#d5d4cc";
+  COLOR.TERMINAL_PROVIDE_DISABLED = colors.disabled || "#d5d4cc";
   COLOR.CONNECTION = colors.secondary;
 };
 

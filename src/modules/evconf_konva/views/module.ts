@@ -232,7 +232,7 @@ export default class ModuleView {
     this.group.add(frame, topStroke, typeInfo, title, ...this._terminal_views);
   }
 
-  get_terminal_placement(id: number) {
+  get_terminal_placement(id: number): TerminalPlacement {
     const terminal_view = this._terminal_views[id];
     const relative_position = terminal_view.position();
     const module_position = this.group.position();
