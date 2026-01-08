@@ -24,8 +24,9 @@ type ModifyTerminalsEvent = {
   readonly type: "TERMINAL_MODIFY_APPEARENCE";
   readonly normal: number[];
   readonly disable: number[];
-  readonly highlight: number[];
   readonly connected: number[];
+  readonly highlight_normal: number[];
+  readonly highlight_connected: number[];
 };
 
 type ModuleModelUpdateEvent = {
@@ -104,15 +105,22 @@ export default class ModuleViewModel {
       normal,
       connected,
       disable: [],
-      highlight: [],
+      highlight_normal: [],
+      highlight_connected: [],
     });
   }
 
-  highlight_compatible_terminals(interfaceName: string, type: string, blockedTerminals: Set<number> = new Set()) {
+  highlight_compatible_terminals(
+    interfaceName: string,
+    type: string,
+    blockedTerminals: Set<number> = new Set(),
+    source?: { moduleId: number; terminalId: string },
+  ) {
     const modify_event: ModifyTerminalsEvent = {
       type: "TERMINAL_MODIFY_APPEARENCE",
       disable: [],
-      highlight: [],
+      highlight_normal: [],
+      highlight_connected: [],
       normal: [],
       connected: [],
     };
@@ -124,12 +132,35 @@ export default class ModuleViewModel {
           ? this._config_model.interfaces_match(interfaceName, item.terminal.interface)
           : this._config_model.interfaces_match(item.terminal.interface, interfaceName))
       ) {
-        if (blockedTerminals.has(id)) {
+        // Check if this terminal connects to the source
+        const connectedToSource =
+          source &&
+          Object.values(this._config_model._connections).some((conn) => {
+            if (type === "provide") {
+              // Source was provide, we are requirement
+              return (
+                conn.providing_instance_id === source.moduleId &&
+                conn.providing_impl_name === source.terminalId &&
+                conn.requiring_instance_id === this._instance_id &&
+                conn.requirement_name === item.terminal.id
+              );
+            } else {
+              // Source was requirement, we are provide
+              return (
+                conn.requiring_instance_id === source.moduleId &&
+                conn.requirement_name === source.terminalId &&
+                conn.providing_instance_id === this._instance_id &&
+                conn.providing_impl_name === item.terminal.id
+              );
+            }
+          });
+
+        if (blockedTerminals.has(id) || connectedToSource) {
           modify_event.disable.push(id);
         } else if (this.is_terminal_connected(id)) {
-          modify_event.connected.push(id);
+          modify_event.highlight_connected.push(id);
         } else {
-          modify_event.normal.push(id);
+          modify_event.highlight_normal.push(id);
         }
         return;
       }
@@ -213,7 +244,8 @@ export default class ModuleViewModel {
       const modify_event: ModifyTerminalsEvent = {
         type: "TERMINAL_MODIFY_APPEARENCE",
         disable: [],
-        highlight: [],
+        highlight_normal: [],
+        highlight_connected: [],
         normal: [],
         connected: [],
       };
@@ -226,7 +258,11 @@ export default class ModuleViewModel {
           item.terminal.id === terminal.id &&
           item.terminal.type === terminal.type
         ) {
-          modify_event.connected.push(id);
+          if (this.is_terminal_connected(id)) {
+            modify_event.highlight_connected.push(id);
+          } else {
+            modify_event.highlight_normal.push(id);
+          }
           return;
         }
 
@@ -236,10 +272,30 @@ export default class ModuleViewModel {
             ? this._config_model.interfaces_match(terminal.interface, item.terminal.interface)
             : this._config_model.interfaces_match(item.terminal.interface, terminal.interface))
         ) {
-          if (this.is_terminal_connected(id)) {
-            modify_event.connected.push(id);
+          const connectedToSource = Object.values(this._config_model._connections).some((conn) => {
+            if (terminal.type === "provide") {
+              return (
+                conn.providing_instance_id === selection_event.moduleId &&
+                conn.providing_impl_name === terminal.id &&
+                conn.requiring_instance_id === this._instance_id &&
+                conn.requirement_name === item.terminal.id
+              );
+            } else {
+              return (
+                conn.requiring_instance_id === selection_event.moduleId &&
+                conn.requirement_name === terminal.id &&
+                conn.providing_instance_id === this._instance_id &&
+                conn.providing_impl_name === item.terminal.id
+              );
+            }
+          });
+
+          if (connectedToSource) {
+            modify_event.disable.push(id);
+          } else if (this.is_terminal_connected(id)) {
+            modify_event.highlight_connected.push(id);
           } else {
-            modify_event.normal.push(id);
+            modify_event.highlight_normal.push(id);
           }
           return;
         }

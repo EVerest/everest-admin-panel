@@ -821,11 +821,25 @@ export default class ConfigStage {
       if (id !== moduleId && !compatibleModules.has(id)) {
         view.group.opacity(0.3);
         ghostedModules.add(id);
+        this._module_vms[id].highlight_compatible_terminals(interfaceName, type, new Set(), {
+          moduleId,
+          terminalId: terminalName,
+        });
       } else if (compatibleModules.has(id)) {
         const blocked = (this._module_vms[id] as any)._tempBlockedTerminals || new Set();
-        view.set_highlight_terminals(interfaceName, type === "provide" ? "requirement" : "provide", blocked);
-        this._module_vms[id].highlight_compatible_terminals(interfaceName, type, blocked);
+        this._module_vms[id].highlight_compatible_terminals(interfaceName, type, blocked, {
+          moduleId,
+          terminalId: terminalName,
+        });
         delete (this._module_vms[id] as any)._tempBlockedTerminals;
+      } else if (id === moduleId) {
+        // Also update the source module's terminals to show disabled state for incompatible ones
+        // We pass an empty set for blocked terminals, as the compatibility check inside
+        // highlight_compatible_terminals will handle disabling non-matching terminals.
+        this._module_vms[id].highlight_compatible_terminals(interfaceName, type, new Set(), {
+          moduleId,
+          terminalId: terminalName,
+        });
       }
     });
 
@@ -907,7 +921,7 @@ export default class ConfigStage {
     dragAvatar.listening(false);
     this._konva.static_layer.add(dragAvatar);
 
-    this._module_views[moduleId]._terminal_views[terminalId].set_appearence("CONNECTED");
+    this._module_views[moduleId]._terminal_views[terminalId].set_appearence("DRAG_ORIGIN");
     this._module_views[moduleId].group.clearCache();
     this._konva.static_layer.batchDraw();
 

@@ -80,8 +80,19 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
   //   }
   // }
 
-  set_appearence(look: "DISABLED" | "NORMAL" | "PLACEHOLDER" | "CONNECTED") {
+  set_appearence(
+    look:
+      | "DISABLED"
+      | "NORMAL"
+      | "PLACEHOLDER"
+      | "CONNECTED"
+      | "HIGHLIGHT_NORMAL"
+      | "HIGHLIGHT_CONNECTED"
+      | "DRAG_ORIGIN",
+  ) {
     this._currentLook = look;
+    this.scale({ x: 1, y: 1 });
+
     // FIXME (aw): this function might still assume some knowledge about the order in which the appearence was set
     if (look !== "DISABLED") {
       this.data(this.terminal_type === "provide" ? ICON_DATA.PLUG : ICON_DATA.SOCKET);
@@ -98,12 +109,24 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
       );
       this.listening(false);
     } else if (look === "CONNECTED") {
+      this.data(this.terminal_type === "requirement" ? ICON_DATA.ARROW_HEAD : ICON_DATA.CONNECTED);
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
+      this.listening(true);
+    } else if (look === "DRAG_ORIGIN") {
       this.data(ICON_DATA.CONNECTED);
       this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
       this.listening(true);
     } else if (look === "NORMAL") {
       this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
       this.listening(true);
+    } else if (look === "HIGHLIGHT_NORMAL") {
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
+      this.listening(true);
+      this.scale({ x: 3, y: 3 });
+    } else if (look === "HIGHLIGHT_CONNECTED") {
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
+      this.listening(true);
+      this.scale({ x: 3, y: 3 });
     }
   }
 

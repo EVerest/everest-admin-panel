@@ -268,6 +268,12 @@ export default class ModuleView {
       ev.connected?.forEach((id) => {
         this._terminal_views[id].set_appearence("CONNECTED");
       });
+      ev.highlight_normal?.forEach((id) => {
+        this._terminal_views[id].set_appearence("HIGHLIGHT_NORMAL");
+      });
+      ev.highlight_connected?.forEach((id) => {
+        this._terminal_views[id].set_appearence("HIGHLIGHT_CONNECTED");
+      });
       if (this.group.children.length > 0) {
         this.group.cache();
       }

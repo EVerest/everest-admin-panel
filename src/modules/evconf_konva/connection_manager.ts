@@ -75,7 +75,7 @@ export default class ConnectionManager {
   add_connection(id: ConnectionID, provide: ConnectionHalf, requirement: ConnectionHalf) {
     const providing_placement = (provide.module_view as ModuleView).get_terminal_placement(provide.terminal_lookup_id);
     const requiring_placement = (requirement.module_view as ModuleView).get_terminal_placement(
-      requirement.terminal_lookup_id
+      requirement.terminal_lookup_id,
     );
 
     const connection_view = new ConnectionShape({

@@ -46,7 +46,7 @@ export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig>
     config.fill = config.stroke;
     config.pointerLength = 10;
     config.pointerWidth = 10;
-    config.pointerAtBeginning = true;
+    config.pointerAtBeginning = false;
     config.pointerAtEnding = false;
     super(config);
 
