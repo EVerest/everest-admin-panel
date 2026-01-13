@@ -30,7 +30,7 @@
               </v-toolbar>
 
               <v-card-text>
-                <Form v-if="[ComponentViews.ADD, ComponentViews.EDIT].includes(currentView)" @submit="submitEdit">
+                <form v-if="[ComponentViews.ADD, ComponentViews.EDIT].includes(currentView)" @submit="submitEdit">
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12">
@@ -99,7 +99,7 @@
                       </v-col>
                     </v-row>
                   </v-container>
-                </Form>
+                </form>
                 <template v-else>
                   <v-list-subheader lines="two" :disabled="connecting" class="mb-3">
                     <!-- TODO: Render server list items again on locale change -->
