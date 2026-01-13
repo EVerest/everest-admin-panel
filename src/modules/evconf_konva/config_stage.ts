@@ -541,6 +541,18 @@ export default class ConfigStage {
     } else if (e.key === "Delete" || e.key === "Backspace") {
       this.requestDelete();
       e.preventDefault();
+    } else if (e.key === "ArrowUp") {
+      this.moveSelection(0, -1);
+      e.preventDefault();
+    } else if (e.key === "ArrowDown") {
+      this.moveSelection(0, 1);
+      e.preventDefault();
+    } else if (e.key === "ArrowLeft") {
+      this.moveSelection(-1, 0);
+      e.preventDefault();
+    } else if (e.key === "ArrowRight") {
+      this.moveSelection(1, 0);
+      e.preventDefault();
     }
   }
 
@@ -748,6 +760,20 @@ export default class ConfigStage {
 
     if (this._konva) {
       this._konva.selectionRect = this._selectionRect;
+    }
+  }
+
+  private moveSelection(dx: number, dy: number) {
+    const selectedIds = this.context.get_selected_instances();
+    if (selectedIds.length === 0) return;
+
+    // Moving one selected item will move all other selected items due to the 
+    // logic in ModuleViewModel's grid_position setter
+    const firstId = selectedIds[0];
+    const vm = this._module_vms[firstId];
+    if (vm) {
+      const currentPos = vm.grid_position;
+      vm.grid_position = { x: currentPos.x + dx, y: currentPos.y + dy };
     }
   }
 
