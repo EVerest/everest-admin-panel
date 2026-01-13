@@ -113,7 +113,7 @@ export default class ConfigStage {
       alpha: 0.75,
       visible: false,
       sceneFunc: function (context, shape) {
-        const { width, height } = shape.size();
+        const { width, height } = (shape as Konva.Text).size();
         const borderRadius = 3;
 
         context.beginPath();
