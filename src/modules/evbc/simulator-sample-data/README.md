@@ -4,8 +4,8 @@
 
 This directory contains a Node.js script (`update-simulator-data.js`) designed to update the dummy data directly from a
 running EVerest instance. The script interfaces with the EVerest WebSocket API to fetch and refresh module and interface
-data and converts the sample-configs in `./sample-configs` in a config list ensuring that the TypeScript files here
-reflect the latest system definitions.
+data and converts the manually curated sample-configs in `./sample-configs` in a config list ensuring that the
+TypeScript files here reflect the latest system definitions.
 
 The script also updates the English language definition files in the `src/locales` directory, using unique keys from the module and interface data. Note that other language definition files are not updated by this script.
 

@@ -29,11 +29,18 @@ const help = `
 Usage: node update-simulator-data.js [options]
 Options:
   --url=<ws-url>     Specify the WebSocket URL of the EVerest instance (default: ${defaultUrl})
+  --local-only       Skip WebSocket connection and only update config files from local YAML
   --help             Show this help message
 `;
 
 if (args.includes("--help")) {
   console.log(help);
+  process.exit(0);
+}
+
+if (args.includes("--local-only")) {
+  console.log("Running in local-only mode...");
+  compileConfigFiles();
   process.exit(0);
 }
 
