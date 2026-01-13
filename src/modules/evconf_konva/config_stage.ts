@@ -917,7 +917,7 @@ export default class ConfigStage {
       y: localPointer.y,
     });
     dragAvatar.set_appearence("NORMAL");
-    dragAvatar.scale({ x: 3, y: 3 });
+    dragAvatar.scale({ x: 1.5, y: 1.5 });
     dragAvatar.listening(false);
     this._konva.static_layer.add(dragAvatar);
 

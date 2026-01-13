@@ -482,7 +482,7 @@ export default class ModuleView {
     this._terminal_views.forEach((view, id) => {
       const info = this._vm.terminal_lookup[id];
       if (info.terminal.interface === interfaceName && info.terminal.type === type && !blockedTerminals.has(id)) {
-        view.scale({ x: 3, y: 3 });
+        view.scale({ x: 1.5, y: 1.5 });
       }
     });
   }
