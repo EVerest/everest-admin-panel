@@ -2,7 +2,7 @@
      Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest -->
 
 <template>
-  <v-dialog :model-value="showDialog" width="auto" @click:outside="deny">
+  <v-dialog :model-value="showDialog" width="auto" @click:outside="deny" @keydown.enter="accept">
     <v-card>
       <v-card-title class="d-flex flex-row align-baseline">
         <v-icon size="large" color="error"> mdi-alert-circle </v-icon>
