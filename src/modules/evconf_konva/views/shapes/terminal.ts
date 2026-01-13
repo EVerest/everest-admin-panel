@@ -14,7 +14,14 @@ export interface TerminalConfig extends PathConfig {
 
 // this view sticks to the Konva infrastructure of shapes
 export class TerminalShape<Config extends TerminalConfig = TerminalConfig> extends Konva.Path {
-  private _currentLook: "DISABLED" | "NORMAL" | "PLACEHOLDER" | "CONNECTED" = "NORMAL";
+  private _currentLook:
+    | "DISABLED"
+    | "NORMAL"
+    | "PLACEHOLDER"
+    | "CONNECTED"
+    | "HIGHLIGHT_NORMAL"
+    | "HIGHLIGHT_CONNECTED"
+    | "DRAG_ORIGIN" = "NORMAL";
 
   constructor(config: Config) {
     // FIXME (aw): the static path string should go to constants!
@@ -122,11 +129,11 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
     } else if (look === "HIGHLIGHT_NORMAL") {
       this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
       this.listening(true);
-      this.scale({ x: 3, y: 3 });
+      this.scale({ x: 1.5, y: 1.5 });
     } else if (look === "HIGHLIGHT_CONNECTED") {
       this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
       this.listening(true);
-      this.scale({ x: 3, y: 3 });
+      this.scale({ x: 1.5, y: 1.5 });
     }
   }
 

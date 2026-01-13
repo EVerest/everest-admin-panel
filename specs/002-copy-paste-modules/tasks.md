@@ -99,6 +99,7 @@ description: "Task list for Copy/Paste Modules feature"
 - [x] T018 Verify performance with ~50 modules (ensure no lag during drag/paste)
 - [x] T019 Ensure clipboard clears on page reload (implicit by in-memory storage, but verify)
 - [x] T049 Fix flaky E2E tests (connections, canvas interaction) using programmatic setup via window.evbc
+- [x] T050 Fix YAML preview `x-module-layout` synchronization with visual state (terminal positions)
 
 ## Phase 8: User Story 5 - Connection Creation Overhaul (Priority: P1)
 

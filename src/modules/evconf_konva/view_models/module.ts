@@ -41,6 +41,9 @@ type ModuleSelectionChangedEvent = {
 export type ViewModelChangeEvent = ModifyTerminalsEvent | ModuleModelUpdateEvent | ModuleSelectionChangedEvent;
 type ViewModelChangeHandler = (ev: ViewModelChangeEvent) => void;
 
+const CAPACITY_SHORT = 5;
+const CAPACITY_LONG = 10;
+
 export default class ModuleViewModel {
   _grid_position: {
     x: number;
@@ -171,7 +174,49 @@ export default class ModuleViewModel {
   }
 
   _initialize_terminals(terminal_arrangement: TerminalArrangement) {
-    Object.entries(terminal_arrangement).forEach(([_alignment, terminals]) => {
+    let changed = false;
+    const distribution: Record<TerminalAlignment, Terminal[]> = {
+      left: [...(terminal_arrangement.left || [])],
+      top: [...(terminal_arrangement.top || [])],
+      right: [...(terminal_arrangement.right || [])],
+      bottom: [...(terminal_arrangement.bottom || [])],
+    };
+
+    const sides: TerminalAlignment[] = ["left", "top", "right", "bottom"];
+
+    for (let i = 0; i < sides.length; i++) {
+      const side = sides[i];
+      const nextSide = sides[(i + 1) % sides.length];
+
+      const capacity = side === "top" || side === "bottom" ? CAPACITY_LONG : CAPACITY_SHORT;
+      const currentList = distribution[side];
+
+      if (currentList.length > capacity) {
+        changed = true;
+        const overflowCount = currentList.length - capacity;
+        let overflow: Terminal[] = [];
+
+        if (side === "left") {
+          // Left->Top: Take from start (top-most), move to start (left-most)
+          overflow = currentList.splice(0, overflowCount);
+          distribution[nextSide].unshift(...overflow);
+        } else if (side === "top") {
+          // Top->Right: Take from end (right-most), move to start (top-most)
+          overflow = currentList.splice(currentList.length - overflowCount, overflowCount);
+          distribution[nextSide].unshift(...overflow);
+        } else if (side === "right") {
+          // Right->Bottom: Take from end (bottom-most), move to end (right-most)
+          overflow = currentList.splice(currentList.length - overflowCount, overflowCount);
+          distribution[nextSide].push(...overflow);
+        } else if (side === "bottom") {
+          // Bottom->Left: Take from start (left-most), move to end (bottom-most)
+          overflow = currentList.splice(0, overflowCount);
+          distribution[nextSide].push(...overflow);
+        }
+      }
+    }
+
+    Object.entries(distribution).forEach(([_alignment, terminals]) => {
       const alignment = _alignment as TerminalAlignment;
       terminals.forEach((terminal) => {
         const index = this.terminal_dist[alignment].length;
@@ -186,6 +231,15 @@ export default class ModuleViewModel {
         this.terminal_dist[alignment].push(terminal_id);
       });
     });
+
+    if (changed) {
+      this._config_model.update_module_view_terminals(this._instance_id, {
+        left: distribution.left,
+        top: distribution.top,
+        right: distribution.right,
+        bottom: distribution.bottom,
+      });
+    }
   }
 
   add_observer(handler: ViewModelChangeHandler) {
@@ -356,6 +410,8 @@ export default class ModuleViewModel {
     const cur_align = this.terminal_lookup[terminal_id].alignment;
     const cur_index = this.terminal_lookup[terminal_id].index;
 
+    const changed_sides = new Set<TerminalAlignment>();
+
     if (new_align !== cur_align) {
       // FIXME (aw): we could do an assert here checking the terminal_id
       this.terminal_dist[cur_align].splice(cur_index, 1);
@@ -364,9 +420,8 @@ export default class ModuleViewModel {
       // set new align
       this.terminal_lookup[terminal_id].alignment = new_align;
 
-      // adjust dirty positions (could be optimized)
-      this._recalculate_terminal_index([cur_align, new_align]);
-      return [cur_align, new_align];
+      changed_sides.add(cur_align);
+      changed_sides.add(new_align);
     } else {
       if (new_index > cur_index + 1 || new_index < cur_index) {
         // this should be a rotate!
@@ -374,13 +429,64 @@ export default class ModuleViewModel {
         const corrected_new_index = new_index < cur_index ? new_index : new_index - 1;
         this.terminal_dist[cur_align].splice(corrected_new_index, 0, terminal_id);
 
-        // adjust dirty positions (could be optimized)
-        this._recalculate_terminal_index([cur_align]);
-        return [cur_align];
+        changed_sides.add(cur_align);
       } else {
         return [];
       }
     }
+
+    const overflow_updates = this._enforce_capacity();
+    overflow_updates.forEach((s) => changed_sides.add(s));
+
+    const result = Array.from(changed_sides);
+    // adjust dirty positions (could be optimized)
+    this._recalculate_terminal_index(result);
+
+    return result;
+  }
+
+  _enforce_capacity(): TerminalAlignment[] {
+    const sides: TerminalAlignment[] = ["left", "top", "right", "bottom"];
+    const changed_sides = new Set<TerminalAlignment>();
+
+    for (let i = 0; i < sides.length; i++) {
+      const side = sides[i];
+      const nextSide = sides[(i + 1) % sides.length];
+
+      const capacity = side === "top" || side === "bottom" ? CAPACITY_LONG : CAPACITY_SHORT;
+      const currentList = this.terminal_dist[side];
+
+      if (currentList.length > capacity) {
+        let movedIds: number[] = [];
+        const overflowCount = currentList.length - capacity;
+
+        if (side === "left") {
+          // Left->Top: Take from start (top-most), move to start (left-most)
+          movedIds = currentList.splice(0, overflowCount);
+          this.terminal_dist[nextSide].unshift(...movedIds);
+        } else if (side === "top") {
+          // Top->Right: Take from end (right-most), move to start (top-most)
+          movedIds = currentList.splice(currentList.length - overflowCount, overflowCount);
+          this.terminal_dist[nextSide].unshift(...movedIds);
+        } else if (side === "right") {
+          // Right->Bottom: Take from end (bottom-most), move to end (right-most)
+          movedIds = currentList.splice(currentList.length - overflowCount, overflowCount);
+          this.terminal_dist[nextSide].push(...movedIds);
+        } else if (side === "bottom") {
+          // Bottom->Left: Take from start (left-most), move to end (bottom-most)
+          movedIds = currentList.splice(0, overflowCount);
+          this.terminal_dist[nextSide].push(...movedIds);
+        }
+
+        movedIds.forEach((id) => {
+          this.terminal_lookup[id].alignment = nextSide;
+        });
+
+        changed_sides.add(side);
+        changed_sides.add(nextSide);
+      }
+    }
+    return Array.from(changed_sides);
   }
 
   get_terminal_lookup_id(name: string, type: TerminalType) {
