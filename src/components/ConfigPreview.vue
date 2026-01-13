@@ -1,13 +1,13 @@
 <!-- SPDX-License-Identifier: Apache-2.0
      Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest -->
 <template>
-  <v-dialog v-model="dialogVisible">
+  <v-dialog v-model="dialogVisible" scrollable max-width="80vw" height="85vh">
     <template #activator="{ props: activatorProps }">
       <slot name="activator" :activator-props="activatorProps" />
     </template>
     <template #default="{}">
-      <v-card>
-        <v-card-title>
+      <v-card class="d-flex flex-column" height="100%">
+        <v-card-title class="flex-shrink-0">
           <div class="title-content">
             <div class="controls">
               <v-btn icon="mdi-download" data-cy="download-config-file-button" @click="downloadConfig()" />
@@ -16,16 +16,21 @@
             <v-btn class="close-button" icon="mdi-close" variant="plain" density="compact" @click="closeDialog()" />
           </div>
         </v-card-title>
-        <v-card-text>
-          <v-tabs v-model="tab">
+
+        <div class="flex-shrink-0">
+          <v-tabs v-model="tab" bg-color="surface">
             <v-tab value="yaml"> YAML </v-tab>
           </v-tabs>
+        </div>
+
+        <v-card-text class="flex-grow-1 overflow-y-auto">
           <v-window v-model="tab">
             <v-window-item value="yaml">
               <highlightjs language="yaml" :code="yamlCode" data-cy="config-preview-component" />
             </v-window-item>
           </v-window>
         </v-card-text>
+        <div class="flex-shrink-0 mb-4"></div>
       </v-card>
     </template>
   </v-dialog>
@@ -43,7 +48,7 @@ export default {
 
 <script setup lang="ts">
 import EVConfigModel from "@/modules/evbc/config_model";
-import { computed, inject, ref } from "vue";
+import { inject, ref, watch } from "vue";
 import { Notyf } from "notyf";
 import yaml from "js-yaml";
 
@@ -60,12 +65,18 @@ const props = defineProps<{
 
 const tab = ref("yaml");
 
-const yamlCode = computed(() => yaml.dump(props.config.serialize()));
+const yamlCode = ref("");
+
+watch(dialogVisible, (visible) => {
+  if (visible) {
+    yamlCode.value = yaml.dump(props.config.serialize());
+  }
+});
 
 const downloadConfig = () => {
   const filename = `${props.config._name}.yaml`;
   const contentType = "text/yaml";
-  const content = yamlCode.value;
+  const content = yaml.dump(props.config.serialize());
 
   const blob = new Blob([content], { type: contentType });
   const url = URL.createObjectURL(blob);
@@ -79,7 +90,7 @@ const downloadConfig = () => {
 };
 
 const copyConfig = () => {
-  const content = yamlCode.value;
+  const content = yaml.dump(props.config.serialize());
   navigator.clipboard.writeText(content);
   notyf.success("Copied to clipboard!");
 };
