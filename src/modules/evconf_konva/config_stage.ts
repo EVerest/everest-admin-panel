@@ -17,7 +17,7 @@ import { ClipboardSnapshot, CopiedModule, CopiedConnection } from "./types";
 import { NORMAL_TEXT, TOOLTIP, SIZE, updateColors } from "./views/constants";
 import { KonvaEventObject } from "konva/lib/Node";
 import { Vector2d } from "konva/lib/types";
-import { currentTheme } from "@/plugins/vuetify";
+import { currentTheme, EverestThemeColors } from "@/plugins/vuetify";
 import { i18n } from "@/plugins/i18n";
 import { ComposerTranslation } from "vue-i18n";
 import Stage = Konva.Stage;
@@ -43,7 +43,7 @@ export default class ConfigStage {
   _pasteCount = 0;
   _autoZoomToFit = true;
   _resizeObserver: ResizeObserver;
-  _currentColors = currentTheme.colors;
+  _currentColors: EverestThemeColors = currentTheme.colors;
 
   _connectionDragState: {
     active: boolean;
@@ -261,7 +261,7 @@ export default class ConfigStage {
     this.zoom(1 / 1.2);
   }
 
-  public updateTheme(colors: typeof currentTheme.colors) {
+  public updateTheme(colors: EverestThemeColors) {
     this._currentColors = colors;
     updateColors(colors);
 

@@ -40,6 +40,8 @@ export const everestTheme = {
   },
 };
 
+export type EverestThemeColors = typeof everestTheme.colors;
+
 export const everestThemeDark = {
   dark: true,
   colors: {

@@ -8,7 +8,7 @@ import { TerminalConfig, TerminalShape } from "./shapes/terminal";
 import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
 import { TerminalPlacement } from "./shapes/connection";
 import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
-import { currentTheme } from "@/plugins/vuetify";
+import { currentTheme, EverestThemeColors } from "@/plugins/vuetify";
 import { i18n } from "../../../plugins/i18n";
 import { ComposerTranslation } from "vue-i18n";
 
@@ -77,7 +77,7 @@ export default class ModuleView {
   readonly _title: Konva.Text;
   readonly _frame: Konva.Rect;
   readonly _topStroke: Konva.Line;
-  _currentColors = currentTheme.colors;
+  _currentColors: EverestThemeColors = currentTheme.colors;
   _isSelected = false;
 
   _observers: ModuleViewEventHandler[] = [];
