@@ -670,6 +670,68 @@ export default class ConfigStage {
       } else {
         this._reset_ghosting();
       }
+    } else if (ev.type === "TRY_AUTO_CONNECT") {
+      const sourceTerminal = ev.source;
+      const targetModuleId = ev.targetModuleId;
+
+      const pointerPos = this._stage.getPointerPosition();
+      let localPointer = { x: 0, y: 0 };
+
+      if (pointerPos) {
+        const transform = this._konva.static_layer.getAbsoluteTransform().copy().invert();
+        localPointer = transform.point(pointerPos);
+      }
+
+      const targetVm = this._module_vms[targetModuleId];
+      const targetView = this._module_views[targetModuleId];
+
+      if (!targetVm || !targetView) return;
+
+      let closestTerminalId = -1;
+      let minDist = Infinity;
+
+      targetVm.terminal_lookup.forEach((t, id) => {
+        if (
+          t.terminal.type !== sourceTerminal.type &&
+          (sourceTerminal.type === "provide"
+            ? this._model.interfaces_match(sourceTerminal.interface, t.terminal.interface)
+            : this._model.interfaces_match(t.terminal.interface, sourceTerminal.interface))
+        ) {
+          const pos = targetView.get_terminal_placement(id);
+          // If we have a pointer, use it to disambiguate. If not, assume 0 distance or skip optimization
+          let dist = 0;
+          if (pointerPos) {
+            dist = Math.hypot(pos.x - localPointer.x, pos.y - localPointer.y);
+          }
+
+          if (dist < minDist) {
+            minDist = dist;
+            closestTerminalId = id;
+          }
+        }
+      });
+
+      if (closestTerminalId !== -1) {
+        const sourceIsProvide = sourceTerminal.type === "provide";
+        const provideId = sourceIsProvide ? sourceTerminal.module_instance_id : targetModuleId;
+        const requireId = sourceIsProvide ? targetModuleId : sourceTerminal.module_instance_id;
+        const provideImpl = sourceIsProvide
+          ? sourceTerminal.id
+          : targetVm.terminal_lookup[closestTerminalId].terminal.id;
+        const requireName = sourceIsProvide
+          ? targetVm.terminal_lookup[closestTerminalId].terminal.id
+          : sourceTerminal.id;
+
+        // Reset any ghosting/selection before adding connection
+        this._reset_ghosting();
+
+        this._model.add_connection({
+          providing_instance_id: provideId,
+          providing_impl_name: provideImpl,
+          requiring_instance_id: requireId,
+          requirement_name: requireName,
+        });
+      }
     }
   }
 
@@ -870,25 +932,7 @@ export default class ConfigStage {
     });
 
     this._conn_man.connections.forEach((connItem) => {
-      const conn = this._model._connections[connItem.id];
-      if (conn) {
-        // Ghost connection if either end is ghosted OR if it connects to the source terminal
-        const connectsToSource =
-          (type === "provide" &&
-            conn.providing_instance_id === moduleId &&
-            conn.providing_impl_name === terminalName) ||
-          (type !== "provide" && conn.requiring_instance_id === moduleId && conn.requirement_name === terminalName);
-
-        if (
-          ghostedModules.has(conn.providing_instance_id) ||
-          ghostedModules.has(conn.requiring_instance_id) ||
-          connectsToSource
-        ) {
-          connItem.view.opacity(0.1);
-        } else {
-          connItem.view.opacity(1);
-        }
-      }
+      connItem.view.opacity(0.1);
     });
 
     return compatibleModules;

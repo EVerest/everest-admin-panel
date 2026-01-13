@@ -35,6 +35,12 @@ type AddConnectionEvent = {
   readonly connection: Connection;
 };
 
+export type TryAutoConnectEvent = {
+  readonly type: "TRY_AUTO_CONNECT";
+  readonly source: Terminal & { module_instance_id: ModuleInstanceID };
+  readonly targetModuleId: ModuleInstanceID;
+};
+
 export type ShowTooltipEvent = {
   readonly type: "SHOW_TOOLTIP";
   readonly text: string;
@@ -44,7 +50,12 @@ export type HideTooltipEvent = {
   readonly type: "HIDE_TOOLTIP";
 };
 
-export type ConfigStageContextEvent = SelectionEvent | AddConnectionEvent | ShowTooltipEvent | HideTooltipEvent;
+export type ConfigStageContextEvent =
+  | SelectionEvent
+  | AddConnectionEvent
+  | TryAutoConnectEvent
+  | ShowTooltipEvent
+  | HideTooltipEvent;
 
 type ConfigStageContextEventHandler = (ev: ConfigStageContextEvent) => void;
 
@@ -113,7 +124,16 @@ export default class ConfigStageContext {
   }
 
   clicked_instance(id: ModuleInstanceID) {
-    this.select_instances([id]);
+    if (this._current_selected_terminal) {
+      this._publish({
+        type: "TRY_AUTO_CONNECT",
+        source: { ...this._current_selected_terminal },
+        targetModuleId: id,
+      });
+      this.unselect();
+    } else {
+      this.select_instances([id]);
+    }
   }
 
   get_selected_instances(): ModuleInstanceID[] {

@@ -100,9 +100,18 @@ export default class ModuleView {
         });
 
         view.setDraggable(true);
-        view.on("dragstart", (e) => this._terminal_dragstart_handler(view, e));
-        view.on("dragmove", (e) => this._terminal_dragmove_handler(view, e));
-        view.on("dragend", (e) => this._terminal_dragend_handler(view, e));
+        view.on("dragstart", (e) => {
+          e.cancelBubble = true;
+          this._terminal_dragstart_handler(view, e);
+        });
+        view.on("dragmove", (e) => {
+          e.cancelBubble = true;
+          this._terminal_dragmove_handler(view, e);
+        });
+        view.on("dragend", (e) => {
+          e.cancelBubble = true;
+          this._terminal_dragend_handler(view, e);
+        });
         view.on("mouseenter", () => {
           const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
