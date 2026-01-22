@@ -62,21 +62,21 @@ export default class ConfigStage {
 
   _conn_man: ConnectionManager;
 
-  onDeleteRequest?: (count: number) => void;
+  onDeleteRequest?: (_count: number) => void;
 
   readonly context: ConfigStageContext;
   private _stage: Stage;
   private _bg: Konva.Rect;
   private _boundResizeStage: () => void;
   private _boundKeyDown: (e: KeyboardEvent) => void;
-  private _boundHandleStageContextEvent: (ev: ConfigStageContextEvent) => void;
+  private _boundHandleStageContextEvent: (_ev: ConfigStageContextEvent) => void;
 
   constructor(
     private config: StageConfig,
     context: ConfigStageContext,
     private notyf?: Notyf,
   ) {
-    this._stage = new Konva.Stage(config);
+    this._stage = new Konva.Stage(config) as Konva.Stage;
 
     this._stage.on("mousemove", (e) => {
       if (this._connectionDragState?.active) {
@@ -110,7 +110,7 @@ export default class ConfigStage {
       fontFamily: NORMAL_TEXT.fontFamily,
       fontSize: 16,
       padding: 5,
-      fill: currentTheme.colors["on-secondary"],
+      fill: (currentTheme.colors as EverestThemeColors)["on-secondary"],
       alpha: 0.75,
       visible: false,
       sceneFunc: function (context, shape) {
