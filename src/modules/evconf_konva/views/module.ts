@@ -77,7 +77,7 @@ export default class ModuleView {
   readonly _title: Konva.Text;
   readonly _frame: Konva.Rect;
   readonly _topStroke: Konva.Line;
-  _currentColors: EverestThemeColors = currentTheme.colors;
+  _currentColors: EverestThemeColors = currentTheme.colors as EverestThemeColors;
   _isSelected = false;
 
   _observers: ModuleViewEventHandler[] = [];
@@ -100,15 +100,15 @@ export default class ModuleView {
         });
 
         view.setDraggable(true);
-        view.on("dragstart", (e) => {
+        view.on("dragstart", (e: Konva.KonvaEventObject<DragEvent>) => {
           e.cancelBubble = true;
           this._terminal_dragstart_handler(view, e);
         });
-        view.on("dragmove", (e) => {
+        view.on("dragmove", (e: Konva.KonvaEventObject<DragEvent>) => {
           e.cancelBubble = true;
           this._terminal_dragmove_handler(view, e);
         });
-        view.on("dragend", (e) => {
+        view.on("dragend", (e: Konva.KonvaEventObject<DragEvent>) => {
           e.cancelBubble = true;
           this._terminal_dragend_handler(view, e);
         });

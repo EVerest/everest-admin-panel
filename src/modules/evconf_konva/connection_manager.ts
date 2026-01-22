@@ -70,7 +70,8 @@ export default class ConnectionManager {
           view.strokeWidth(SIZE.CONNECTION_WIDTH);
         }
       });
-      this.group.getLayer()?.batchDraw();
+      const layer = this.group.getLayer() as Konva.Layer | null;
+      layer?.batchDraw();
     }
   }
 

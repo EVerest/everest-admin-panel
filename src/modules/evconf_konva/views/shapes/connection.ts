@@ -59,8 +59,8 @@ export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig>
   }
 
   update_terminals(requirement: TerminalPlacement, provide: TerminalPlacement, animate = false) {
-    const req = requirement || (this.getAttr("requirement") as TerminalPlacement);
-    const prov = provide || (this.getAttr("provide") as TerminalPlacement);
+    const req = requirement || ((this as unknown as Konva.Node).getAttr("requirement") as TerminalPlacement);
+    const prov = provide || ((this as unknown as Konva.Node).getAttr("provide") as TerminalPlacement);
 
     const req_x = req.x + correction[req.alignment].x;
     const req_y = req.y + correction[req.alignment].y;

@@ -50,15 +50,15 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
   }
 
   get terminal_type(): TerminalType {
-    return this.getAttr("terminal_type") as TerminalType;
+    return (this as unknown as Konva.Node).getAttr("terminal_type") as TerminalType;
   }
 
   get terminal_id(): number {
-    return this.getAttr("terminal_id") as number;
+    return (this as unknown as Konva.Node).getAttr("terminal_id") as number;
   }
 
   get terminal_alignment(): TerminalAlignment {
-    return this.getAttr("terminal_alignment") as TerminalAlignment;
+    return (this as unknown as Konva.Node).getAttr("terminal_alignment") as TerminalAlignment;
   }
 
   set_alignment(alignment: TerminalAlignment) {
@@ -98,7 +98,7 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
       | "DRAG_ORIGIN",
   ) {
     this._currentLook = look;
-    this.scale({ x: 1, y: 1 });
+    (this as unknown as Konva.Node).scale({ x: 1, y: 1 });
 
     // FIXME (aw): this function might still assume some knowledge about the order in which the appearence was set
     if (look !== "DISABLED") {

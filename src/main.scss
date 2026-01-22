@@ -7,8 +7,7 @@ html {
 
 .splitpanes__pane {
   background-color: transparent !important;
-  overflow-y: scroll !important;
-  overflow-x: hidden !important;
+  overflow: hidden scroll !important;
   padding: 0;
 
   &:nth-of-type(3) {

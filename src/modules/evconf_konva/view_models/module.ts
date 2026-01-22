@@ -9,7 +9,7 @@ import {
   TerminalArrangement,
   TerminalType,
 } from "@/modules/evbc";
-import EVConfigModel from "@/modules/evbc/config_model";
+import EVConfigModel, { ConfigModelEvent } from "@/modules/evbc/config_model";
 import ConfigStageContext, { ConfigStageContextEvent } from "../stage_context";
 
 type TerminalDistribution = Record<TerminalAlignment, number[]>;
@@ -76,7 +76,7 @@ export default class ModuleViewModel {
     this.type = this._module_instance.type;
 
     stage_context.add_observer((ev) => this._handle_stage_context_event(ev));
-    model.add_observer((ev) => {
+    model.add_observer((ev: ConfigModelEvent) => {
       if (ev.type === "MODULE_INSTANCE_UPDATED" && ev.id === id) {
         this._grid_position = this._module_instance.view_config.position;
         this._notify({ type: "MODULE_MODEL_UPDATE" });

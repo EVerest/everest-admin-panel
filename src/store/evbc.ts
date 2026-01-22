@@ -30,7 +30,7 @@ export const useEvbcStore = defineStore("evbc", () => {
   const get_selected_module_instance = (): ModuleInstanceID | null => {
     if (!get_is_config_opened()) return null;
 
-    const sel = selection.value;
+    const sel: SelectionType = selection.value;
     if (sel.type !== "MODULE_INSTANCE") return null;
 
     const ids = sel.ids;
@@ -41,16 +41,18 @@ export const useEvbcStore = defineStore("evbc", () => {
 
   const get_selected_module_instances = (): ModuleInstanceID[] => {
     if (!get_is_config_opened()) return [];
-    if (selection.value.type === "MODULE_INSTANCE") {
-      return selection.value.ids;
+    const sel: SelectionType = selection.value;
+    if (sel.type === "MODULE_INSTANCE") {
+      return sel.ids;
     }
     return [];
   };
 
   const get_selected_terminal = (): Terminal | null => {
     if (!get_is_config_opened()) return null;
-    if (selection.value.type === "TERMINAL") {
-      return selection.value.terminal;
+    const sel: SelectionType = selection.value;
+    if (sel.type === "TERMINAL") {
+      return sel.terminal;
     }
     return null;
   };

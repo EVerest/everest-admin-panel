@@ -6,7 +6,7 @@ import { App } from "vue";
 
 export default {
   install(app: App) {
-    const evbc = new EVBackendClient();
+    const evbc: EVBackendClient = new EVBackendClient();
     app.provide("evbc", evbc);
     // Expose evbc to window for E2E testing and debugging
     if (import.meta.env.DEV) {
