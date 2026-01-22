@@ -61,11 +61,12 @@ export default class ConnectionManager {
     if (ev.type === "SELECT") {
       const selectedId = ev.selection.type === "CONNECTION" ? ev.selection.id : null;
       this.connections.forEach((cxn) => {
+        const view = cxn.view as Konva.Arrow;
         if (cxn.id === selectedId) {
-          cxn.view.strokeWidth(SIZE.CONNECTION_WIDTH * 2);
-          cxn.view.moveToTop();
+          view.strokeWidth(SIZE.CONNECTION_WIDTH * 2);
+          view.moveToTop();
         } else {
-          cxn.view.strokeWidth(SIZE.CONNECTION_WIDTH);
+          view.strokeWidth(SIZE.CONNECTION_WIDTH);
         }
       });
       this.group.getLayer()?.batchDraw();
@@ -73,10 +74,8 @@ export default class ConnectionManager {
   }
 
   add_connection(id: ConnectionID, provide: ConnectionHalf, requirement: ConnectionHalf) {
-    const providing_placement = (provide.module_view as ModuleView).get_terminal_placement(provide.terminal_lookup_id);
-    const requiring_placement = (requirement.module_view as ModuleView).get_terminal_placement(
-      requirement.terminal_lookup_id,
-    );
+    const providing_placement = provide.module_view.get_terminal_placement(provide.terminal_lookup_id);
+    const requiring_placement = requirement.module_view.get_terminal_placement(requirement.terminal_lookup_id);
 
     const connection_view = new ConnectionShape({
       points: [],
