@@ -76,14 +76,14 @@ export default class ConfigStage {
     context: ConfigStageContext,
     private notyf?: Notyf,
   ) {
-    this._stage = new Konva.Stage(config) as Konva.Stage;
+    this._stage = new Konva.Stage(config) as unknown as Stage;
 
-    this._stage.on("mousemove", (e) => {
+    this._stage.on("mousemove", (e: KonvaEventObject<MouseEvent>) => {
       if (this._connectionDragState?.active) {
         this._handle_connection_drag_move(e);
       }
     });
-    this._stage.on("mouseup", (e) => {
+    this._stage.on("mouseup", (e: KonvaEventObject<MouseEvent>) => {
       if (this._connectionDragState?.active) {
         this._handle_connection_drag_end(e);
       }
@@ -110,7 +110,7 @@ export default class ConfigStage {
       fontFamily: NORMAL_TEXT.fontFamily,
       fontSize: 16,
       padding: 5,
-      fill: (currentTheme.colors as EverestThemeColors)["on-secondary"],
+      fill: (currentTheme.colors as unknown as EverestThemeColors)["on-secondary"],
       alpha: 0.75,
       visible: false,
       sceneFunc: function (context, shape) {
@@ -830,7 +830,7 @@ export default class ConfigStage {
     const selectedIds = this.context.get_selected_instances();
     if (selectedIds.length === 0) return;
 
-    // Moving one selected item will move all other selected items due to the
+    // Moving one selected item will move all other selected items due to the 
     // logic in ModuleViewModel's grid_position setter
     const firstId = selectedIds[0];
     const vm = this._module_vms[firstId];
