@@ -20,6 +20,9 @@ html {
   z-index: 10 !important;
 }
 
+// The `splitpanes__splitter` class comes from the `splitpanes` library and does
+// not follow our selector-class-pattern. Hence we disable the stylelint rule.
+// stylelint-disable-next-line selector-class-pattern
 .default-theme.splitpanes--vertical > .splitpanes__splitter {
   border-left: 1px solid rgba(var(--v-theme-on-background), 0.12) !important;
 }
