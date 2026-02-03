@@ -1,14 +1,19 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 import { EventHandler, EverestConfig, EverestDefinitions } from ".";
 import EVConfigModel from "./config_model";
 import EVBackendConnection, { ConnectionStatus } from "./connection";
-import { useEvbcStore } from "@/store/evbc";
+import { useEvbcStore } from "../../store/evbc";
+import { i18n } from "../../plugins/i18n";
+import { computed, type ComputedRef } from "vue";
+import { ComposerTranslation } from "vue-i18n";
+
+type LocalizedString = string | ComputedRef<string>;
 
 type ConnectionStateEvent = {
   type: "INFO" | "INITIALIZED" | "FAILED" | "RECONNECT" | "IDLE";
-  text: string;
+  text?: LocalizedString;
 };
 
 type ClientEventMap = {
@@ -28,7 +33,11 @@ class EVBackendClient {
   _cxn: EVBackendConnection = null;
   _event_handler_map: ClientEventHandlerMap = {};
   _last_event_map: LastEventMap = {};
-  private evbcStore = useEvbcStore();
+
+  private get evbcStore(): { available_configs: Record<string, EverestConfig> } {
+    return (useEvbcStore as unknown as () => { available_configs: Record<string, EverestConfig> })();
+  }
+
   readonly everest_definitions: EverestDefinitions = {
     modules: null,
     interfaces: null,
@@ -70,7 +79,8 @@ class EVBackendClient {
   // - it would be nice, if we got an object after successful connection, that contains that
   load_config(name: string) {
     if (!(name in this.evbcStore.available_configs)) {
-      throw Error(`Configuration "${name}" not found`);
+      const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+      throw Error(t("evbc.client.configurationNotFound", { name }));
     }
     const config = this.evbcStore.available_configs[name];
     return new EVConfigModel(this.everest_definitions, name, config);
@@ -93,22 +103,31 @@ class EVBackendClient {
 
   _connection_state_listener(status: ConnectionStatus) {
     let event: ConnectionStateEvent = null;
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+
     if (status.type === "OPEN") {
-      event = { type: "INFO", text: `Opening WebSocket connection to ${status.url}` };
+      event = {
+        type: "INFO",
+        // XXX (pa): Not sure if computed refs should be used in event texts. E.g. it works
+        // for errors shown in Vue components. It would not work for errors logged to a file.
+        // If not desired, change to unref() as string. Like so:
+        // text: unref(t("evbc.client.openConnection", { connectionUrl: status.url })) as string,
+        text: computed(() => String(t("evbc.client.openConnection", { connectionUrl: status.url }))),
+      };
     } else if (status.type === "OPENED") {
       // FIXME (aw): this state handling is not production ready yet, in fact it will be probably quite complicated
       if (!this.initialized) {
-        event = { type: "INFO", text: "Successfully opened WebSocket connection" };
+        event = { type: "INFO", text: computed(() => String(t("evbc.client.openConnectionSuccess"))) };
         this._on_connected();
       } else {
-        event = { type: "INITIALIZED", text: "Successfully reconnected" };
+        event = { type: "INITIALIZED", text: computed(() => String(t("evbc.client.reconnectedSuccess"))) };
       }
     } else if (status.type === "ERROR") {
-      event = { type: "FAILED", text: "Connection failed. Trying to reconnect." };
+      event = { type: "FAILED", text: computed(() => String(t("evbc.client.connectionFailed"))) };
     } else if (status.type === "CLOSED") {
-      event = { type: "RECONNECT", text: "Trying to reconnect" };
+      event = { type: "RECONNECT", text: computed(() => String(t("evbc.client.reconnecting"))) };
     } else if (status.type === "DISCONNECTED") {
-      event = { type: "IDLE", text: "Disconnected" };
+      event = { type: "IDLE", text: computed(() => String(t("evbc.client.disconnected"))) };
     }
 
     if (event) {
@@ -117,32 +136,62 @@ class EVBackendClient {
   }
 
   _on_connected() {
-    this._reload_instance_data().then(() => {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+
+    void this._reload_instance_data().then(() => {
       this.initialized = true;
-      this._publish("connection_state", { type: "INITIALIZED", text: "Done initializing" });
+      this._publish("connection_state", {
+        type: "INITIALIZED",
+        text: computed(() => String(t("evbc.client.initialized"))),
+      });
     });
   }
 
   async _reload_modules(): Promise<void> {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+
     this.everest_definitions.modules = await this._cxn.rpc_issuer.get_modules();
     this._publish("connection_state", {
       type: "INFO",
-      text: `Received ${Object.keys(this.everest_definitions.modules).length} module files`,
+      text: computed(() =>
+        String(
+          t("evbc.client.receivedModuleFiles", {
+            count: Object.keys(this.everest_definitions.modules).length,
+          }),
+        ),
+      ),
     });
   }
 
   async _reload_interfaces(): Promise<void> {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+
     this.everest_definitions.interfaces = await this._cxn.rpc_issuer.get_interfaces();
     this._publish("connection_state", {
       type: "INFO",
-      text: `Received ${Object.keys(this.everest_definitions.interfaces).length} interfaces definitions`,
+      text: String(
+        t("evbc.client.receivedInterfacesDefinitions", {
+          count: Object.keys(this.everest_definitions.interfaces).length,
+        }),
+      ),
     });
   }
 
   async _reload_configs(): Promise<void> {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+
     const cfgs = await this._cxn.rpc_issuer.get_configs();
-    Object.assign(this.evbcStore.available_configs, cfgs);
-    this._publish("connection_state", { type: "INFO", text: `Received ${Object.keys(cfgs).length} config files` });
+    Object.assign(this.evbcStore.available_configs, cfgs as unknown as Record<string, EverestConfig>);
+    this._publish("connection_state", {
+      type: "INFO",
+      text: computed(() =>
+        String(
+          t("evbc.client.receivedConfigFiles", {
+            count: Object.keys(cfgs as unknown as Record<string, EverestConfig>).length,
+          }),
+        ),
+      ),
+    });
   }
 
   _reload_instance_data(): Promise<void[]> {

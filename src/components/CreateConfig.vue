@@ -1,5 +1,5 @@
 <!-- SPDX-License-Identifier: Apache-2.0
-     Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
+     Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest -->
 
 <template>
   <div class="btn-container">
@@ -15,7 +15,7 @@
           @click="uploadConfigPrompt()"
         />
       </template>
-      <span>Upload Config</span>
+      <span>{{ t("createConfig.uploadConfigTooltip") }}</span>
     </v-tooltip>
     <v-tooltip v-if="state == ComponentStates.DEFAULT" location="right" open-delay="500">
       <template #activator="{ props }">
@@ -29,7 +29,7 @@
           @click="state = ComponentStates.ASK_USER_FOR_CONFIG_NAME"
         />
       </template>
-      <span>Create Config</span>
+      <span>{{ t("createConfig.createConfigTooltip") }}</span>
     </v-tooltip>
     <v-tooltip v-if="state == ComponentStates.ASK_USER_FOR_CONFIG_NAME" location="right" open-delay="500">
       <template #activator="{ props }">
@@ -43,7 +43,7 @@
           @click="resetDialog()"
         />
       </template>
-      <span>Abort</span>
+      <span>{{ t("createConfig.abortTooltip") }}</span>
     </v-tooltip>
     <v-tooltip v-if="state == ComponentStates.ASK_USER_FOR_CONFIG_NAME" location="right" open-delay="500">
       <template #activator="{ props }">
@@ -58,7 +58,7 @@
           @click="onAcceptBtnClick()"
         />
       </template>
-      <span>Create Config</span>
+      <span>{{ t("createConfig.createConfigTooltip") }}</span>
     </v-tooltip>
   </div>
   <v-text-field
@@ -66,17 +66,17 @@
     v-model="configName"
     density="compact"
     data-cy="config-name-input"
-    placeholder="config name"
+    :placeholder="t('createConfig.configNamePlaceholder')"
     :rules="[validateConfigName]"
   />
   <v-dialog v-model="showErrorDialog" @click:outside="resetDialog()">
     <v-card color="danger">
-      <v-card-title>Couldn't load config</v-card-title>
+      <v-card-title>{{ t("createConfig.errorDialogTitle") }}</v-card-title>
       <v-card-text>
         <pre style="white-space: pre-wrap"><code>{{ errorStore.getError() }}</code></pre>
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" @click="resetDialog()"> OK </v-btn>
+        <v-btn color="primary" @click="resetDialog()">{{ t("createConfig.errorDialogOk") }}</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -91,6 +91,9 @@ import Ajv from "ajv";
 import { EverestConfig } from "@/modules/evbc";
 import { urlToPublicAsset } from "@/utils";
 import { useErrorStore } from "@/store/errorStore";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n({ useScope: "global" });
 
 enum ComponentStates {
   DEFAULT,
@@ -155,13 +158,13 @@ function uploadConfigPrompt() {
  */
 function validateConfigName() {
   if (configName.value.trim().length === 0) {
-    return "Please enter a name";
+    return t("createConfig.validateConfigNameMissing");
   } else if (/.*(\.json|\.ya?ml)$/.test(configName.value)) {
-    return "The name must not contain the file extension";
+    return t("createConfig.validateConfigNameFileExtension");
   } else if (!/^[a-zA-Z0-9-_]+$/.test(configName.value)) {
-    return "The name must only contain letters, numbers, dashes and underscores";
+    return t("createConfig.validateConfigNameCharacters");
   } else if (Object.keys(available_configs.value).includes(configName.value.trim())) {
-    return "The name must be unique";
+    return t("createConfig.validateConfigNameUnique");
   } else {
     return true;
   }

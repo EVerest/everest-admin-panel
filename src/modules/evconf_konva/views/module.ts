@@ -1,17 +1,19 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
-import { TerminalAlignment } from "@/modules/evbc";
+import { Terminal, TerminalAlignment } from "@/modules/evbc";
 import { MONO_TEXT, NORMAL_TEXT, SIZE } from "./constants";
 import { TerminalConfig, TerminalShape } from "./shapes/terminal";
 import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
 import { TerminalPlacement } from "./shapes/connection";
 import { HideTooltipEvent, ShowTooltipEvent } from "../stage_context";
-import { currentTheme } from "@/plugins/vuetify";
+import { currentTheme, EverestThemeColors } from "@/plugins/vuetify";
+import { i18n } from "../../../plugins/i18n";
+import { ComposerTranslation } from "vue-i18n";
 
 // FIXME (aw): the TerminalPlacement type belongs to a shared place!
-type TerminalPlacementWithID = TerminalPlacement & { id: number };
+export type TerminalPlacementWithID = TerminalPlacement & { id: number };
 
 type TerminalsUpdatedEvent = {
   readonly type: "TERMINALS_UPDATED";
@@ -19,8 +21,23 @@ type TerminalsUpdatedEvent = {
   readonly module_moved: boolean;
 };
 
-export type ModuleViewEvent = TerminalsUpdatedEvent;
+export type TerminalDragStartEvent = {
+  readonly type: "TERMINAL_DRAG_START";
+  readonly terminal_id: number;
+};
+
+export type ModuleViewEvent = TerminalsUpdatedEvent | TerminalDragStartEvent;
 type ModuleViewEventHandler = (ev: ModuleViewEvent) => void;
+
+function safeTerminalInterface(item: unknown): string {
+  if (typeof item !== "object" || item === null) return "";
+  const rec = item as Record<string, unknown>;
+  const term = rec.terminal;
+  if (typeof term !== "object" || term === null) return "";
+  const raw = (term as Record<string, unknown>).interface;
+  if (typeof raw === "string") return raw;
+  return String(raw ?? "");
+}
 
 function check_hit(x: number, y: number, terminal_distribution: Record<TerminalAlignment, number[]>) {
   let align: TerminalAlignment = null;
@@ -58,6 +75,10 @@ export default class ModuleView {
   readonly _vm: ModuleViewModel;
   readonly _terminal_views: Array<TerminalShape>;
   readonly _title: Konva.Text;
+  readonly _frame: Konva.Rect;
+  readonly _topStroke: Konva.Line;
+  _currentColors: EverestThemeColors = currentTheme.colors as EverestThemeColors;
+  _isSelected = false;
 
   _observers: ModuleViewEventHandler[] = [];
 
@@ -70,43 +91,64 @@ export default class ModuleView {
     // initialize member variables
     this._vm = view_model;
 
-    this._terminal_views = view_model.terminal_lookup.map((item, terminal_id) => {
-      const view = new TerminalShape<TerminalConfig>({
-        terminal_type: item.terminal.type,
-        terminal_id,
-        terminal_alignment: item.alignment,
-      });
+    this._terminal_views = view_model.terminal_lookup.map(
+      (item: { readonly terminal: Terminal; alignment: TerminalAlignment; index: number }, terminal_id) => {
+        const view = new TerminalShape<TerminalConfig>({
+          terminal_type: item.terminal.type,
+          terminal_id,
+          terminal_alignment: item.alignment,
+        });
 
-      view.setDraggable(true);
-      view.on("dragstart", () => this._terminal_dragstart_handler(view));
-      view.on("dragmove", () => this._terminal_dragmove_handler(view));
-      view.on("dragend", () => this._terminal_dragend_handler(view));
-      view.on("mouseenter", () => {
-        this._vm.set_cursor("pointer");
-        const showTooltip: ShowTooltipEvent = {
-          type: "SHOW_TOOLTIP",
-          text: `Interface type: ${item.terminal.interface}`,
-        };
-        this._vm.notify_stage_context(showTooltip);
-      });
-      view.on("mouseleave", () => {
-        this._vm.set_cursor("default");
-        const hideTooltip: HideTooltipEvent = {
-          type: "HIDE_TOOLTIP",
-        };
-        this._vm.notify_stage_context(hideTooltip);
-      });
-      view.on("pointerclick", (ev) => {
-        view_model.clicked_terminal(terminal_id);
-        ev.cancelBubble = true;
-      });
+        view.setDraggable(true);
+        view.on("dragstart", (e: Konva.KonvaEventObject<DragEvent>) => {
+          e.cancelBubble = true;
+          this._terminal_dragstart_handler(view, e);
+        });
+        view.on("dragmove", (e: Konva.KonvaEventObject<DragEvent>) => {
+          e.cancelBubble = true;
+          this._terminal_dragmove_handler(view, e);
+        });
+        view.on("dragend", (e: Konva.KonvaEventObject<DragEvent>) => {
+          e.cancelBubble = true;
+          this._terminal_dragend_handler(view, e);
+        });
+        view.on("mouseenter", () => {
+          const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
 
-      return view;
-    });
+          this._vm.set_cursor("pointer");
+          const iface = safeTerminalInterface(item);
+          const showTooltip: ShowTooltipEvent = {
+            type: "SHOW_TOOLTIP",
+            text: t("module.terminalTooltip", { interface: iface }),
+          };
+          this._vm.notify_stage_context(showTooltip);
+        });
+        view.on("mouseleave", () => {
+          this._vm.set_cursor("default");
+          const hideTooltip: HideTooltipEvent = {
+            type: "HIDE_TOOLTIP",
+          };
+          this._vm.notify_stage_context(hideTooltip);
+        });
+        view.on("pointerclick", (ev) => {
+          view_model.clicked_terminal(terminal_id);
+          ev.cancelBubble = true;
+        });
+
+        return view;
+      },
+    );
 
     // initialize correct terminal positions
     Object.entries(view_model.terminal_dist).forEach(([_alignment, terminal_ids]) => {
       this._recalculate_terminal_position(_alignment as TerminalAlignment, terminal_ids, false);
+    });
+
+    // Set initial appearance
+    this._terminal_views.forEach((view, id) => {
+      if (view_model.is_terminal_connected(id)) {
+        view.set_appearence("CONNECTED");
+      }
     });
 
     // register view model observer
@@ -124,7 +166,7 @@ export default class ModuleView {
       cornerRadius: 4,
       width: SIZE.FRAME_WIDTH,
       height: SIZE.FRAME_HEIGHT,
-      fill: currentTheme.colors.primary,
+      fill: currentTheme.colors["module-primary"],
       shadowBlur: 4,
       shadowOpacity: 0.4,
       shadowOffset: {
@@ -134,6 +176,7 @@ export default class ModuleView {
       fillAfterStrokeEnabled: true,
       listening: true,
     });
+    this._frame = frame;
 
     const strokeWidth = 8;
     const topStroke = new Konva.Line({
@@ -150,6 +193,7 @@ export default class ModuleView {
       y: frame.y(),
       listening: true,
     });
+    this._topStroke = topStroke;
 
     const title = new Konva.Text({
       wrap: "none",
@@ -187,7 +231,7 @@ export default class ModuleView {
         this._vm.set_cursor("default");
       });
       e.on("pointerclick", (ev) => {
-        this._vm.clicked_title();
+        this._vm.clicked_title(ev.evt.shiftKey);
         ev.cancelBubble = true;
       });
     });
@@ -197,7 +241,7 @@ export default class ModuleView {
     this.group.add(frame, topStroke, typeInfo, title, ...this._terminal_views);
   }
 
-  get_terminal_placement(id: number) {
+  get_terminal_placement(id: number): TerminalPlacement {
     const terminal_view = this._terminal_views[id];
     const relative_position = terminal_view.position();
     const module_position = this.group.position();
@@ -230,11 +274,58 @@ export default class ModuleView {
       ev.normal.forEach((id) => {
         this._terminal_views[id].set_appearence("NORMAL");
       });
+      ev.connected?.forEach((id) => {
+        this._terminal_views[id].set_appearence("CONNECTED");
+      });
+      ev.highlight_normal?.forEach((id) => {
+        this._terminal_views[id].set_appearence("HIGHLIGHT_NORMAL");
+      });
+      ev.highlight_connected?.forEach((id) => {
+        this._terminal_views[id].set_appearence("HIGHLIGHT_CONNECTED");
+      });
       if (this.group.children.length > 0) {
         this.group.cache();
       }
     } else if (ev.type === "MODULE_MODEL_UPDATE") {
       this._title.setText(this._vm.id);
+
+      // Update position if it changed externally (e.g. via multi-selection drag)
+      const new_group_pos = {
+        x: this._vm.grid_position.x * SIZE.GRID,
+        y: this._vm.grid_position.y * SIZE.GRID,
+      };
+      this.group.position(new_group_pos);
+
+      // Notify terminals updated so connections can redraw
+      const update_terminals = this._terminal_views.map((item, id): TerminalPlacementWithID => {
+        return {
+          alignment: item.terminal_alignment,
+          id,
+          x: item.x() + new_group_pos.x,
+          y: item.y() + new_group_pos.y,
+        };
+      });
+
+      this._notify({
+        type: "TERMINALS_UPDATED",
+        terminals: update_terminals,
+        module_moved: true,
+      });
+
+      if (this.group.children.length > 0) {
+        this.group.cache();
+      }
+    } else if (ev.type === "MODULE_SELECTION_CHANGED") {
+      this._isSelected = ev.selected;
+      if (ev.selected) {
+        this._frame.stroke(this._currentColors["on-background"]);
+        this._frame.strokeWidth(4);
+        this._frame.dash([10, 5]);
+      } else {
+        this._frame.stroke(null);
+        this._frame.strokeWidth(0);
+        this._frame.dash([]);
+      }
       if (this.group.children.length > 0) {
         this.group.cache();
       }
@@ -281,7 +372,31 @@ export default class ModuleView {
     }
   }
 
-  _terminal_dragstart_handler(view: TerminalShape) {
+  _terminal_dragstart_handler(view: TerminalShape, e: Konva.KonvaEventObject<DragEvent>) {
+    if (!e.evt.altKey) {
+      view.stopDrag();
+
+      // Hide tooltip since we are starting a connection drag
+      const hideTooltip: HideTooltipEvent = {
+        type: "HIDE_TOOLTIP",
+      };
+      this._vm.notify_stage_context(hideTooltip);
+
+      // Reset position immediately because dragstart might have moved it slightly
+      const alignment = this._vm.terminal_lookup[view.terminal_id].alignment;
+      this._recalculate_terminal_position(alignment, this._vm.terminal_dist[alignment], false);
+
+      if (this.group.children.length > 0) {
+        this.group.cache();
+      }
+
+      this._notify({
+        type: "TERMINAL_DRAG_START",
+        terminal_id: view.terminal_id,
+      });
+      return;
+    }
+
     const replace_terminal = view.clone() as TerminalShape;
     replace_terminal.set_appearence("PLACEHOLDER");
 
@@ -294,7 +409,7 @@ export default class ModuleView {
     this.group.clearCache();
   }
 
-  _terminal_dragmove_handler(view: TerminalShape) {
+  _terminal_dragmove_handler(view: TerminalShape, _e: Konva.KonvaEventObject<DragEvent>) {
     const hit = check_hit(view.x(), view.y(), this._vm.terminal_dist);
 
     if (!hit.align) {
@@ -313,10 +428,13 @@ export default class ModuleView {
     });
   }
 
-  _terminal_dragend_handler(view: TerminalShape) {
-    // remove ghost
-    this._terminal_views[view.terminal_id].destroy();
-    this._terminal_views[view.terminal_id] = view;
+  _terminal_dragend_handler(view: TerminalShape, _e: Konva.KonvaEventObject<DragEvent>) {
+    // Only destroy if we have a ghost (meaning we were in rearrange mode)
+    if (this._terminal_views[view.terminal_id] !== view) {
+      // remove ghost
+      this._terminal_views[view.terminal_id].destroy();
+      this._terminal_views[view.terminal_id] = view;
+    }
 
     const end_align = this._vm.terminal_lookup[view.terminal_id].alignment;
 
@@ -366,5 +484,36 @@ export default class ModuleView {
     });
 
     this._notify(terminal_update_event);
+  }
+
+  set_highlight_terminals(interfaceName: string, type: string, blockedTerminals: Set<number> = new Set()) {
+    this.group.clearCache();
+    this._terminal_views.forEach((view, id) => {
+      const info = this._vm.terminal_lookup[id];
+      if (info.terminal.interface === interfaceName && info.terminal.type === type && !blockedTerminals.has(id)) {
+        view.scale({ x: 1.5, y: 1.5 });
+      }
+    });
+  }
+
+  reset_highlight_terminals() {
+    this.group.clearCache();
+    this._terminal_views.forEach((view) => {
+      view.scale({ x: 1, y: 1 });
+    });
+  }
+
+  updateTheme(colors: any) {
+    this._currentColors = colors;
+    this.group.clearCache();
+    this._frame.fill(colors["module-primary"]);
+    this._topStroke.stroke(colors.secondary);
+    this._terminal_views.forEach((view) => view.updateTheme());
+
+    if (this._isSelected) {
+      this._frame.stroke(colors["on-background"]);
+    }
+
+    this.group.cache();
   }
 }

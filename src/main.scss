@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 html {
   scrollbar-color: rgba(var(--v-theme-on-background), var(--v-disabled-opacity)) rgb(var(--v-theme-background));
@@ -7,7 +7,7 @@ html {
 
 .splitpanes__pane {
   background-color: transparent !important;
-  overflow-y: scroll !important;
+  overflow: hidden scroll !important;
   padding: 0;
 
   &:nth-of-type(3) {
@@ -16,5 +16,13 @@ html {
 }
 
 .splitpanes__splitter {
-  background-color: rgba(var(--v-theme-on-background), 0.05) !important;
+  background-color: rgba(var(--v-theme-on-background), 0.12) !important;
+  z-index: 10 !important;
+}
+
+// The `splitpanes__splitter` class comes from the `splitpanes` library and does
+// not follow our selector-class-pattern. Hence we disable the stylelint rule.
+// stylelint-disable-next-line selector-class-pattern
+.default-theme.splitpanes--vertical > .splitpanes__splitter {
+  border-left: 1px solid rgba(var(--v-theme-on-background), 0.12) !important;
 }

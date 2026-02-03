@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "EverestConfig",
+  "type": "object",
+  "required": ["name", "modules", "connections"],
+  "properties": {
+    "name": { "type": "string" },
+    "modules": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["id", "module", "terminals", "parameters"],
+        "properties": {
+          "id": { "type": "string" },
+          "module": { "type": "string" },
+          "terminals": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "direction", "interface"],
+              "properties": {
+                "id": { "type": "string" },
+                "direction": { "enum": ["in", "out"] },
+                "interface": { "type": "string" }
+              }
+            }
+          },
+          "parameters": { "type": "object" }
+        }
+      }
+    },
+    "connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "from", "to"],
+        "properties": {
+          "id": { "type": "string" },
+          "from": {
+            "type": "object",
+            "required": ["moduleId","terminalId"],
+            "properties": {
+              "moduleId": { "type": "string" },
+              "terminalId": { "type": "string" }
+            }
+          },
+          "to": {
+            "type": "object",
+            "required": ["moduleId","terminalId"],
+            "properties": {
+              "moduleId": { "type": "string" },
+              "terminalId": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "metadata": { "type": "object" }
+  },
+  "additionalProperties": false
+}

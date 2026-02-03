@@ -1,19 +1,20 @@
 <!-- SPDX-License-Identifier: Apache-2.0
-     Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
+     Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest -->
 
 <template>
   <v-app>
     <v-app-bar color="primary">
       <v-app-bar-nav-icon data-cy="hamburger-menu" @click="drawer = !drawer" />
       <v-spacer />
-      <v-img class="mx-4 rotateable" max-height="40" max-width="40" src="/img/icons/everest_lf_logo_white.svg" />
-      <v-toolbar-title class="app-bar-title"> EVerest Admin Panel </v-toolbar-title>
+      <v-img class="mx-4 rotateable" max-height="40" max-width="40" :src="logoSrc" :style="logoStyle" />
+      <v-toolbar-title class="app-bar-title">{{ t("mainPanel.toolbarTitle") }}</v-toolbar-title>
       <v-spacer />
+      <LanguageSelector />
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" position="fixed" temporary>
       <v-list nav density="compact">
         <v-list-item to="config" append-icon="mdi-cog" link>
-          <v-list-item-title>Config</v-list-item-title>
+          <v-list-item-title>{{ t("mainPanel.navigationDrawer.config") }}</v-list-item-title>
         </v-list-item>
         <v-tooltip location="end">
           <template #activator="{ props }">
@@ -24,14 +25,14 @@
               data-cy="switch-instance"
               @click="changeInstance()"
             >
-              <v-list-item-title>Change EVerest instance</v-list-item-title>
+              <v-list-item-title>{{ t("mainPanel.navigationDrawer.change") }}</v-list-item-title>
             </v-list-item>
           </template>
-          <span>Connected to {{ connectionUrl }}</span>
+          <span>{{ t("mainPanel.navigationDrawer.connectedTo", { connectionUrl }) }}</span>
         </v-tooltip>
       </v-list>
       <v-list-item class="bottom-list d-flex flex-column">
-        <span>Version {{ version }}</span>
+        <span>{{ t("mainPanel.navigationDrawer.version", { version }) }}</span>
       </v-list-item>
     </v-navigation-drawer>
 
@@ -43,8 +44,8 @@
           <template #actions>
             <v-progress-linear height="10" indeterminate />
           </template>
-          <v-card-title>Lost connection to EVerest backend</v-card-title>
-          <v-card-text>Trying to reconnect ...</v-card-text>
+          <v-card-title>{{ t("mainPanel.overlay.titleLostConnection") }}</v-card-title>
+          <v-card-text>{{ t("mainPanel.overlay.textTryingToReconnect") }}</v-card-text>
         </v-card>
       </v-overlay>
     </v-main>
@@ -52,16 +53,28 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject } from "vue";
+import { defineComponent, inject, unref } from "vue";
 import EVBackendClient from "@/modules/evbc/client";
+import LanguageSelector from "@/components/LanguageSelector.vue";
 
 import { Router, useRouter } from "vue-router";
 import { Notyf } from "notyf";
+import { useI18n } from "vue-i18n";
+import { useTheme } from "vuetify";
 
 let evbc: EVBackendClient;
 let router: Router;
 let notyf: Notyf;
+
 export default defineComponent({
+  components: {
+    LanguageSelector,
+  },
+  setup() {
+    const { t } = useI18n();
+    const theme = useTheme();
+    return { t, theme };
+  },
   data: () => ({
     drawer: false,
     evbc_disconnected: false,
@@ -72,13 +85,19 @@ export default defineComponent({
     connectionUrl() {
       return evbc?.connection.url ?? "nothing";
     },
+    logoSrc() {
+      return "/img/icons/everest_lf_logo_white.svg";
+    },
+    logoStyle() {
+      return this.theme.global.current.value.dark ? { filter: "brightness(0)" } : {};
+    },
   },
   created() {
     evbc = inject<EVBackendClient>("evbc");
     router = useRouter();
     notyf = inject<Notyf>("notyf");
     evbc.on("connection_state", (ev) => {
-      this.evbc_status = ev.text;
+      this.evbc_status = unref(ev.text);
       if (ev.type === "RECONNECT" || ev.type === "IDLE") {
         this.evbc_disconnected = true;
       } else if (ev.type === "INITIALIZED") {
@@ -93,7 +112,7 @@ export default defineComponent({
       const timeout = setTimeout(() => {
         notification = notyf.open({
           type: "warning",
-          message: "Disconnecting from EVerest backend ...",
+          message: String(this.$t("mainPanel.changeInstance.disconnectNotification")),
           ripple: false,
         });
       }, 250);
@@ -102,7 +121,10 @@ export default defineComponent({
       if (notification) {
         notyf.dismiss(notification);
       }
-      await router.push({ path: "/connect", query: { auto_connect: "false" } });
+
+      const route = router.currentRoute.value;
+
+      await router.push({ path: `/${route.params.locale}/connect`, query: { auto_connect: "false" } });
     },
   },
 });

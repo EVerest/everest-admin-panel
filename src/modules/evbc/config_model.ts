@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 import {
   ConfigSet,
@@ -22,6 +22,8 @@ import {
 import { default_terminals, generate_interface_parents_map, InterfaceParentMap } from "./utils";
 
 import clone from "just-clone";
+import { i18n } from "../../plugins/i18n";
+import { ComposerTranslation } from "vue-i18n";
 
 function get_next_available_name(prefix: string, name_list: string[]): string {
   const valid_integral_endings = name_list
@@ -38,9 +40,11 @@ function get_next_available_name(prefix: string, name_list: string[]): string {
 }
 
 function config_set_with_schema_to_config_set(config_set: ConfigSetWithSchema): ConfigSet {
-  const entries = config_set.filter((item) => item.model !== undefined).map((item) => [item.schema.title, item.model]);
+  const entries: [string, unknown][] = config_set
+    .filter((item) => item.model !== undefined)
+    .map((item) => [item.schema.title, item.model]);
 
-  return Object.fromEntries(entries);
+  return Object.fromEntries(entries) as ConfigSet;
 }
 
 type ModulInstanceeAddedEvent = {
@@ -85,6 +89,20 @@ class EVConfigModel {
   _instances: Record<ModuleInstanceID, ModuleInstanceModel> = {};
   _connections: Record<ConnectionID, Connection> = {};
 
+  is_terminal_connected(
+    instance_id: ModuleInstanceID,
+    terminal_id: string,
+    terminal_type: "provide" | "requirement",
+  ): boolean {
+    return Object.values(this._connections).some((conn) => {
+      if (terminal_type === "provide") {
+        return conn.providing_instance_id === instance_id && conn.providing_impl_name === terminal_id;
+      } else {
+        return conn.requiring_instance_id === instance_id && conn.requirement_name === terminal_id;
+      }
+    });
+  }
+
   // FIXME (aw): refactor this functionality like a mixin or something similar
   readonly _event_handlers: EventHandler<ConfigModelEvent>[] = [];
 
@@ -126,6 +144,10 @@ class EVConfigModel {
     });
   }
 
+  get connections() {
+    return this._connections;
+  }
+
   _module_instance_id_from_module_id(module_id: string) {
     const pair = Object.entries(this._instances).find(([, instance]) => instance.id === module_id);
     return pair ? Number(pair[0]) : null;
@@ -141,19 +163,30 @@ class EVConfigModel {
     });
   }
 
-  add_new_module_instance(module_type: string, module_id?: string): ModuleInstanceID {
+  get_existing_module_ids(): string[] {
+    return Object.values(this._instances).map((i) => i.id);
+  }
+
+  add_new_module_instance(
+    module_type: string,
+    module_id?: string,
+    config?: EverestModuleConfig,
+    view_config?: ModuleViewConfig,
+  ): ModuleInstanceID {
     module_id =
       module_id ||
       get_next_available_name(
         module_type,
         Object.values(this._instances).map((item) => item.id),
       );
-    return this._add_module_instance(module_type, module_id);
+    return this._add_module_instance(module_type, module_id, config, view_config);
   }
 
   delete_module_instance(id: ModuleInstanceID) {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+
     if (!(id in this._instances)) {
-      throw Error(`Module instance with instance id "${id}" does not exist`);
+      throw Error(t("config_model.deleteModelInstanceError", { id }));
     }
 
     const cxns = Object.entries(this._connections).filter(
@@ -171,7 +204,10 @@ class EVConfigModel {
   add_connection(conn: Connection): ConnectionID {
     this._validate_connection(conn);
 
-    this._connection_exists(conn);
+    const existing_id = this._find_existing_connection_id(conn);
+    if (existing_id !== null) {
+      return existing_id;
+    }
 
     const new_connection_id = this._next_connection_id;
     this._next_connection_id++;
@@ -210,6 +246,7 @@ class EVConfigModel {
   update_module_view_position(module_instance_id: ModuleInstanceID, pos: ModuleViewConfig["position"]) {
     const module_instance = this.get_module_instance(module_instance_id);
     module_instance.view_config.position = clone(pos);
+    this._notify({ type: "MODULE_INSTANCE_UPDATED", id: module_instance_id });
   }
 
   update_module_view_terminals(module_instance_id: ModuleInstanceID, arrangement: TerminalArrangement) {
@@ -226,8 +263,10 @@ class EVConfigModel {
   }
 
   delete_connection(connection_id: ConnectionID) {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+
     if (!(connection_id in this._connections)) {
-      throw Error(`Connection with id "${connection_id}" unknown`);
+      throw Error(t("config_model.deleteConnectionError", { id: connection_id }));
     }
 
     const conn = this._connections[connection_id];
@@ -309,12 +348,17 @@ class EVConfigModel {
     return config;
   }
 
-  _setup_config_set(schema: ConfigSetSchema, config?: ConfigSet): ConfigSetWithSchema {
+  _setup_config_set(schema: ConfigSetSchema, config?: ConfigSet): ConfigSetWithSchema | undefined {
     if (schema === undefined) {
       return undefined;
     }
     return Object.entries(schema).map(([key, value]) => {
-      const config_value = config !== undefined && key in config ? config[key] : value.default;
+      // There is no object injection possible here, `key` is valid and checked.
+      // Prevent ESlint from flagging a false positive for `config[key]` and from
+      // flagging the missing production definition rule in a local development environment.
+      // eslint-disable-next-line
+      // eslint-disable-next-line security/detect-object-injection
+      const config_value: unknown = config !== undefined && key in config ? config[key] : value.default;
       return { schema: { ...value, title: key }, model: config_value };
     });
   }
@@ -326,6 +370,7 @@ class EVConfigModel {
       implementations?: Record<string, { evse: number; connector?: number }>;
     },
   ): ConfigSetWithSchema {
+    // XXX: (pa) Not sure if schema entries need translation
     const schema_entries = [];
 
     // Add module-level mapping fields
@@ -382,13 +427,13 @@ class EVConfigModel {
   }
 
   _add_module_instance(type: string, id: string, config?: EverestModuleConfig, view_config?: ModuleViewConfig): number {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
+
     if (!(type in this._module_definitions)) {
-      throw Error(
-        `Invalid module type: ${type}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this module yet. Make sure you are running the correct admin panel or connect to a live instance.`,
-      );
+      throw Error(t("config_model.moduleInvalidError", { type }));
     }
     if (Object.values(this._instances).filter((value) => value.id === id).length) {
-      throw Error(`Module instance with id: ${module.id} already exists`);
+      throw Error(t("config_model.moduleExistsError", { moduleId: module.id }));
     }
 
     const manifest = this._module_definitions[type];
@@ -459,18 +504,15 @@ class EVConfigModel {
   }
 
   _validate_connection(conn: Connection) {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
     const prov_id = conn.providing_instance_id;
     if (!(prov_id in this._instances)) {
-      throw Error(
-        `Providing instance with instance id ${prov_id} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.`,
-      );
+      throw Error(t("config_model.providingInstanceDoesNotExistError", { instanceId: prov_id }));
     }
 
     const req_id = conn.requiring_instance_id;
     if (!(req_id in this._instances)) {
-      throw Error(
-        `Requiring instance with instance id ${req_id} does not exist. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this interface yet. Make sure you are running the correct admin panel or connect to a live instance.`,
-      );
+      throw Error(t("config_model.requiringInstanceDoesNotExistError", { instanceId: req_id }));
     }
 
     const prov_module = this._instances[prov_id].type;
@@ -479,15 +521,21 @@ class EVConfigModel {
     const req_module = this._instances[req_id].type;
     const req_manifest = this._module_definitions[req_module];
 
-    if (!(conn.providing_impl_name in prov_manifest.provides)) {
+    if (!prov_manifest.provides || !(conn.providing_impl_name in prov_manifest.provides)) {
       throw Error(
-        `Providing module of type "${prov_module}" does not provide an implementation named "${conn.providing_impl_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`,
+        t("config_model.providingModuleDoesNotProvideError", {
+          moduleType: prov_module,
+          implementationName: conn.providing_impl_name,
+        }),
       );
     }
 
-    if (!(conn.requirement_name in req_manifest.requires)) {
+    if (!req_manifest.requires || !(conn.requirement_name in req_manifest.requires)) {
       throw Error(
-        `Requiring module of type "${req_module}" does not have an requirement called "${conn.requirement_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`,
+        t("config_model.requiringModuleDoesNotRequireError", {
+          moduleType: req_module,
+          requirementName: conn.requirement_name,
+        }),
       );
     }
 
@@ -495,23 +543,22 @@ class EVConfigModel {
     const req_interface = req_manifest.requires[conn.requirement_name].interface;
 
     if (!this.interfaces_match(prov_interface, req_interface)) {
-      throw Error(
-        `The interface for the provide (${prov_interface}) and the requirement (${req_interface}) do not match`,
-      );
+      throw Error(t("config_model.interfaceMismatchError", { provider: prov_interface, requirement: req_interface }));
     }
   }
 
-  _connection_exists(conn: Connection) {
-    for (const [, other_conn] of Object.entries(this._connections)) {
+  _find_existing_connection_id(conn: Connection): ConnectionID | null {
+    for (const [id, other_conn] of Object.entries(this._connections)) {
       if (
         conn.providing_impl_name === other_conn.providing_impl_name &&
         conn.providing_instance_id === other_conn.providing_instance_id &&
         conn.requirement_name === other_conn.requirement_name &&
         conn.requiring_instance_id === other_conn.requiring_instance_id
       ) {
-        throw Error(`The connection "${JSON.stringify(conn, null, 2)}" already exists`);
+        return parseInt(id, 10);
       }
     }
+    return null;
   }
 
   _add_connection_to_instance(instance_id: ModuleInstanceID, connection_id: ConnectionID) {
@@ -551,6 +598,7 @@ class EVConfigModel {
   }
 
   validate_mapping_configuration(): { valid: boolean; warnings: string[] } {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
     const warnings: string[] = [];
     const evse_manager_count = Object.values(this._instances).filter(
       (instance) => instance.type === "EvseManager",
@@ -562,7 +610,11 @@ class EVConfigModel {
         const evse_id = instance.mapping.module.evse;
         if (evse_id > evse_manager_count) {
           warnings.push(
-            `Module "${instance.id}" has EVSE ID ${evse_id} but only ${evse_manager_count} EvseManager modules exist.`,
+            t("config_model.evseIdCountWarning", {
+              instanceId: instance.id,
+              evseId: evse_id,
+              evseManagerCount: evse_manager_count,
+            }),
           );
         }
       }
@@ -571,7 +623,12 @@ class EVConfigModel {
         Object.entries(instance.mapping.implementations).forEach(([impl_name, impl_mapping]) => {
           if (impl_mapping.evse > evse_manager_count) {
             warnings.push(
-              `Module "${instance.id}" implementation "${impl_name}" has EVSE ID ${impl_mapping.evse} but only ${evse_manager_count} EvseManager modules exist.`,
+              t("config_model.moduleImplementationCountWarning", {
+                instanceId: instance.id,
+                implementation: impl_name,
+                evseId: impl_mapping.evse,
+                evseManagerCount: evse_manager_count,
+              }),
             );
           }
         });

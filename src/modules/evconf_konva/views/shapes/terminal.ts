@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 import Konva from "konva";
 import { PathConfig } from "konva/lib/shapes/Path";
@@ -14,9 +14,18 @@ export interface TerminalConfig extends PathConfig {
 
 // this view sticks to the Konva infrastructure of shapes
 export class TerminalShape<Config extends TerminalConfig = TerminalConfig> extends Konva.Path {
+  private _currentLook:
+    | "DISABLED"
+    | "NORMAL"
+    | "PLACEHOLDER"
+    | "CONNECTED"
+    | "HIGHLIGHT_NORMAL"
+    | "HIGHLIGHT_CONNECTED"
+    | "DRAG_ORIGIN" = "NORMAL";
+
   constructor(config: Config) {
     // FIXME (aw): the static path string should go to constants!
-    config.data = config.data || ICON_DATA.TERMINAL;
+    config.data = config.data || (config.terminal_type === "provide" ? ICON_DATA.PLUG : ICON_DATA.SOCKET);
 
     config.fill =
       config.fill || config.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE;
@@ -41,15 +50,15 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
   }
 
   get terminal_type(): TerminalType {
-    return this.getAttr("terminal_type");
+    return (this as unknown as Konva.Node).getAttr("terminal_type") as TerminalType;
   }
 
   get terminal_id(): number {
-    return this.getAttr("terminal_id");
+    return (this as unknown as Konva.Node).getAttr("terminal_id") as number;
   }
 
   get terminal_alignment(): TerminalAlignment {
-    return this.getAttr("terminal_alignment");
+    return (this as unknown as Konva.Node).getAttr("terminal_alignment") as TerminalAlignment;
   }
 
   set_alignment(alignment: TerminalAlignment) {
@@ -78,10 +87,22 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
   //   }
   // }
 
-  set_appearence(look: "DISABLED" | "NORMAL" | "PLACEHOLDER") {
+  set_appearence(
+    look:
+      | "DISABLED"
+      | "NORMAL"
+      | "PLACEHOLDER"
+      | "CONNECTED"
+      | "HIGHLIGHT_NORMAL"
+      | "HIGHLIGHT_CONNECTED"
+      | "DRAG_ORIGIN",
+  ) {
+    this._currentLook = look;
+    (this as unknown as Konva.Node).scale({ x: 1, y: 1 });
+
     // FIXME (aw): this function might still assume some knowledge about the order in which the appearence was set
     if (look !== "DISABLED") {
-      this.data(ICON_DATA.TERMINAL);
+      this.data(this.terminal_type === "provide" ? ICON_DATA.PLUG : ICON_DATA.SOCKET);
     }
     if (look === "DISABLED") {
       this.data(ICON_DATA.DISABLED);
@@ -94,9 +115,29 @@ export class TerminalShape<Config extends TerminalConfig = TerminalConfig> exten
         this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT_DISABLED : COLOR.TERMINAL_PROVIDE_DISABLED,
       );
       this.listening(false);
+    } else if (look === "CONNECTED") {
+      this.data(this.terminal_type === "requirement" ? ICON_DATA.ARROW_HEAD : ICON_DATA.CONNECTED);
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
+      this.listening(true);
+    } else if (look === "DRAG_ORIGIN") {
+      this.data(ICON_DATA.CONNECTED);
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
+      this.listening(true);
     } else if (look === "NORMAL") {
       this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
       this.listening(true);
+    } else if (look === "HIGHLIGHT_NORMAL") {
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
+      this.listening(true);
+      this.scale({ x: 1.5, y: 1.5 });
+    } else if (look === "HIGHLIGHT_CONNECTED") {
+      this.fill(this.terminal_type === "requirement" ? COLOR.TERMINAL_REQUIREMENT : COLOR.TERMINAL_PROVIDE);
+      this.listening(true);
+      this.scale({ x: 1.5, y: 1.5 });
     }
+  }
+
+  updateTheme() {
+    this.set_appearence(this._currentLook);
   }
 }

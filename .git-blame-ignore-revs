@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: Apache-2.0
-# Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+# Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 # please run this git command to exclude these revisions from git blame
 # git config --local blame.ignoreRevsFile .git-blame-ignore-revs

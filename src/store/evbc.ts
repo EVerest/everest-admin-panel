@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 import { defineStore } from "pinia";
 import { reactive, Ref, ref } from "vue";
@@ -9,7 +8,7 @@ import ConfigStageContext, { SelectionType } from "@/modules/evconf_konva/stage_
 import { ConnectionID, EverestConfigList, ModuleInstanceID, Terminal } from "@/modules/evbc";
 
 export const useEvbcStore = defineStore("evbc", () => {
-  const selection = ref({ type: "NONE" } as SelectionType);
+  const selection = ref<SelectionType>({ type: "NONE" });
   const current_config = ref<EVConfigModel | null>(null);
   const config_context = reactive(new ConfigStageContext());
   const available_configs: Ref<EverestConfigList> = ref({});
@@ -27,12 +26,44 @@ export const useEvbcStore = defineStore("evbc", () => {
   // Getters
   const get_is_config_opened = (): boolean => !!current_config.value;
   const get_config_context = (): ConfigStageContext => config_context;
-  const get_selected_module_instance = (): ModuleInstanceID | null =>
-    get_is_config_opened() && selection.value.type === "MODULE_INSTANCE" ? selection.value.id : null;
-  const get_selected_terminal = (): Terminal | null =>
-    get_is_config_opened() && selection.value.type === "TERMINAL" ? selection.value.terminal : null;
-  const get_selected_connection = (): ConnectionID | null =>
-    get_is_config_opened() && selection.value.type === "CONNECTION" ? selection.value.id : null;
+
+  const get_selected_module_instance = (): ModuleInstanceID | null => {
+    if (!get_is_config_opened()) return null;
+
+    const sel: SelectionType = selection.value;
+    if (sel.type !== "MODULE_INSTANCE") return null;
+
+    const ids = sel.ids;
+    if (!ids || ids.length === 0) return null;
+
+    return ids[ids.length - 1];
+  };
+
+  const get_selected_module_instances = (): ModuleInstanceID[] => {
+    if (!get_is_config_opened()) return [];
+    const sel: SelectionType = selection.value;
+    if (sel.type === "MODULE_INSTANCE") {
+      return sel.ids;
+    }
+    return [];
+  };
+
+  const get_selected_terminal = (): Terminal | null => {
+    if (!get_is_config_opened()) return null;
+    const sel: SelectionType = selection.value;
+    if (sel.type === "TERMINAL") {
+      return sel.terminal;
+    }
+    return null;
+  };
+
+  const get_selected_connection = (): ConnectionID | null => {
+    if (!get_is_config_opened()) return null;
+    if (selection.value.type === "CONNECTION") {
+      return selection.value.id;
+    }
+    return null;
+  };
 
   return {
     available_configs,
@@ -42,6 +73,7 @@ export const useEvbcStore = defineStore("evbc", () => {
     setOpenedConfig,
     get_config_context,
     get_selected_module_instance,
+    get_selected_module_instances,
     get_selected_terminal,
     get_selected_connection,
   };

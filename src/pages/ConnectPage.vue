@@ -1,5 +1,5 @@
 <!-- SPDX-License-Identifier: Apache-2.0
-     Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest -->
+     Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest -->
 
 <template>
   <v-app>
@@ -10,9 +10,9 @@
             <v-card elevation="10">
               <v-toolbar dark color="primary">
                 <template v-if="currentView === ComponentViews.LIST">
-                  <v-toolbar-title>Choose EVerest instance</v-toolbar-title>
-
+                  <v-toolbar-title>{{ t("connectPage.toolbarTitle") }}</v-toolbar-title>
                   <v-spacer />
+                  <LanguageSelector />
                   <v-btn
                     icon="mdi-plus"
                     :disabled="connecting"
@@ -21,22 +21,24 @@
                   />
                 </template>
                 <template v-else>
-                  <v-toolbar-title
-                    >{{ currentView === ComponentViews.ADD ? "Add" : "Edit" }} server instance</v-toolbar-title
-                  >
+                  <v-toolbar-title>{{
+                    currentView === ComponentViews.ADD
+                      ? t("connectPage.instanceForm.titleAdd")
+                      : t("connectPage.instanceForm.titleEdit")
+                  }}</v-toolbar-title>
                 </template>
               </v-toolbar>
 
               <v-card-text>
-                <Form v-if="[ComponentViews.ADD, ComponentViews.EDIT].includes(currentView)" @submit="submitEdit">
+                <form v-if="[ComponentViews.ADD, ComponentViews.EDIT].includes(currentView)" @submit="submitEdit">
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12">
                         <v-text-field
                           v-model="instanceId.value.value"
-                          label="Name of EVerest instance"
+                          :label="t('connectPage.instanceForm.instanceNameFieldLabel')"
                           :error-messages="instanceId.errorMessage.value"
-                          hint="For example 'Local', 'Development'..."
+                          :hint="t('connectPage.instanceForm.instanceNameFieldHint')"
                           data-cy="instance-name-field"
                         />
                       </v-col>
@@ -46,7 +48,7 @@
                         <v-select
                           v-model="protocol.value.value"
                           :error-messages="protocol.errorMessage.value"
-                          label="Protocol"
+                          :label="t('connectPage.instanceForm.protocolSelectFieldLabel')"
                           data-cy="protocol-select-field"
                           :items="[
                             { value: 'ws', title: 'ws://' },
@@ -57,20 +59,20 @@
                       <v-col cols="6" sm="6">
                         <v-text-field
                           v-model="host.value.value"
-                          label="EVerest instance host address"
+                          :label="t('connectPage.instanceForm.hostAddressFieldLabel')"
                           :error-messages="host.errorMessage.value"
                           data-cy="host-address-field"
-                          hint="For example, localhost"
+                          :hint="t('connectPage.instanceForm.hostAddressFieldHint')"
                         />
                       </v-col>
                       <v-col cols="3" sm="3">
                         <v-text-field
                           v-model="port.value.value"
                           type="number"
-                          label="Port"
+                          :label="t('connectPage.instanceForm.portFieldLabel')"
                           :error-messages="port.errorMessage.value"
                           data-cy="port-field"
-                          hint="For example, 8849"
+                          :hint="t('connectPage.instanceForm.portFieldHint')"
                         />
                       </v-col>
                     </v-row>
@@ -97,9 +99,10 @@
                       </v-col>
                     </v-row>
                   </v-container>
-                </Form>
+                </form>
                 <template v-else>
                   <v-list-subheader lines="two" :disabled="connecting" class="mb-3">
+                    <!-- TODO: Render server list items again on locale change -->
                     <v-list-item
                       v-for="(server, index) in servers"
                       :key="server.id"
@@ -131,7 +134,7 @@
                   <v-checkbox
                     v-model="connectAutomatically"
                     data-cy="auto-connect-checkbox"
-                    label="Automatically connect to this instance"
+                    :label="t('connectPage.instanceCard.connectAutomaticallyLabel')"
                   />
                   <v-alert
                     v-model="error.active"
@@ -158,17 +161,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, inject, onMounted, reactive, ref, watch } from "vue";
+import { computed, ComputedRef, defineComponent, inject, onMounted, reactive, ref, unref, watch } from "vue";
 import { useField, useForm } from "vee-validate";
 import EVBackendClient from "@/modules/evbc/client";
 import { useRouter } from "vue-router";
+import { i18n } from "../plugins/i18n";
+import { ComposerTranslation } from "vue-i18n";
+import LanguageSelector from "@/components/LanguageSelector.vue";
+
+type LocalizedString = string | ComputedRef<string>;
 
 type ServerItem = {
-  id: string;
+  id: LocalizedString;
   host: string;
   editable: boolean;
   protocol: "ws" | "wss";
-  hint?: string;
+  hint?: LocalizedString;
   port: number;
 };
 
@@ -179,19 +187,23 @@ enum ComponentViews {
 }
 
 export default defineComponent({
+  components: {
+    LanguageSelector,
+  },
   setup() {
+    const t = (i18n as unknown as { global: { t: ComposerTranslation } }).global.t;
     const evbc = inject<EVBackendClient>("evbc");
     const servers = reactive<ServerItem[]>([
       {
-        id: "Simulator / Mock",
+        id: computed(() => t("connectPage.componentDefinition.simulatorMockId")),
         host: "loopback",
         editable: false,
         protocol: "ws",
-        hint: "Mock EVerest Instance for testing: simulates behavior without real data transmission. Not perfect, but useful for development.",
+        hint: computed(() => t("connectPage.componentDefinition.simulatorMockHint")),
         port: 8849,
       },
       {
-        id: "Instance on localhost",
+        id: computed(() => t("connectPage.componentDefinition.localhostInstanceId")),
         host: "localhost",
         editable: true,
         protocol: "ws",
@@ -206,37 +218,37 @@ export default defineComponent({
     const currentlyEditing = ref<ServerItem | null>(null);
     const connecting = ref(false);
     const connectionStatus = ref<string | null>(null);
-    const error = reactive({ active: false, status: "" });
+    const error = reactive<{ active: boolean; status: LocalizedString }>({ active: false, status: "" });
 
     const { meta, handleSubmit } = useForm({
       validationSchema: {
         instanceId: (value: string) => {
           if (value === undefined || value.trim().length < 1) {
-            return "Please enter a name with at least one character.";
+            return t("connectPage.instanceForm.instanceIdEmptyError");
           } else {
             return true;
           }
         },
         host: (value: string) => {
           if (value === undefined || value.trim().length < 1) {
-            return "Please enter a host.";
+            return t("connectPage.instanceForm.hostEmptyError");
           }
 
           if (value.includes("://")) {
-            return 'Please enter a domain without any protocol (e.g., "test.pionix.de").';
+            return t("connectPage.instanceForm.hostProtocolError");
           }
 
           // Prevent user from entering a domain with port
-          const domainPattern = /.*:\d+$/;
+          const domainPattern = /:\d+$/;
           if (domainPattern.test(value)) {
-            return "Please don't enter a port here.";
+            return t("connectPage.instanceForm.hostPortError");
           } else {
             return true;
           }
         },
         port: (value: number) => {
           if (value === undefined || value < 1 || value > 65535) {
-            return "Please enter a valid port number.";
+            return t("connectPage.instanceForm.portInvalidError");
           } else {
             return true;
           }
@@ -346,14 +358,16 @@ export default defineComponent({
       if (evbc) {
         const unsubscribe = evbc.on("connection_state", (ev) => {
           if (ev.type === "INFO") {
-            connectionStatus.value = ev.text;
+            connectionStatus.value = unref(ev.text);
           } else if (ev.type === "INITIALIZED") {
             unsubscribe();
-            router.push({ name: "main" });
+            const localeRaw = i18n.global.locale as unknown;
+            const localeParam = typeof localeRaw === "string" ? localeRaw : (localeRaw as { value: string }).value;
+            router.push({ name: "main", params: { locale: localeParam } });
           } else if (ev.type === "FAILED") {
             connecting.value = false;
             error.active = true;
-            error.status = ev.text;
+            error.status = unref(ev.text) ?? "";
           } else if (ev.type === "IDLE") {
             connecting.value = false;
             connectionStatus.value = "";
@@ -383,6 +397,7 @@ export default defineComponent({
       currentView,
       currentlyEditing,
       ComponentViews,
+      t,
     };
   },
 });

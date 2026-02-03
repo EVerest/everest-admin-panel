@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 
 import { EverestInterfaceDefinitionList, EverestModuleDefinition, Terminal, TerminalArrangement } from ".";
 
@@ -61,4 +61,22 @@ export function default_terminals(module_definition: EverestModuleDefinition): T
     bottom: [],
     left: left_terminals,
   };
+}
+
+export function smart_increment_name(base_name: string, existing_names: Set<string>): string {
+  const match = base_name.match(/^(.*) \((\d+)\)$/);
+  let prefix = base_name;
+  let count = 1;
+
+  if (match) {
+    prefix = match[1];
+    count = parseInt(match[2], 10) + 1;
+  }
+
+  let new_name = `${prefix} (${count})`;
+  while (existing_names.has(new_name)) {
+    count++;
+    new_name = `${prefix} (${count})`;
+  }
+  return new_name;
 }

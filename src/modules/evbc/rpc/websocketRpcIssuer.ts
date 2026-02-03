@@ -1,11 +1,30 @@
 // SPDX-License-Identifier: Apache-2.0
-// Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
+// Copyright 2020 - 2026 Pionix GmbH and Contributors to EVerest
 import { INITIAL_RPC_TIMEOUT_VALUE } from "@/modules/evconf_konva/views/constants";
 import { ConnectionStatus } from "@/modules/evbc/connection";
-import { RpcIssuer } from "@/modules/evbc/rpc/abstractRpcIssuer";
+import { RpcIssuer } from "../../../modules/evbc/rpc/abstractRpcIssuer";
+
+interface PendingCommand<T = unknown> {
+  // These definitions are valid, but the linter finds false positives
+  // and complains about unused vars in the production environment.
+  // Prevent the linter from flagging this.
+  // eslint-disable-next-line no-unused-vars
+  resolve: (value: T) => void;
+
+  // eslint-disable-next-line no-unused-vars
+  reject: (reason: Error) => void;
+
+  timeout_id: ReturnType<typeof setTimeout>;
+}
+
+interface RpcResponse {
+  id?: number;
+  result?: unknown;
+  error?: { message: string };
+}
 
 export class WebsocketRpcIssuer extends RpcIssuer {
-  private _pending_commands: Map<number, any> = new Map<number, any>();
+  private _pending_commands: Map<number, PendingCommand> = new Map<number, PendingCommand>();
   private _socket: WebSocket;
   private _rpc_timeout_ms: number = INITIAL_RPC_TIMEOUT_VALUE;
 
@@ -23,7 +42,7 @@ export class WebsocketRpcIssuer extends RpcIssuer {
 
   private _handle_socket_opened() {
     this.publish_connection_state({ type: "OPENED" });
-    this.get_rpc_timeout().then((timeout) => {
+    void this.get_rpc_timeout().then((timeout) => {
       this._rpc_timeout_ms = timeout;
     });
   }
@@ -41,37 +60,53 @@ export class WebsocketRpcIssuer extends RpcIssuer {
     });
   }
 
-  public async disconnect() {
+  public async disconnect(): Promise<void> {
     this._socket.close();
+    return Promise.resolve();
   }
 
   protected async issue_rpc<T>(method: string, params: unknown, notification: boolean): Promise<T> {
-    const id = notification ? undefined : Math.floor(Math.random() * 1024 * 1024);
+    if (notification) {
+      const rpc_request = {
+        method,
+        ...(params !== undefined && { params }),
+      };
+      this._socket.send(JSON.stringify(rpc_request));
+      return null as T;
+    }
+
+    const id = Math.floor(Math.random() * 1024 * 1024);
     const rpc_request = {
       method,
       ...(params !== undefined && { params }),
-      ...(!notification && { id }),
+      id,
     };
 
     // FIXME (aw): id generation
     this._socket.send(JSON.stringify(rpc_request));
 
-    if (notification) {
-      return null;
-    }
-
-    // this._pending_commands[id] =
-    return new Promise((resolve, reject) => {
+    return new Promise<T>((resolve, reject) => {
       const timeout_id = setTimeout(() => {
         this._pending_commands.delete(id);
-        reject(`RPC communication timeout to everest controller process after '${this._rpc_timeout_ms}'ms`);
+        reject(new Error(`RPC communication timeout to everest controller process after '${this._rpc_timeout_ms}'ms`));
       }, this._rpc_timeout_ms);
-      this._pending_commands.set(id, { resolve, reject, timeout_id });
+      this._pending_commands.set(id, {
+        // This definition is valid, but the linter finds a false positive
+        // and complains about unused var. Disable the rule for this lines.
+        resolve: resolve as (value: unknown) => void, // eslint-disable-line no-unused-vars
+        reject,
+        timeout_id,
+      });
     });
   }
 
   public handle_backend_message(ev: MessageEvent) {
-    const payload = JSON.parse(ev.data);
+    if (typeof ev.data !== "string") {
+      console.error("Received non-string message from backend");
+      return;
+    }
+
+    const payload = JSON.parse(ev.data) as RpcResponse;
     if (payload.id !== undefined) {
       const id = payload.id;
       const pending_command = this._pending_commands.get(id);
@@ -86,7 +121,7 @@ export class WebsocketRpcIssuer extends RpcIssuer {
       if (payload.result !== undefined) {
         pending_command.resolve(payload.result);
       } else if (payload.error !== undefined) {
-        pending_command.reject(payload.error.message);
+        pending_command.reject(new Error(payload.error.message));
       } else {
         console.log("Received an invalid JSON RPC response from backend");
       }
