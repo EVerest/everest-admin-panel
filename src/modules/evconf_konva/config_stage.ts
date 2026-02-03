@@ -62,7 +62,7 @@ export default class ConfigStage {
 
   _conn_man: ConnectionManager;
 
-  onDeleteRequest?: (_count: number) => void;
+  onDeleteRequest?: (count: number) => void;
 
   readonly context: ConfigStageContext;
   private _stage: Stage;
@@ -76,7 +76,7 @@ export default class ConfigStage {
     context: ConfigStageContext,
     private notyf?: Notyf,
   ) {
-    this._stage = new Konva.Stage(config) as unknown as Stage;
+    this._stage = new Konva.Stage(config);
 
     this._stage.on("mousemove", (e: KonvaEventObject<MouseEvent>) => {
       if (this._connectionDragState?.active) {
