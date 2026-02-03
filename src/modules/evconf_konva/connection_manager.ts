@@ -61,8 +61,7 @@ export default class ConnectionManager {
     if (ev.type === "SELECT") {
       const selectedId = ev.selection.type === "CONNECTION" ? ev.selection.id : null;
       this.connections.forEach((cxn) => {
-        // Explicitly cast to unknown first to avoid "Unsafe call" error, then to Konva.Arrow
-        const view = cxn.view as unknown as Konva.Arrow;
+        const view = cxn.view;
         if (cxn.id === selectedId) {
           view.strokeWidth(SIZE.CONNECTION_WIDTH * 2);
           view.moveToTop();
@@ -70,7 +69,7 @@ export default class ConnectionManager {
           view.strokeWidth(SIZE.CONNECTION_WIDTH);
         }
       });
-      const layer = this.group.getLayer() as Konva.Layer | null;
+      const layer = this.group.getLayer();
       layer?.batchDraw();
     }
   }
