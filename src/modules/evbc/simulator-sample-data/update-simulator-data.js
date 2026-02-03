@@ -274,7 +274,10 @@ function compileConfigFiles() {
       const configName = path.basename(filename, ".yaml");
       
       // There is no object injection possible here, `configName` is valid.
-      // Prevent ESlint from flagging a false positive for `configs[configName]`.
+      // Prevent ESlint from flagging a false positive for `configs[configName]`
+      // and from flagging the missing production definition rule in a local
+      // development environment.
+      // eslint-disable-next-line
       // eslint-disable-next-line security/detect-object-injection
       configs[configName] = yaml.load(fileContent);
     } catch (err) {

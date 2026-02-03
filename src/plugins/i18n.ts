@@ -26,6 +26,9 @@ const defaultLocaleMessages: LocaleMessages = {
   ...defaultModuleMessagesTyped,
 
   // Trust vuetify library messages to not inject anything malicious
+  // Prevent ESlint from flagging a false positive and from flagging
+  // the missing production definition rule in a local development environment.
+  // eslint-disable-next-line
   // eslint-disable-next-line security/detect-object-injection
   $vuetify: { ...vuetifyMessages },
 };
@@ -83,6 +86,9 @@ async function loadLocaleMessages(locale: string): Promise<void> {
   const mod = (await import("vuetify/locale")) as VuetifyLocaleModule;
 
   // Trust vuetify messages to not inject anything malicious for a valid locale
+  // Prevent ESlint from flagging a false positive and from flagging
+  // the missing production definition rule in a local development environment.
+  // eslint-disable-next-line
   // eslint-disable-next-line security/detect-object-injection
   const vuetifyLocale: LocaleMessages = mod[locale] ?? {};
 

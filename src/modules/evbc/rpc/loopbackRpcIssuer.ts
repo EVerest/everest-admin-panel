@@ -86,7 +86,9 @@ export class LoopbackRpcIssuer extends RpcIssuer {
         continue;
       }
       // There is no object injection possible here, `k` is valid.
-      // Prevent ESlint from flagging a false positive for `am[k]`.
+      // Prevent ESlint from flagging a false positive for `am[k]` and from
+      // flagging the missing production definition rule in a local development environment.
+      // eslint-disable-next-line
       // eslint-disable-next-line security/detect-object-injection
       const entry = (am as Record<string, unknown>)[k];
       if (!LoopbackRpcIssuer.isEverestModuleConfig(entry)) {
@@ -124,7 +126,9 @@ export class LoopbackRpcIssuer extends RpcIssuer {
         }
 
         // There is no object injection possible here, `key` is valid.
-        // Prevent ESlint from flagging a false positive for `parsedConfigs[key]`.
+        // Prevent ESlint from flagging a false positive for `parsedConfigs[key]` and from
+        // flagging the missing production definition rule in a local development environment.
+        // eslint-disable-next-line
         // eslint-disable-next-line security/detect-object-injection
         const val = parsedConfigs[key];
 
@@ -132,7 +136,9 @@ export class LoopbackRpcIssuer extends RpcIssuer {
         if (LoopbackRpcIssuer.isEverestConfig(val)) {
           // There is no object injection possible here, `key` is valid. Also, `val`
           // is safe due to the type guard above.
-          // Prevent ESlint from flagging false positives for `safeMerge[key]` and `val`.
+          // Prevent ESlint from flagging false positives for `safeMerge[key]` and `val` and from
+          // flagging the missing production definition rule in a local development environment.
+          // eslint-disable-next-line
           // eslint-disable-next-line security/detect-object-injection, @typescript-eslint/no-unsafe-assignment
           safeMerge[key] = val;
         }

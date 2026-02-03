@@ -830,7 +830,7 @@ export default class ConfigStage {
     const selectedIds = this.context.get_selected_instances();
     if (selectedIds.length === 0) return;
 
-    // Moving one selected item will move all other selected items due to the 
+    // Moving one selected item will move all other selected items due to the
     // logic in ModuleViewModel's grid_position setter
     const firstId = selectedIds[0];
     const vm = this._module_vms[firstId];
