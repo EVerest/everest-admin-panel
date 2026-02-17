@@ -15,10 +15,10 @@ jobs:
     name: Auto Request Review
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Request reviewers
         uses: necojackarc/auto-request-review@v0.13.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           config: .github/auto_request_review.yml
           use_local: true
-
