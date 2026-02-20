@@ -18,8 +18,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(highlight.js@11.11.1)(vue@3.5.18(typescript@5.5.4))
       '@koumoul/vjsf':
-        specifier: 3.14.0
-        version: 3.14.0(typescript@5.5.4)(vue@3.5.18(typescript@5.5.4))(vuetify@3.7.19)
+        specifier: 3.26.0
+        version: 3.26.0(typescript@5.5.4)(vue@3.5.18(typescript@5.5.4))(vuetify@3.7.19)
       '@mdi/font':
         specifier: 7.4.47
         version: 7.4.47
@@ -260,10 +260,6 @@ packages:
 
   '@babel/helper-string-parser@7.27.1':
     resolution: {integrity: sha512-qMlSxKbpRlAridDExk92nSobyDdpPijUq2DW6oDnUqd0iOGxmQjyqhMIihI9+zv4LPyZdRje2cavWPbCbWm3eA==}
-    engines: {node: '>=6.9.0'}
-
-  '@babel/helper-validator-identifier@7.27.1':
-    resolution: {integrity: sha512-D2hP9eA+Sqx1kBZgzxZh0y1trbuU+JoDkiEwqhQ36nodYqJwyEIhPSdMNd7lOm/4io72luTPWH20Yda0xOuUow==}
     engines: {node: '>=6.9.0'}
 
   '@babel/helper-validator-identifier@7.28.5':
@@ -948,19 +944,19 @@ packages:
   '@jridgewell/trace-mapping@0.3.30':
     resolution: {integrity: sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q==}
 
-  '@json-layout/core@1.10.0':
-    resolution: {integrity: sha512-74XmYxWzl4aAUBJy98LeURIb6pEDKNd4Bo0u1JmklShhQsebBQ0EAJK8jjqEeAt8EAhkSkxo5BG9TXK64OxV4Q==}
+  '@json-layout/core@2.4.0':
+    resolution: {integrity: sha512-Hv+rlY4RLn5x412bh6zHHwF/52zfMCVm9t8k61MoC9pd27cvc+V8ymLXIp8nwN4jqUQKzCxXNfj2Fe42+spA9Q==}
     peerDependencies:
-      '@json-layout/vocabulary': ^2.3.0
+      '@json-layout/vocabulary': ^2.12.0
 
-  '@json-layout/vocabulary@2.3.0':
-    resolution: {integrity: sha512-38ieAJb4p5Z5CJ6lv+K0MvBGFTuNPtshxxmWBkVIc/BvM1iPniMxv6+MjOzjgay2Bnu3PvP03yoyEXA/LM6uyA==}
+  '@json-layout/vocabulary@2.12.0':
+    resolution: {integrity: sha512-cykB9IDukrMGp87JcABmrzJ/56EK5k1OtnbZfDd+derOwDVUr+6sR1WxMZ9tCLBlf7k9AwtkiA1499u9CwEO3g==}
 
-  '@koumoul/vjsf@3.14.0':
-    resolution: {integrity: sha512-sZube/Pd1E2BOcoHRUQW5ngAvYaWku6nFZqnwWI81kSXgxHfT66cOBM7189771GPR2iZgSDCjdwhDflvC3xUow==}
+  '@koumoul/vjsf@3.26.0':
+    resolution: {integrity: sha512-KwNk6BRMgERpYtsHZ2aH9Hlnu1qajN2Tai22HUQp/zw+SBfRCl/FRgVs1ouDfHFKIlVfK994x0/hy4X2TxMRfg==}
     peerDependencies:
       vue: ^3.4.3
-      vuetify: ^3.6.13
+      vuetify: ^3.8.12
 
   '@mdi/font@7.4.47':
     resolution: {integrity: sha512-43MtGpd585SNzHZPcYowu/84Vz2a2g31TvPMTm9uTiCSWzaheQySUcSyUH/46fPnuPQWof2yd0pGBtzee/IQWw==}
@@ -3723,7 +3719,7 @@ snapshots:
 
   '@babel/code-frame@7.27.1':
     dependencies:
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       js-tokens: 4.0.0
       picocolors: 1.1.1
 
@@ -3820,7 +3816,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.28.3
       '@babel/helper-module-imports': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       '@babel/traverse': 7.28.3
     transitivePeerDependencies:
       - supports-color
@@ -3857,8 +3853,6 @@ snapshots:
       - supports-color
 
   '@babel/helper-string-parser@7.27.1': {}
-
-  '@babel/helper-validator-identifier@7.27.1': {}
 
   '@babel/helper-validator-identifier@7.28.5': {}
 
@@ -4109,7 +4103,7 @@ snapshots:
       '@babel/core': 7.28.3
       '@babel/helper-module-transforms': 7.28.3(@babel/core@7.28.3)
       '@babel/helper-plugin-utils': 7.27.1
-      '@babel/helper-validator-identifier': 7.27.1
+      '@babel/helper-validator-identifier': 7.28.5
       '@babel/traverse': 7.28.3
     transitivePeerDependencies:
       - supports-color
@@ -4587,9 +4581,9 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@json-layout/core@1.10.0(@json-layout/vocabulary@2.3.0)':
+  '@json-layout/core@2.4.0(@json-layout/vocabulary@2.12.0)':
     dependencies:
-      '@json-layout/vocabulary': 2.3.0
+      '@json-layout/vocabulary': 2.12.0
       ajv: 8.18.0
       ajv-errors: 3.0.0(ajv@8.18.0)
       ajv-formats: 3.0.1(ajv@8.18.0)
@@ -4601,7 +4595,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@json-layout/vocabulary@2.3.0':
+  '@json-layout/vocabulary@2.12.0':
     dependencies:
       ajv: 8.18.0
       ajv-errors: 3.0.0(ajv@8.18.0)
@@ -4610,10 +4604,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@koumoul/vjsf@3.14.0(typescript@5.5.4)(vue@3.5.18(typescript@5.5.4))(vuetify@3.7.19)':
+  '@koumoul/vjsf@3.26.0(typescript@5.5.4)(vue@3.5.18(typescript@5.5.4))(vuetify@3.7.19)':
     dependencies:
-      '@json-layout/core': 1.10.0(@json-layout/vocabulary@2.3.0)
-      '@json-layout/vocabulary': 2.3.0
+      '@json-layout/core': 2.4.0(@json-layout/vocabulary@2.12.0)
+      '@json-layout/vocabulary': 2.12.0
       '@vueuse/core': 12.7.0(typescript@5.5.4)
       debug: 4.4.1(supports-color@8.1.1)
       vue: 3.5.18(typescript@5.5.4)
