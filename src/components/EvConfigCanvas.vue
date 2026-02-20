@@ -23,7 +23,7 @@
       </config-preview>
       <v-tooltip location="left">
         <template #activator="{ props }">
-          <v-btn id="reset-view-button" icon="mdi-undo" color="primary" v-bind="props" @click="reset_view" />
+          <v-btn id="reset-view-button" icon="mdi-arrow-expand-all" color="primary" v-bind="props" @click="reset_view" />
         </template>
         <span>Reset View</span>
       </v-tooltip>

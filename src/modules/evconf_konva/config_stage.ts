@@ -462,7 +462,43 @@ export default class ConfigStage {
   }
 
   public reset_view(): void {
-    this.setNewPosAndScale(this._konva.static_layer, { x: 0, y: 0 }, 1);
+    this.resizeStage();
+    const views = Object.values(this._module_views);
+    if (views.length === 0) {
+      this.setNewPosAndScale(this._konva.static_layer, { x: 0, y: 0 }, 1);
+      return;
+    }
+
+    const MARGIN = 48;
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
+    for (const view of views) {
+      const pos = view.group.position();
+      minX = Math.min(minX, pos.x);
+      minY = Math.min(minY, pos.y);
+      maxX = Math.max(maxX, pos.x + SIZE.FRAME_WIDTH);
+      maxY = Math.max(maxY, pos.y + SIZE.FRAME_HEIGHT);
+    }
+
+    const contentWidth = maxX - minX;
+    const contentHeight = maxY - minY;
+    const stageWidth = this._stage.width();
+    const stageHeight = this._stage.height();
+
+    const scale = Math.min(
+      (stageWidth - 2 * MARGIN) / contentWidth,
+      (stageHeight - 2 * MARGIN) / contentHeight,
+      1, // do not zoom in beyond 100% for small configs
+    );
+
+    const newPos = {
+      x: (stageWidth - contentWidth * scale) / 2 - minX * scale,
+      y: (stageHeight - contentHeight * scale) / 2 - minY * scale,
+    };
+
+    this.setNewPosAndScale(this._konva.static_layer, newPos, scale);
   }
 
   public zoomIn() {
@@ -552,6 +588,9 @@ export default class ConfigStage {
     // setup listeners?
     // FIXME: this needs to be reworked!
     // this._konva.static_layer.destroyChildren();
+
+    // Fit all modules in the viewport after loading a config.
+    this.reset_view();
   }
 
   _handle_config_event(ev: ConfigModelEvent) {
