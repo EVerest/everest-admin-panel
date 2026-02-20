@@ -6,6 +6,9 @@ import { Connection, ConnectionID, ModuleInstanceID, Terminal } from "../evbc";
 type TerminalSelection = {
   type: "TERMINAL";
   terminal: Terminal;
+  module_instance_id: ModuleInstanceID;
+  /** Lookup index of the origin terminal within its module's terminal_lookup array. */
+  terminal_lookup_id: number;
 };
 
 type ModuleInstanceSelection = {
@@ -50,21 +53,51 @@ type MoveSelectionEvent = {
   readonly source_id: ModuleInstanceID;
 };
 
+/** Published when the user clicks a module card in the left panel during selection mode. */
+type ClickLeftPanelModuleEvent = {
+  readonly type: "CLICK_LEFT_PANEL_MODULE";
+  readonly module_instance_id: ModuleInstanceID;
+};
+
 export type ConfigStageContextEvent =
   | SelectionEvent
   | AddConnectionEvent
   | ShowTooltipEvent
   | HideTooltipEvent
-  | MoveSelectionEvent;
+  | MoveSelectionEvent
+  | ClickLeftPanelModuleEvent;
 
 type ConfigStageContextEventHandler = (ev: ConfigStageContextEvent) => void;
+
+/**
+ * Callbacks registered by ConfigStage so that ModuleViewModels can query
+ * connection state without importing ConnectionManager (avoiding circular deps).
+ */
+export interface ConnectionQueries {
+  /** Returns true if the given terminal has any existing connections. */
+  has_connections(instanceId: ModuleInstanceID, terminalLookupId: number): boolean;
+  /** Returns true if the specific provide↔requirement pair is already connected. */
+  is_connected_pair(
+    provideInstanceId: ModuleInstanceID,
+    provideTerminalLookupId: number,
+    requireInstanceId: ModuleInstanceID,
+    requireTerminalLookupId: number,
+  ): boolean;
+}
 
 export default class ConfigStageContext {
   readonly _event_handlers: ConfigStageContextEventHandler[] = [];
   container: HTMLDivElement;
 
-  _current_selected_terminal: Terminal & { module_instance_id: ModuleInstanceID } = null;
+  _current_selected_terminal: Terminal & { module_instance_id: ModuleInstanceID; terminal_lookup_id: number } = null;
   _selected_instances: Set<ModuleInstanceID> = new Set();
+
+  /** Injected by ConfigStage.set_model — allows VMs to query connection data. */
+  _connection_queries: ConnectionQueries | null = null;
+
+  register_connection_queries(queries: ConnectionQueries) {
+    this._connection_queries = queries;
+  }
 
   // constructor() {}
 
@@ -118,14 +151,33 @@ export default class ConfigStageContext {
     // Legacy support: single select
     this.select_instances([id], true);
   }
-  clicked_terminal(terminal: Terminal, module_instance_id: ModuleInstanceID) {
-    if (!this._current_selected_terminal) {
-      this._publish({ type: "SELECT", selection: { type: "TERMINAL", terminal } });
-      this._current_selected_terminal = {
-        ...terminal,
-        module_instance_id,
-      };
 
+  clicked_terminal(terminal: Terminal, module_instance_id: ModuleInstanceID, terminal_lookup_id = -1) {
+    if (!this._current_selected_terminal) {
+      this._publish({
+        type: "SELECT",
+        selection: { type: "TERMINAL", terminal, module_instance_id, terminal_lookup_id },
+      });
+      this._current_selected_terminal = { ...terminal, module_instance_id, terminal_lookup_id };
+
+      return;
+    }
+
+    // Guard against self-clicking the already-selected terminal (e.g. mousedown
+    // set the selection and then pointerclick fires on the same terminal).
+    if (
+      this._current_selected_terminal.module_instance_id === module_instance_id &&
+      this._current_selected_terminal.id === terminal.id &&
+      this._current_selected_terminal.type === terminal.type
+    ) {
+      return; // stay in selection mode
+    }
+
+    // Guard against same-role connections (provide↔provide or require↔require).
+    // These are always invalid; attempting them would assign a requirement-only
+    // module as the providing side, where prov_manifest.provides is undefined.
+    if (terminal.type === this._current_selected_terminal.type) {
+      this.unselect();
       return;
     }
 
@@ -145,6 +197,58 @@ export default class ConfigStageContext {
 
     this.unselect();
   }
+
+  // ─── Drag lifecycle routing ────────────────────────────────────────────────
+
+  /**
+   * Called by ModuleView when a terminal drag starts.  Enters the same selection
+   * state as a first click so dimming/highlighting is applied across all modules.
+   */
+  drag_terminal_start(terminal: Terminal, module_instance_id: ModuleInstanceID, terminal_lookup_id = -1) {
+    // Enter selection mode (same state as first click).
+    this._publish({
+      type: "SELECT",
+      selection: { type: "TERMINAL", terminal, module_instance_id, terminal_lookup_id },
+    });
+    this._current_selected_terminal = { ...terminal, module_instance_id, terminal_lookup_id };
+  }
+
+  /**
+   * Called by ModuleView on every mousemove during drag.
+   * No state change in stage_context; DragPreviewOverlay is updated directly in
+   * ModuleView.  Exposed so future observers can react to drag position.
+   */
+
+  drag_terminal_move(_cursorPos: { x: number; y: number }) {
+    // intentional no-op
+  }
+
+  /**
+   * Called by ModuleView when the drag ends.
+   * If a compatible target was identified by the caller, completes the connection.
+   * Otherwise reverts to idle state.
+   */
+  drag_terminal_end(target_terminal?: Terminal, target_module_instance_id?: ModuleInstanceID) {
+    if (target_terminal && target_module_instance_id !== undefined) {
+      this.clicked_terminal(target_terminal, target_module_instance_id);
+    } else {
+      this.unselect();
+    }
+  }
+
+  // ─── Left-panel integration ────────────────────────────────────────────────
+
+  /**
+   * Called when the user clicks a module card in the left panel during terminal
+   * selection mode.  Publishes a CLICK_LEFT_PANEL_MODULE event so that ConfigStage
+   * can resolve the correct terminal on that instance and complete the connection.
+   */
+  clicked_left_panel_module(moduleInstanceId: ModuleInstanceID) {
+    if (!this._current_selected_terminal) return;
+    this._publish({ type: "CLICK_LEFT_PANEL_MODULE", module_instance_id: moduleInstanceId });
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
 
   unselect() {
     this._clear_terminal_selection();

@@ -501,6 +501,23 @@ export default class ConfigStage {
 
     this._model = model;
 
+    // T005 / T011: Register connection query callbacks on the context so that
+    // ModuleViewModels can query ConnectionManager without a direct import.
+    this.context.register_connection_queries({
+      has_connections: (instanceId, terminalLookupId) => {
+        const view = this._module_views[instanceId];
+        if (!view) return false;
+        const result = this._conn_man.get_connections_for_terminal(view, terminalLookupId);
+        return result.connected_instance_ids.length > 0;
+      },
+      is_connected_pair: (provId, provLookupId, reqId, reqLookupId) => {
+        const provView = this._module_views[provId];
+        const reqView = this._module_views[reqId];
+        if (!provView || !reqView) return false;
+        return this._conn_man.is_connected_pair(provView, provLookupId, reqView, reqLookupId);
+      },
+    });
+
     Object.keys(model._instances).forEach((id) => this._add_module_instance_to_stage(Number(id)));
     Object.keys(model._connections).forEach((id) => {
       try {
@@ -510,7 +527,27 @@ export default class ConfigStage {
       }
     });
 
+    // T029: After all ModuleViews and connections are created, mark every terminal
+    // that already has ≥1 connection as idle-connected so the UI immediately
+    // reflects the saved connection graph without any user interaction.
+    this._apply_initial_idle_states();
+
     model.add_observer((ev) => this._handle_config_event(ev));
+
+    // Register connection-dimming observer AFTER all module VM observers so it
+    // fires last on every SELECT event.
+    this.context.add_observer((ev) => {
+      if (ev.type !== "SELECT") return;
+      if (ev.selection.type === "TERMINAL") {
+        // Dim every connection line while a terminal is selected.
+        // Active (non-dimmed) modules may still have connections to each other
+        // that are unrelated to the selected terminal — those are noise during
+        // the connection-selection flow and must be hidden too.
+        this._conn_man.dim_all_connections();
+      } else {
+        this._conn_man.reset_all_connections_dimmed();
+      }
+    });
 
     // setup listeners?
     // FIXME: this needs to be reworked!
@@ -522,7 +559,11 @@ export default class ConfigStage {
       this._add_module_instance_to_stage(ev.id);
     } else if (ev.type === "CONNECTION_ADDED") {
       this._add_connection_to_stage(ev.id);
+      // T028: After connection is added, mark both endpoint terminals as idle-connected.
+      this._refresh_idle_terminal_states_for_connection(ev.id);
     } else if (ev.type === "CONNECTION_DELETED") {
+      // T034: Capture connection endpoints BEFORE deleting, then refresh their idle states.
+      this._refresh_idle_terminal_states_after_delete(ev.id);
       this._conn_man.delete_connection(ev.id);
       this.context.unselect();
     } else if (ev.type === "MODULE_INSTANCE_DELETED") {
@@ -537,10 +578,89 @@ export default class ConfigStage {
     }
   }
 
+  /**
+   * T028: Re-evaluate both endpoint terminals of a newly added connection and
+   * apply idle-connected / idle-unconnected based on current connection count.
+   */
+  _refresh_idle_terminal_states_for_connection(connection_id: import("@/modules/evbc").ConnectionID) {
+    if (!this._model) return;
+    try {
+      const cxn = this._model._connections[connection_id];
+      if (!cxn) return;
+
+      const pairs: Array<{
+        instanceId: import("@/modules/evbc").ModuleInstanceID;
+        terminalId: string;
+        type: "provide" | "requirement";
+      }> = [
+        { instanceId: cxn.providing_instance_id, terminalId: cxn.providing_impl_name, type: "provide" },
+        { instanceId: cxn.requiring_instance_id, terminalId: cxn.requirement_name, type: "requirement" },
+      ];
+
+      pairs.forEach(({ instanceId, terminalId, type }) => {
+        const vm = this._module_vms[instanceId];
+        const view = this._module_views[instanceId];
+        if (!vm || !view) return;
+
+        const lookup_id = vm.get_terminal_lookup_id(terminalId, type);
+        if (lookup_id === -1) return;
+
+        const has_cxn = this._conn_man.get_connections_for_terminal(view, lookup_id).connected_instance_ids.length > 0;
+        view._terminal_views[lookup_id].set_visual_state(has_cxn ? "idle-connected" : "idle-unconnected");
+      });
+    } catch {
+      // ignore — connection may not be resolvable during teardown
+    }
+  }
+
+  /**
+   * T034: When a connection is removed, revert endpoints that now have zero
+   * connections back to idle-unconnected.  Must be called BEFORE delete so the
+   * connection item is still in the lookup.
+   */
+  _refresh_idle_terminal_states_after_delete(connection_id: import("@/modules/evbc").ConnectionID) {
+    if (!this._model) return;
+    try {
+      const cxn = this._model._connections[connection_id];
+      if (!cxn) return;
+
+      const pairs: Array<{
+        instanceId: import("@/modules/evbc").ModuleInstanceID;
+        terminalId: string;
+        type: "provide" | "requirement";
+      }> = [
+        { instanceId: cxn.providing_instance_id, terminalId: cxn.providing_impl_name, type: "provide" },
+        { instanceId: cxn.requiring_instance_id, terminalId: cxn.requirement_name, type: "requirement" },
+      ];
+
+      pairs.forEach(({ instanceId, terminalId, type }) => {
+        const vm = this._module_vms[instanceId];
+        const view = this._module_views[instanceId];
+        if (!vm || !view) return;
+
+        const lookup_id = vm.get_terminal_lookup_id(terminalId, type);
+        if (lookup_id === -1) return;
+
+        // connections.length === 1 means this IS the only connection (about to be removed).
+        const cxns_count = this._conn_man.get_connections_for_terminal(view, lookup_id).connected_instance_ids.length;
+        if (cxns_count <= 1) {
+          view._terminal_views[lookup_id].set_visual_state("idle-unconnected");
+        }
+        // else: still connected to other terminals — keep idle-connected
+      });
+    } catch {
+      // ignore
+    }
+  }
+
   _handle_stage_context_event(ev: ConfigStageContextEvent) {
     if (ev.type === "ADD_CONNECTION") {
       // FIXME (aw): check return value and deal with it
-      this._model.add_connection(ev.connection);
+      try {
+        this._model.add_connection(ev.connection);
+      } catch (err) {
+        console.error("[ConfigStage] add_connection failed:", err);
+      }
     } else if (ev.type === "SHOW_TOOLTIP") {
       this._konva.tooltip.text(ev.text);
       this._konva.tooltip.show();
@@ -563,7 +683,56 @@ export default class ConfigStage {
           }
         }
       });
+    } else if (ev.type === "CLICK_LEFT_PANEL_MODULE") {
+      // T018: A module card in the left panel was clicked during terminal selection.
+      // ConfigStage resolves the correct terminal and completes the connection.
+      const origin = this.context._current_selected_terminal;
+      if (!origin || !this._model) return;
+
+      const vm = this._module_vms[ev.module_instance_id];
+      if (!vm) return;
+
+      const compatible_lookup_id = vm.terminal_lookup.findIndex((item, idx) => {
+        // Must be opposite type.
+        if (item.terminal.type === origin.type) return false;
+        // Must be interface-compatible.
+        const [provIf, reqIf] =
+          origin.type === "provide"
+            ? [origin.interface, item.terminal.interface]
+            : [item.terminal.interface, origin.interface];
+        if (!this._model.interfaces_match(provIf, reqIf)) return false;
+        // Must not already be connected to the origin terminal.
+        const [provId, provLId, reqId, reqLId] =
+          origin.type === "provide"
+            ? [origin.module_instance_id, origin.terminal_lookup_id, ev.module_instance_id, idx]
+            : [ev.module_instance_id, idx, origin.module_instance_id, origin.terminal_lookup_id];
+        const provView = this._module_views[provId];
+        const reqView = this._module_views[reqId];
+        if (!provView || !reqView) return false;
+        return !this._conn_man.is_connected_pair(provView, provLId, reqView, reqLId);
+      });
+
+      if (compatible_lookup_id !== -1) {
+        const terminal = vm.terminal_lookup[compatible_lookup_id].terminal;
+        this.context.clicked_terminal(terminal, ev.module_instance_id, compatible_lookup_id);
+      }
     }
+  }
+
+  /**
+   * T029: After initial config load, iterate all terminals in all module views
+   * and apply idle-connected for any terminal that has ≥1 connection.
+   */
+  _apply_initial_idle_states() {
+    Object.values(this._module_views).forEach((view) => {
+      view._terminal_views.forEach((terminalView, lookup_id) => {
+        const result = this._conn_man.get_connections_for_terminal(view, lookup_id);
+        if (result.connected_instance_ids.length > 0) {
+          terminalView.set_visual_state("idle-connected");
+        }
+        // idle-unconnected is the constructor default — no call needed
+      });
+    });
   }
 
   _add_module_instance_to_stage(id: ModuleInstanceID) {
