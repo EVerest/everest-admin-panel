@@ -24,8 +24,8 @@ importers:
         specifier: 7.4.47
         version: 7.4.47
       '@rollup/plugin-commonjs':
-        specifier: 28.0.6
-        version: 28.0.6(rollup@2.79.2)
+        specifier: 28.0.9
+        version: 28.0.9(rollup@2.79.2)
       '@vue/compat':
         specifier: 3.5.18
         version: 3.5.18(vue@3.5.18(typescript@5.5.4))
@@ -1087,8 +1087,8 @@ packages:
       '@types/babel__core':
         optional: true
 
-  '@rollup/plugin-commonjs@28.0.6':
-    resolution: {integrity: sha512-XSQB1K7FUU5QP+3lOQmVCE3I0FcbbNvmNT4VJSj93iUjayaARrTQeoRdiYQoftAJBLrR9t2agwAd3ekaTgHNlw==}
+  '@rollup/plugin-commonjs@28.0.9':
+    resolution: {integrity: sha512-PIR4/OHZ79romx0BVVll/PkwWpJ7e5lsqFa3gFfcrFPWwLXLV39JVUzQV9RKjWerE7B845Hqjj9VYlQeieZ2dA==}
     engines: {node: '>=16.0.0 || 14 >= 14.17'}
     peerDependencies:
       rollup: ^2.68.0||^3.0.0||^4.0.0
@@ -4713,7 +4713,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@rollup/plugin-commonjs@28.0.6(rollup@2.79.2)':
+  '@rollup/plugin-commonjs@28.0.9(rollup@2.79.2)':
     dependencies:
       '@rollup/pluginutils': 5.2.0(rollup@2.79.2)
       commondir: 1.0.1
