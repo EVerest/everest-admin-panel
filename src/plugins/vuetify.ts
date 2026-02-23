@@ -22,6 +22,7 @@ export const everestTheme = {
     background: "#EFEDE8",
     surface: "#EFEDE8",
     primary: "#254C84",
+    "module-primary": "#1A365D",
     secondary: "#35CE7C",
     error: "#b9352b",
     info: "#254C84",
@@ -29,6 +30,7 @@ export const everestTheme = {
     warning: "#c09112",
     "on-background": "#212121",
     "on-surface": "#212121",
+    "on-secondary": "#212121",
   },
 };
 export const currentTheme = everestTheme;

@@ -28,6 +28,38 @@ export function generate_interface_parents_map(interface_definitions: EverestInt
   return interface_parents;
 }
 
+export function smart_increment_name(original_name: string, existing_names: string[]): string {
+  // If original name doesn't exist, use it directly
+  if (!existing_names.includes(original_name)) {
+    return original_name;
+  }
+
+  // Regex to match " (n)" suffix at end of string
+  const regex = /^(.*) \((\d+)\)$/;
+  const match = original_name.match(regex);
+
+  let base: string;
+  let start_n: number;
+
+  if (match) {
+    base = match[1];
+    start_n = parseInt(match[2], 10) + 1;
+  } else {
+    base = original_name;
+    start_n = 1;
+  }
+
+  // Iterate until available
+  let n = start_n;
+  while (true) {
+    const candidate = `${base} (${n})`;
+    if (!existing_names.includes(candidate)) {
+      return candidate;
+    }
+    n++;
+  }
+}
+
 export function default_terminals(module_definition: EverestModuleDefinition): TerminalArrangement {
   const left_terminals: Array<Terminal> = [];
   if (module_definition.requires) {

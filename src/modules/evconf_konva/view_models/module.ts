@@ -31,7 +31,11 @@ type ModuleModelUpdateEvent = {
   readonly type: "MODULE_MODEL_UPDATE";
 };
 
-export type ViewModelChangeEvent = ModifyTerminalsEvent | ModuleModelUpdateEvent;
+type SelectionUpdateEvent = {
+  readonly type: "SELECTION_UPDATE";
+};
+
+export type ViewModelChangeEvent = ModifyTerminalsEvent | ModuleModelUpdateEvent | SelectionUpdateEvent;
 type ViewModelChangeHandler = (ev: ViewModelChangeEvent) => void;
 
 export default class ModuleViewModel {
@@ -55,6 +59,19 @@ export default class ModuleViewModel {
   readonly _module_instance: ModuleInstanceModel;
   _observers: ViewModelChangeHandler[] = [];
   readonly _stage_context: ConfigStageContext;
+
+  get is_selected() {
+    return this._stage_context._selected_instances.has(this._instance_id);
+  }
+
+  move_selection(dx: number, dy: number) {
+    this._stage_context._publish({
+      type: "MOVE_SELECTION",
+      dx,
+      dy,
+      source_id: this._instance_id,
+    });
+  }
 
   constructor(model: EVConfigModel, id: ModuleInstanceID, stage_context: ConfigStageContext) {
     this._instance_id = id;
@@ -112,8 +129,12 @@ export default class ModuleViewModel {
     this._stage_context.clicked_terminal(terminal, this._instance_id);
   }
 
-  clicked_title() {
-    this._stage_context.clicked_instance(this._instance_id);
+  clicked_title(shiftKey: boolean) {
+    if (shiftKey) {
+      this._stage_context.toggle_instance_selection(this._instance_id);
+    } else {
+      this._stage_context.select_instances([this._instance_id], true);
+    }
   }
 
   set_cursor(type: string) {
@@ -156,6 +177,7 @@ export default class ModuleViewModel {
         disable: [],
         highlight: [],
       });
+      this._notify({ type: "SELECTION_UPDATE" });
     }
   }
 
