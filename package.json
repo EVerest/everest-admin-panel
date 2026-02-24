@@ -22,7 +22,7 @@
     "@koumoul/vjsf": "3.14.0",
     "@mdi/font": "7.4.47",
     "@rollup/plugin-commonjs": "28.0.9",
-    "@vue/compat": "3.5.18",
+    "@vue/compat": "3.5.28",
     "ajv": "8.18.0",
     "ajv-errors": "3.0.0",
     "ajv-formats": "3.0.1",
