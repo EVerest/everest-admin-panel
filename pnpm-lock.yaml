@@ -27,8 +27,8 @@ importers:
         specifier: 28.0.9
         version: 28.0.9(rollup@2.79.2)
       '@vue/compat':
-        specifier: 3.5.18
-        version: 3.5.18(vue@3.5.18(typescript@5.5.4))
+        specifier: 3.5.28
+        version: 3.5.28(vue@3.5.18(typescript@5.5.4))
       ajv:
         specifier: 8.18.0
         version: 8.18.0
@@ -280,6 +280,11 @@ packages:
 
   '@babel/parser@7.28.3':
     resolution: {integrity: sha512-7+Ey1mAgYqFAx2h0RuoxcQT5+MlG3GTV0TQrgr7/ZliKsm/MNDxVVutlWaziMq7wJNAz8MTqz55XLpWvva6StA==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  '@babel/parser@7.29.0':
+    resolution: {integrity: sha512-IyDgFV5GeDUVX4YdF/3CPULtVGSXXMLh1xVIgdCgxApktqnQV0r7/8Nqthg+8YLGaAtdyIlo2qIdZrbCv4+7ww==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -1503,10 +1508,10 @@ packages:
   '@volar/typescript@2.4.23':
     resolution: {integrity: sha512-lAB5zJghWxVPqfcStmAP1ZqQacMpe90UrP5RJ3arDyrhy4aCUQqmxPPLB2PWDKugvylmO41ljK7vZ+t6INMTag==}
 
-  '@vue/compat@3.5.18':
-    resolution: {integrity: sha512-9nJUhd2+1JBW2YRxPkF0JZ+UieK2U7FEVla+7V4d9IlzD9HztQFSFj9VVR3sy/aTIUTyEhysKvsv7geD1jEiKg==}
+  '@vue/compat@3.5.28':
+    resolution: {integrity: sha512-2kkX3MlOrFRpeXE4STmIkwCKXvUDbALxhsD3ynzL7QxppCMEegJk6asQi2H0K2q2udXmkYnMDXl4RGcv3L05zQ==}
     peerDependencies:
-      vue: 3.5.18
+      vue: 3.5.28
 
   '@vue/compiler-core@3.5.18':
     resolution: {integrity: sha512-3slwjQrrV1TO8MoXgy3aynDQ7lslj5UqDxuHnrzHtpON5CBinhWjJETciPngpin/T3OuW3tXUf86tEurusnztw==}
@@ -3930,6 +3935,10 @@ snapshots:
     dependencies:
       '@babel/types': 7.29.0
 
+  '@babel/parser@7.29.0':
+    dependencies:
+      '@babel/types': 7.29.0
+
   '@babel/plugin-bugfix-firefox-class-in-computed-class-key@7.27.1(@babel/core@7.28.3)':
     dependencies:
       '@babel/core': 7.28.3
@@ -5239,9 +5248,9 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
-  '@vue/compat@3.5.18(vue@3.5.18(typescript@5.5.4))':
+  '@vue/compat@3.5.28(vue@3.5.18(typescript@5.5.4))':
     dependencies:
-      '@babel/parser': 7.28.3
+      '@babel/parser': 7.29.0
       estree-walker: 2.0.2
       source-map-js: 1.2.1
       vue: 3.5.18(typescript@5.5.4)
