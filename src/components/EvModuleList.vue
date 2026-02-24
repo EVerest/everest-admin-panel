@@ -3,8 +3,8 @@
 
 <template>
   <v-expansion-panels v-model="expansionPanelState" class="ma-0">
-    <v-expansion-panel data-cy="modules-expansion-panel" value="modules" :disabled="!current_config">
-      <v-expansion-panel-title> Available modules</v-expansion-panel-title>
+    <v-expansion-panel value="modules" :disabled="!current_config">
+      <v-expansion-panel-title data-cy="modules-expansion-panel"> Available modules</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-text-field
           v-if="show_search"
@@ -156,16 +156,10 @@ function add_module_to_config(type: string) {
     throw new Error("No config loaded");
   }
   if (evbcStore.get_selected_terminal()) {
-    const selectedTerminal = evbcStore.get_selected_terminal();
-    const addedModuleInstance = evbcStore.current_config.get_module_instance(added_module_id);
-    const terminals = Object.values(addedModuleInstance.view_config.terminals).flat();
-    let terminalToClick;
-    if (selectedTerminal.type === "requirement") {
-      terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "provide");
-    } else {
-      terminalToClick = terminals.find((t) => t.interface === selectedTerminal.interface && t.type === "requirement");
-    }
-    evbcStore.get_config_context().clicked_terminal(terminalToClick, added_module_id);
+    // T018: Delegate connection completion to ConfigStage via clicked_left_panel_module.
+    // ConfigStage resolves the correct compatible terminal on the newly added module
+    // and calls clicked_terminal to complete the connection.
+    evbcStore.get_config_context().clicked_left_panel_module(added_module_id);
   }
 }
 
