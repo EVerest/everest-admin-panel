@@ -16,7 +16,7 @@
  *      new position                   : stage (432, 168)
  *      Frame                          : (432,168)–(720,312)
  *      left terminal x                : 432 − 12 = 420
- *      bsp [require, #1/11, left]     : stage (420, 188)   [168 + 1.5×144/11 ≈ 188]
+ *    bsp [require, #1/5 on left]     : stage (420, 211)   [168 + 1.5×144/5 ≈ 211]
  *      Module body centre             : stage (576, 240)
  *
  * ── Connection verification ──────────────────────────────────────────────────
@@ -29,8 +29,12 @@
 /** YetiDriver0 board_support provide terminal (right side, index 0 of 4). */
 const YETI_BOARD = { x: 300, y: 18 };
 
-/** EvseManager0 bsp require terminal after separation (left side, index 1 of 11). */
-const EVSE_BSP = { x: 420, y: 188 };
+/**
+ * EvseManager0 bsp require terminal after separation (left side, index 1 of 5).
+ * EvseManager0 left terminals: ac_rcd(0), bsp(1), connector_lock(2), hlc(3), imd(4)
+ * y = frame_top + (index + 0.5) * FRAME_HEIGHT / n = 168 + 1.5 * 144 / 5 = 211
+ */
+const EVSE_BSP = { x: 420, y: 211 };
 
 /** EvseManager0 frame body centre after separation — not a terminal zone. */
 const EVSE_BODY = { x: 576, y: 240 };
@@ -63,11 +67,22 @@ const separateEvseManager = () => {
 
 /** Open the config-preview dialog and return a chainable assertion on its text. */
 const openPreview = () => {
+  // Guard: if the preview is already open (leaked from a prior test), close it first
+  // so that clicking #show-preview-button opens rather than toggles it closed.
+  cy.get("body").then(($body) => {
+    if ($body.find('[data-cy="config-preview-component"]').length > 0) {
+      cy.get('[data-cy="close-preview-button"]').click();
+      cy.get('[data-cy="config-preview-component"]').should("not.exist");
+    }
+  });
   cy.get("#show-preview-button").click({ force: true });
   return cy.get('[data-cy="config-preview-component"]', { timeout: 5000 });
 };
 
-const closePreview = () => cy.get("body").type("{esc}");
+const closePreview = () => {
+  cy.get('[data-cy="close-preview-button"]').click();
+  cy.get('[data-cy="config-preview-component"]').should("not.exist");
+};
 
 // ─── Suite ───────────────────────────────────────────────────────────────────
 
