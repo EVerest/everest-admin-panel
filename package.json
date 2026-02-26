@@ -61,7 +61,7 @@
     "eslint-plugin-vuetify": "2.5.3",
     "globals": "16.5.0",
     "prettier": "3.8.1",
-    "sass": "1.89.2",
+    "sass": "1.97.3",
     "typescript": "5.5.4",
     "vite": "7.0.8",
     "vite-plugin-pwa": "1.0.3",
