@@ -20,7 +20,14 @@ Cypress.Commands.add("connectToSimulator", () => {
 });
 
 Cypress.Commands.add("createConfig", (name) => {
-  cy.get('[data-cy="plus-create-config-btn"]').click();
+  cy.get("body").then(($body) => {
+    if (!$body.find('[data-cy="plus-create-config-btn"]').is(":visible")) {
+      cy.get('[data-cy="configs-expansion-panel"]').click();
+    }
+  });
+  cy.get('[data-cy="plus-create-config-btn"]', { timeout: 10000 })
+    .should("be.visible")
+    .click();
   cy.get('[data-cy="config-name-input"]').type(name);
   cy.get('[data-cy="accept-create-config-btn"]').click();
 });

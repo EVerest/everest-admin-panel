@@ -14,23 +14,6 @@
 // MOD0: used for single-module tests (T024) and as the module-0 click in multi-module tests.
 const MOD0 = { cx: 12, cy: 70 }; // safe when only one module is on canvas (T024, T028)
 
-/** Add a module from the sidebar without relying on drag for position. */
-const addModule = (name: string) => {
-  cy.get("body").then(($body) => {
-    if (!$body.find('[data-cy="modules-search"]').is(":visible")) {
-      cy.get('[data-cy="modules-expansion-panel"]').click();
-    }
-  });
-  cy.get('[data-cy="modules-search"]', { timeout: 10000 }).should("be.visible");
-  cy.get('[data-cy="modules-search"] input')
-    .clear({ force: true })
-    .type(name, { delay: 50, force: true });
-  cy.get('[data-cy="module-list-item"]', { timeout: 10000 })
-    .contains(name)
-    .click({ force: true });
-  cy.wait(400);
-};
-
 describe("T024-T028: Canvas Interactions & Selection", () => {
   beforeEach(() => {
     cy.viewport(1400, 1000);
@@ -45,7 +28,7 @@ describe("T024-T028: Canvas Interactions & Selection", () => {
 
   // T024 – FR-001: single click selects; click away deselects
   it("T024: Single click selects a module; clicking background deselects", () => {
-    addModule("EvseManager");
+    cy.addModule("EvseManager");
 
     // Click inside module 0 frame to select
     cy.get(".konvajs-content").click(MOD0.cx, MOD0.cy, { force: true });
@@ -64,8 +47,8 @@ describe("T024-T028: Canvas Interactions & Selection", () => {
 
   // T025 – FR-002: Shift+click adds to / removes from selection
   it("T025: Shift+Click adds an unselected module; again removes it (FR-002)", () => {
-    addModule("EvseManager"); // id=0 → frame (0,0)-(288,144)
-    addModule("EvseManager"); // id=1 → frame (24,24)-(312,168)
+    cy.addModule("EvseManager"); // id=0 → frame (0,0)-(288,144)
+    cy.addModule("EvseManager"); // id=1 → frame (24,24)-(312,168)
 
     // Deselect everything
     cy.get(".konvajs-content").click(700, 500, { force: true });
@@ -130,8 +113,8 @@ describe("T024-T028: Canvas Interactions & Selection", () => {
 
   // T026 – FR-003: left-button drag on background draws selection rectangle
   it("T026: Left-drag on background rectangle-selects enclosed modules (FR-003)", () => {
-    addModule("EvseManager"); // id=0 → (0,0)-(288,144)
-    addModule("EvseManager"); // id=1 → (24,24)-(312,168)
+    cy.addModule("EvseManager"); // id=0 → (0,0)-(288,144)
+    cy.addModule("EvseManager"); // id=1 → (24,24)-(312,168)
 
     // Deselect
     cy.get(".konvajs-content").click(700, 500, { force: true });
@@ -152,8 +135,8 @@ describe("T024-T028: Canvas Interactions & Selection", () => {
 
   // T027 – FR-005: dragging one selected module moves all selected modules
   it("T027: Dragging one module moves all selected modules in unison (FR-005)", () => {
-    addModule("EvseManager"); // id=0
-    addModule("EvseManager"); // id=1
+    cy.addModule("EvseManager"); // id=0
+    cy.addModule("EvseManager"); // id=1
 
     // Select both with rectangle drag (same as T026)
     cy.get(".konvajs-content").click(700, 500, { force: true });
@@ -182,7 +165,7 @@ describe("T024-T028: Canvas Interactions & Selection", () => {
 
   // T028 – FR-004: right-button drag pans the canvas
   it("T028: Right-drag on background pans the canvas (FR-004)", () => {
-    addModule("EvseManager");
+    cy.addModule("EvseManager");
     // Just verify the interaction doesn't crash and canvas remains visible
     cy.get(".konvajs-content")
       .trigger("mousedown", { button: 2, x: 400, y: 300, force: true })
