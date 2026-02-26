@@ -13,7 +13,7 @@
               <v-btn icon="mdi-download" data-cy="download-config-file-button" @click="downloadConfig()" />
               <v-btn icon="mdi-content-copy" @click="copyConfig()" />
             </div>
-            <v-btn class="close-button" icon="mdi-close" variant="plain" density="compact" @click="closeDialog()" />
+            <v-btn class="close-button" icon="mdi-close" variant="plain" density="compact" data-cy="close-preview-button" @click="closeDialog()" />
           </div>
         </v-card-title>
         <v-card-text>
