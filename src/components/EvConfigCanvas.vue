@@ -27,6 +27,18 @@
         </template>
         <span>Reset View</span>
       </v-tooltip>
+      <v-tooltip location="left">
+        <template #activator="{ props }">
+          <v-btn id="zoom-in-button" icon="mdi-magnify-plus" color="primary" v-bind="props" @click="zoom_in" />
+        </template>
+        <span>Zoom In</span>
+      </v-tooltip>
+      <v-tooltip location="left">
+        <template #activator="{ props }">
+          <v-btn id="zoom-out-button" icon="mdi-magnify-minus" color="primary" v-bind="props" @click="zoom_out" />
+        </template>
+        <span>Zoom Out</span>
+      </v-tooltip>
       <v-tooltip v-if="current_config" location="left">
         <template #activator="{ props }">
           <v-btn id="config-save-button" icon="mdi-content-save" color="primary" v-bind="props" @click="save_config" />
@@ -59,7 +71,39 @@ export default defineComponent({
     ref(false);
 
     let stage: ConfigStage;
+
+    const handleKeydown = (e: KeyboardEvent) => {
+      // Ignore if input/textarea focused
+      if (["INPUT", "TEXTAREA"].includes((e.target as HTMLElement).tagName)) {
+        return;
+      }
+
+      const ctrlOrCmd = e.ctrlKey || e.metaKey;
+
+      if (ctrlOrCmd && e.key === "c") {
+        e.preventDefault();
+        if (stage.copy()) {
+          notyf.success("Modules copied to clipboard");
+        }
+      } else if (ctrlOrCmd && e.key === "v") {
+        e.preventDefault();
+        if (stage.paste()) {
+          notyf.success("Modules pasted");
+        }
+      } else if (ctrlOrCmd && e.key === "x") {
+        e.preventDefault();
+        if (stage.cut()) {
+          notyf.success("Modules cut to clipboard");
+        }
+      } else if (e.key === "Delete" || e.key === "Backspace") {
+        if (stage.delete_selection()) {
+          e.preventDefault();
+        }
+      }
+    };
+
     onMounted(() => {
+      window.addEventListener("keydown", handleKeydown);
       stage = new ConfigStage(
         {
           container: "konva-stage",
@@ -75,11 +119,20 @@ export default defineComponent({
     });
 
     onBeforeUnmount(() => {
+      window.removeEventListener("keydown", handleKeydown);
       stage.destroy();
     });
 
     const reset_view = () => {
       stage.reset_view();
+    };
+
+    const zoom_in = () => {
+      stage.zoomIn();
+    };
+
+    const zoom_out = () => {
+      stage.zoomOut();
     };
 
     const save_config = () => {
@@ -109,6 +162,8 @@ export default defineComponent({
       stage,
       current_config,
       reset_view,
+      zoom_in,
+      zoom_out,
       save_config,
     };
   },
