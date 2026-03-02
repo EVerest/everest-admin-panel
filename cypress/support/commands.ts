@@ -35,17 +35,29 @@ Cypress.Commands.add("createConfig", (name) => {
 Cypress.Commands.add("addModule", (name: string, x?: number, y?: number) => {
   cy.log(`Adding module: ${name}`);
 
-  cy.get("body").then(($body) => {
-    if (!$body.find('[data-cy="modules-search"]').is(":visible")) {
-      cy.get('[data-cy="modules-expansion-panel"]').click();
-    }
-  });
+  // Reusable guard: opens the "Available modules" panel if it is closed.
+  // Called twice — before typing (original guard) and after typing — because
+  // Cypress's synthetic keyboard events during clear/type can cause Vuetify to
+  // collapse the expansion panel (e.g. an Escape keydown bubbling up through the
+  // component tree to the v-expansion-panel-title handler).
+  const ensureModulesOpen = () =>
+    cy.get("body").then(($body) => {
+      if (!$body.find('[data-cy="modules-search"]').is(":visible")) {
+        cy.get('[data-cy="modules-expansion-panel"]').click();
+        cy.get('[data-cy="modules-search"]', { timeout: 10000 }).should("be.visible");
+      }
+    });
+
+  ensureModulesOpen();
 
   cy.get('[data-cy="modules-search"]', { timeout: 10000 }).should("be.visible");
 
   cy.get('[data-cy="modules-search"] input')
     .clear({ force: true })
     .type(name, { delay: 50, force: true });
+
+  // Guard again: re-open the panel if typing collapsed it.
+  ensureModulesOpen();
 
   cy.get('[data-cy="module-list-item"]', { timeout: 10000 })
     .contains(name)
