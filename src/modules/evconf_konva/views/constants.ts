@@ -9,6 +9,7 @@ export const COLOR = {
   TERMINAL_PROVIDE: currentTheme.colors.warning,
   TERMINAL_PROVIDE_DISABLED: "#d5d4cc",
   CONNECTION: currentTheme.colors.secondary,
+  MODULE_FILL: currentTheme.colors["module-primary"],
 };
 
 export const ICON_DATA = {

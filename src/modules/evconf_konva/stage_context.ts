@@ -10,7 +10,7 @@ type TerminalSelection = {
 
 type ModuleInstanceSelection = {
   type: "MODULE_INSTANCE";
-  id: ModuleInstanceID;
+  ids: ModuleInstanceID[];
 };
 
 type ConnectionSelection = {
@@ -43,7 +43,19 @@ export type HideTooltipEvent = {
   readonly type: "HIDE_TOOLTIP";
 };
 
-export type ConfigStageContextEvent = SelectionEvent | AddConnectionEvent | ShowTooltipEvent | HideTooltipEvent;
+type MoveSelectionEvent = {
+  readonly type: "MOVE_SELECTION";
+  readonly dx: number;
+  readonly dy: number;
+  readonly source_id: ModuleInstanceID;
+};
+
+export type ConfigStageContextEvent =
+  | SelectionEvent
+  | AddConnectionEvent
+  | ShowTooltipEvent
+  | HideTooltipEvent
+  | MoveSelectionEvent;
 
 type ConfigStageContextEventHandler = (ev: ConfigStageContextEvent) => void;
 
@@ -52,6 +64,7 @@ export default class ConfigStageContext {
   container: HTMLDivElement;
 
   _current_selected_terminal: Terminal & { module_instance_id: ModuleInstanceID } = null;
+  _selected_instances: Set<ModuleInstanceID> = new Set();
 
   // constructor() {}
 
@@ -71,11 +84,40 @@ export default class ConfigStageContext {
     this._current_selected_terminal = null;
   }
 
-  clicked_instance(id: ModuleInstanceID) {
+  select_instances(ids: ModuleInstanceID[], clear_existing = true) {
     this._clear_terminal_selection();
-    this._publish({ type: "SELECT", selection: { type: "MODULE_INSTANCE", id } });
+    if (clear_existing) {
+      this._selected_instances.clear();
+    }
+    ids.forEach((id) => this._selected_instances.add(id));
+    this._publish_selection();
   }
 
+  toggle_instance_selection(id: ModuleInstanceID) {
+    this._clear_terminal_selection();
+    if (this._selected_instances.has(id)) {
+      this._selected_instances.delete(id);
+    } else {
+      this._selected_instances.add(id);
+    }
+    this._publish_selection();
+  }
+
+  _publish_selection() {
+    if (this._selected_instances.size > 0) {
+      this._publish({
+        type: "SELECT",
+        selection: { type: "MODULE_INSTANCE", ids: Array.from(this._selected_instances) },
+      });
+    } else {
+      this._publish({ type: "SELECT", selection: { type: "NONE" } });
+    }
+  }
+
+  clicked_instance(id: ModuleInstanceID) {
+    // Legacy support: single select
+    this.select_instances([id], true);
+  }
   clicked_terminal(terminal: Terminal, module_instance_id: ModuleInstanceID) {
     if (!this._current_selected_terminal) {
       this._publish({ type: "SELECT", selection: { type: "TERMINAL", terminal } });
@@ -106,6 +148,7 @@ export default class ConfigStageContext {
 
   unselect() {
     this._clear_terminal_selection();
+    this._selected_instances.clear();
     this._publish({
       type: "SELECT",
       selection: { type: "NONE" },

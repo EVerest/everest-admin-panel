@@ -3,8 +3,8 @@
 
 <template>
   <v-expansion-panels v-model="expansionPanelState" class="ma-0">
-    <v-expansion-panel data-cy="modules-expansion-panel" value="modules" :disabled="!current_config">
-      <v-expansion-panel-title> Available modules</v-expansion-panel-title>
+    <v-expansion-panel value="modules" :disabled="!current_config">
+      <v-expansion-panel-title data-cy="modules-expansion-panel"> Available modules</v-expansion-panel-title>
       <v-expansion-panel-text>
         <v-text-field
           v-if="show_search"

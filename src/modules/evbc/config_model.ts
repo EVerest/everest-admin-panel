@@ -151,6 +151,25 @@ class EVConfigModel {
     return this._add_module_instance(module_type, module_id);
   }
 
+  add_instance_from_copy(model: Omit<ModuleInstanceModel, "id" | "connections">, new_id: string): ModuleInstanceID {
+    const config_module = model.module_config ? config_set_with_schema_to_config_set(model.module_config) : undefined;
+    const config_implementation: Record<string, ConfigSet> = {};
+    if (model.implementation_config) {
+      Object.entries(model.implementation_config).forEach(([key, val]) => {
+        config_implementation[key] = config_set_with_schema_to_config_set(val);
+      });
+    }
+
+    const config: EverestModuleConfig = {
+      module: model.type,
+      config_module,
+      config_implementation: Object.keys(config_implementation).length ? config_implementation : undefined,
+      mapping: model.mapping,
+    };
+
+    return this._add_module_instance(model.type, new_id, config, clone(model.view_config));
+  }
+
   delete_module_instance(id: ModuleInstanceID) {
     if (!(id in this._instances)) {
       throw Error(`Module instance with instance id "${id}" does not exist`);

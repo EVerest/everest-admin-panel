@@ -152,6 +152,19 @@
       />
     </v-card-actions>
   </v-card>
+  <v-card v-else-if="multi_selection_count > 1">
+    <v-card-title>
+      {{ multi_selection_count }} items selected
+      <icon-button-with-tooltip
+        icon="mdi-close"
+        title="Discard selection"
+        variant="text"
+        density="compact"
+        @click="context.unselect()"
+      />
+    </v-card-title>
+    <v-card-text> Drag to move group. </v-card-text>
+  </v-card>
   <v-card v-else-if="connection">
     <v-card-title>
       Connection
@@ -212,6 +225,9 @@ export default defineComponent({
         return null;
       }
       const instance = current_config.value.get_module_instance(instance_id);
+      if (!instance) {
+        return null;
+      }
       return {
         instance_id,
         instance,
@@ -228,8 +244,16 @@ export default defineComponent({
         return null;
       }
       const cxn = current_config.value.get_connection(connection_id);
+      if (!cxn) {
+        return null;
+      }
+
       const requiring_module = current_config.value.get_module_instance(cxn.requiring_instance_id);
       const implementing_module = current_config.value.get_module_instance(cxn.providing_instance_id);
+
+      if (!requiring_module || !implementing_module) {
+        return null;
+      }
 
       return {
         from: {
@@ -352,7 +376,13 @@ export default defineComponent({
       return !!(module_definition.provides && Object.keys(module_definition.provides).length > 0);
     });
 
+    const multi_selection_count = computed(() => {
+      const instances = evbcStore.get_selected_module_instances();
+      return (instances || []).length;
+    });
+
     return {
+      multi_selection_count,
       module_node,
       terminal,
       current_config,
