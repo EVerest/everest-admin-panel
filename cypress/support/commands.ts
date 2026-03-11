@@ -44,7 +44,9 @@ Cypress.Commands.add("addModule", (name: string, x?: number, y?: number) => {
     cy.get("body").then(($body) => {
       if (!$body.find('[data-cy="modules-search"]').is(":visible")) {
         cy.get('[data-cy="modules-expansion-panel"]').click();
-        cy.get('[data-cy="modules-search"]', { timeout: 10000 }).should("be.visible");
+        cy.get('[data-cy="modules-search"]', { timeout: 10000 }).should(
+          "be.visible",
+        );
       }
     });
 
