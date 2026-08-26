@@ -37,7 +37,7 @@
     "splitpanes": "4.0.4",
     "vee-validate": "4.15.1",
     "vue": "3.5.18",
-    "vue-router": "4.5.1",
+    "vue-router": "4.6.4",
     "vue-tsc": "3.0.10",
     "vuetify": "3.7.19"
   },
