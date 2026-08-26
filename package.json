@@ -19,7 +19,7 @@
     "@fontsource/open-sans-condensed": "4.5.5",
     "@fontsource/roboto": "5.2.9",
     "@highlightjs/vue-plugin": "2.1.0",
-    "@koumoul/vjsf": "3.14.0",
+    "@koumoul/vjsf": "3.26.1",
     "@mdi/font": "7.4.47",
     "@rollup/plugin-commonjs": "28.0.9",
     "@vue/compat": "3.5.18",
