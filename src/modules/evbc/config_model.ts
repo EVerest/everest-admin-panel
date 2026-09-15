@@ -37,8 +37,19 @@ function get_next_available_name(prefix: string, name_list: string[]): string {
   return `${prefix}${next_number}`;
 }
 
+function coerce_to_schema_type(value: unknown, schema_type: string | undefined): unknown {
+  if (value === undefined || value === null) return value;
+  if (schema_type === "string" && typeof value !== "string") return String(value);
+  if (schema_type === "number" && typeof value !== "number") return Number(value);
+  if (schema_type === "integer" && typeof value !== "number") return Math.round(Number(value));
+  if (schema_type === "boolean" && typeof value !== "boolean") return Boolean(value);
+  return value;
+}
+
 function config_set_with_schema_to_config_set(config_set: ConfigSetWithSchema): ConfigSet {
-  const entries = config_set.filter((item) => item.model !== undefined).map((item) => [item.schema.title, item.model]);
+  const entries = config_set
+    .filter((item) => item.model !== undefined)
+    .map((item) => [item.schema.title, coerce_to_schema_type(item.model, item.schema.type)]);
 
   return Object.fromEntries(entries);
 }
@@ -314,7 +325,8 @@ class EVConfigModel {
       return undefined;
     }
     return Object.entries(schema).map(([key, value]) => {
-      const config_value = config !== undefined && key in config ? config[key] : value.default;
+      const raw_value = config !== undefined && key in config ? config[key] : value.default;
+      const config_value = coerce_to_schema_type(raw_value, value.type);
       return { schema: { ...value, title: key }, model: config_value };
     });
   }
