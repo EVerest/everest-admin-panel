@@ -3,7 +3,7 @@
 
 import Konva from "konva";
 import { TerminalAlignment } from "@/modules/evbc";
-import { MONO_TEXT, NORMAL_TEXT, SIZE } from "./constants";
+import { MONO_TEXT, NORMAL_TEXT, SIZE, COLOR } from "./constants";
 import { TerminalConfig, TerminalShape } from "./shapes/terminal";
 import ModuleViewModel, { ViewModelChangeEvent } from "../view_models/module";
 import { TerminalPlacement } from "./shapes/connection";
@@ -58,6 +58,8 @@ export default class ModuleView {
   readonly _vm: ModuleViewModel;
   readonly _terminal_views: Array<TerminalShape>;
   readonly _title: Konva.Text;
+  readonly _topStroke: Konva.Line;
+  readonly _selectionRect: Konva.Rect;
 
   _observers: ModuleViewEventHandler[] = [];
 
@@ -65,6 +67,14 @@ export default class ModuleView {
     // FIXME (aw): refactor all these inline functions !!!
     this.group = new Konva.Group({
       draggable: true,
+      name: "module",
+      id: view_model.id.toString(),
+      dragBoundFunc: (pos) => {
+        return {
+          x: Math.round(pos.x / SIZE.GRID) * SIZE.GRID,
+          y: Math.round(pos.y / SIZE.GRID) * SIZE.GRID,
+        };
+      },
     });
 
     // initialize member variables
@@ -113,6 +123,12 @@ export default class ModuleView {
     view_model.add_observer((ev) => this._vm_event_handler(ev));
 
     // set handlers
+    // Auto-select module when drag starts without a prior click (FR-001)
+    this.group.on("dragstart", () => {
+      if (!this._vm.is_selected) {
+        this._vm.clicked_title(false);
+      }
+    });
     this.group.on("dragmove", () => this._module_dragmove_handler());
 
     // init position
@@ -124,7 +140,7 @@ export default class ModuleView {
       cornerRadius: 4,
       width: SIZE.FRAME_WIDTH,
       height: SIZE.FRAME_HEIGHT,
-      fill: currentTheme.colors.primary,
+      fill: COLOR.MODULE_FILL,
       shadowBlur: 4,
       shadowOpacity: 0.4,
       shadowOffset: {
@@ -150,6 +166,23 @@ export default class ModuleView {
       y: frame.y(),
       listening: true,
     });
+
+    this._topStroke = topStroke;
+
+    const selectionRect = new Konva.Rect({
+      x: frame.x(),
+      y: frame.y(),
+      width: SIZE.FRAME_WIDTH,
+      height: SIZE.FRAME_HEIGHT,
+      fill: "transparent",
+      stroke: "black",
+      strokeWidth: 2,
+      dash: [8, 4],
+      cornerRadius: 4,
+      listening: false,
+      visible: view_model.is_selected,
+    });
+    this._selectionRect = selectionRect;
 
     const title = new Konva.Text({
       wrap: "none",
@@ -187,14 +220,14 @@ export default class ModuleView {
         this._vm.set_cursor("default");
       });
       e.on("pointerclick", (ev) => {
-        this._vm.clicked_title();
+        this._vm.clicked_title(ev.evt.shiftKey);
         ev.cancelBubble = true;
       });
     });
 
     this._title = title;
 
-    this.group.add(frame, topStroke, typeInfo, title, ...this._terminal_views);
+    this.group.add(frame, topStroke, selectionRect, typeInfo, title, ...this._terminal_views);
   }
 
   get_terminal_placement(id: number) {
@@ -221,6 +254,25 @@ export default class ModuleView {
     this._observers.forEach((handler) => handler(ev));
   }
 
+  /**
+   * Move this module to a new grid position, updating both the Konva group and
+   * re-notifying connection observers. Used by the MOVE_SELECTION handler to
+   * keep non-dragged modules visually in sync during a group drag (FR-005).
+   */
+  update_position(new_grid_pos: { x: number; y: number }) {
+    const new_group_pos = { x: new_grid_pos.x * SIZE.GRID, y: new_grid_pos.y * SIZE.GRID };
+    this.group.position(new_group_pos);
+    const update_terminals = this._terminal_views.map(
+      (item, id): TerminalPlacementWithID => ({
+        alignment: item.terminal_alignment,
+        id,
+        x: item.x() + new_group_pos.x,
+        y: item.y() + new_group_pos.y,
+      }),
+    );
+    this._notify({ type: "TERMINALS_UPDATED", terminals: update_terminals, module_moved: true });
+  }
+
   _vm_event_handler(ev: ViewModelChangeEvent) {
     // FIXME (aw): unneccessary complex - should be displayed in a custom html widget !!!
     if (ev.type === "TERMINAL_MODIFY_APPEARENCE") {
@@ -230,14 +282,14 @@ export default class ModuleView {
       ev.normal.forEach((id) => {
         this._terminal_views[id].set_appearence("NORMAL");
       });
-      if (this.group.children.length > 0) {
-        this.group.cache();
-      }
     } else if (ev.type === "MODULE_MODEL_UPDATE") {
       this._title.setText(this._vm.id);
-      if (this.group.children.length > 0) {
-        this.group.cache();
-      }
+      this.group.position({
+        x: this._vm.grid_position.x * SIZE.GRID,
+        y: this._vm.grid_position.y * SIZE.GRID,
+      });
+    } else if (ev.type === "SELECTION_UPDATE") {
+      this._selectionRect.visible(this._vm.is_selected);
     }
   }
 
@@ -251,19 +303,22 @@ export default class ModuleView {
 
     const cur_grid_pos = this._vm.grid_position;
 
-    const new_group_pos = {
-      x: new_grid_pos.x * SIZE.GRID,
-      y: new_grid_pos.y * SIZE.GRID,
-    };
-
-    // snap to grid
-    this.group.position(new_group_pos);
+    // We only update the MODEL here.
+    // The visual snapping is handled by dragBoundFunc.
 
     if (cur_grid_pos.x !== new_grid_pos.x || cur_grid_pos.y !== new_grid_pos.y) {
+      // If module is selected, move other selected modules
+      if (this._vm.is_selected) {
+        const dx = new_grid_pos.x - cur_grid_pos.x;
+        const dy = new_grid_pos.y - cur_grid_pos.y;
+        this._vm.move_selection(dx, dy);
+      }
+
       // got a change, send notification and update view model
       this._vm.grid_position = new_grid_pos;
 
       // update all terminals
+      const new_group_pos = { x: new_grid_pos.x * SIZE.GRID, y: new_grid_pos.y * SIZE.GRID };
       const update_terminals = this._terminal_views.map((item, id): TerminalPlacementWithID => {
         return {
           alignment: item.terminal_alignment,
