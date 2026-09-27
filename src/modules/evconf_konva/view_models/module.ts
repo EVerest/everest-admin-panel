@@ -11,6 +11,7 @@ import {
 } from "@/modules/evbc";
 import EVConfigModel from "@/modules/evbc/config_model";
 import ConfigStageContext, { ConfigStageContextEvent } from "../stage_context";
+import { TerminalVisualState } from "@/modules/evconf_konva/types";
 
 type TerminalDistribution = Record<TerminalAlignment, number[]>;
 type TerminalLookup = Array<{
@@ -27,11 +28,26 @@ type ModifyTerminalsEvent = {
   readonly highlight: number[];
 };
 
+/** New event — replaces TERMINAL_MODIFY_APPEARENCE for the visual-state system. */
+export type ModifyTerminalStatesEvent = {
+  readonly type: "TERMINAL_MODIFY_STATES";
+  /** Map from terminal_id (lookup index) → TerminalVisualState */
+  readonly states: Record<number, TerminalVisualState>;
+};
+
 type ModuleModelUpdateEvent = {
   readonly type: "MODULE_MODEL_UPDATE";
 };
 
-export type ViewModelChangeEvent = ModifyTerminalsEvent | ModuleModelUpdateEvent;
+type SelectionUpdateEvent = {
+  readonly type: "SELECTION_UPDATE";
+};
+
+export type ViewModelChangeEvent =
+  | ModifyTerminalsEvent
+  | ModifyTerminalStatesEvent
+  | ModuleModelUpdateEvent
+  | SelectionUpdateEvent;
 type ViewModelChangeHandler = (ev: ViewModelChangeEvent) => void;
 
 export default class ModuleViewModel {
@@ -55,6 +71,19 @@ export default class ModuleViewModel {
   readonly _module_instance: ModuleInstanceModel;
   _observers: ViewModelChangeHandler[] = [];
   readonly _stage_context: ConfigStageContext;
+
+  get is_selected() {
+    return this._stage_context._selected_instances.has(this._instance_id);
+  }
+
+  move_selection(dx: number, dy: number) {
+    this._stage_context._publish({
+      type: "MOVE_SELECTION",
+      dx,
+      dy,
+      source_id: this._instance_id,
+    });
+  }
 
   constructor(model: EVConfigModel, id: ModuleInstanceID, stage_context: ConfigStageContext) {
     this._instance_id = id;
@@ -109,17 +138,33 @@ export default class ModuleViewModel {
 
   clicked_terminal(terminal_id: number) {
     const terminal = this.terminal_lookup[terminal_id].terminal;
-    this._stage_context.clicked_terminal(terminal, this._instance_id);
+    // Pass terminal_id as the lookup_id so the SELECT TERMINAL event carries it.
+    this._stage_context.clicked_terminal(terminal, this._instance_id, terminal_id);
   }
 
-  clicked_title() {
-    this._stage_context.clicked_instance(this._instance_id);
+  clicked_title(shiftKey: boolean) {
+    if (shiftKey) {
+      this._stage_context.toggle_instance_selection(this._instance_id);
+    } else {
+      this._stage_context.select_instances([this._instance_id], true);
+    }
   }
 
   set_cursor(type: string) {
     this._stage_context.container.style.cursor = type;
   }
 
+  /**
+   * T011: Compute the full 7-state TerminalVisualState for each terminal
+   * whenever a SELECT event arrives.
+   *
+   * On TERMINAL selection: categorise each terminal as one of:
+   *   selected | dimmed-same-module | dimmed-incompatible | dimmed-exhausted | compatible-target
+   *
+   * On any other selection (MODULE_INSTANCE, CONNECTION, NONE): reset every
+   * terminal to idle-unconnected or idle-connected based on whether it has
+   * existing connections.
+   */
   _handle_stage_context_event(event: ConfigStageContextEvent) {
     if (event.type !== "SELECT") {
       return;
@@ -127,35 +172,74 @@ export default class ModuleViewModel {
     const selection_event = event.selection;
 
     if (selection_event.type === "TERMINAL") {
-      const modify_event: ModifyTerminalsEvent = {
-        type: "TERMINAL_MODIFY_APPEARENCE",
-        disable: [],
-        highlight: [],
-        normal: [],
-      };
-
-      const terminal = selection_event.terminal;
+      const origin = selection_event; // { terminal, module_instance_id, terminal_lookup_id }
+      const queries = this._stage_context._connection_queries;
+      const states: Record<number, TerminalVisualState> = {};
 
       this.terminal_lookup.forEach((item, id) => {
+        // 1. Is this the origin terminal itself?
         if (
-          item.terminal.type !== terminal.type &&
-          (terminal.type === "provide"
-            ? this._config_model.interfaces_match(terminal.interface, item.terminal.interface)
-            : this._config_model.interfaces_match(item.terminal.interface, terminal.interface))
+          this._instance_id === origin.module_instance_id &&
+          item.terminal.id === origin.terminal.id &&
+          item.terminal.type === origin.terminal.type
         ) {
+          states[id] = "selected";
           return;
         }
 
-        modify_event.disable.push(id);
+        // 2. Same module, different terminal → dimmed-same-module.
+        if (this._instance_id === origin.module_instance_id) {
+          states[id] = "dimmed-same-module";
+          return;
+        }
+
+        // 3. Same type → wrong role, incompatible.
+        if (item.terminal.type === origin.terminal.type) {
+          states[id] = "dimmed-incompatible";
+          return;
+        }
+
+        // 4. Interface compatibility check.
+        const provideInterface =
+          origin.terminal.type === "provide" ? origin.terminal.interface : item.terminal.interface;
+        const requireInterface =
+          origin.terminal.type === "provide" ? item.terminal.interface : origin.terminal.interface;
+
+        if (!this._config_model.interfaces_match(provideInterface, requireInterface)) {
+          states[id] = "dimmed-incompatible";
+          return;
+        }
+
+        // 5. Already connected to origin? → dimmed-exhausted.
+        if (queries) {
+          const [provId, provLId, reqId, reqLId] =
+            origin.terminal.type === "provide"
+              ? [origin.module_instance_id, origin.terminal_lookup_id, this._instance_id, id]
+              : [this._instance_id, id, origin.module_instance_id, origin.terminal_lookup_id];
+
+          if (queries.is_connected_pair(provId, provLId, reqId, reqLId)) {
+            states[id] = "dimmed-exhausted";
+            return;
+          }
+        }
+
+        // 6. Compatible target!
+        states[id] = "compatible-target";
       });
-      this._notify(modify_event);
+
+      this._notify({ type: "TERMINAL_MODIFY_STATES", states });
     } else {
-      this._notify({
-        type: "TERMINAL_MODIFY_APPEARENCE",
-        normal: Array.from(this.terminal_lookup.keys()),
-        disable: [],
-        highlight: [],
+      // Reset all terminals to their idle state (connected or unconnected).
+      const queries = this._stage_context._connection_queries;
+      const states: Record<number, TerminalVisualState> = {};
+
+      this.terminal_lookup.forEach((_item, id) => {
+        const has_cxn = queries ? queries.has_connections(this._instance_id, id) : false;
+        states[id] = has_cxn ? "idle-connected" : "idle-unconnected";
       });
+
+      this._notify({ type: "TERMINAL_MODIFY_STATES", states });
+      this._notify({ type: "SELECTION_UPDATE" });
     }
   }
 
