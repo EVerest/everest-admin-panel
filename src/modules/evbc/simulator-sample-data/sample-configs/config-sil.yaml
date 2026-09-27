@@ -1,206 +1,333 @@
-# SPDX-License-Identifier: Apache-2.0
-# Copyright 2020 - 2025 Pionix GmbH and Contributors to EVerest
-settings:
-  telemetry_enabled: true
 active_modules:
-  api:
-    connections:
-      evse_manager:
-        - implementation_id: evse
-          module_id: connector_1
-      error_history:
-        - module_id: error_history
-          implementation_id: error_history
-    module: API
   error_history:
     module: ErrorHistory
+    connections: {}
     config_implementation:
       error_history:
         database_path: /tmp/error_history.db
   auth:
+    module: Auth
+    connections:
+      token_provider:
+        - module_id: token_provider
+          implementation_id: main
+      token_validator:
+        - module_id: token_validator
+          implementation_id: main
+      evse_manager:
+        - module_id: connector_1
+          implementation_id: evse
     config_module:
       connection_timeout: 10
+      ignore_connector_faults: true
+      master_pass_group_id: ''
       prioritize_authorization_over_stopping_transaction: true
       selection_algorithm: FindFirst
-      ignore_connector_faults: true
-    connections:
-      evse_manager:
-        - implementation_id: evse
-          module_id: connector_1
-      token_provider:
-        - implementation_id: main
-          module_id: token_provider
-      token_validator:
-        - implementation_id: main
-          module_id: token_validator
-    module: Auth
   ev_manager:
-    config_module:
-      auto_enable: true
-      auto_exec: false
-      auto_exec_commands: sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep 30;unplug
-      connector_id: 1
+    module: EvManager
     connections:
       ev:
-        - implementation_id: ev
-          module_id: iso15118_car
-      ev_board_support:
-        - implementation_id: ev_board_support
-          module_id: connector_1_powerpath
+        - module_id: iso15118_car
+          implementation_id: ev
       slac:
-        - implementation_id: ev
-          module_id: slac
-    module: EvManager
-  energy_manager:
+        - module_id: slac
+          implementation_id: ev
     config_module:
-      switch_3ph1ph_while_charging_mode: Both
-      switch_3ph1ph_max_nr_of_switches_per_session: 5
-      switch_3ph1ph_time_hysteresis_s: 20
-      switch_3ph1ph_power_hysteresis_W: 1000
-      switch_3ph1ph_switch_limit_stickyness: SinglePhase
-      schedule_interval_duration: 60
-      schedule_total_duration: 10
-      debug: false
+      ac_nominal_voltage: 230
+      auto_enable: true
+      auto_exec: false
+      auto_exec_commands: >-
+        sleep 1;iec_wait_pwr_ready;sleep 1;draw_power_regulated 16,3;sleep
+        30;unplug
+      auto_exec_infinite: false
+      connector_id: 1
+      dc_discharge_max_current_limit: 300
+      dc_discharge_max_power_limit: 150000
+      dc_discharge_target_current: 5
+      dc_discharge_v2g_minimal_soc: 20
+      dc_energy_capacity: 60000
+      dc_max_current_limit: 300
+      dc_max_power_limit: 150000
+      dc_max_voltage_limit: 900
+      dc_target_current: 5
+      dc_target_voltage: 200
+      departure_time: 86400
+      e_amount: 0
+      keep_cross_boot_plugin_state: false
+      max_current: 16
+      soc: 30
+      support_sae_j2847: false
+      three_phases: true
+  energy_manager:
+    module: EnergyManager
     connections:
       energy_trunk:
-        - implementation_id: energy_grid
-          module_id: grid_connection_point
-    module: EnergyManager
-  connector_1:
+        - module_id: grid_connection_point
+          implementation_id: energy_grid
     config_module:
-      ac_enforce_hlc: false
-      ac_hlc_enabled: true
-      ac_hlc_use_5percent: false
-      ac_nominal_voltage: 230
-      charge_mode: AC
-      connector_id: 1
-      ev_receipt_required: false
-      evse_id: DE*PNX*E12345*1
-      has_ventilation: true
-      max_current_import_A: 32
-      max_current_export_A: 32
-      payment_enable_contract: true
-      payment_enable_eim: true
-      session_logging: true
-      session_logging_path: /tmp/everest-logs
-      session_logging_xml: false
-      switch_3ph1ph_delay_s: 5
-      switch_3ph1ph_cp_state: X1
-    connections:
-      bsp:
-        - implementation_id: board_support
-          module_id: connector_1_powerpath
-      hlc:
-        - implementation_id: charger
-          module_id: iso15118_charger
-      powermeter_grid_side:
-        - implementation_id: powermeter
-          module_id: connector_1_powerpath
-      slac:
-        - implementation_id: evse
-          module_id: slac
-      ac_rcd:
-        - implementation_id: rcd
-          module_id: connector_1_powerpath
-      connector_lock:
-        - implementation_id: connector_lock
-          module_id: connector_1_powerpath
-    module: EvseManager
-    telemetry:
-      id: 1
+      debug: false
+      nominal_ac_voltage: 230
+      schedule_interval_duration: 60
+      schedule_total_duration: 10
+      slice_ampere: 0.5
+      slice_watt: 500
+      switch_3ph1ph_max_nr_of_switches_per_session: 5
+      switch_3ph1ph_power_hysteresis_W: 1000
+      switch_3ph1ph_switch_limit_stickyness: SinglePhase
+      switch_3ph1ph_time_hysteresis_s: 20
+      switch_3ph1ph_while_charging_mode: Both
+      update_interval: 1
   grid_connection_point:
+    module: EnergyNode
+    connections:
+      energy_consumer:
+        - module_id: connector_1
+          implementation_id: energy_grid
     config_module:
       fuse_limit_A: 40
       phase_count: 3
-    connections:
-      energy_consumer:
-        - implementation_id: energy_grid
-          module_id: connector_1
-    module: EnergyNode
   iso15118_car:
-    config_module:
-      device: auto
-      supported_ISO15118_2: true
-    connections: {}
     module: PyEvJosev
-  iso15118_charger:
+    connections: {}
     config_module:
       device: auto
-      tls_security: allow
+      enable_tls_1_3: false
+      enforce_tls: false
+      is_cert_install_needed: false
       supported_DIN70121: false
-    module: EvseV2G
-    connections:
-      security:
-        - module_id: evse_security
-          implementation_id: main
+      supported_ISO15118_2: true
+      supported_ISO15118_20_AC: false
+      supported_ISO15118_20_DC: false
+      tls_active: false
   evse_security:
     module: EvseSecurity
+    connections: {}
     config_module:
-      private_key_password: "123456"
+      csms_ca_bundle: ca/csms/CSMS_ROOT_CA.pem
+      csms_leaf_cert_directory: client/csms
+      csms_leaf_key_directory: client/csms
+      mf_ca_bundle: ca/mf/MF_ROOT_CA.pem
+      mo_ca_bundle: ca/mo/MO_ROOT_CA.pem
+      private_key_password: '123456'
+      secc_leaf_cert_directory: client/cso
+      secc_leaf_key_directory: client/cso
+      v2g_ca_bundle: ca/v2g/V2G_ROOT_CA.pem
   persistent_store:
+    module: PersistentStore
+    connections: {}
     config_module:
       sqlite_db_file_path: everest_persistent_store.db
-    connections: {}
-    module: PersistentStore
   setup:
+    module: Setup
+    connections:
+      store:
+        - module_id: persistent_store
+          implementation_id: main
     config_module:
+      ap_interface: wlan0
+      ap_ipv4: 192.168.1.1/24
       initialized_by_default: true
       localization: true
       online_check_host: lfenergy.org
+      release_metadata_file: release.json
       setup_simulation: true
       setup_wifi: false
-    connections:
-      store:
-        - implementation_id: main
-          module_id: persistent_store
-    module: Setup
   slac:
     module: SlacSimulator
+    connections: {}
   token_provider:
-    config_implementation:
-      main:
-        timeout: 10
-        token: DEADBEEF
+    module: DummyTokenProvider
     connections:
       evse:
-        - implementation_id: evse
-          module_id: connector_1
-    module: DummyTokenProvider
+        - module_id: connector_1
+          implementation_id: evse
+    config_implementation:
+      main:
+        connector_id: 0
+        timeout: 10
+        token: DEADBEEF
+        type: RFID
   token_validator:
+    module: DummyTokenValidator
+    connections: {}
     config_implementation:
       main:
         sleep: 0.25
         validation_reason: Token seems valid
         validation_result: Accepted
-    connections: {}
-    module: DummyTokenValidator
+  api:
+    module: API
+    connections:
+      error_history:
+        - module_id: error_history
+          implementation_id: error_history
+      evse_manager:
+        - module_id: connector_1
+          implementation_id: evse
+    config_module:
+      charger_information_file: ''
+      hw_caps_max_current_export_decimal_places: 2
+      hw_caps_max_current_export_round_to: 0
+      hw_caps_max_current_import_decimal_places: 2
+      hw_caps_max_current_import_round_to: 0
+      hw_caps_max_plug_temperature_C_decimal_places: 2
+      hw_caps_max_plug_temperature_C_round_to: 0
+      hw_caps_min_current_export_decimal_places: 2
+      hw_caps_min_current_export_round_to: 0
+      hw_caps_min_current_import_decimal_places: 2
+      hw_caps_min_current_import_round_to: 0
+      limits_max_current_decimal_places: 2
+      limits_max_current_round_to: 0
+      powermeter_VAR_decimal_places: 2
+      powermeter_VAR_round_to: 0
+      powermeter_current_decimal_places: 2
+      powermeter_current_round_to: 0
+      powermeter_energy_export_decimal_places: 2
+      powermeter_energy_export_round_to: 0
+      powermeter_energy_import_decimal_places: 2
+      powermeter_energy_import_round_to: 0
+      powermeter_frequency_decimal_places: 2
+      powermeter_frequency_round_to: 0
+      powermeter_power_decimal_places: 2
+      powermeter_power_round_to: 0
+      powermeter_voltage_decimal_places: 2
+      powermeter_voltage_round_to: 0
+      telemetry_evse_temperature_C_decimal_places: 2
+      telemetry_evse_temperature_C_round_to: 0
+      telemetry_fan_rpm_decimal_places: 2
+      telemetry_fan_rpm_round_to: 0
+      telemetry_plug_temperature_C_decimal_places: 2
+      telemetry_plug_temperature_C_round_to: 0
+      telemetry_supply_voltage_12V_decimal_places: 2
+      telemetry_supply_voltage_12V_round_to: 0
+      telemetry_supply_voltage_minus_12V_decimal_places: 2
+      telemetry_supply_voltage_minus_12V_round_to: 0
   connector_1_powerpath:
+    module: YetiSimulator
+    connections: {}
     config_module:
       connector_id: 1
-    connections: {}
-    module: YetiSimulator
-    telemetry:
-      id: 1
-'x-module-layout':
-  api:
+      reset_powermeter_on_session_start: true
+  connector_1:
+    module: EvseManager
+    connections:
+      powermeter_grid_side:
+        - module_id: connector_1_powerpath
+          implementation_id: powermeter
+      bsp:
+        - module_id: connector_1_powerpath
+          implementation_id: board_support
+      slac:
+        - module_id: slac
+          implementation_id: evse
+      ac_rcd:
+        - module_id: connector_1_powerpath
+          implementation_id: rcd
+      connector_lock:
+        - module_id: connector_1_powerpath
+          implementation_id: connector_lock
+      hlc:
+        - module_id: iso15118_charger
+          implementation_id: charger
+    mapping:
+      module:
+        evse: 2
+        connector: 1
+    config_module:
+      ac_enforce_hlc: false
+      ac_hlc_enabled: false
+      ac_hlc_use_5percent: false
+      ac_nominal_voltage: 230
+      ac_with_soc: false
+      autocharge_use_slac_instead_of_hlc: false
+      cable_check_enable_imd_self_test: true
+      cable_check_wait_below_60V_before_finish: true
+      cable_check_wait_number_of_imd_measurements: 1
+      central_contract_validation_allowed: false
+      charge_mode: AC
+      connector_id: 1
+      connector_type: Unknown
+      contract_certificate_installation_enabled: true
+      dbg_hlc_auth_after_tstep: false
+      dc_isolation_voltage_V: 0
+      disable_authentication: false
+      enable_autocharge: false
+      ev_receipt_required: false
+      evse_id: DE*PNX*E1234567*1
+      evse_id_din: 49A80737A45678
+      external_ready_to_start_charging: false
+      fail_on_powermeter_errors: true
+      hack_allow_bpt_with_iso2: false
+      hack_fix_hlc_integer_current_requests: false
+      hack_pause_imd_during_precharge: false
+      hack_present_current_offset: 0
+      hack_simplified_mode_limit_10A: false
+      hack_skoda_enyaq: false
+      hack_sleep_in_cable_check: 0
+      hack_sleep_in_cable_check_volkswagen: 0
+      has_ventilation: true
+      initial_meter_value_timeout_ms: 5000
+      inoperative_error_use_vendor_id: false
+      lock_connector_in_state_b: true
+      logfile_suffix: session_uuid
+      max_current_export_A: 32
+      max_current_import_A: 32
+      payment_enable_contract: true
+      payment_enable_eim: true
+      raise_mrec9: false
+      request_zero_power_in_idle: false
+      sae_j2847_2_bpt_enabled: false
+      sae_j2847_2_bpt_mode: V2G
+      session_id_type: UUID
+      session_logging: false
+      session_logging_path: /tmp
+      session_logging_xml: true
+      sleep_before_enabling_pwm_hlc_mode_ms: 500
+      soft_over_current_measurement_noise_A: 0.5
+      soft_over_current_timeout_ms: 7000
+      soft_over_current_tolerance_percent: 10
+      state_F_after_fault_ms: 300
+      switch_3ph1ph_cp_state: X1
+      switch_3ph1ph_delay_s: 5
+      uk_smartcharging_random_delay_at_any_change: true
+      uk_smartcharging_random_delay_enable: false
+      uk_smartcharging_random_delay_max_duration: 600
+  iso15118_charger:
+    module: EvseV2G
+    connections:
+      security:
+        - module_id: evse_security
+          implementation_id: main
+    config_module:
+      auth_timeout_eim: 300
+      auth_timeout_pnc: 55
+      device: auto
+      enable_sdp_server: true
+      supported_DIN70121: false
+      supported_ISO15118_2: true
+      terminate_connection_on_failed_response: false
+      tls_key_logging: false
+      tls_key_logging_path: /tmp
+      tls_security: allow
+      tls_timeout: 15000
+      verify_contract_cert_chain: false
+x-module-layout:
+  error_history:
     position:
-      x: 33
-      y: 13
+      x: 53
+      'y': 13
     terminals:
+      top: []
+      right: []
       bottom: []
       left:
-        - id: evse_manager
-          interface: evse_manager
-          type: requirement
-      right:
-        - id: main
-          interface: empty
+        - id: error_history
+          interface: error_history
           type: provide
-      top: []
   auth:
     position:
       x: 33
-      y: 2
+      'y': 3
     terminals:
       bottom:
         - id: main
@@ -224,13 +351,13 @@ active_modules:
   ev_manager:
     position:
       x: 53
-      y: 33
+      'y': 33
     terminals:
-      bottom: []
-      left:
+      bottom:
         - id: simulation_control
           interface: yeti_simulation_control
           type: requirement
+      left:
         - id: slac
           interface: slac
           type: requirement
@@ -242,82 +369,10 @@ active_modules:
         - id: ev
           interface: ISO15118_ev
           type: requirement
-  connector_1:
-    position:
-      x: 13
-      y: 23
-    terminals:
-      bottom:
-        - id: powersupply_DC
-          interface: power_supply_DC
-          type: requirement
-        - id: imd
-          interface: isolation_monitor
-          type: requirement
-        - id: powermeter_car_side
-          interface: powermeter
-          type: requirement
-        - id: token_provider
-          interface: auth_token_provider
-          type: provide
-        - id: slac
-          interface: slac
-          type: requirement
-      left:
-        - id: hlc
-          interface: ISO15118_charger
-          type: requirement
-      right:
-        - id: bsp
-          interface: board_support_AC
-          type: requirement
-        - id: powermeter_grid_side
-          interface: powermeter
-          type: requirement
-      top:
-        - id: energy_grid
-          interface: energy
-          type: provide
-        - id: evse
-          interface: evse_manager
-          type: provide
-  connector_1_powerpath:
-    position:
-      x: 33
-      y: 23
-    terminals:
-      bottom:
-        - id: debug_keepalive
-          interface: debug_json
-          type: provide
-        - id: debug_powermeter
-          interface: debug_json
-          type: provide
-        - id: debug_yeti
-          interface: debug_json
-          type: provide
-        - id: yeti_extras
-          interface: yeti_extras
-          type: provide
-        - id: debug_state
-          interface: debug_json
-          type: provide
-      left:
-        - id: board_support
-          interface: board_support_AC
-          type: provide
-        - id: powermeter
-          interface: powermeter
-          type: provide
-      right:
-        - id: yeti_simulation_control
-          interface: yeti_simulation_control
-          type: provide
-      top: []
   energy_manager:
     position:
-      x: -5
-      y: 2
+      x: 4
+      'y': -1
     terminals:
       bottom:
         - id: energy_trunk
@@ -331,10 +386,13 @@ active_modules:
       top: []
   grid_connection_point:
     position:
-      x: -5
-      y: 13
+      x: 4
+      'y': 9
     terminals:
-      bottom: []
+      bottom:
+        - id: energy_consumer
+          interface: energy
+          type: requirement
       left:
         - id: price_information
           interface: energy_price_information
@@ -346,9 +404,6 @@ active_modules:
         - id: external_limits
           interface: external_energy_limits
           type: provide
-        - id: energy_consumer
-          interface: energy
-          type: requirement
       top:
         - id: energy_grid
           interface: energy
@@ -356,7 +411,7 @@ active_modules:
   iso15118_car:
     position:
       x: 53
-      y: 23
+      'y': 23
     terminals:
       bottom:
         - id: ev
@@ -368,22 +423,22 @@ active_modules:
           interface: empty
           type: provide
       top: []
-  iso15118_charger:
+  evse_security:
     position:
-      x: -5
-      y: 23
+      x: -20
+      'y': 23
     terminals:
+      top: []
+      right:
+        - id: main
+          interface: evse_security
+          type: provide
       bottom: []
       left: []
-      right:
-        - id: charger
-          interface: ISO15118_charger
-          type: provide
-      top: []
   persistent_store:
     position:
-      x: -5
-      y: 40
+      x: -12
+      'y': 33
     terminals:
       bottom: []
       left: []
@@ -394,8 +449,8 @@ active_modules:
       top: []
   setup:
     position:
-      x: 13
-      y: 40
+      x: 4
+      'y': 33
     terminals:
       bottom: []
       left:
@@ -410,7 +465,7 @@ active_modules:
   slac:
     position:
       x: 33
-      y: 33
+      'y': 33
     terminals:
       bottom: []
       left:
@@ -425,7 +480,7 @@ active_modules:
   token_provider:
     position:
       x: 33
-      y: -9
+      'y': -7
     terminals:
       bottom:
         - id: main
@@ -439,8 +494,8 @@ active_modules:
       top: []
   token_validator:
     position:
-      x: 51
-      y: 2
+      x: 53
+      'y': 3
     terminals:
       bottom: []
       left:
@@ -449,3 +504,126 @@ active_modules:
           type: provide
       right: []
       top: []
+  api:
+    position:
+      x: 33
+      'y': 13
+    terminals:
+      top: []
+      right:
+        - id: random_delay
+          interface: uk_random_delay
+          type: requirement
+        - id: error_history
+          interface: error_history
+          type: requirement
+        - id: main
+          interface: empty
+          type: provide
+      bottom: []
+      left:
+        - id: evse_energy_sink
+          interface: external_energy_limits
+          type: requirement
+        - id: evse_manager
+          interface: evse_manager
+          type: requirement
+        - id: ocpp
+          interface: ocpp
+          type: requirement
+  connector_1_powerpath:
+    position:
+      x: 33
+      'y': 23
+    terminals:
+      top: []
+      right:
+        - id: ev_board_support
+          interface: ev_board_support
+          type: provide
+      bottom: []
+      left:
+        - id: board_support
+          interface: evse_board_support
+          type: provide
+        - id: connector_lock
+          interface: connector_lock
+          type: provide
+        - id: rcd
+          interface: ac_rcd
+          type: provide
+        - id: powermeter
+          interface: powermeter
+          type: provide
+  connector_1:
+    position:
+      x: 15
+      'y': 23
+    terminals:
+      top:
+        - id: imd
+          interface: isolation_monitor
+          type: requirement
+        - id: energy_grid
+          interface: energy
+          type: provide
+        - id: evse
+          interface: evse_manager
+          type: provide
+        - id: powermeter_car_side
+          interface: powermeter
+          type: requirement
+        - id: over_voltage_monitor
+          interface: over_voltage_monitor
+          type: requirement
+      right:
+        - id: bsp
+          interface: evse_board_support
+          type: requirement
+        - id: connector_lock
+          interface: connector_lock
+          type: requirement
+        - id: ac_rcd
+          interface: ac_rcd
+          type: requirement
+        - id: powermeter_grid_side
+          interface: powermeter
+          type: requirement
+      bottom:
+        - id: token_provider
+          interface: auth_token_provider
+          type: provide
+        - id: slac
+          interface: slac
+          type: requirement
+        - id: random_delay
+          interface: uk_random_delay
+          type: provide
+      left:
+        - id: powersupply_DC
+          interface: power_supply_DC
+          type: requirement
+        - id: hlc
+          interface: ISO15118_charger
+          type: requirement
+        - id: store
+          interface: kvs
+          type: requirement
+  iso15118_charger:
+    position:
+      x: -4
+      'y': 23
+    terminals:
+      top: []
+      right:
+        - id: charger
+          interface: ISO15118_charger
+          type: provide
+      bottom:
+        - id: extensions
+          interface: iso15118_extensions
+          type: provide
+      left:
+        - id: security
+          interface: evse_security
+          type: requirement

@@ -17,22 +17,25 @@ interface ConnectionConfig extends LineConfig {
   provide: TerminalPlacement;
 }
 
-// FIXME (aw): do this lookup get unrolled for performance?
+// Correction is zero: line endpoints land exactly at the terminal centres.
+// Module groups are rendered above the connection group (z-order in config_stage),
+// so the terminal icon visually caps the line end — producing a seamless,
+// contiguous terminal-line-terminal appearance.
 const correction = {
   top: {
     x: 0,
-    y: -SIZE.GRID / 2,
+    y: 0,
   },
   right: {
-    x: SIZE.GRID / 2,
+    x: 0,
     y: 0,
   },
   bottom: {
     x: 0,
-    y: SIZE.GRID / 2,
+    y: 0,
   },
   left: {
-    x: -SIZE.GRID / 2,
+    x: 0,
     y: 0,
   },
 };
@@ -90,5 +93,13 @@ export class ConnectionShape<Config extends ConnectionConfig = ConnectionConfig>
       requirement,
       provide,
     });
+  }
+
+  /**
+   * T014: Dim (or restore) this connection line during terminal selection mode.
+   * Called by ConnectionManager when a terminal is selected or deselected.
+   */
+  set_dimmed(dimmed: boolean) {
+    this.opacity(dimmed ? 0.25 : 1);
   }
 }
