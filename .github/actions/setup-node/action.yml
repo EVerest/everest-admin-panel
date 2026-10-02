@@ -17,7 +17,7 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - uses: pnpm/action-setup@v4
+    - uses: pnpm/action-setup@v4.4.0
       with:
         version: ${{ inputs.pnpm-version }}
 
@@ -27,7 +27,7 @@ runs:
       run: echo version=$(cat .nvmrc) >> "$GITHUB_OUTPUT"
 
     - name: Setup Node.js ${{ steps.nvmrc.outputs.version }}
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v4.4.0
       with:
         node-version: ${{ steps.nvmrc.outputs.version }}
         cache: 'pnpm'
