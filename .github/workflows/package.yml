@@ -18,7 +18,7 @@ jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
       - name: Setup node + pnpm install
         uses: ./.github/actions/setup-node
         with:
@@ -29,7 +29,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/') && success()
         run: tar -C dist -czf everest-admin-panel.tar.gz ./
       - name: Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.6.2
         if: startsWith(github.ref, 'refs/tags/') && success()
         with:
           files: everest-admin-panel.tar.gz
