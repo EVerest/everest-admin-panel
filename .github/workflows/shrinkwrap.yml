@@ -17,7 +17,7 @@ jobs:
   create-shrinkwrap:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.4.0
 
       - name: Read .nvmrc
         id: nvmrc
@@ -25,7 +25,7 @@ jobs:
         run: echo version=$(cat .nvmrc) >> "$GITHUB_OUTPUT"
 
       - name: Setup Node.js ${{ steps.nvmrc.outputs.version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.4.0
         with:
           node-version: ${{ steps.nvmrc.outputs.version }}
 
@@ -36,7 +36,7 @@ jobs:
 
       - name: Publish npm-shrinkwrap.json as Artifact
         if: github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: npm-shrinkwrap
           path: npm-shrinkwrap.json
