@@ -393,7 +393,7 @@ class EVConfigModel {
 
     const manifest = this._module_definitions[type];
     const impl_configs: Record<string, ConfigSetWithSchema> = {};
-    Object.entries(manifest.provides).forEach(([impl_name, impl_def]) => {
+    Object.entries(manifest.provides ?? {}).forEach(([impl_name, impl_def]) => {
       const impl_config =
         config?.config_implementation !== undefined && impl_name in config.config_implementation
           ? config.config_implementation[impl_name]
@@ -479,13 +479,13 @@ class EVConfigModel {
     const req_module = this._instances[req_id].type;
     const req_manifest = this._module_definitions[req_module];
 
-    if (!(conn.providing_impl_name in prov_manifest.provides)) {
+    if (!(conn.providing_impl_name in (prov_manifest.provides ?? {}))) {
       throw Error(
         `Providing module of type "${prov_module}" does not provide an implementation named "${conn.providing_impl_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`,
       );
     }
 
-    if (!(conn.requirement_name in req_manifest.requires)) {
+    if (!(conn.requirement_name in (req_manifest.requires ?? {}))) {
       throw Error(
         `Requiring module of type "${req_module}" does not have an requirement called "${conn.requirement_name}. Are you running in simulator mode? If yes, this likely means this version of the Admin Panel in simulator mode doesn't support this yet. Make sure you are running the correct admin panel or connect to a live instance."`,
       );
