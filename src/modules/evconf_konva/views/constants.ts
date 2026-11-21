@@ -6,9 +6,10 @@ import { currentTheme } from "@/plugins/vuetify";
 export const COLOR = {
   TERMINAL_REQUIREMENT: currentTheme.colors.secondary,
   TERMINAL_REQUIREMENT_DISABLED: "#d5d4cc",
-  TERMINAL_PROVIDE: currentTheme.colors.warning,
+  TERMINAL_PROVIDE: currentTheme.colors.secondary,
   TERMINAL_PROVIDE_DISABLED: "#d5d4cc",
   CONNECTION: currentTheme.colors.secondary,
+  MODULE_FILL: currentTheme.colors["module-primary"],
 };
 
 export const ICON_DATA = {
@@ -18,6 +19,16 @@ export const ICON_DATA = {
     "M12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M17,14L12,9L7,14H17Z",
   DISABLED:
     "M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2C6.47,2 2,6.47 2,12C2,17.53 6.47,22 12,22C17.53,22 22,17.53 22,12C22,6.47 17.53,2 12,2M14.59,8L12,10.59L9.41,8L8,9.41L10.59,12L8,14.59L9.41,16L12,13.41L14.59,16L16,14.59L13.41,12L16,9.41L14.59,8Z",
+  // MDI power-plug: two prongs at top (pointing up/away at 0°), body below.
+  TERMINAL_PROVIDE: "M16,7V3H14V7H10V3H8V7H8C7,7 6,8 6,9V14.5L9.5,18V21H14.5V18L18,14.5V9C18,8 17,7 16,7Z",
+  // power-socket with circular outline: outer circle (CW, +1 winding) + inner cutout (CCW, −1 winding)
+  // forms a ring; three slot rectangles (CW, +1) are filled within the transparent interior.
+  TERMINAL_REQUIREMENT:
+    "M15,15H17V11H15M7,15H9V11H7M11,13H13V9H11M2,12A10,10 0 0,1 22,12A10,10 0 0,1 2,12ZM4,12A8,8 0 0,0 20,12A8,8 0 0,0 4,12Z",
+  // Solid filled circle, radius 8 (slightly smaller than full to match visual weight of plug/arrowhead).
+  TERMINAL_PROVIDE_CONNECTED: "M12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4Z",
+  // Solid filled arrowhead pointing up at 0° (tip at top, base at bottom).
+  TERMINAL_REQUIREMENT_CONNECTED: "M12,3L21,19H3L12,3Z",
 };
 
 export const SIZE = {
